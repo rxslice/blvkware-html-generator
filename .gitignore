@@ -1,0 +1,17 @@
+# Secrets — never commit. Use .env.example as the template.
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Local dev artifacts
+_harness.html
+__pycache__/
+*.pyc
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,2556 @@
+$meta
+  title =  BlvkWare AI HTML Generator
+  description = Generate complete HTML websites, games, tools, and apps from a text prompt. Live streaming preview, runtime console, AI error repair, refine loop, and version history.
+  tags = html, generator, website, game, app, code, ai, builder, ide, no-code
+
+generateText = {import:ai-text-plugin}
+
+<style>
+  /* ============================================================
+     BLVKWARE — "CARBON & ACID" DESIGN SYSTEM
+     Warm graphite base, acid-chartreuse primary, clay secondary.
+     ============================================================ */
+  :root {
+    color-scheme: dark;
+
+    /* surfaces — warm blacks, not blue-blacks */
+    --bg:        #0a0908;
+    --bg-2:      #100e0b;
+    --surface:   #17140f;
+    --surface-2: #1e1a15;
+    --surface-3: #29241d;
+    --line:      #2e2820;
+    --line-2:    #423a2e;
+
+    /* ink — bone, not white */
+    --ink:   #f5f0e6;
+    --ink-2: #a89d8b;
+    --ink-3: #726858;
+
+    /* brand */
+    --accent:     #d4f24a;   /* acid chartreuse — fills */
+    --accent-ink: #d4f24a;   /* accent used as text/icon colour */
+    --on-accent:  #14170a;   /* text ON an accent fill */
+    --accent-2:   #e8734a;   /* clay */
+    --accent-3:   #6ec8a8;   /* jade */
+    --accent-soft: rgba(212, 242, 74, .11);
+    --accent-line: rgba(212, 242, 74, .34);
+    --grad: linear-gradient(100deg, #d4f24a 0%, #b6e647 42%, #e8734a 110%);
+
+    /* semantic */
+    --ok:   #6ec8a8;
+    --warn: #f0b429;
+    --err:  #ff6b57;
+    --info: #8fbfd8;
+
+    /* geometry */
+    --r-xs: 7px;
+    --r-sm: 10px;
+    --r-md: 14px;
+    --r-lg: 18px;
+    --r-xl: 24px;
+
+    /* elevation */
+    --sh-1: 0 1px 2px rgba(0,0,0,.45);
+    --sh-2: 0 4px 16px -4px rgba(0,0,0,.55), 0 1px 2px rgba(0,0,0,.4);
+    --sh-3: 0 20px 52px -14px rgba(0,0,0,.75), 0 2px 8px rgba(0,0,0,.45);
+
+    /* motion */
+    --ease: cubic-bezier(.2,.8,.2,1);
+    --t-fast: 120ms var(--ease);
+    --t: 190ms var(--ease);
+
+    --rail: 272px;
+    --font: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  [data-theme="light"] {
+    color-scheme: light;
+    --bg:        #f2efe6;
+    --bg-2:      #fbf9f3;
+    --surface:   #fbf9f3;
+    --surface-2: #efebe0;
+    --surface-3: #e4decf;
+    --line:      #ddd5c4;
+    --line-2:    #c7bda8;
+    --ink:   #14120c;
+    --ink-2: #5a5344;
+    --ink-3: #8b8271;
+    --accent:     #c7e83d;
+    --accent-ink: #5c7407;
+    --on-accent:  #14170a;
+    --accent-soft: rgba(150, 190, 20, .13);
+    --accent-line: rgba(120, 155, 15, .34);
+    --sh-1: 0 1px 2px rgba(40,34,20,.07);
+    --sh-2: 0 4px 16px -4px rgba(40,34,20,.12), 0 1px 2px rgba(40,34,20,.06);
+    --sh-3: 0 20px 52px -14px rgba(40,34,20,.2), 0 2px 8px rgba(40,34,20,.07);
+  }
+
+  * { box-sizing: border-box; }
+  /* The app owns every scroll container internally. `overflow:hidden` on <html>
+     as well as <body> matters: the out-of-flow toast/live-region nodes leave
+     trailing whitespace that forms an anonymous line box after #app, and without
+     this the document scrolls by a stray line-height. */
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    margin: 0;
+    font-family: var(--font);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+  /* ambient warmth */
+  body::before {
+    content: "";
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(820px 460px at 4% -10%, rgba(212,242,74,.10), transparent 62%),
+      radial-gradient(700px 420px at 98% 2%,  rgba(232,115,74,.10), transparent 62%),
+      radial-gradient(900px 600px at 50% 108%, rgba(110,200,168,.06), transparent 60%);
+  }
+  [data-theme="light"] body::before { opacity: .6; }
+
+  button, input, textarea, select { font: inherit; color: inherit; }
+  button { background: none; border: none; cursor: pointer; }
+  ::selection { background: rgba(212,242,74,.3); color: var(--ink); }
+
+  ::-webkit-scrollbar { width: 11px; height: 11px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 20px; border: 3px solid transparent; background-clip: content-box; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--ink-3); background-clip: content-box; }
+
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 5px; }
+
+  .ic { width: 18px; height: 18px; flex: none; display: block; }
+  .ic-14 { width: 14px; height: 14px; }
+  .ic-16 { width: 16px; height: 16px; }
+  .ic-20 { width: 20px; height: 20px; }
+  .ic-28 { width: 28px; height: 28px; }
+
+  /* ============================================================
+     SHELL — full viewport, no page scroll
+     ============================================================ */
+  #app { position: relative; z-index: 1; height: 100%; display: flex; }
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; height: 100%; }
+  .spacer { flex: 1; }
+  .hidden { display: none !important; }
+  /* fixed, not absolute: an absolute .sr sits at its static position after #app
+     and adds a pixel of document overflow */
+  .sr { position: fixed; top: 0; left: 0; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ---------- rail ---------- */
+  .rail {
+    width: var(--rail); flex: none;
+    display: flex; flex-direction: column;
+    border-right: 1px solid var(--line);
+    background: color-mix(in oklab, var(--bg-2) 84%, transparent);
+    backdrop-filter: blur(18px);
+    transition: margin-left var(--t);
+  }
+  .rail.collapsed { margin-left: calc(var(--rail) * -1); }
+
+  .brand { display: flex; align-items: center; gap: 11px; padding: 17px 16px 15px; }
+  /* Dark tile so the brass mark reads the way it does on its own black field. */
+  .logo {
+    width: 38px; height: 38px; border-radius: 11px; flex: none;
+    background: radial-gradient(circle at 50% 30%, #191209 0%, #0b0806 70%);
+    display: grid; place-items: center; overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgba(217,182,92,.30), 0 5px 16px -8px rgba(0,0,0,.9);
+  }
+  .logo svg { width: 30px; height: 30px; }
+  [data-theme="light"] .logo {
+    background: radial-gradient(circle at 50% 30%, #23190e 0%, #120c07 70%);
+    box-shadow: inset 0 0 0 1px rgba(217,182,92,.42), 0 4px 12px -6px rgba(40,30,10,.5);
+  }
+  .brand-name {
+    font-size: 13px; font-weight: 780; letter-spacing: .17em; text-transform: uppercase;
+    line-height: 1.1; color: var(--ink);
+  }
+  .brand-sub { font-size: 11px; color: var(--ink-3); margin-top: 3px; letter-spacing: .01em; }
+
+  .rail-body { flex: 1; overflow-y: auto; padding: 4px 10px 10px; }
+  .rail-foot { border-top: 1px solid var(--line); padding: 10px; display: flex; gap: 6px; align-items: center; }
+
+  .rail-label {
+    font-size: 10px; font-weight: 750; letter-spacing: .13em; text-transform: uppercase;
+    color: var(--ink-3); padding: 15px 8px 7px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .rail-label button { color: var(--ink-3); display: grid; place-items: center; padding: 3px; border-radius: 6px; }
+  .rail-label button:hover { color: var(--err); background: var(--surface-2); }
+
+  .hist-item {
+    display: flex; gap: 10px; align-items: flex-start; width: 100%; text-align: left;
+    padding: 9px 10px; border-radius: var(--r-sm); color: var(--ink-2);
+    transition: background var(--t-fast), color var(--t-fast); position: relative;
+  }
+  .hist-item:hover { background: var(--surface-2); color: var(--ink); }
+  .hist-item.active { background: var(--accent-soft); color: var(--ink); box-shadow: inset 0 0 0 1px var(--accent-line); }
+  .hist-ic { margin-top: 1px; color: var(--ink-3); }
+  .hist-item:hover .hist-ic, .hist-item.active .hist-ic { color: var(--accent-ink); }
+  .hist-main { min-width: 0; flex: 1; }
+  .hist-title { font-size: 12.7px; font-weight: 560; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hist-meta { font-size: 10.5px; color: var(--ink-3); margin-top: 2px; display: flex; gap: 6px; }
+  .hist-del { opacity: 0; color: var(--ink-3); padding: 4px; border-radius: 6px; transition: opacity var(--t-fast); }
+  .hist-item:hover .hist-del { opacity: 1; }
+  .hist-del:hover { color: var(--err); background: var(--surface-3); }
+  .empty-hint { padding: 12px 10px; font-size: 12px; color: var(--ink-3); line-height: 1.6; }
+
+  /* ---------- topbar ---------- */
+  .topbar {
+    height: 52px; flex: none; display: flex; align-items: center; gap: 10px;
+    padding: 0 14px; border-bottom: 1px solid var(--line);
+    background: color-mix(in oklab, var(--bg-2) 62%, transparent);
+    backdrop-filter: blur(14px);
+  }
+  .doc-title { font-size: 13.5px; font-weight: 620; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 40vw; }
+  .doc-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 1px; }
+
+  /* ============================================================
+     BUTTONS
+     ============================================================ */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    height: 36px; padding: 0 14px; border-radius: var(--r-sm);
+    font-size: 13px; font-weight: 570; letter-spacing: -.005em;
+    color: var(--ink-2); background: var(--surface-2);
+    box-shadow: inset 0 0 0 1px var(--line);
+    transition: color var(--t-fast), background var(--t-fast), box-shadow var(--t-fast), transform var(--t-fast), opacity var(--t-fast);
+    white-space: nowrap; user-select: none;
+  }
+  .btn:hover { color: var(--ink); background: var(--surface-3); box-shadow: inset 0 0 0 1px var(--line-2); }
+  .btn:active { transform: translateY(1px); }
+  .btn:disabled { opacity: .4; pointer-events: none; }
+  .btn.ghost { background: transparent; box-shadow: none; }
+  .btn.ghost:hover { background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line); }
+  .btn.icon { width: 36px; padding: 0; }
+  .btn.sm { height: 30px; padding: 0 10px; font-size: 12.4px; border-radius: var(--r-xs); }
+  .btn.sm.icon { width: 30px; padding: 0; }
+  .btn.lg { height: 42px; padding: 0 20px; font-size: 14px; border-radius: var(--r-md); }
+
+  /* the signature: acid fill, dark ink */
+  .btn.primary {
+    color: var(--on-accent); background: var(--accent);
+    box-shadow: 0 6px 18px -8px rgba(212,242,74,.65), inset 0 1px 0 rgba(255,255,255,.35);
+    font-weight: 680;
+  }
+  .btn.primary:hover {
+    background: color-mix(in oklab, var(--accent) 88%, #fff);
+    box-shadow: 0 9px 24px -8px rgba(212,242,74,.8), inset 0 1px 0 rgba(255,255,255,.4);
+  }
+  .btn.primary .ic { color: var(--on-accent); }
+
+  .kbd {
+    font-family: var(--mono); font-size: 10.5px; font-weight: 620;
+    padding: 2px 5px; border-radius: 5px; letter-spacing: .02em; line-height: 1.4;
+    background: rgba(255,255,255,.09); opacity: .82;
+  }
+  [data-theme="light"] .kbd { background: rgba(0,0,0,.07); }
+  .btn.primary .kbd { background: rgba(0,0,0,.16); opacity: .85; }
+
+  [data-tip] { position: relative; }
+  [data-tip]::after {
+    content: attr(data-tip);
+    position: absolute; top: calc(100% + 8px); left: 50%;
+    transform: translateX(-50%) translateY(-3px);
+    background: var(--surface-3); color: var(--ink);
+    font-size: 11.5px; font-weight: 500; white-space: nowrap;
+    padding: 5px 8px; border-radius: 7px;
+    box-shadow: var(--sh-2), inset 0 0 0 1px var(--line-2);
+    opacity: 0; pointer-events: none; z-index: 70;
+    transition: opacity var(--t-fast), transform var(--t-fast);
+  }
+  [data-tip]:hover::after { opacity: 1; transform: translateX(-50%) translateY(0); }
+  [data-tip-below]::after { top: auto; bottom: calc(100% + 8px); }
+
+  /* ============================================================
+     COMPOSER
+     ============================================================ */
+  .composer-shell { flex: none; padding: 16px 18px 0; }
+  .composer {
+    background: color-mix(in oklab, var(--surface) 90%, transparent);
+    border-radius: var(--r-xl);
+    box-shadow: var(--sh-2), inset 0 0 0 1px var(--line);
+    backdrop-filter: blur(10px);
+    transition: box-shadow var(--t);
+    overflow: hidden;
+  }
+  .composer.focused { box-shadow: var(--sh-3), inset 0 0 0 1px var(--accent-line), 0 0 0 4px var(--accent-soft); }
+
+  .prompt-zone { padding: 16px 18px 0; }
+  #prompt {
+    width: 100%; border: none; background: none; resize: none;
+    font-size: 16px; line-height: 1.6; letter-spacing: -.012em;
+    min-height: 76px; max-height: 240px; padding: 0; margin: 0;
+    outline: none; overflow-y: auto;
+  }
+  #prompt::placeholder { color: var(--ink-3); }
+
+  .composer-bar {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    padding: 12px 14px 13px; margin-top: 10px;
+    border-top: 1px solid var(--line);
+    background: color-mix(in oklab, var(--surface-2) 55%, transparent);
+  }
+
+  /* collapsed composer — one compact line */
+  .composer-mini {
+    display: none; align-items: center; gap: 10px;
+    padding: 10px 12px 10px 16px;
+  }
+  .composer-shell.collapsed .composer-full { display: none; }
+  .composer-shell.collapsed .composer-mini { display: flex; }
+  .mini-txt {
+    flex: 1; min-width: 0; font-size: 13px; color: var(--ink-2);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .mini-tag {
+    font-size: 10px; font-weight: 750; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--accent-ink); flex: none;
+  }
+
+  .seg { display: flex; gap: 2px; padding: 3px; border-radius: var(--r-sm); background: var(--surface-3); box-shadow: inset 0 0 0 1px var(--line); }
+  .seg button {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 28px; padding: 0 9px; border-radius: 7px;
+    font-size: 12.4px; font-weight: 560; color: var(--ink-3);
+    transition: color var(--t-fast), background var(--t-fast);
+  }
+  .seg button:hover { color: var(--ink); }
+  .seg button.on { color: var(--ink); background: var(--surface); box-shadow: var(--sh-1); }
+  .seg button.on .ic { color: var(--accent-ink); }
+
+  .counter { font-family: var(--mono); font-size: 11px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+  /* provider picker — only shown when the host exposes /api/providers */
+  .picker {
+    height: 30px; padding: 0 26px 0 10px; border-radius: var(--r-xs);
+    font-size: 12.4px; font-weight: 550; color: var(--ink-2);
+    background: var(--surface-2); border: none;
+    box-shadow: inset 0 0 0 1px var(--line);
+    -webkit-appearance: none; appearance: none; cursor: pointer;
+    background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+                      linear-gradient(135deg, currentColor 50%, transparent 50%);
+    background-position: right 12px center, right 7px center;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    transition: color var(--t-fast), box-shadow var(--t-fast);
+    max-width: 190px;
+  }
+  .picker:hover { color: var(--ink); box-shadow: inset 0 0 0 1px var(--line-2); }
+  .picker.pinned { color: var(--accent-ink); box-shadow: inset 0 0 0 1px var(--accent-line); }
+  .picker option { background: var(--surface-2); color: var(--ink); }
+
+  .opts { border-top: 1px solid var(--line); padding: 14px 16px 16px; display: none; background: color-mix(in oklab, var(--surface-2) 38%, transparent); }
+  .opts.open { display: block; animation: slideIn 220ms var(--ease); }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+  .opt-row { display: flex; gap: 18px; flex-wrap: wrap; align-items: flex-start; }
+  .opt-title { font-size: 10px; font-weight: 750; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip {
+    height: 28px; padding: 0 11px; border-radius: 30px;
+    font-size: 12.2px; font-weight: 530; color: var(--ink-2);
+    background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line);
+    display: inline-flex; align-items: center; gap: 6px; transition: all var(--t-fast);
+  }
+  .chip:hover { color: var(--ink); box-shadow: inset 0 0 0 1px var(--line-2); }
+  .chip.on { color: var(--ink); background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent-line); }
+
+  .swatches { display: flex; gap: 6px; }
+  .sw { width: 26px; height: 26px; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--line-2); transition: transform var(--t-fast), box-shadow var(--t-fast); }
+  .sw:hover { transform: scale(1.12); }
+  .sw.on { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent); }
+  .sw.auto { background: conic-gradient(from 200deg, #d4f24a, #6ec8a8, #8fbfd8, #e8734a, #f0b429, #d4f24a); }
+
+  .toggles { display: flex; gap: 6px 16px; flex-wrap: wrap; }
+  .tg { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-2); cursor: pointer; user-select: none; }
+  .tg input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .tg .track {
+    width: 32px; height: 18px; border-radius: 20px; flex: none;
+    background: var(--surface-3); box-shadow: inset 0 0 0 1px var(--line-2);
+    position: relative; transition: background var(--t);
+  }
+  .tg .track::after {
+    content: ""; position: absolute; top: 2px; left: 2px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--ink-3); transition: transform var(--t), background var(--t);
+  }
+  .tg input:checked + .track { background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent-line); }
+  .tg input:checked + .track::after { transform: translateX(14px); background: var(--accent); }
+  .tg input:focus-visible + .track { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .tg:hover { color: var(--ink); }
+
+  /* ============================================================
+     STAGE AREA — fills remaining height
+     ============================================================ */
+  .stage-area { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 16px 18px 18px; }
+
+  .browse { flex: 1; min-height: 0; overflow-y: auto; }
+  .browse-inner { max-width: 1120px; margin: 0 auto; }
+  .section-head { display: flex; align-items: center; gap: 10px; margin: 4px 2px 12px; }
+  .section-head h2 { font-size: 11px; font-weight: 750; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3); margin: 0; }
+  .section-head .line { flex: 1; height: 1px; background: var(--line); }
+
+  .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(198px, 1fr)); gap: 10px; padding-bottom: 8px; }
+  .preset {
+    text-align: left; padding: 14px 14px 15px; border-radius: var(--r-md);
+    background: color-mix(in oklab, var(--surface) 60%, transparent);
+    box-shadow: inset 0 0 0 1px var(--line);
+    transition: transform var(--t), box-shadow var(--t);
+    position: relative; overflow: hidden;
+  }
+  .preset::before {
+    content: ""; position: absolute; inset: 0; opacity: 0;
+    background: radial-gradient(130px 90px at 18% 0%, var(--accent-soft), transparent 72%);
+    transition: opacity var(--t);
+  }
+  .preset:hover { transform: translateY(-2px); box-shadow: inset 0 0 0 1px var(--accent-line), var(--sh-2); }
+  .preset:hover::before { opacity: 1; }
+  .preset-ic {
+    width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center;
+    background: var(--surface-3); color: var(--accent-ink);
+    box-shadow: inset 0 0 0 1px var(--line); margin-bottom: 10px; position: relative;
+  }
+  .preset-name { font-size: 13px; font-weight: 620; margin-bottom: 3px; position: relative; }
+  .preset-desc { font-size: 11.6px; color: var(--ink-3); line-height: 1.45; position: relative; }
+
+  /* ============================================================
+     WORKSPACE
+     ============================================================ */
+  .workspace {
+    flex: 1; min-height: 0; display: flex; flex-direction: column;
+    border-radius: var(--r-lg);
+    background: color-mix(in oklab, var(--surface) 90%, transparent);
+    box-shadow: var(--sh-2), inset 0 0 0 1px var(--line);
+    overflow: hidden;
+  }
+  .ws-bar {
+    flex: none; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    padding: 9px 11px; border-bottom: 1px solid var(--line);
+    background: color-mix(in oklab, var(--surface-2) 52%, transparent);
+    position: relative;
+  }
+  .tabs { display: flex; gap: 2px; padding: 3px; border-radius: var(--r-sm); background: var(--surface-3); box-shadow: inset 0 0 0 1px var(--line); }
+  .tab {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 28px; padding: 0 11px; border-radius: 7px;
+    font-size: 12.5px; font-weight: 570; color: var(--ink-3);
+    transition: color var(--t-fast), background var(--t-fast);
+  }
+  .tab:hover { color: var(--ink); }
+  .tab[aria-selected="true"] { color: var(--ink); background: var(--surface); box-shadow: var(--sh-1); }
+  .tab[aria-selected="true"] .ic { color: var(--accent-ink); }
+  .badge {
+    min-width: 16px; height: 16px; padding: 0 4px; border-radius: 20px;
+    font-size: 10px; font-weight: 750; font-family: var(--mono);
+    display: inline-grid; place-items: center; background: var(--err); color: #1c0603;
+  }
+  .badge.zero { display: none; }
+
+  .ws-body { flex: 1; min-height: 0; position: relative; background: var(--bg-2); }
+  .pane { position: absolute; inset: 0; display: none; }
+  .pane.on { display: flex; flex-direction: column; }
+
+  /* ---------- preview with browser chrome ---------- */
+  .stage {
+    flex: 1; min-height: 0; overflow: auto;
+    display: flex; align-items: flex-start; justify-content: center; padding: 0;
+    background:
+      linear-gradient(45deg, rgba(140,130,105,.055) 25%, transparent 25%, transparent 75%, rgba(140,130,105,.055) 75%),
+      linear-gradient(45deg, rgba(140,130,105,.055) 25%, transparent 25%, transparent 75%, rgba(140,130,105,.055) 75%);
+    background-size: 22px 22px; background-position: 0 0, 11px 11px;
+  }
+  .stage.framed { padding: 20px; }
+  #frameBox { width: 100%; height: 100%; display: flex; flex-direction: column; }
+  .stage.framed #frameBox {
+    height: auto; min-height: 100%;
+    border-radius: 14px; overflow: hidden;
+    box-shadow: var(--sh-3), 0 0 0 1px var(--line-2);
+  }
+  .chrome {
+    display: none; flex: none; align-items: center; gap: 10px;
+    height: 34px; padding: 0 12px;
+    background: var(--surface-2); border-bottom: 1px solid var(--line);
+  }
+  .stage.framed .chrome { display: flex; }
+  .dots { display: flex; gap: 6px; flex: none; }
+  .dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--line-2); display: block; }
+  .chrome-url {
+    flex: 1; min-width: 0; height: 20px; border-radius: 20px;
+    background: var(--surface); box-shadow: inset 0 0 0 1px var(--line);
+    display: flex; align-items: center; padding: 0 10px;
+    font-family: var(--mono); font-size: 10.5px; color: var(--ink-3);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  #preview { flex: 1; width: 100%; height: 100%; border: 0; display: block; background: #fff; min-height: 400px; }
+
+  /* ---------- code ---------- */
+  .code-head {
+    flex: none; display: flex; align-items: center; gap: 8px;
+    padding: 7px 10px; border-bottom: 1px solid var(--line);
+    background: color-mix(in oklab, var(--surface-2) 42%, transparent);
+    font-family: var(--mono); font-size: 11px; color: var(--ink-3);
+  }
+  .code-scroll { flex: 1; min-height: 0; overflow: auto; background: var(--bg); }
+  .code-grid { display: flex; min-height: 100%; font-family: var(--mono); font-size: 12.5px; line-height: 1.66; }
+  #gutter {
+    flex: none; padding: 14px 12px 40px; text-align: right;
+    color: var(--ink-3); opacity: .5; user-select: none;
+    border-right: 1px solid var(--line);
+    background: color-mix(in oklab, var(--surface) 38%, transparent);
+    font-variant-numeric: tabular-nums; white-space: pre;
+    position: sticky; left: 0; z-index: 2;
+  }
+  #code { flex: 1; padding: 14px 18px 40px; margin: 0; white-space: pre; color: #ded8c9; tab-size: 2; }
+  [data-theme="light"] #code { color: #2c2718; }
+  #code.wrap { white-space: pre-wrap; word-break: break-word; }
+  .code-grid.wrapped #gutter { display: none; }
+
+  /* syntax — tuned to the warm palette */
+  .t-doc  { color: var(--ink-3); font-style: italic; }
+  .t-com  { color: #6b6553; font-style: italic; }
+  .t-tag  { color: #d4f24a; }
+  .t-atr  { color: #e8a04a; }
+  .t-str  { color: #8fd6a8; }
+  .t-kw   { color: #ff9470; }
+  .t-num  { color: #f0c94a; }
+  .t-pun  { color: var(--ink-3); }
+  .t-prop { color: #e8a04a; }
+  [data-theme="light"] .t-com  { color: #928a75; }
+  [data-theme="light"] .t-tag  { color: #5c7407; }
+  [data-theme="light"] .t-atr  { color: #a35a10; }
+  [data-theme="light"] .t-str  { color: #1d6b45; }
+  [data-theme="light"] .t-kw   { color: #b8451f; }
+  [data-theme="light"] .t-num  { color: #8a6508; }
+  [data-theme="light"] .t-prop { color: #a35a10; }
+
+  /* ---------- console ---------- */
+  .con-head { flex: none; display: flex; align-items: center; gap: 6px; padding: 7px 10px; border-bottom: 1px solid var(--line); background: color-mix(in oklab, var(--surface-2) 42%, transparent); }
+  .con-scroll { flex: 1; min-height: 0; overflow: auto; padding: 6px 0 24px; font-family: var(--mono); font-size: 12.2px; }
+  .log {
+    display: flex; gap: 9px; padding: 6px 12px; align-items: flex-start; line-height: 1.5;
+    border-bottom: 1px solid color-mix(in oklab, var(--line) 52%, transparent);
+  }
+  .log-ic { margin-top: 2px; flex: none; }
+  .log-txt { white-space: pre-wrap; word-break: break-word; flex: 1; color: var(--ink-2); }
+  .log.error .log-ic, .log.error .log-txt { color: var(--err); }
+  .log.warn  .log-ic, .log.warn  .log-txt { color: var(--warn); }
+  .log.info  .log-ic { color: var(--info); }
+  .log.log   .log-ic { color: var(--ink-3); }
+
+  /* audit */
+  .audit-score {
+    font-family: var(--mono); font-size: 12px; font-weight: 700;
+    padding: 3px 9px; border-radius: 20px; flex: none;
+    background: var(--surface-3); color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .audit-score.good { color: var(--ok); box-shadow: inset 0 0 0 1px rgba(110,200,168,.4); }
+  .audit-score.mid  { color: var(--warn); box-shadow: inset 0 0 0 1px rgba(240,180,41,.4); }
+  .audit-score.bad  { color: var(--err); box-shadow: inset 0 0 0 1px rgba(255,107,87,.4); }
+  .find {
+    display: flex; gap: 10px; padding: 11px 13px; align-items: flex-start;
+    border-bottom: 1px solid color-mix(in oklab, var(--line) 52%, transparent);
+    font-family: var(--font);
+  }
+  .find-ic { margin-top: 1px; flex: none; }
+  .find.error .find-ic { color: var(--err); }
+  .find.warn  .find-ic { color: var(--warn); }
+  .find.info  .find-ic { color: var(--info); }
+  .find-body { min-width: 0; flex: 1; }
+  .find-title { font-size: 13px; font-weight: 600; }
+  .find-detail { font-size: 12.2px; color: var(--ink-3); margin-top: 3px; line-height: 1.5; }
+  .find-tag {
+    font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--ink-3); flex: none; margin-top: 3px;
+  }
+
+  .empty { flex: 1; display: grid; place-items: center; padding: 40px 20px; text-align: center; }
+  .empty-inner { max-width: 380px; }
+  .empty-ic {
+    width: 62px; height: 62px; border-radius: 17px; margin: 0 auto 15px;
+    display: grid; place-items: center; color: var(--accent-ink);
+    background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .empty h3 { margin: 0 0 6px; font-size: 15px; font-weight: 630; }
+  .empty p { margin: 0; font-size: 13px; color: var(--ink-3); line-height: 1.6; }
+
+  /* ---------- progress / status ---------- */
+  .progress { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; overflow: hidden; opacity: 0; transition: opacity var(--t); }
+  .progress.on { opacity: 1; }
+  .progress::after {
+    content: ""; position: absolute; inset: 0;
+    background: var(--grad); background-size: 40% 100%;
+    animation: slide 1.15s var(--ease) infinite;
+  }
+  @keyframes slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(350%); } }
+
+  .status { display: inline-flex; align-items: center; gap: 7px; font-size: 12.2px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .status.busy { color: var(--warn); }
+  .status.ok { color: var(--ok); }
+  .status.err { color: var(--err); }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: none; }
+  .status.busy .dot { animation: pulse 1.1s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .3; transform: scale(.65); } }
+
+  .spin { width: 14px; height: 14px; flex: none; border-radius: 50%; border: 1.8px solid rgba(0,0,0,.25); border-top-color: currentColor; animation: spin .68s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .vers { display: flex; gap: 3px; align-items: center; padding: 3px; border-radius: var(--r-sm); background: var(--surface-3); box-shadow: inset 0 0 0 1px var(--line); }
+  .ver {
+    height: 24px; min-width: 26px; padding: 0 7px; border-radius: 6px;
+    font-family: var(--mono); font-size: 11px; font-weight: 620; color: var(--ink-3);
+    display: inline-grid; place-items: center; transition: all var(--t-fast);
+  }
+  .ver:hover { color: var(--ink); background: var(--surface-2); }
+  .ver.on { color: var(--on-accent); background: var(--accent); }
+
+  .refine {
+    flex: none; display: flex; align-items: center; gap: 8px;
+    padding: 9px 11px; border-top: 1px solid var(--line);
+    background: color-mix(in oklab, var(--surface-2) 52%, transparent);
+  }
+  .refine-input {
+    flex: 1; min-width: 0; height: 34px; padding: 0 12px;
+    border-radius: var(--r-sm); border: none; outline: none;
+    background: var(--surface-3); box-shadow: inset 0 0 0 1px var(--line);
+    font-size: 13px; transition: box-shadow var(--t-fast);
+  }
+  .refine-input::placeholder { color: var(--ink-3); }
+  .refine-input:focus { box-shadow: inset 0 0 0 1px var(--accent-line), 0 0 0 3px var(--accent-soft); }
+
+  /* ============================================================
+     OVERLAYS
+     ============================================================ */
+  .toasts { position: fixed; right: 18px; bottom: 18px; z-index: 90; display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+  .toast {
+    display: flex; align-items: flex-start; gap: 9px; max-width: 340px; padding: 11px 13px;
+    border-radius: var(--r-md); background: var(--surface-2); color: var(--ink);
+    box-shadow: var(--sh-3), inset 0 0 0 1px var(--line-2);
+    font-size: 12.8px; line-height: 1.45; animation: toastIn 260ms var(--ease);
+  }
+  .toast.out { animation: toastOut 200ms var(--ease) forwards; }
+  @keyframes toastIn { from { opacity: 0; transform: translateY(10px) scale(.97); } to { opacity: 1; transform: none; } }
+  @keyframes toastOut { to { opacity: 0; transform: translateX(14px); } }
+  .toast .ic { margin-top: 1px; }
+  .toast.ok .ic { color: var(--ok); }
+  .toast.err .ic { color: var(--err); }
+  .toast.info .ic { color: var(--info); }
+
+  .modal-back {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(8,6,4,.66); backdrop-filter: blur(6px);
+    display: grid; place-items: center; padding: 24px; animation: fade 180ms var(--ease);
+  }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+  .modal {
+    width: min(560px, 100%); max-height: 82vh; overflow: auto;
+    background: var(--surface); border-radius: var(--r-lg);
+    box-shadow: var(--sh-3), inset 0 0 0 1px var(--line-2);
+    animation: pop 220ms var(--ease);
+  }
+  @keyframes pop { from { opacity: 0; transform: translateY(10px) scale(.985); } to { opacity: 1; transform: none; } }
+  .modal-head { display: flex; align-items: center; gap: 10px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+  .modal-head h3 { margin: 0; font-size: 14.5px; font-weight: 650; }
+  .modal-body { padding: 16px 18px 20px; }
+  .kb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 26px; }
+  .kb-sec-title { font-size: 10px; font-weight: 750; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 8px; }
+  .kb-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 5px 0; font-size: 12.8px; color: var(--ink-2); }
+  .kb-keys { display: flex; gap: 4px; flex: none; }
+
+  .scrim { position: fixed; inset: 0; z-index: 40; background: rgba(8,6,4,.5); backdrop-filter: blur(3px); animation: fade 160ms var(--ease); }
+
+  /* focus mode */
+  body.zen .rail, body.zen .composer-shell, body.zen .topbar { display: none !important; }
+  body.zen .stage-area { padding: 0; }
+  body.zen .workspace { border-radius: 0; box-shadow: none; }
+
+  @media (max-width: 900px) {
+    .rail { position: fixed; z-index: 50; top: 0; bottom: 0; left: 0; box-shadow: var(--sh-3); }
+    .composer-shell { padding: 12px 12px 0; }
+    .stage-area { padding: 12px; }
+    .doc-title { max-width: 32vw; }
+    .seg button span, .tab span { display: none; }
+    .seg button, .tab { padding: 0 9px; }
+    .kb-grid { grid-template-columns: 1fr; }
+    #prompt { font-size: 15px; }
+  }
+  @media (max-width: 620px) {
+    .gallery { grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); }
+    .hide-sm { display: none !important; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  }
+</style>
+
+<!-- ============================================================
+     ICON SPRITE — hand-authored, 24px grid, 1.65 stroke
+     ============================================================ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M11.4 2.9 13 8.3l5.4 1.6-5.4 1.6-1.6 5.4-1.6-5.4L4.4 9.9 9.8 8.3z"/>
+    <path d="M18.4 14.6l.75 2.25 2.25.75-2.25.75-.75 2.25-.75-2.25-2.25-.75 2.25-.75z"/>
+  </symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="6.75" y="6.75" width="10.5" height="10.5" rx="2.6"/>
+  </symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M2.6 12S6.2 5.6 12 5.6 21.4 12 21.4 12 17.8 18.4 12 18.4 2.6 12 2.6 12Z"/>
+    <circle cx="12" cy="12" r="2.85"/>
+  </symbol>
+  <symbol id="i-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m8.6 8.2-4.1 3.8 4.1 3.8M15.4 8.2l4.1 3.8-4.1 3.8M13.6 4.6l-3.2 14.8"/>
+  </symbol>
+  <symbol id="i-console" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="4.6" width="18" height="14.8" rx="2.8"/>
+    <path d="m7.4 10 2.4 2.2-2.4 2.2M13 14.4h4"/>
+  </symbol>
+  <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3.6v10.8m0 0 4.2-4.2M12 14.4l-4.2-4.2M4.2 16.4v1.8a2.4 2.4 0 0 0 2.4 2.4h10.8a2.4 2.4 0 0 0 2.4-2.4v-1.8"/>
+  </symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="8.2" y="8.2" width="12.3" height="12.3" rx="3"/>
+    <path d="M16 8.2V6.2a2.7 2.7 0 0 0-2.7-2.7H6.2A2.7 2.7 0 0 0 3.5 6.2v7.1A2.7 2.7 0 0 0 6.2 16h2"/>
+  </symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m4.8 12.4 4.6 4.6L19.2 7"/>
+  </symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="8.6"/><path d="m8.2 12.2 2.6 2.6 5.1-5.3"/>
+  </symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4.4 12a7.6 7.6 0 1 1 2.6 5.75"/><path d="M4.4 7.6V12h4.4"/>
+  </symbol>
+  <symbol id="i-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14.2 4.4h5.4v5.4M19.4 4.6 11.6 12.4"/>
+    <path d="M17.8 14.2v4.2a2.2 2.2 0 0 1-2.2 2.2H5.8a2.2 2.2 0 0 1-2.2-2.2V8.6a2.2 2.2 0 0 1 2.2-2.2H10"/>
+  </symbol>
+  <symbol id="i-expand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9.2 4.2H5.6a1.4 1.4 0 0 0-1.4 1.4v3.6M14.8 4.2h3.6a1.4 1.4 0 0 1 1.4 1.4v3.6M19.8 14.8v3.6a1.4 1.4 0 0 1-1.4 1.4h-3.6M4.2 14.8v3.6a1.4 1.4 0 0 0 1.4 1.4h3.6"/>
+  </symbol>
+  <symbol id="i-collapse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9.4 4.2v3.8a1.4 1.4 0 0 1-1.4 1.4H4.2M14.6 4.2v3.8a1.4 1.4 0 0 0 1.4 1.4h3.8M9.4 19.8V16a1.4 1.4 0 0 0-1.4-1.4H4.2M14.6 19.8V16a1.4 1.4 0 0 1 1.4-1.4h3.8"/>
+  </symbol>
+  <symbol id="i-desktop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2.8" y="4.2" width="18.4" height="12.4" rx="2.4"/><path d="M9 20.2h6M12 16.6v3.6"/>
+  </symbol>
+  <symbol id="i-tablet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="5.6" y="2.8" width="12.8" height="18.4" rx="2.6"/><path d="M11 18.2h2"/>
+  </symbol>
+  <symbol id="i-mobile" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="7.2" y="2.4" width="9.6" height="19.2" rx="2.6"/><path d="M11 18.6h2"/>
+  </symbol>
+  <symbol id="i-wand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m3.6 20.4 9.2-9.2"/>
+    <path d="m16.4 3 1 2.6 2.6 1-2.6 1-1 2.6-1-2.6-2.6-1 2.6-1z"/>
+    <path d="M8.6 4.4v2.4M7.4 5.6h2.4M19.6 14.6V17M18.4 15.8h2.4"/>
+  </symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="8.6"/><path d="M12 7.4V12l3.2 1.9"/>
+  </symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 7.2h8.6M17.4 7.2H20M4 16.8h4.6M13.4 16.8H20M4 12h13M21 12h-1"/>
+    <circle cx="15" cy="7.2" r="2.1"/><circle cx="11" cy="16.8" r="2.1"/><circle cx="19" cy="12" r="2.1"/>
+  </symbol>
+  <symbol id="i-keyboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2.4" y="5.8" width="19.2" height="12.4" rx="2.6"/>
+    <path d="M6 9.6h.01M9.4 9.6h.01M12.8 9.6h.01M16.2 9.6h.01M18.4 9.6h.01M6 13h.01M18.4 13h.01M9.2 15.6h5.6M9.4 13h5.2"/>
+  </symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="4"/>
+    <path d="M12 2.6v2.2M12 19.2v2.2M4.35 4.35l1.55 1.55M18.1 18.1l1.55 1.55M2.6 12h2.2M19.2 12h2.2M4.35 19.65l1.55-1.55M18.1 5.9l1.55-1.55"/>
+  </symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20.6 14.3A8.7 8.7 0 0 1 9.7 3.4a8.7 8.7 0 1 0 10.9 10.9Z"/>
+  </symbol>
+  <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m6.6 6.6 10.8 10.8M17.4 6.6 6.6 17.4"/>
+  </symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m6.4 9.4 5.6 5.4 5.6-5.4"/>
+  </symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4.4 6.6h15.2M9.6 6.6V5.2a1.6 1.6 0 0 1 1.6-1.6h1.6a1.6 1.6 0 0 1 1.6 1.6v1.4"/>
+    <path d="M6.6 6.6 7.5 19a2 2 0 0 0 2 1.9h5a2 2 0 0 0 2-1.9l.9-12.4M10.4 10.6v6M13.6 10.6v6"/>
+  </symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3.9 21 19.2a1.4 1.4 0 0 1-1.2 2.1H4.2A1.4 1.4 0 0 1 3 19.2L12 3.9Z"/>
+    <path d="M12 9.6v4.6M12 17.6h.01"/>
+  </symbol>
+  <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="8.6"/><path d="M12 11.2v5.2M12 7.8h.01"/>
+  </symbol>
+  <symbol id="i-gamepad" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8.4 7h7.2a5.4 5.4 0 0 1 5.3 4.4l.6 3.6a2.8 2.8 0 0 1-2.75 3.3c-1 0-1.9-.5-2.45-1.35l-.7-1.05a2 2 0 0 0-1.66-.9h-3.98a2 2 0 0 0-1.66.9l-.7 1.05A2.94 2.94 0 0 1 5.15 18.3 2.8 2.8 0 0 1 2.4 15l.7-3.6A5.4 5.4 0 0 1 8.4 7Z"/>
+    <path d="M7.6 10.4v2.6M6.3 11.7h2.6M15.7 10.9h.01M17.6 12.9h.01"/>
+  </symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="8.6"/>
+    <path d="M3.5 12h17M12 3.4c2.2 2.4 3.4 5.4 3.4 8.6S14.2 18.2 12 20.6c-2.2-2.4-3.4-5.4-3.4-8.6S9.8 5.8 12 3.4Z"/>
+  </symbol>
+  <symbol id="i-cube" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2.7 20.2 7v10L12 21.3 3.8 17V7L12 2.7Z"/><path d="M3.8 7 12 11.4 20.2 7M12 11.4v9.9"/>
+  </symbol>
+  <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M13.6 3H7.4a2.2 2.2 0 0 0-2.2 2.2v13.6A2.2 2.2 0 0 0 7.4 21h9.2a2.2 2.2 0 0 0 2.2-2.2V8.4L13.6 3Z"/>
+    <path d="M13.4 3.2v4a1.6 1.6 0 0 0 1.6 1.6h3.6M8.6 13h6.8M8.6 16.6h4.6"/>
+  </symbol>
+  <symbol id="i-sparkles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8.8 3.2 10 6.9l3.7 1.2L10 9.3l-1.2 3.7-1.2-3.7L3.9 8.1 7.6 6.9z"/>
+    <path d="m17.2 12.6.85 2.35 2.35.85-2.35.85-.85 2.35-.85-2.35-2.35-.85 2.35-.85z"/>
+  </symbol>
+  <symbol id="i-cpu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="6.4" y="6.4" width="11.2" height="11.2" rx="2.6"/><rect x="10" y="10" width="4" height="4" rx="1.2"/>
+    <path d="M9.6 3v3.4M14.4 3v3.4M9.6 17.6V21M14.4 17.6V21M3 9.6h3.4M3 14.4h3.4M17.6 9.6H21M17.6 14.4H21"/>
+  </symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 5.2v13.6M5.2 12h13.6"/>
+  </symbol>
+  <symbol id="i-panel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3.2" y="4.4" width="17.6" height="15.2" rx="2.8"/><path d="M9.4 4.4v15.2"/>
+  </symbol>
+  <symbol id="i-music" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 17.8V6.1l10-2v11.6"/><circle cx="6.5" cy="17.8" r="2.5"/><circle cx="16.5" cy="15.7" r="2.5"/>
+  </symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7.2 19h9.4a4.1 4.1 0 0 0 .5-8.2 5.6 5.6 0 0 0-10.7 1.3A3.65 3.65 0 0 0 7.2 19Z"/>
+  </symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3.8 20.2h16.4M7.6 20.2v-5.4M12 20.2V8.6M16.4 20.2v-8.2"/>
+  </symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3.4" y="3.4" width="7.2" height="7.2" rx="1.9"/><rect x="13.4" y="3.4" width="7.2" height="7.2" rx="1.9"/>
+    <rect x="3.4" y="13.4" width="7.2" height="7.2" rx="1.9"/><rect x="13.4" y="13.4" width="7.2" height="7.2" rx="1.9"/>
+  </symbol>
+  <symbol id="i-checksquare" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3.4" y="3.4" width="17.2" height="17.2" rx="4.2"/><path d="m8 12.2 2.8 2.8 5.2-5.6"/>
+  </symbol>
+  <symbol id="i-cup" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4.8 8.6h11.4v5.8a4.4 4.4 0 0 1-4.4 4.4H9.2a4.4 4.4 0 0 1-4.4-4.4V8.6Z"/>
+    <path d="M16.2 10h1.4a2.6 2.6 0 0 1 0 5.2h-1.4M7.4 3.4v2.2M10.5 3v2.6M13.6 3.4v2.2"/>
+  </symbol>
+  <symbol id="i-wrench" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20.2 5.7a4.7 4.7 0 0 1-6.3 6.3l-7.6 7.6a2.25 2.25 0 0 1-3.2-3.2l7.6-7.6a4.7 4.7 0 0 1 6.3-6.3l-3.2 3.2.95 2.25 2.25.95 3.2-3.2Z"/>
+  </symbol>
+  <symbol id="i-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4.4 6.4V4.6h15.2v1.8M12 4.6v14.8M9 19.4h6"/>
+  </symbol>
+  <symbol id="i-shuffle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3.6 6.6h3.2c1.2 0 2.3.6 3 1.6l4.4 6.4c.7 1 1.8 1.6 3 1.6h3.2M17.4 3.8l3 2.8-3 2.8M17.4 14.6l3 2.8-3 2.8M3.6 17.4h3.2c1.2 0 2.3-.6 3-1.6l.9-1.3M13.2 9.5l.9-1.3c.7-1 1.8-1.6 3-1.6h3.2"/>
+  </symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15.8 4.2a2.3 2.3 0 0 1 3.3 3.3L8.4 18.2l-4.3 1 1-4.3L15.8 4.2Z"/>
+  </symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2.9 4.6 6v5.4c0 4.3 3.1 8.3 7.4 9.7 4.3-1.4 7.4-5.4 7.4-9.7V6L12 2.9Z"/>
+    <path d="m9 11.9 2.1 2.1 4-4.2"/>
+  </symbol>
+
+  <!-- Brand mark: the BlvkWare artificer, reduced to the cues that survive 36px —
+       pointed wide-brim hat, brass band, crown cog, goggles. Full colour by
+       design; this is a logo, not a currentColor UI icon. -->
+  <symbol id="i-blvkmark" viewBox="0 0 64 64">
+    <defs>
+      <linearGradient id="bwHat" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#7A5236"/><stop offset="1" stop-color="#4A3121"/>
+      </linearGradient>
+      <linearGradient id="bwBrass" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#F2DC9E"/><stop offset="1" stop-color="#C9A44E"/>
+      </linearGradient>
+      <linearGradient id="bwCoat" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#6B472E"/><stop offset="1" stop-color="#3D2718"/>
+      </linearGradient>
+    </defs>
+
+    <!-- coat / shoulders: makes it a figure rather than a floating face -->
+    <path d="M11 63c1.2-8.4 6.6-12.4 14-13.6l7 5.2 7-5.2c7.4 1.2 12.8 5.2 14 13.6Z" fill="url(#bwCoat)"/>
+    <path d="M25 49.4 32 54.6l7-5.2-1.6-2.2-5.4 3.4-5.4-3.4Z" fill="#33210F"/>
+    <circle cx="35.6" cy="58" r="1.3" fill="url(#bwBrass)"/>
+    <circle cx="35.6" cy="62.4" r="1.3" fill="url(#bwBrass)"/>
+    <!-- shoulder cog -->
+    <g transform="translate(46,56.5)">
+      <circle r="2.6" fill="none" stroke="url(#bwBrass)" stroke-width="1.3"/>
+      <g fill="url(#bwBrass)">
+        <rect x="-.6" y="-4.5" width="1.2" height="2" rx=".5"/>
+        <rect x="-.6" y="-4.5" width="1.2" height="2" rx=".5" transform="rotate(72)"/>
+        <rect x="-.6" y="-4.5" width="1.2" height="2" rx=".5" transform="rotate(144)"/>
+        <rect x="-.6" y="-4.5" width="1.2" height="2" rx=".5" transform="rotate(216)"/>
+        <rect x="-.6" y="-4.5" width="1.2" height="2" rx=".5" transform="rotate(288)"/>
+      </g>
+    </g>
+
+    <!-- head: narrow and tapered, not a round blob -->
+    <path d="M25.5 33h13v9.6c0 5.6-2.9 9.6-6.5 9.6s-6.5-4-6.5-9.6Z" fill="#E3D2A6"/>
+    <path d="M32 33h6.5v9.6c0 5.6-2.9 9.6-6.5 9.6Z" fill="#C9B47C" opacity=".5"/>
+    <!-- beak -->
+    <path d="M32 44.6 34.3 49 32 52.2 29.7 49Z" fill="#CBB176" opacity=".75"/>
+
+    <!-- goggles: small, dark lenses, thin brass rings -->
+    <g>
+      <circle cx="28.3" cy="41.6" r="3.9" fill="#241708"/>
+      <circle cx="35.7" cy="41.6" r="3.9" fill="#241708"/>
+      <circle cx="28.3" cy="41.6" r="3.9" fill="none" stroke="url(#bwBrass)" stroke-width="1.5"/>
+      <circle cx="35.7" cy="41.6" r="3.9" fill="none" stroke="url(#bwBrass)" stroke-width="1.5"/>
+      <circle cx="27" cy="40.3" r="1" fill="#F6E9BE" opacity=".7"/>
+      <circle cx="34.4" cy="40.3" r="1" fill="#F6E9BE" opacity=".7"/>
+    </g>
+
+    <!-- brim -->
+    <path d="M4 34c8-6 16-7.5 28-7.5S52 28 60 34c-8 3.5-16 5-28 5S12 37.5 4 34Z" fill="url(#bwHat)"/>
+    <!-- crown -->
+    <path d="M22 27.5c1-9.5 5-18.5 17.5-24C42 11.5 43.5 21 44 27.5Z" fill="url(#bwHat)"/>
+    <!-- band -->
+    <path d="M22.5 24c6-1.3 15-1.3 21 0l.5 3.5h-22Z" fill="#33210F"/>
+    <circle cx="26.6" cy="25.4" r="1.35" fill="url(#bwBrass)"/>
+    <circle cx="32.4" cy="25" r="1.35" fill="url(#bwBrass)"/>
+    <circle cx="38.2" cy="25.3" r="1.35" fill="url(#bwBrass)"/>
+
+    <!-- crown cog -->
+    <g transform="translate(35,13)">
+      <circle r="2.9" fill="none" stroke="url(#bwBrass)" stroke-width="1.5"/>
+      <g fill="url(#bwBrass)">
+        <rect x="-.7" y="-5" width="1.4" height="2.2" rx=".6"/>
+        <rect x="-.7" y="-5" width="1.4" height="2.2" rx=".6" transform="rotate(60)"/>
+        <rect x="-.7" y="-5" width="1.4" height="2.2" rx=".6" transform="rotate(120)"/>
+        <rect x="-.7" y="-5" width="1.4" height="2.2" rx=".6" transform="rotate(180)"/>
+        <rect x="-.7" y="-5" width="1.4" height="2.2" rx=".6" transform="rotate(240)"/>
+        <rect x="-.7" y="-5" width="1.4" height="2.2" rx=".6" transform="rotate(300)"/>
+      </g>
+    </g>
+  </symbol>
+</svg>
+
+<!-- ============================================================
+     MARKUP
+     ============================================================ -->
+<div id="app">
+
+  <aside class="rail" id="rail">
+    <div class="brand">
+      <div class="logo"><svg class="ic ic-28" viewBox="0 0 64 64"><use href="#i-blvkmark"/></svg></div>
+      <div style="min-width:0">
+        <div class="brand-name">Blvkware</div>
+        <div class="brand-sub">AI HTML Generator</div>
+      </div>
+    </div>
+
+    <div style="padding: 0 10px 4px;">
+      <button class="btn primary" id="newBtn" style="width:100%">
+        <svg class="ic ic-16"><use href="#i-plus"/></svg> New build
+        <span class="kbd" style="margin-left:auto">Ctrl K</span>
+      </button>
+    </div>
+
+    <div class="rail-body">
+      <div class="rail-label">
+        <span>Library</span>
+        <button id="clearHistBtn" data-tip="Clear all" aria-label="Clear library"><svg class="ic ic-14"><use href="#i-trash"/></svg></button>
+      </div>
+      <div id="histList"></div>
+      <div class="empty-hint" id="histEmpty">Builds are saved locally in this browser. Nothing leaves your device.</div>
+    </div>
+
+    <div class="rail-foot">
+      <button class="btn ghost icon" id="themeBtn" data-tip="Theme" aria-label="Toggle theme"><svg class="ic ic-16" id="themeIcon"><use href="#i-moon"/></svg></button>
+      <button class="btn ghost icon" id="kbBtn" data-tip="Shortcuts" aria-label="Keyboard shortcuts"><svg class="ic ic-16"><use href="#i-keyboard"/></svg></button>
+      <div class="spacer"></div>
+      <button class="btn ghost sm icon" id="railHide" data-tip="Hide panel" aria-label="Hide panel"><svg class="ic ic-16"><use href="#i-panel"/></svg></button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <button class="btn ghost icon" id="railShow" data-tip-below data-tip="Show panel" aria-label="Show panel"><svg class="ic ic-16"><use href="#i-panel"/></svg></button>
+      <div style="min-width:0">
+        <div class="doc-title" id="docTitle">Untitled build</div>
+        <div class="doc-sub" id="docSub">Describe it, and it gets built</div>
+      </div>
+      <div class="spacer"></div>
+      <div class="status" id="status"><span class="dot"></span><span id="statusText">Ready</span></div>
+    </div>
+
+    <!-- ===== COMPOSER ===== -->
+    <div class="composer-shell" id="composerShell">
+      <section class="composer" id="composer">
+
+        <div class="composer-mini">
+          <span class="mini-tag">Prompt</span>
+          <span class="mini-txt" id="miniTxt"></span>
+          <button class="btn sm ghost" id="editPromptBtn"><svg class="ic ic-14"><use href="#i-edit"/></svg> Edit</button>
+          <button class="btn sm primary" id="genBtnMini"><svg class="ic ic-14"><use href="#i-spark"/></svg> Rebuild</button>
+        </div>
+
+        <div class="composer-full">
+          <div class="prompt-zone">
+            <label class="sr" for="prompt">Describe what to build</label>
+            <textarea id="prompt" spellcheck="false" placeholder="Describe what you want to build — a game, a landing page, a tool, a dashboard, anything.&#10;&#10;Be specific about features, style, and behaviour for the best results."></textarea>
+          </div>
+
+          <div class="composer-bar">
+            <div class="seg" id="typeSeg" role="group" aria-label="Build type">
+              <button data-type="auto" class="on" data-tip="Let the AI decide"><svg class="ic ic-16"><use href="#i-cpu"/></svg><span>Auto</span></button>
+              <button data-type="game" data-tip="Playable game"><svg class="ic ic-16"><use href="#i-gamepad"/></svg><span>Game</span></button>
+              <button data-type="website" data-tip="Multi-section site"><svg class="ic ic-16"><use href="#i-globe"/></svg><span>Site</span></button>
+              <button data-type="app" data-tip="Interactive tool"><svg class="ic ic-16"><use href="#i-cube"/></svg><span>App</span></button>
+              <button data-type="landing" data-tip="Landing page"><svg class="ic ic-16"><use href="#i-file"/></svg><span>Landing</span></button>
+              <button data-type="art" data-tip="Generative / visual"><svg class="ic ic-16"><use href="#i-sparkles"/></svg><span>Visual</span></button>
+            </div>
+
+            <button class="btn sm ghost" id="optsBtn" aria-expanded="false">
+              <svg class="ic ic-16"><use href="#i-sliders"/></svg> <span class="hide-sm">Options</span>
+              <svg class="ic ic-14" id="optsChev" style="transition:transform 190ms"><use href="#i-chevron"/></svg>
+            </button>
+            <button class="btn sm ghost icon" id="diceBtn" data-tip="Surprise me" aria-label="Random idea"><svg class="ic ic-16"><use href="#i-shuffle"/></svg></button>
+            <select class="picker hidden" id="providerSel" aria-label="Model provider"></select>
+
+            <div class="spacer"></div>
+            <span class="counter" id="counter">0</span>
+
+            <button class="btn" id="stopBtn" style="display:none">
+              <svg class="ic ic-16"><use href="#i-stop"/></svg> Stop
+            </button>
+            <button class="btn primary" id="genBtn">
+              <svg class="ic ic-16"><use href="#i-spark"/></svg> Generate
+              <span class="kbd">Ctrl ⏎</span>
+            </button>
+          </div>
+
+          <div class="opts" id="opts">
+            <div class="opt-row">
+              <div class="opt-group" style="flex:1 1 340px">
+                <div class="opt-title">Aesthetic</div>
+                <div class="chips" id="styleChips">
+                  <button class="chip on" data-style="">Auto</button>
+                  <button class="chip" data-style="a sleek dark product aesthetic — deep neutral surfaces, one vivid accent, generous whitespace, crisp typography">Dark product</button>
+                  <button class="chip" data-style="glassmorphism — frosted translucent panels, soft blurred gradients, subtle inner light">Glass</button>
+                  <button class="chip" data-style="neo-brutalist — thick black borders, hard offset shadows, saturated flat colours, chunky type">Brutalist</button>
+                  <button class="chip" data-style="refined minimalism — near-monochrome palette, lots of whitespace, precise typographic hierarchy, almost no ornament">Minimal</button>
+                  <button class="chip" data-style="retro terminal — CRT green/amber on black, monospace type, scanline texture, blinking cursor details">Terminal</button>
+                  <button class="chip" data-style="playful and colourful — rounded shapes, bouncy micro-animations, bright cheerful palette, friendly type">Playful</button>
+                  <button class="chip" data-style="editorial magazine layout — large serif display type, asymmetric grid, restrained palette, strong rhythm between blocks">Editorial</button>
+                  <button class="chip" data-style="warm analogue — cream and charcoal base, acid accent, grain texture, technical sans type">Analogue</button>
+                </div>
+              </div>
+
+              <div class="opt-group">
+                <div class="opt-title">Accent</div>
+                <div class="swatches" id="swatches">
+                  <button class="sw auto on" data-accent="" data-tip="Auto" aria-label="Auto accent"></button>
+                  <button class="sw" data-accent="#d4f24a" style="background:#d4f24a" data-tip="Acid" aria-label="Acid"></button>
+                  <button class="sw" data-accent="#e8734a" style="background:#e8734a" data-tip="Clay" aria-label="Clay"></button>
+                  <button class="sw" data-accent="#6ec8a8" style="background:#6ec8a8" data-tip="Jade" aria-label="Jade"></button>
+                  <button class="sw" data-accent="#f0b429" style="background:#f0b429" data-tip="Amber" aria-label="Amber"></button>
+                  <button class="sw" data-accent="#8fbfd8" style="background:#8fbfd8" data-tip="Slate blue" aria-label="Slate blue"></button>
+                  <button class="sw" data-accent="#c96ac9" style="background:#c96ac9" data-tip="Orchid" aria-label="Orchid"></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="opt-row" style="margin-top:16px">
+              <div class="opt-group" style="flex:1 1 100%">
+                <div class="opt-title">Build rules</div>
+                <div class="toggles">
+                  <label class="tg"><input type="checkbox" id="oAnim" checked><span class="track"></span>Micro-animations</label>
+                  <label class="tg"><input type="checkbox" id="oResp" checked><span class="track"></span>Mobile responsive</label>
+                  <label class="tg"><input type="checkbox" id="oA11y" checked><span class="track"></span>Accessible</label>
+                  <label class="tg"><input type="checkbox" id="oDark"><span class="track"></span>Force dark UI</label>
+                  <label class="tg"><input type="checkbox" id="oCdn"><span class="track"></span>Allow CDN libraries</label>
+                  <label class="tg"><input type="checkbox" id="oCmt"><span class="track"></span>Comment the code</label>
+                  <label class="tg"><input type="checkbox" id="oLive" checked><span class="track"></span>Live preview while writing</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ===== STAGE ===== -->
+    <div class="stage-area">
+
+      <div class="browse" id="browse">
+        <div class="browse-inner">
+          <div class="section-head"><h2>Start from an idea</h2><div class="line"></div></div>
+          <section class="gallery" id="gallery"></section>
+        </div>
+      </div>
+
+      <section class="workspace hidden" id="workspace">
+        <div class="ws-bar">
+          <div class="tabs" role="tablist" aria-label="Output view">
+            <button class="tab" role="tab" aria-selected="true" data-pane="preview"><svg class="ic ic-16"><use href="#i-eye"/></svg><span>Preview</span></button>
+            <button class="tab" role="tab" aria-selected="false" data-pane="code"><svg class="ic ic-16"><use href="#i-code"/></svg><span>Code</span></button>
+            <button class="tab" role="tab" aria-selected="false" data-pane="console">
+              <svg class="ic ic-16"><use href="#i-console"/></svg><span>Console</span>
+              <span class="badge zero" id="errBadge">0</span>
+            </button>
+            <button class="tab" role="tab" aria-selected="false" data-pane="audit">
+              <svg class="ic ic-16"><use href="#i-shield"/></svg><span>Audit</span>
+              <span class="badge zero" id="auditBadge">0</span>
+            </button>
+          </div>
+
+          <div class="seg" id="deviceSeg" role="group" aria-label="Viewport">
+            <button data-w="0" class="on" data-tip="Full width" aria-label="Desktop"><svg class="ic ic-16"><use href="#i-desktop"/></svg></button>
+            <button data-w="834" data-tip="Tablet · 834px" aria-label="Tablet"><svg class="ic ic-16"><use href="#i-tablet"/></svg></button>
+            <button data-w="390" data-tip="Mobile · 390px" aria-label="Mobile"><svg class="ic ic-16"><use href="#i-mobile"/></svg></button>
+          </div>
+
+          <div class="vers hidden" id="versions" aria-label="Versions"></div>
+          <div class="spacer"></div>
+
+          <button class="btn sm ghost icon" id="refreshBtn" data-tip-below data-tip="Reload" aria-label="Reload preview"><svg class="ic ic-16"><use href="#i-refresh"/></svg></button>
+          <button class="btn sm ghost icon" id="zenBtn" data-tip-below data-tip="Focus mode" aria-label="Focus mode"><svg class="ic ic-16"><use href="#i-expand"/></svg></button>
+          <button class="btn sm ghost icon" id="openBtn" data-tip-below data-tip="Open in new tab" aria-label="Open in new tab"><svg class="ic ic-16"><use href="#i-external"/></svg></button>
+          <button class="btn sm ghost icon" id="copyBtn" data-tip-below data-tip="Copy code" aria-label="Copy code"><svg class="ic ic-16"><use href="#i-copy"/></svg></button>
+          <button class="btn sm primary" id="dlBtn"><svg class="ic ic-16"><use href="#i-download"/></svg> <span class="hide-sm">Download</span></button>
+
+          <div class="progress" id="progress"></div>
+        </div>
+
+        <div class="ws-body">
+          <div class="pane on" id="paneP">
+            <div class="stage" id="stage">
+              <div id="frameBox">
+                <div class="chrome">
+                  <div class="dots"><i></i><i></i><i></i></div>
+                  <div class="chrome-url" id="chromeUrl">preview.html</div>
+                </div>
+                <iframe id="preview" title="Generated output preview"
+                  sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-modals allow-forms allow-popups allow-downloads"></iframe>
+              </div>
+            </div>
+          </div>
+
+          <div class="pane" id="paneC">
+            <div class="code-head">
+              <span id="codeMeta">0 lines · 0 B</span>
+              <div class="spacer"></div>
+              <button class="btn sm ghost" id="wrapBtn"><svg class="ic ic-14"><use href="#i-text"/></svg> Wrap</button>
+              <button class="btn sm ghost" id="copyBtn2"><svg class="ic ic-14"><use href="#i-copy"/></svg> Copy</button>
+            </div>
+            <div class="code-scroll" id="codeScroll">
+              <div class="code-grid" id="codeGrid">
+                <div id="gutter"></div>
+                <pre id="code"></pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="pane" id="paneL">
+            <div class="con-head">
+              <div class="seg" id="logFilter">
+                <button data-f="all" class="on">All</button>
+                <button data-f="error">Errors</button>
+                <button data-f="warn">Warnings</button>
+                <button data-f="log">Logs</button>
+              </div>
+              <div class="spacer"></div>
+              <button class="btn sm ghost" id="fixBtn" style="display:none"><svg class="ic ic-14"><use href="#i-wrench"/></svg> Repair with AI</button>
+              <button class="btn sm ghost icon" id="clearLogBtn" data-tip-below data-tip="Clear" aria-label="Clear console"><svg class="ic ic-14"><use href="#i-trash"/></svg></button>
+            </div>
+            <div class="con-scroll" id="logScroll">
+              <div class="empty" id="logEmpty">
+                <div class="empty-inner">
+                  <div class="empty-ic"><svg class="ic ic-28"><use href="#i-console"/></svg></div>
+                  <h3>Console is clear</h3>
+                  <p>Runtime logs, warnings and errors from your generated page appear here — captured live.</p>
+                </div>
+              </div>
+              <div id="logList"></div>
+            </div>
+          </div>
+
+          <div class="pane" id="paneA">
+            <div class="con-head">
+              <span id="auditScore" class="audit-score">—</span>
+              <span style="font-size:12px;color:var(--ink-3)" id="auditSummary">Not run yet</span>
+              <div class="spacer"></div>
+              <button class="btn sm ghost" id="auditRunBtn"><svg class="ic ic-14"><use href="#i-refresh"/></svg> Re-run</button>
+              <button class="btn sm ghost" id="auditFixBtn" style="display:none"><svg class="ic ic-14"><use href="#i-wrench"/></svg> Fix with AI</button>
+            </div>
+            <div class="con-scroll" id="auditScroll">
+              <div class="empty" id="auditEmpty">
+                <div class="empty-inner">
+                  <div class="empty-ic"><svg class="ic ic-28"><use href="#i-shield"/></svg></div>
+                  <h3>Nothing to audit yet</h3>
+                  <p>After a build, this checks the generated file for structural, accessibility and quality problems — before you ship it.</p>
+                </div>
+              </div>
+              <div id="auditList"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="refine" id="refineBar">
+          <svg class="ic ic-16" style="color:var(--accent-ink);flex:none"><use href="#i-wand"/></svg>
+          <input class="refine-input" id="refineInput" placeholder="Refine it — “add a dark mode toggle”, “make it feel more premium”, “add sound effects”…">
+          <button class="btn sm primary" id="refineBtn">Refine <span class="kbd">⏎</span></button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+<div class="sr" id="live" aria-live="polite"></div>
+
+<script>
+/* ================================================================
+   BLVKWARE AI HTML GENERATOR
+   ================================================================ */
+(function () {
+  'use strict';
+
+  const $ = (s, r) => (r || document).querySelector(s);
+  const $$ = (s, r) => Array.prototype.slice.call((r || document).querySelectorAll(s));
+  const AI = (typeof root !== 'undefined' && root && typeof root.generateText === 'function') ? root : null;
+
+  const el = {
+    rail: $('#rail'), railHide: $('#railHide'), railShow: $('#railShow'),
+    histList: $('#histList'), histEmpty: $('#histEmpty'), clearHist: $('#clearHistBtn'),
+    themeBtn: $('#themeBtn'), themeIcon: $('#themeIcon'), kbBtn: $('#kbBtn'), newBtn: $('#newBtn'),
+    docTitle: $('#docTitle'), docSub: $('#docSub'), status: $('#status'), statusText: $('#statusText'),
+    composerShell: $('#composerShell'), composer: $('#composer'), prompt: $('#prompt'), counter: $('#counter'),
+    miniTxt: $('#miniTxt'), editPromptBtn: $('#editPromptBtn'), genBtnMini: $('#genBtnMini'),
+    typeSeg: $('#typeSeg'), optsBtn: $('#optsBtn'), opts: $('#opts'), optsChev: $('#optsChev'),
+    diceBtn: $('#diceBtn'), styleChips: $('#styleChips'), swatches: $('#swatches'),
+    providerSel: $('#providerSel'),
+    genBtn: $('#genBtn'), stopBtn: $('#stopBtn'),
+    browse: $('#browse'), gallery: $('#gallery'),
+    workspace: $('#workspace'), progress: $('#progress'),
+    stage: $('#stage'), frameBox: $('#frameBox'), preview: $('#preview'), chromeUrl: $('#chromeUrl'),
+    deviceSeg: $('#deviceSeg'), versions: $('#versions'),
+    code: $('#code'), gutter: $('#gutter'), codeGrid: $('#codeGrid'), codeScroll: $('#codeScroll'), codeMeta: $('#codeMeta'),
+    logList: $('#logList'), logEmpty: $('#logEmpty'), logScroll: $('#logScroll'), logFilter: $('#logFilter'),
+    errBadge: $('#errBadge'), fixBtn: $('#fixBtn'), clearLog: $('#clearLogBtn'),
+    auditBadge: $('#auditBadge'), auditList: $('#auditList'), auditEmpty: $('#auditEmpty'),
+    auditScore: $('#auditScore'), auditSummary: $('#auditSummary'),
+    auditFixBtn: $('#auditFixBtn'), auditRunBtn: $('#auditRunBtn'),
+    refineInput: $('#refineInput'), refineBtn: $('#refineBtn'),
+    toasts: $('#toasts'), live: $('#live')
+  };
+
+  const S = {
+    html: '', prompt: '', type: 'auto', style: '', accent: '',
+    busy: false, cancelled: false,
+    versions: [], vIndex: -1,
+    logs: [], logFilter: 'all',
+    pane: 'preview', device: 0, pid: 0,
+    history: [], activeId: null, wrap: false, streamText: '', audit: [], servedBy: '', servedByFull: ''
+  };
+
+  /* ---------------- utilities ---------------- */
+  const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const kb = (n) => n < 1024 ? n + ' B' : (n / 1024).toFixed(1) + ' KB';
+  const now = () => new Date().getTime();
+
+  function ago(ts) {
+    const d = Math.floor((now() - ts) / 1000);
+    if (d < 60) return 'just now';
+    if (d < 3600) return Math.floor(d / 60) + 'm ago';
+    if (d < 86400) return Math.floor(d / 3600) + 'h ago';
+    if (d < 604800) return Math.floor(d / 86400) + 'd ago';
+    return new Date(ts).toLocaleDateString();
+  }
+
+  function toast(msg, kind) {
+    const t = document.createElement('div');
+    t.className = 'toast ' + (kind || 'info');
+    const icon = kind === 'ok' ? 'i-check-circle' : kind === 'err' ? 'i-alert' : 'i-info';
+    t.innerHTML = '<svg class="ic ic-16"><use href="#' + icon + '"/></svg><div>' + esc(msg) + '</div>';
+    el.toasts.appendChild(t);
+    setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 220); }, 3200);
+  }
+
+  function setStatus(text, kind) {
+    el.statusText.textContent = text;
+    el.status.className = 'status' + (kind ? ' ' + kind : '');
+    el.live.textContent = text;
+  }
+
+  function flash(btn, iconId) {
+    const html = btn.innerHTML;
+    btn.innerHTML = '<svg class="ic ic-16"><use href="#' + iconId + '"/></svg>';
+    setTimeout(() => { btn.innerHTML = html; }, 1400);
+  }
+
+  /* ================================================================
+     SYNTAX HIGHLIGHTER (self-contained)
+     ================================================================ */
+  function hlJS(src) {
+    return esc(src).replace(
+      /(\/\*[\s\S]*?(?:\*\/|$)|\/\/[^\n]*)|('(?:\\.|[^'\\\n])*'|"(?:\\.|[^"\\\n])*"|`(?:\\.|[^`\\])*`)|\b(const|let|var|function|return|if|else|for|while|do|new|class|extends|super|async|await|of|in|try|catch|finally|switch|case|break|continue|typeof|instanceof|this|null|undefined|true|false|import|export|default|throw|delete|void|yield|static)\b|\b(\d+(?:\.\d+)?)\b/g,
+      function (m, com, str, kw, num) {
+        if (com) return '<span class="t-com">' + com + '</span>';
+        if (str) return '<span class="t-str">' + str + '</span>';
+        if (kw) return '<span class="t-kw">' + kw + '</span>';
+        return '<span class="t-num">' + num + '</span>';
+      });
+  }
+
+  function hlCSS(src) {
+    return esc(src).replace(
+      /(\/\*[\s\S]*?(?:\*\/|$))|('(?:\\.|[^'\\\n])*'|"(?:\\.|[^"\\\n])*")|(@[\w-]+|--[\w-]+)|(#[0-9a-fA-F]{3,8}\b)|([-\w]+)(\s*:)/g,
+      function (m, com, str, at, hex, prop, colon) {
+        if (com) return '<span class="t-com">' + com + '</span>';
+        if (str) return '<span class="t-str">' + str + '</span>';
+        if (at) return '<span class="t-kw">' + at + '</span>';
+        if (hex) return '<span class="t-num">' + hex + '</span>';
+        return '<span class="t-prop">' + prop + '</span>' + colon;
+      });
+  }
+
+  function hlTag(tag) {
+    const m = /^(<\/?)([a-zA-Z][\w:.-]*)([\s\S]*?)(\/?>?)$/.exec(tag);
+    if (!m) return esc(tag);
+    const attrs = esc(m[3]).replace(
+      /([a-zA-Z_:@#$*\[\(][\w:.\-\[\]\(\)]*)(\s*=\s*)?("[^"]*"|'[^']*')?/g,
+      function (s, name, eq, val) {
+        if (!name) return s;
+        return '<span class="t-atr">' + name + '</span>' + (eq || '') + (val ? '<span class="t-str">' + val + '</span>' : '');
+      });
+    return '<span class="t-pun">' + esc(m[1]) + '</span><span class="t-tag">' + esc(m[2]) + '</span>' +
+           attrs + '<span class="t-pun">' + esc(m[4]) + '</span>';
+  }
+
+  // NEVER write an open-comment sequence or a script open/close tag literally
+  // inside this block. An open-comment puts the HTML tokenizer into "script data
+  // escaped" state; a following script open tag escalates to "double escaped",
+  // where the real closing tag stops working and the rest of the document is
+  // swallowed as script text. A literal closing tag here ends the block outright.
+  const OPEN_COMMENT = '<!' + '--';
+
+  function highlight(src) {
+    let out = '', pos = 0, m;
+    const re = /<!\-\-[\s\S]*?(?:\-\->|$)|<!\s*doctype[^>]*>|<\/?[a-zA-Z][\w:.-]*(?:"[^"]*"|'[^']*'|[^'">])*>?/gi;
+    while ((m = re.exec(src)) !== null) {
+      if (m.index > pos) out += esc(src.slice(pos, m.index));
+      const tag = m[0];
+      if (tag.slice(0, 4) === OPEN_COMMENT) out += '<span class="t-com">' + esc(tag) + '</span>';
+      else if (/^<!\s*doctype/i.test(tag)) out += '<span class="t-doc">' + esc(tag) + '</span>';
+      else out += hlTag(tag);
+      pos = m.index + tag.length;
+
+      const em = /^<\s*(script|style)\b/i.exec(tag);
+      if (em && tag.charAt(tag.length - 2) !== '/') {
+        const close = new RegExp('<\\/\\s*' + em[1] + '\\s*>', 'i');
+        const rest = src.slice(pos);
+        const cm = close.exec(rest);
+        const body = cm ? rest.slice(0, cm.index) : rest;
+        if (body) out += em[1].toLowerCase() === 'script' ? hlJS(body) : hlCSS(body);
+        pos += body.length;
+        re.lastIndex = pos;
+      }
+    }
+    if (pos < src.length) out += esc(src.slice(pos));
+    return out;
+  }
+
+  /* ================================================================
+     CODE VIEW
+     ================================================================ */
+  let codeTimer = 0, lastCodeAt = 0;
+
+  function renderCode(src, immediate) {
+    const t = now();
+    if (!immediate && t - lastCodeAt < 160) {
+      if (codeTimer) return;
+      codeTimer = setTimeout(() => { codeTimer = 0; renderCode(S.streamText || src, true); }, 160);
+      return;
+    }
+    lastCodeAt = t;
+    const lines = src ? src.split('\n').length : 0;
+    el.codeMeta.textContent = lines.toLocaleString() + ' lines · ' + kb(src.length);
+
+    if (src.length > 140000) el.code.textContent = src;
+    else {
+      try { el.code.innerHTML = highlight(src); }
+      catch (e) { el.code.textContent = src; }
+    }
+    if (!S.wrap) {
+      let g = '';
+      for (let i = 1; i <= lines; i++) g += i + '\n';
+      el.gutter.textContent = g;
+    }
+  }
+
+  /* ================================================================
+     PREVIEW + RUNTIME CONSOLE PROBE
+     ================================================================ */
+  function probeScript(pid) {
+    return '<' + 'script>(function(){var P=' + pid + ';function send(t,a){try{var p=[];for(var i=0;i<a.length;i++){var v=a[i];try{p.push(typeof v==="string"?v:(v instanceof Error?(v.message+"\\n"+(v.stack||"")):JSON.stringify(v)))}catch(e){p.push(String(v))}}parent.postMessage({__blvk:1,pid:P,type:t,text:p.join(" ")},"*")}catch(e){}}' +
+      'var M=["log","info","warn","error","debug"];for(var i=0;i<M.length;i++){(function(k){var o=console[k];console[k]=function(){send(k==="debug"?"log":k,arguments);try{o.apply(console,arguments)}catch(e){}}})(M[i])}' +
+      'window.addEventListener("error",function(e){send("error",[(e.message||"Script error")+(e.filename?" — line "+(e.lineno||0)+":"+(e.colno||0):"")])});' +
+      'window.addEventListener("unhandledrejection",function(e){var r=e.reason;send("error",["Unhandled promise rejection: "+((r&&r.message)||r)])});' +
+      '})();<\/script>';
+  }
+
+  function injectProbe(html, pid) {
+    const probe = probeScript(pid);
+    const hm = /<head[^>]*>/i.exec(html);
+    if (hm) return html.slice(0, hm.index + hm[0].length) + probe + html.slice(hm.index + hm[0].length);
+    const bm = /<body[^>]*>/i.exec(html);
+    if (bm) return html.slice(0, bm.index + bm[0].length) + probe + html.slice(bm.index + bm[0].length);
+    return probe + html;
+  }
+
+  function mount(html, keepLogs) {
+    S.pid++;
+    if (!keepLogs) clearLogs(true);
+    try { el.preview.srcdoc = injectProbe(html, S.pid); }
+    catch (e) { el.preview.srcdoc = html; }
+  }
+
+  window.addEventListener('message', function (e) {
+    const d = e.data;
+    if (!d || d.__blvk !== 1 || d.pid !== S.pid) return;
+    addLog(d.type, d.text);
+  });
+
+  /* ================================================================
+     CONSOLE
+     ================================================================ */
+  function addLog(type, text) {
+    if (S.logs.length > 400) S.logs.shift();
+    S.logs.push({ type: type, text: text });
+    renderLogs();
+  }
+
+  function clearLogs(silent) {
+    S.logs = [];
+    renderLogs();
+    if (!silent) toast('Console cleared', 'info');
+  }
+
+  function renderLogs() {
+    const errs = S.logs.filter(l => l.type === 'error').length;
+    el.errBadge.textContent = errs;
+    el.errBadge.classList.toggle('zero', errs === 0);
+    el.fixBtn.style.display = errs > 0 ? '' : 'none';
+
+    const shown = S.logFilter === 'all' ? S.logs : S.logs.filter(l => l.type === S.logFilter);
+    el.logEmpty.style.display = shown.length ? 'none' : '';
+
+    let html = '';
+    for (let i = 0; i < shown.length; i++) {
+      const l = shown[i];
+      const ic = l.type === 'error' ? 'i-alert' : l.type === 'warn' ? 'i-alert' : l.type === 'info' ? 'i-info' : 'i-chevron';
+      html += '<div class="log ' + l.type + '"><svg class="ic ic-14 log-ic"><use href="#' + ic + '"/></svg>' +
+              '<div class="log-txt">' + esc(l.text) + '</div></div>';
+    }
+    el.logList.innerHTML = html;
+    el.logScroll.scrollTop = el.logScroll.scrollHeight;
+  }
+
+  /* ================================================================
+     AUDIT — static quality pass over the generated file
+     Catches what the runtime console cannot: structural breakage, missing
+     document furniture, accessibility gaps, and unfinished-work tells.
+     ================================================================ */
+  const VOID_TAGS = ['area','base','br','col','embed','hr','img','input','link',
+    'meta','param','source','track','wbr'];
+
+  function stripCode(html) {
+    // remove script/style bodies and comments so scans don't trip on them
+    return html
+      .replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi, m => m.replace(/[^\n]/g, ' '))
+      .replace(/<style\b[^>]*>[\s\S]*?<\/style\s*>/gi, m => m.replace(/[^\n]/g, ' '))
+      .replace(/<!\-\-[\s\S]*?\-\->/g, ' ');
+  }
+
+  function scriptBodies(html) {
+    const out = [];
+    const re = /<script\b[^>]*>([\s\S]*?)<\/script\s*>/gi;
+    let m;
+    while ((m = re.exec(html))) out.push(m[1]);
+    return out.join('\n');
+  }
+
+  function unbalancedTags(html) {
+    const markup = stripCode(html);
+    const re = /<(\/?)([a-zA-Z][\w:-]*)([^>]*?)(\/?)>/g;
+    const stack = [];
+    const bad = [];
+    let m;
+    while ((m = re.exec(markup))) {
+      const closing = m[1] === '/';
+      const name = m[2].toLowerCase();
+      const selfClose = m[4] === '/';
+      if (VOID_TAGS.indexOf(name) !== -1 || selfClose) continue;
+      if (!closing) stack.push(name);
+      else {
+        const i = stack.lastIndexOf(name);
+        if (i === -1) bad.push('</' + name + '> with no opening tag');
+        else stack.splice(i, 1);
+      }
+    }
+    for (const t of stack.slice(0, 6)) bad.push('<' + t + '> never closed');
+    return bad;
+  }
+
+  function auditHTML(html, opts) {
+    const F = [];
+    const add = (sev, tag, title, detail) => F.push({ sev, tag, title, detail });
+    const markup = stripCode(html);
+    const js = scriptBodies(html);
+    const low = html.toLowerCase();
+
+    // --- structure ---
+    if (!/^\s*<!doctype html>/i.test(html)) add('error', 'structure', 'Missing doctype', 'The file should start with <!DOCTYPE html>. Without it browsers use quirks mode.');
+    if (!/<\/html\s*>/i.test(html)) add('error', 'structure', 'Document is truncated', 'No closing </html> — generation likely stopped early. Re-run or refine to complete it.');
+    if (!/<html[^>]*\slang\s*=/i.test(html)) add('warn', 'a11y', 'No lang attribute', 'Add lang="en" to <html> so screen readers and translation know the language.');
+    if (!/<meta[^>]*charset/i.test(html)) add('error', 'structure', 'No charset declared', 'Add <meta charset="utf-8"> or non-ASCII characters may render as mojibake.');
+    if (!/<meta[^>]*name=["']?viewport/i.test(html)) add('error', 'responsive', 'No viewport meta', 'Without it the page renders zoomed-out on phones. Add <meta name="viewport" content="width=device-width,initial-scale=1">.');
+    const title = /<title[^>]*>([\s\S]*?)<\/title\s*>/i.exec(html);
+    if (!title || !title[1].trim()) add('warn', 'structure', 'No page title', 'Add a real <title> — it names the browser tab and the bookmark.');
+
+    const bad = unbalancedTags(html);
+    if (bad.length) add('error', 'structure', bad.length + ' unbalanced tag' + (bad.length > 1 ? 's' : ''), bad.join(' · '));
+
+    // --- dead controls ---
+    const buttons = (markup.match(/<button\b/gi) || []).length;
+    const listeners = (js.match(/addEventListener\s*\(/g) || []).length;
+    const inlineOn = (markup.match(/\son[a-z]+\s*=/gi) || []).length;
+    if (buttons > 0 && listeners === 0 && inlineOn === 0) {
+      add('error', 'function', buttons + ' button' + (buttons > 1 ? 's' : '') + ' with no handler',
+        'No addEventListener and no inline handlers anywhere — every control on the page is dead.');
+    }
+
+    // --- unfinished work ---
+    const stubs = [];
+    if (/\bTODO\b/.test(markup)) stubs.push('TODO');
+    if (/coming soon/i.test(markup)) stubs.push('"coming soon"');
+    if (/lorem ipsum/i.test(markup)) stubs.push('Lorem ipsum');
+    if (/\bplaceholder text\b/i.test(markup)) stubs.push('placeholder text');
+    if (stubs.length) add('warn', 'quality', 'Unfinished content', 'Found ' + stubs.join(', ') + ' in the markup — real copy was requested.');
+    if (/alert\s*\(/.test(js)) add('info', 'quality', 'Uses alert()', 'alert() blocks the page and reads as a stub. Prefer inline UI feedback.');
+    if (/document\.write\s*\(/.test(js)) add('warn', 'quality', 'Uses document.write', 'It blocks parsing and wipes the document after load. Use DOM APIs.');
+
+    // --- accessibility ---
+    const imgs = markup.match(/<img\b[^>]*>/gi) || [];
+    const noAlt = imgs.filter(t => !/\salt\s*=/i.test(t)).length;
+    if (noAlt) add('warn', 'a11y', noAlt + ' image' + (noAlt > 1 ? 's' : '') + ' without alt', 'Every <img> needs an alt attribute (alt="" if purely decorative).');
+
+    const inputs = markup.match(/<input\b[^>]*>/gi) || [];
+    const bareInputs = inputs.filter(t =>
+      !/\stype\s*=\s*["']?(hidden|submit|button|reset|checkbox|radio)/i.test(t) &&
+      !/aria-label|aria-labelledby|\sid\s*=/i.test(t)).length;
+    if (bareInputs) add('warn', 'a11y', bareInputs + ' unlabelled input' + (bareInputs > 1 ? 's' : ''), 'Associate a <label for>, or add aria-label, so the field is announced.');
+
+    if (opts && opts.a11y && !/:focus-visible|:focus\b/.test(html)) {
+      add('warn', 'a11y', 'No visible focus styles', 'Keyboard users cannot see where they are. Add a :focus-visible ring.');
+    }
+
+    // --- responsive / motion ---
+    if (opts && opts.resp && !/@media[^{]*\(/.test(html)) {
+      add('warn', 'responsive', 'No media queries', 'Responsive layout was requested but the CSS has no @media rules. Check narrow widths.');
+    }
+    const wide = html.match(/width\s*:\s*(\d{4,})px/gi) || [];
+    if (wide.length) add('info', 'responsive', 'Hard-coded wide widths', wide.slice(0, 3).join(', ') + ' — these can overflow small screens.');
+    if (opts && opts.anim && /transition|animation/.test(html) && !/prefers-reduced-motion/.test(html)) {
+      add('info', 'a11y', 'Motion not gated', 'Wrap animation in @media (prefers-reduced-motion: reduce) for users who need it off.');
+    }
+
+    // --- self-containment ---
+    if (opts && !opts.cdn) {
+      const ext = [];
+      const re = /\b(?:src|href)\s*=\s*["'](https?:\/\/[^"']+)["']/gi;
+      let m;
+      while ((m = re.exec(markup)) && ext.length < 4) {
+        if (!/^https?:\/\/(www\.)?w3\.org/i.test(m[1])) ext.push(m[1]);
+      }
+      if (ext.length) add('warn', 'offline', ext.length + ' external resource' + (ext.length > 1 ? 's' : ''),
+        'Self-contained was requested but the page loads ' + ext.map(u => u.slice(0, 48)).join(', ') + '. It will break offline.');
+    }
+
+    const order = { error: 0, warn: 1, info: 2 };
+    F.sort((a, b) => order[a.sev] - order[b.sev]);
+    return F;
+  }
+
+  function renderAudit() {
+    const F = S.audit;
+    const errs = F.filter(f => f.sev === 'error').length;
+    const warns = F.filter(f => f.sev === 'warn').length;
+
+    el.auditBadge.textContent = errs || warns || 0;
+    el.auditBadge.classList.toggle('zero', errs + warns === 0);
+    el.auditBadge.style.background = errs ? 'var(--err)' : 'var(--warn)';
+    el.auditFixBtn.style.display = (errs + warns) ? '' : 'none';
+
+    if (!S.html) {
+      el.auditEmpty.style.display = '';
+      el.auditList.innerHTML = '';
+      el.auditScore.textContent = '—';
+      el.auditScore.className = 'audit-score';
+      el.auditSummary.textContent = 'Not run yet';
+      return;
+    }
+
+    // 100 minus weighted penalties, floored at 0
+    const score = Math.max(0, 100 - errs * 15 - warns * 6 - F.filter(f => f.sev === 'info').length * 2);
+    el.auditScore.textContent = score;
+    el.auditScore.className = 'audit-score ' + (score >= 90 ? 'good' : score >= 70 ? 'mid' : 'bad');
+    el.auditSummary.textContent = F.length
+      ? errs + ' error' + (errs === 1 ? '' : 's') + ' · ' + warns + ' warning' + (warns === 1 ? '' : 's')
+      : 'No issues found';
+
+    el.auditEmpty.style.display = F.length ? 'none' : '';
+    if (!F.length) {
+      el.auditList.innerHTML = '';
+      el.auditEmpty.querySelector('h3').textContent = 'Clean bill of health';
+      el.auditEmpty.querySelector('p').textContent = 'No structural, accessibility or quality problems found in this build.';
+      return;
+    }
+
+    let h = '';
+    for (const f of F) {
+      const ic = f.sev === 'error' ? 'i-alert' : f.sev === 'warn' ? 'i-alert' : 'i-info';
+      h += '<div class="find ' + f.sev + '">' +
+        '<svg class="ic ic-16 find-ic"><use href="#' + ic + '"/></svg>' +
+        '<div class="find-body"><div class="find-title">' + esc(f.title) + '</div>' +
+        '<div class="find-detail">' + esc(f.detail) + '</div></div>' +
+        '<span class="find-tag">' + esc(f.tag) + '</span></div>';
+    }
+    el.auditList.innerHTML = h;
+  }
+
+  function runAudit() {
+    S.audit = S.html ? auditHTML(S.html, readOpts()) : [];
+    renderAudit();
+  }
+
+  /* ================================================================
+     EXTRACTION
+     ================================================================ */
+  function extractHTML(text) {
+    let t = String(text || '').trim();
+    const fence = /```(?:html?|markup)?\s*([\s\S]*?)(?:```|$)/i.exec(t);
+    if (fence && /<(?:!doctype|html|body|div|style|script)/i.test(fence[1])) t = fence[1].trim();
+    else t = t.replace(/^```(?:html?|markup)?\s*/i, '').replace(/```\s*$/, '').trim();
+
+    const d = t.toLowerCase().indexOf('<!doctype');
+    if (d > 0) t = t.slice(d);
+    else if (d < 0) {
+      const h = t.toLowerCase().indexOf('<html');
+      if (h > 0) t = t.slice(h);
+    }
+    const end = t.toLowerCase().lastIndexOf('</html>');
+    if (end >= 0) t = t.slice(0, end + 7);
+    return t;
+  }
+
+  const isComplete = (h) => h.toLowerCase().indexOf('</html>') !== -1;
+
+  /* ================================================================
+     PROMPT ENGINEERING
+     ================================================================ */
+  const TYPE_HINT = {
+    auto: '',
+    game: 'Build a fully playable GAME. Real game loop, win/lose states, score, restart, keyboard AND touch/mouse controls, satisfying feedback on every action.',
+    website: 'Build a multi-section WEBSITE: sticky nav with smooth scrolling, hero, several distinct content sections, and a footer. Every link and control must work.',
+    app: 'Build a functional APP/TOOL. Real working logic, sensible empty and error states, and persistence via localStorage where it makes sense.',
+    landing: 'Build a high-converting LANDING PAGE: strong hero with headline + subhead + CTA, social proof, feature grid, FAQ, and a footer CTA. Scroll-reveal animations.',
+    art: 'Build a VISUAL/GENERATIVE piece. Canvas or SVG driven, animated at 60fps, interactive with pointer input, with a small control panel to tweak parameters live.'
+  };
+
+  // The instruction is the single biggest lever on output quality. It is written to
+  // fight the two default failure modes of every model on this task: generic
+  // "AI-slop" visual design, and skeletons that look finished but do nothing.
+  function buildInstruction(userPrompt, opts) {
+    const out = [];
+
+    out.push('You are a world-class front-end engineer and product designer. You ship single-file HTML that people mistake for a funded product.');
+
+    out.push('\n## Output contract\n' +
+      '- Output ONLY raw HTML. No markdown, no code fences, no commentary before or after.\n' +
+      '- First character is `<`. Begin with <!DOCTYPE html>, end with </html>.\n' +
+      '- Complete document: <html lang>, <head> with <meta charset> + viewport + a real <title>, <body>.\n' +
+      '- One self-contained file: ALL CSS in a <style> in <head>, ALL JS in a <script> before </body>.\n' +
+      (opts.cdn
+        ? '- You may load well-known CDN libraries (three.js, p5.js, GSAP, Chart.js, Tone.js) when they genuinely help.'
+        : '- No external files, CDNs, frameworks, or remote images. Draw every icon and graphic with inline SVG, CSS, or canvas.'));
+
+    out.push('\n## It must actually work\n' +
+      '- Every button, input, link, and control is wired to real behaviour. No dead controls.\n' +
+      '- No placeholder text standing in for functionality. No "TODO", no "coming soon", no alert() stubs.\n' +
+      '- Handle the unhappy paths: empty states, invalid input, zero results, first-run.\n' +
+      '- Seed it with realistic demo content so it looks alive the moment it opens — never Lorem ipsum.\n' +
+      '- The JavaScript must run clean: no reference errors, no undefined access, no console noise.');
+
+    // Anti-slop. Models converge hard on a recognisable default look unless told not to.
+    out.push('\n## Design bar\n' +
+      '- NEVER use generic AI-generated aesthetics: overused font stacks (Inter, Roboto, Arial as the display face), cliched schemes (especially purple/indigo gradients on white or near-black), predictable card-grid-hero layouts, or cookie-cutter components with no point of view.\n' +
+      '- Commit to a specific visual idea and carry it through every element. A distinctive, coherent choice beats a safe one.\n' +
+      '- Build a real system: CSS custom properties for colour, a deliberate type scale with genuine size and weight contrast, one consistent spacing rhythm, considered radii and depth.\n' +
+      '- Typography does the heavy lifting — tight tracking on display text, comfortable measure on body copy, real hierarchy.\n' +
+      '- Sweat one signature detail the user did not ask for but will notice.');
+
+    const on = [];
+    if (opts.resp) on.push('Fully responsive — flawless from 360px to widescreen. Flexbox/grid, fluid units, no horizontal scroll at any width.');
+    if (opts.anim) on.push('Tasteful micro-interactions: hover/active states, 150-250ms transitions, entrance animation. Wrap motion in @media (prefers-reduced-motion: reduce).');
+    if (opts.a11y) on.push('Accessible: semantic elements, labelled inputs, alt text, visible :focus-visible rings, full keyboard operation, WCAG AA contrast.');
+    if (opts.dark) on.push('Dark interface: deep neutral base, light text, one vivid accent.');
+    if (opts.style) on.push('Visual direction: ' + opts.style + '.');
+    if (opts.accent) on.push('Primary accent ' + opts.accent + ', with a full palette derived from it.');
+    on.push(opts.cmt
+      ? 'Comment the JavaScript so a developer can follow the logic.'
+      : 'Clean, readable code; comment only where the logic is non-obvious.');
+    if (on.length) out.push('\n## Requirements\n- ' + on.join('\n- '));
+
+    const hint = TYPE_HINT[opts.type] || '';
+    if (hint) out.push('\n## Form factor\n' + hint);
+
+    out.push('\n## Build this\n' + userPrompt);
+
+    // A short self-check measurably reduces dead controls and truncated files.
+    out.push('\n## Before you finish\n' +
+      'Silently verify: every control does something real; no undefined variables or functions; ' +
+      'the layout holds at 360px; the document is complete through </html>. Fix anything that fails, ' +
+      'then output the file.\n\n' +
+      'Output the complete HTML now — nothing before <!DOCTYPE html>, nothing after </html>.');
+
+    return out.join('\n');
+  }
+
+  function refineInstruction(current, ask) {
+    return 'You are a world-class front-end engineer. Below is a complete single-file HTML page. Apply the requested change and return the ENTIRE updated file.\n\n' +
+      'REQUESTED CHANGE:\n' + ask + '\n\n' +
+      'RULES:\n- Output ONLY raw HTML, from <!DOCTYPE html> to </html>. No markdown, no fences, no commentary.\n' +
+      '- Preserve everything that already works. Change only what the request implies, plus whatever is needed to make it coherent.\n' +
+      '- Keep the file self-contained and keep the visual quality bar high.\n\n' +
+      'CURRENT FILE:\n' + current;
+  }
+
+  function auditFixInstruction(current, brief) {
+    return 'You are a world-class front-end engineer. A static audit of the single-file HTML page below found the following issues. Fix every one and return the ENTIRE corrected file.\n\n' +
+      'AUDIT FINDINGS:\n' + brief + '\n\n' +
+      'RULES:\n- Fix the actual cause of each finding. Do not merely suppress the symptom.\n' +
+      '- Preserve all existing features, content and styling. Do not redesign.\n' +
+      '- Output ONLY raw HTML from <!DOCTYPE html> to </html>. No markdown, no commentary.\n\n' +
+      'CURRENT FILE:\n' + current;
+  }
+
+  function repairInstruction(current, errors) {
+    return 'You are a world-class front-end engineer. The single-file HTML page below throws runtime errors. Fix them and return the ENTIRE corrected file.\n\n' +
+      'RUNTIME ERRORS:\n' + errors.map((e, i) => (i + 1) + '. ' + e).join('\n') + '\n\n' +
+      'RULES:\n- Diagnose the real cause; do not paper over it with try/catch.\n' +
+      '- Output ONLY raw HTML from <!DOCTYPE html> to </html>. No markdown, no commentary.\n' +
+      '- Preserve all existing features and styling.\n\n' +
+      'CURRENT FILE:\n' + current;
+  }
+
+  function readOpts() {
+    return {
+      type: S.type, style: S.style, accent: S.accent,
+      anim: $('#oAnim').checked, resp: $('#oResp').checked, a11y: $('#oA11y').checked,
+      dark: $('#oDark').checked, cdn: $('#oCdn').checked, cmt: $('#oCmt').checked,
+      live: $('#oLive').checked
+    };
+  }
+
+  /* ================================================================
+     GENERATION ENGINE
+     ================================================================ */
+  let handle = null;
+  let runToken = 0;
+
+  function callAI(instruction, seed, onText) {
+    const req = {
+      instruction: instruction + (seed ? '\n\nYou already emitted the beginning of the file. Continue from exactly where it stopped. Do NOT repeat any of it, do not restart, do not apologise — just continue the raw HTML.' : ''),
+      startWith: seed || '',
+      onChunk: function (d) {
+        if (S.cancelled) return;
+        if (d && d.isFromStartWith) return;
+        const soFar = (d && d.fullTextSoFar) || '';
+        const full = (seed && soFar.indexOf(seed) === 0) ? soFar : seed + soFar;
+        onText(full);
+      }
+    };
+    const p = AI.generateText(req);
+    handle = p;
+    return p;
+  }
+
+  function newPart(result, seed) {
+    if (!result) return '';
+    if (typeof result.generatedText === 'string' && result.generatedText) return result.generatedText;
+    const t = result.text || '';
+    return (seed && t.indexOf(seed) === 0) ? t.slice(seed.length) : t;
+  }
+
+  function setBusy(on, label) {
+    S.busy = on;
+    el.genBtn.disabled = on;
+    el.genBtnMini.disabled = on;
+    el.refineBtn.disabled = on;
+    el.refineInput.disabled = on;
+    el.stopBtn.style.display = on ? '' : 'none';
+    el.progress.classList.toggle('on', on);
+    el.genBtn.innerHTML = on
+      ? '<span class="spin"></span> ' + (label || 'Building…')
+      : '<svg class="ic ic-16"><use href="#i-spark"/></svg> Generate <span class="kbd">Ctrl ⏎</span>';
+    el.genBtnMini.innerHTML = on
+      ? '<span class="spin"></span> ' + (label || 'Building…')
+      : '<svg class="ic ic-14"><use href="#i-spark"/></svg> Rebuild';
+  }
+
+  async function run(instruction, opts) {
+    opts = opts || {};
+    if (!AI) {
+      toast('AI runtime not available in this context.', 'err');
+      setStatus('AI runtime unavailable', 'err');
+      return null;
+    }
+    // A stopped run's promise still settles later. Tag each run so a stale one
+    // can never clear the busy state or stream buffer belonging to a newer run.
+    const token = ++runToken;
+    const stale = () => token !== runToken;
+
+    S.cancelled = false;
+    setBusy(true, opts.label);
+    showWorkspace();
+    setPane('code');
+
+    const started = now();
+    let text = '';
+    S.streamText = '';
+    let lastPreview = 0;
+    const live = opts.live !== false && readOpts().live;
+
+    const onText = (full) => {
+      if (stale()) return;
+      text = full;
+      const h = extractHTML(full);
+      S.streamText = h;
+      renderCode(h);
+      const t = now();
+      setStatus('Writing — ' + kb(h.length) + ' · ' + ((t - started) / 1000).toFixed(1) + 's', 'busy');
+      // Only mount mid-stream when the preview is actually on screen. Generation
+      // switches to the Code tab, so unconditional remounting re-parsed a growing
+      // document dozens of times where nobody could see it.
+      if (live && S.pane === 'preview' && t - lastPreview > 900 && /<\/head>|<body/i.test(h)) {
+        lastPreview = t;
+        mount(h + (isComplete(h) ? '' : '\n</body></html>'), true);
+      }
+    };
+
+    try {
+      let result = await callAI(instruction, '', onText);
+      if (S.cancelled || stale()) return null;
+      let full = (result && result.text) || text;
+      if (full.indexOf(text) === -1 && text.length > full.length) full = text;
+
+      let tries = 0;
+      while (!S.cancelled && !stale() && tries < 6 && !isComplete(extractHTML(full))) {
+        tries++;
+        setStatus('Continuing — part ' + (tries + 1) + '…', 'busy');
+        const seed = full;
+        result = await callAI(instruction, seed, onText);
+        if (S.cancelled || stale()) return null;
+        const add = newPart(result, seed);
+        if (!add) break;
+        full = seed + add;
+      }
+
+      const html = extractHTML(full);
+      if (!html || html.length < 40) throw new Error('The model returned no usable HTML.');
+
+      const secs = ((now() - started) / 1000).toFixed(1);
+      if (isComplete(html)) setStatus('Done · ' + kb(html.length) + ' in ' + secs + 's', 'ok');
+      else {
+        setStatus('Stopped early · ' + kb(html.length) + ' — preview may be partial', 'err');
+        toast('Output ended early. You can still preview, refine, or download it.', 'err');
+      }
+      return html;
+    } catch (err) {
+      if (S.cancelled || stale()) return null;
+      const msg = (err && err.message) ? err.message : String(err);
+      setStatus('Failed — ' + msg, 'err');
+      toast(msg, 'err');
+      const partial = extractHTML(text);
+      return partial && partial.length > 200 ? partial : null;
+    } finally {
+      if (!stale()) { handle = null; S.streamText = ''; setBusy(false); }
+    }
+  }
+
+  /* ---------------- commit / versions ---------------- */
+  function commit(html, label) {
+    S.html = html;
+    S.versions.push({ html: html, label: label || 'Build' });
+    S.vIndex = S.versions.length - 1;
+    renderVersions();
+    renderCode(html, true);
+    mount(html);
+    runAudit();
+    saveHistory();
+  }
+
+  function loadVersion(i) {
+    if (!S.versions[i]) return;
+    S.vIndex = i;
+    S.html = S.versions[i].html;
+    renderVersions();
+    renderCode(S.html, true);
+    mount(S.html);
+    runAudit();
+    setPane('preview');
+  }
+
+  function renderVersions() {
+    if (S.versions.length < 2) { el.versions.classList.add('hidden'); return; }
+    el.versions.classList.remove('hidden');
+    let h = '';
+    for (let i = 0; i < S.versions.length; i++) {
+      h += '<button class="ver' + (i === S.vIndex ? ' on' : '') + '" data-v="' + i + '" data-tip-below data-tip="' +
+           esc(S.versions[i].label) + '">v' + (i + 1) + '</button>';
+    }
+    el.versions.innerHTML = h;
+  }
+
+  el.versions.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-v]');
+    if (b) loadVersion(+b.dataset.v);
+  });
+
+  /* ================================================================
+     ACTIONS
+     ================================================================ */
+  async function generate() {
+    const p = el.prompt.value.trim();
+    if (!p) {
+      expandComposer();
+      el.prompt.focus();
+      el.composer.classList.add('focused');
+      toast('Describe what you want to build first.', 'err');
+      return;
+    }
+    if (S.busy) return;
+
+    S.prompt = p;
+    S.versions = []; S.vIndex = -1;
+    S.activeId = 'b' + now();
+    el.docTitle.textContent = titleFor(p);
+    el.docSub.textContent = 'Generating…';
+    collapseComposer();
+    clearLogs(true);
+
+    const html = await run(buildInstruction(p, readOpts()));
+    if (!html) return;
+    commit(html, 'Initial build');
+    setPane('preview');
+    el.docSub.textContent = kb(html.length) + ' · ' + html.split('\n').length + ' lines'
+      + (S.servedBy ? ' · ' + S.servedBy : '');
+    toast('Build ready', 'ok');
+  }
+
+  async function refine() {
+    const ask = el.refineInput.value.trim();
+    if (!ask || !S.html || S.busy) return;
+    el.refineInput.value = '';
+    const html = await run(refineInstruction(S.html, ask), { label: 'Refining…' });
+    if (!html) return;
+    commit(html, ask.length > 46 ? ask.slice(0, 46) + '…' : ask);
+    setPane('preview');
+    toast('Refined — saved as v' + S.versions.length, 'ok');
+  }
+
+  async function repair() {
+    const errs = S.logs.filter(l => l.type === 'error').map(l => l.text);
+    if (!errs.length || !S.html || S.busy) return;
+    const html = await run(repairInstruction(S.html, errs.slice(0, 12)), { label: 'Repairing…', live: false });
+    if (!html) return;
+    commit(html, 'Error repair');
+    setPane('preview');
+    toast('Repaired — saved as v' + S.versions.length, 'ok');
+  }
+
+  // Feed the audit findings back as a repair brief. Runtime errors and static
+  // findings are different failure classes, so they get their own prompts.
+  async function fixAudit() {
+    const issues = S.audit.filter(f => f.sev !== 'info');
+    if (!issues.length || !S.html || S.busy) return;
+    const brief = issues.map((f, i) =>
+      (i + 1) + '. [' + f.sev.toUpperCase() + '/' + f.tag + '] ' + f.title + ' — ' + f.detail).join('\n');
+    const html = await run(auditFixInstruction(S.html, brief), { label: 'Fixing…', live: false });
+    if (!html) return;
+    commit(html, 'Audit fixes (' + issues.length + ')');
+    setPane('audit');
+    const left = S.audit.filter(f => f.sev !== 'info').length;
+    toast(left ? left + ' issue' + (left === 1 ? '' : 's') + ' remaining' : 'All issues resolved', left ? 'info' : 'ok');
+  }
+
+  function stop() {
+    S.cancelled = true;
+    try { if (handle && typeof handle.stop === 'function') handle.stop(); } catch (e) {}
+    setBusy(false);
+    setStatus('Stopped', 'err');
+    if (S.streamText && S.streamText.length > 200) {
+      commit(S.streamText, 'Partial (stopped)');
+      toast('Stopped — partial output kept', 'info');
+    }
+  }
+
+  function titleFor(p) {
+    const t = p.replace(/\s+/g, ' ').trim();
+    return t.length > 58 ? t.slice(0, 58) + '…' : t;
+  }
+
+  function fileName() {
+    const base = (S.prompt || 'generated').toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 42) || 'generated';
+    return base + '.html';
+  }
+
+  function download() {
+    if (!S.html) return;
+    const blob = new Blob([S.html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = fileName();
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+    toast('Downloaded ' + fileName(), 'ok');
+  }
+
+  function copyCode(btn) {
+    if (!S.html) return;
+    const done = () => { toast('Code copied to clipboard', 'ok'); if (btn) flash(btn, 'i-check'); };
+    function fallback() {
+      const ta = document.createElement('textarea');
+      ta.value = S.html; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) { toast('Copy failed', 'err'); }
+      ta.remove();
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(S.html).then(done, fallback);
+    } else fallback();
+  }
+
+  function openTab() {
+    if (!S.html) return;
+    const blob = new Blob([S.html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const w = window.open(url, '_blank');
+    if (!w) toast('Popup blocked — allow popups to open in a new tab.', 'err');
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+  }
+
+  /* ================================================================
+     VIEW CONTROL
+     ================================================================ */
+  function showWorkspace() {
+    el.workspace.classList.remove('hidden');
+    el.browse.classList.add('hidden');
+  }
+  function showBrowse() {
+    el.workspace.classList.add('hidden');
+    el.browse.classList.remove('hidden');
+  }
+
+  function collapseComposer() {
+    el.composerShell.classList.add('collapsed');
+    el.miniTxt.textContent = S.prompt || el.prompt.value.trim();
+  }
+  function expandComposer() {
+    el.composerShell.classList.remove('collapsed');
+  }
+
+  function setPane(name) {
+    const was = S.pane;
+    S.pane = name;
+    $$('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.pane === name)));
+    $('#paneP').classList.toggle('on', name === 'preview');
+    $('#paneC').classList.toggle('on', name === 'code');
+    $('#paneL').classList.toggle('on', name === 'console');
+    $('#paneA').classList.toggle('on', name === 'audit');
+
+    // Switching to the preview mid-generation must catch up immediately —
+    // otherwise you land on whatever was mounted before the run started.
+    if (name === 'preview' && was !== 'preview' && S.busy && S.streamText &&
+        /<\/head>|<body/i.test(S.streamText)) {
+      mount(S.streamText + (isComplete(S.streamText) ? '' : '\n</body></html>'), true);
+    }
+  }
+
+  function setDevice(w) {
+    S.device = w;
+    $$('#deviceSeg button').forEach(b => b.classList.toggle('on', +b.dataset.w === w));
+    if (!w) {
+      el.stage.classList.remove('framed');
+      el.frameBox.style.width = '';
+      el.frameBox.style.maxWidth = '';
+    } else {
+      el.stage.classList.add('framed');
+      el.frameBox.style.width = w + 'px';
+      el.frameBox.style.maxWidth = '100%';
+    }
+    el.chromeUrl.textContent = fileName() + (w ? '  ·  ' + w + 'px' : '');
+  }
+
+  /* ================================================================
+     HISTORY
+     ================================================================ */
+  const LSK = 'blvkware.htmlgen.v1';
+
+  function loadHistory() {
+    try {
+      const raw = localStorage.getItem(LSK);
+      S.history = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(S.history)) S.history = [];
+    } catch (e) { S.history = []; }
+    renderHistory();
+  }
+
+  function persist() {
+    try { localStorage.setItem(LSK, JSON.stringify(S.history)); }
+    catch (e) {
+      while (S.history.length > 3) {
+        S.history.pop();
+        try { localStorage.setItem(LSK, JSON.stringify(S.history)); return; } catch (e2) {}
+      }
+    }
+  }
+
+  function saveHistory() {
+    if (!S.html || !S.activeId) return;
+    const rec = {
+      id: S.activeId, title: titleFor(S.prompt || 'Untitled'), prompt: S.prompt,
+      html: S.html, size: S.html.length, ts: now(), type: S.type
+    };
+    const i = S.history.findIndex(h => h.id === rec.id);
+    if (i >= 0) S.history[i] = rec; else S.history.unshift(rec);
+    if (S.history.length > 14) S.history.length = 14;
+    persist();
+    renderHistory();
+  }
+
+  function renderHistory() {
+    el.histEmpty.style.display = S.history.length ? 'none' : '';
+    let h = '';
+    for (let i = 0; i < S.history.length; i++) {
+      const r = S.history[i];
+      h += '<div class="hist-item' + (r.id === S.activeId ? ' active' : '') + '" data-id="' + r.id + '" role="button" tabindex="0">' +
+        '<svg class="ic ic-16 hist-ic"><use href="#i-file"/></svg>' +
+        '<div class="hist-main"><div class="hist-title">' + esc(r.title) + '</div>' +
+        '<div class="hist-meta"><span>' + ago(r.ts) + '</span><span>·</span><span>' + kb(r.size) + '</span></div></div>' +
+        '<button class="hist-del" data-del="' + r.id + '" aria-label="Delete"><svg class="ic ic-14"><use href="#i-close"/></svg></button>' +
+        '</div>';
+    }
+    el.histList.innerHTML = h;
+  }
+
+  el.histList.addEventListener('click', (e) => {
+    const del = e.target.closest('[data-del]');
+    if (del) {
+      e.stopPropagation();
+      S.history = S.history.filter(h => h.id !== del.dataset.del);
+      persist(); renderHistory();
+      return;
+    }
+    const item = e.target.closest('[data-id]');
+    if (!item) return;
+    const rec = S.history.find(h => h.id === item.dataset.id);
+    if (!rec) return;
+    S.activeId = rec.id;
+    S.prompt = rec.prompt;
+    S.html = rec.html;
+    S.versions = [{ html: rec.html, label: 'Saved build' }];
+    S.vIndex = 0;
+    el.prompt.value = rec.prompt;
+    autosize();
+    el.docTitle.textContent = rec.title;
+    el.docSub.textContent = kb(rec.size) + ' · ' + ago(rec.ts);
+    collapseComposer();
+    showWorkspace();
+    renderVersions();
+    renderCode(rec.html, true);
+    mount(rec.html);
+    runAudit();
+    setPane('preview');
+    renderHistory();
+    setDevice(S.device);
+    setStatus('Loaded from library', 'ok');
+    if (window.innerWidth <= 900) hideRail();
+  });
+
+  el.histList.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      const item = e.target.closest('[data-id]');
+      if (item) { e.preventDefault(); item.click(); }
+    }
+  });
+
+  el.clearHist.addEventListener('click', () => {
+    if (!S.history.length) return;
+    S.history = []; persist(); renderHistory();
+    toast('Library cleared', 'info');
+  });
+
+  /* ================================================================
+     PRESETS
+     ================================================================ */
+  const PRESETS = [
+    { icon: 'i-gamepad', name: 'Tic-Tac-Toe', desc: 'Unbeatable minimax AI', type: 'game',
+      prompt: 'A polished tic-tac-toe game with an unbeatable AI opponent using the minimax algorithm. Difficulty selector (easy/medium/impossible), animated X and O strokes that draw themselves, a winning-line sweep animation, score tracking across rounds, and a clean modern board.' },
+    { icon: 'i-cup', name: 'Coffee Shop', desc: 'Warm landing page', type: 'landing',
+      prompt: 'A landing page for a specialty coffee roastery: sticky nav, full-bleed hero with a tagline and CTA, our-beans section with three origin cards, an interactive menu with price list and category filter, a story section with a timeline, hours + map placeholder, and a footer. Warm palette, elegant serif headings, smooth scroll and reveal-on-scroll animations.' },
+    { icon: 'i-checksquare', name: 'Todo App', desc: 'Persistent task manager', type: 'app',
+      prompt: 'A refined todo app: add, edit inline, complete, delete, reorder by drag and drop, filter by all/active/done, due dates, priority flags, a progress ring, keyboard shortcuts, and full localStorage persistence. Empty state illustration and undo toast on delete.' },
+    { icon: 'i-music', name: 'Synth Piano', desc: 'Playable Web Audio keys', type: 'app',
+      prompt: 'An interactive piano built on the Web Audio API — three octaves, playable by mouse, touch and computer keyboard with correct key mapping and visible key labels. Waveform selector, ADSR envelope sliders, sustain pedal, octave shift, a recording/playback loop, and animated keypress feedback.' },
+    { icon: 'i-sparkles', name: 'Particle Field', desc: 'Interactive canvas physics', type: 'art',
+      prompt: 'A full-screen canvas particle system running at 60fps: thousands of particles with gravity, mouse attraction and repulsion, trails, colour modes (rainbow, monochrome, fire, ocean), collision toggle, and a floating glassmorphic control panel with sliders. Click to burst.' },
+    { icon: 'i-cloud', name: 'Weather Board', desc: 'Animated forecast UI', type: 'app',
+      prompt: 'A weather dashboard with simulated data: current conditions hero with animated CSS weather icons (sun, rain, snow, storm), hourly strip, 7-day forecast cards, a temperature line chart drawn on canvas, wind/humidity/UV gauges, and a city switcher. Glassmorphic cards over a sky gradient that changes with conditions.' },
+    { icon: 'i-grid', name: 'Memory Match', desc: 'Card game with timer', type: 'game',
+      prompt: 'A memory card matching game with hand-drawn SVG symbol cards (no emoji), 3D flip animations, three difficulty grids, a move counter and timer, a best-score record kept in localStorage, combo streak feedback, and a confetti win screen.' },
+    { icon: 'i-chart', name: 'Analytics UI', desc: 'Dashboard with charts', type: 'app',
+      prompt: 'A SaaS analytics dashboard: sidebar navigation, KPI stat cards with sparklines and delta badges, a canvas-drawn revenue line chart with hover tooltips, a bar chart, a donut breakdown, a sortable and filterable data table with pagination, and a date-range selector. All charts drawn from scratch with canvas — no libraries.' }
+  ];
+
+  function renderPresets() {
+    let h = '';
+    for (let i = 0; i < PRESETS.length; i++) {
+      const p = PRESETS[i];
+      h += '<button class="preset" data-i="' + i + '">' +
+        '<div class="preset-ic"><svg class="ic ic-20"><use href="#' + p.icon + '"/></svg></div>' +
+        '<div class="preset-name">' + esc(p.name) + '</div>' +
+        '<div class="preset-desc">' + esc(p.desc) + '</div></button>';
+    }
+    el.gallery.innerHTML = h;
+  }
+
+  el.gallery.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-i]');
+    if (!b) return;
+    const p = PRESETS[+b.dataset.i];
+    el.prompt.value = p.prompt;
+    autosize();
+    setType(p.type);
+    expandComposer();
+    el.prompt.focus();
+    el.composer.classList.add('focused');
+  });
+
+  el.diceBtn.addEventListener('click', () => {
+    const pool = PRESETS.filter(p => p.prompt !== el.prompt.value);
+    const p = pool[Math.floor(Math.random() * pool.length)];
+    el.prompt.value = p.prompt;
+    autosize();
+    setType(p.type);
+    el.prompt.focus();
+  });
+
+  /* ================================================================
+     COMPOSER BEHAVIOUR
+     ================================================================ */
+  function autosize() {
+    el.prompt.style.height = 'auto';
+    el.prompt.style.height = Math.min(el.prompt.scrollHeight, 240) + 'px';
+    el.counter.textContent = el.prompt.value.length ? el.prompt.value.length.toLocaleString() : '0';
+  }
+
+  function setType(t) {
+    S.type = t;
+    $$('#typeSeg button').forEach(b => b.classList.toggle('on', b.dataset.type === t));
+  }
+
+  el.prompt.addEventListener('input', autosize);
+  el.prompt.addEventListener('focus', () => el.composer.classList.add('focused'));
+  el.prompt.addEventListener('blur', () => el.composer.classList.remove('focused'));
+  el.prompt.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); generate(); }
+  });
+
+  el.typeSeg.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-type]');
+    if (b) setType(b.dataset.type);
+  });
+
+  el.styleChips.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-style]');
+    if (!b) return;
+    S.style = b.dataset.style;
+    $$('#styleChips .chip').forEach(c => c.classList.toggle('on', c === b));
+  });
+
+  el.swatches.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-accent]');
+    if (!b) return;
+    S.accent = b.dataset.accent;
+    $$('#swatches .sw').forEach(s => s.classList.toggle('on', s === b));
+  });
+
+  el.optsBtn.addEventListener('click', () => {
+    const open = el.opts.classList.toggle('open');
+    el.optsBtn.setAttribute('aria-expanded', String(open));
+    el.optsChev.style.transform = open ? 'rotate(180deg)' : '';
+  });
+
+  el.editPromptBtn.addEventListener('click', () => {
+    expandComposer();
+    el.prompt.focus();
+  });
+  el.genBtnMini.addEventListener('click', generate);
+
+  /* ================================================================
+     WIRING
+     ================================================================ */
+  el.genBtn.addEventListener('click', generate);
+  el.stopBtn.addEventListener('click', stop);
+  el.refineBtn.addEventListener('click', refine);
+  el.refineInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') refine(); });
+  el.fixBtn.addEventListener('click', repair);
+  el.auditFixBtn.addEventListener('click', fixAudit);
+  el.auditRunBtn.addEventListener('click', () => {
+    runAudit();
+    toast(S.audit.length ? S.audit.length + ' finding' + (S.audit.length === 1 ? '' : 's') : 'No issues found',
+      S.audit.some(f => f.sev === 'error') ? 'err' : 'ok');
+  });
+
+  // Surface which provider actually served the run (the server fails over on 429).
+  window.addEventListener('blvk:meta', (e) => {
+    const d = e.detail || {};
+    if (d.meta && d.meta.model) {
+      S.servedBy = d.meta.model;
+      S.servedByFull = d.meta.provider + ' · ' + d.meta.model;
+    }
+    if (d.note) toast(d.note, 'info');
+  });
+
+  /* ---------------- provider picker ----------------
+     The dev server exposes /api/providers; the plugin platform does not. Absent
+     that endpoint the control stays hidden and the host picks the model. */
+  async function loadProviders() {
+    let d;
+    try {
+      const r = await fetch('/api/providers', { cache: 'no-store' });
+      if (!r.ok) return;
+      d = await r.json();
+    } catch (e) { return; }
+    if (!d || !Array.isArray(d.providers) || !d.providers.length) return;
+
+    let h = '<option value="">Auto · failover</option>';
+    for (const p of d.providers) {
+      h += '<option value="' + esc(p.id) + '">' + esc(p.label) + (p.free ? ' · free' : '') + '</option>';
+    }
+    el.providerSel.innerHTML = h;
+    el.providerSel.classList.remove('hidden');
+    try {
+      const saved = localStorage.getItem('blvkware.provider');
+      if (saved && d.providers.some(p => p.id === saved)) {
+        el.providerSel.value = saved;
+        applyProvider(saved);
+      }
+    } catch (e) {}
+  }
+
+  function applyProvider(id) {
+    window.__blvkProvider = id ? { provider: id } : null;
+    el.providerSel.classList.toggle('pinned', !!id);
+    try {
+      if (id) localStorage.setItem('blvkware.provider', id);
+      else localStorage.removeItem('blvkware.provider');
+    } catch (e) {}
+  }
+
+  el.providerSel.addEventListener('change', () => {
+    const id = el.providerSel.value;
+    applyProvider(id);
+    toast(id ? 'Pinned to ' + el.providerSel.selectedOptions[0].textContent.replace(' · free', '')
+             : 'Auto — will fail over between providers', 'info');
+  });
+  el.clearLog.addEventListener('click', () => clearLogs());
+  $('#dlBtn').addEventListener('click', download);
+  $('#copyBtn').addEventListener('click', function () { copyCode(this); });
+  $('#copyBtn2').addEventListener('click', function () { copyCode(this); });
+  $('#openBtn').addEventListener('click', openTab);
+  $('#refreshBtn').addEventListener('click', () => { if (S.html) { mount(S.html); toast('Preview reloaded', 'info'); } });
+
+  $$('.tab').forEach(t => t.addEventListener('click', () => setPane(t.dataset.pane)));
+  el.deviceSeg.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-w]');
+    if (b) setDevice(+b.dataset.w);
+  });
+  el.logFilter.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-f]');
+    if (!b) return;
+    S.logFilter = b.dataset.f;
+    $$('#logFilter button').forEach(x => x.classList.toggle('on', x === b));
+    renderLogs();
+  });
+
+  $('#wrapBtn').addEventListener('click', function () {
+    S.wrap = !S.wrap;
+    el.code.classList.toggle('wrap', S.wrap);
+    el.codeGrid.classList.toggle('wrapped', S.wrap);
+    this.classList.toggle('primary', S.wrap);
+    if (!S.wrap) renderCode(S.html || S.streamText || '', true);
+  });
+
+  el.newBtn.addEventListener('click', () => {
+    if (S.busy) return;
+    S.html = ''; S.versions = []; S.vIndex = -1; S.activeId = null; S.prompt = '';
+    el.prompt.value = ''; autosize();
+    expandComposer();
+    showBrowse();
+    el.docTitle.textContent = 'Untitled build';
+    el.docSub.textContent = 'Describe it, and it gets built';
+    clearLogs(true);
+    S.audit = []; renderAudit();
+    renderHistory();
+    setStatus('Ready');
+    el.prompt.focus();
+    if (window.innerWidth <= 900) hideRail();
+  });
+
+  /* ---------------- rail ---------------- */
+  let scrim = null;
+  function showRail() {
+    el.rail.classList.remove('collapsed');
+    el.railShow.style.display = 'none';
+    if (window.innerWidth <= 900 && !scrim) {
+      scrim = document.createElement('div');
+      scrim.className = 'scrim';
+      scrim.addEventListener('click', hideRail);
+      document.body.appendChild(scrim);
+    }
+  }
+  function hideRail() {
+    el.rail.classList.add('collapsed');
+    el.railShow.style.display = '';
+    if (scrim) { scrim.remove(); scrim = null; }
+  }
+  el.railHide.addEventListener('click', () => { S.railManual = true; hideRail(); });
+  el.railShow.addEventListener('click', () => { S.railManual = true; showRail(); });
+  el.railShow.style.display = 'none';
+
+  // Auto-manage the rail across the mobile/desktop boundary, but never override a
+  // deliberate choice: once the user hides or shows it themselves, it stays put.
+  let wasNarrow = window.innerWidth <= 900;
+  window.addEventListener('resize', () => {
+    const narrow = window.innerWidth <= 900;
+    if (narrow === wasNarrow) return;
+    wasNarrow = narrow;
+    if (S.railManual) return;
+    if (narrow) hideRail(); else showRail();
+  });
+
+  /* ---------------- theme ---------------- */
+  function setTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    el.themeIcon.innerHTML = '<use href="#' + (t === 'light' ? 'i-sun' : 'i-moon') + '"/>';
+    try { localStorage.setItem('blvkware.theme', t); } catch (e) {}
+  }
+  el.themeBtn.addEventListener('click', () => {
+    setTheme(document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+  });
+
+  /* ---------------- zen ---------------- */
+  function toggleZen() {
+    const on = document.body.classList.toggle('zen');
+    $('#zenBtn').innerHTML = '<svg class="ic ic-16"><use href="#' + (on ? 'i-collapse' : 'i-expand') + '"/></svg>';
+  }
+  $('#zenBtn').addEventListener('click', toggleZen);
+
+  /* ---------------- shortcuts ---------------- */
+  const SHORTCUTS = [
+    ['Compose', [
+      ['Focus the prompt', ['Ctrl', 'K']],
+      ['Generate', ['Ctrl', '⏎']],
+      ['Stop generating', ['Esc']],
+      ['Toggle options', ['Ctrl', 'O']]
+    ]],
+    ['Workspace', [
+      ['Preview / Code / Console / Audit', ['Ctrl', '1–4']],
+      ['Download HTML', ['Ctrl', 'S']],
+      ['Copy code', ['Ctrl', 'Shift', 'C']],
+      ['Reload preview', ['Ctrl', 'R']],
+      ['Focus mode', ['Ctrl', '.']],
+      ['Shortcuts', ['?']]
+    ]]
+  ];
+
+  function openShortcuts() {
+    if ($('#kbModal')) return;
+    let cols = '';
+    SHORTCUTS.forEach(([title, rows]) => {
+      let r = '';
+      rows.forEach(([label, keys]) => {
+        r += '<div class="kb-row"><span>' + label + '</span><span class="kb-keys">' +
+             keys.map(k => '<span class="kbd">' + k + '</span>').join('') + '</span></div>';
+      });
+      cols += '<div><p class="kb-sec-title">' + title + '</p>' + r + '</div>';
+    });
+    const back = document.createElement('div');
+    back.className = 'modal-back'; back.id = 'kbModal';
+    back.innerHTML = '<div class="modal" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts">' +
+      '<div class="modal-head"><svg class="ic ic-20" style="color:var(--accent-ink)"><use href="#i-keyboard"/></svg>' +
+      '<h3>Keyboard shortcuts</h3><div class="spacer"></div>' +
+      '<button class="btn ghost sm icon" data-x aria-label="Close"><svg class="ic ic-16"><use href="#i-close"/></svg></button></div>' +
+      '<div class="modal-body"><div class="kb-grid">' + cols + '</div></div></div>';
+    back.addEventListener('click', (e) => {
+      if (e.target === back || e.target.closest('[data-x]')) back.remove();
+    });
+    document.body.appendChild(back);
+  }
+  el.kbBtn.addEventListener('click', openShortcuts);
+
+  /* ---------------- global keys ---------------- */
+  document.addEventListener('keydown', (e) => {
+    const mod = e.ctrlKey || e.metaKey;
+    const typing = /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);
+
+    if (e.key === 'Escape') {
+      const m = $('#kbModal'); if (m) { m.remove(); return; }
+      if (document.body.classList.contains('zen')) { toggleZen(); return; }
+      if (S.busy) { stop(); return; }
+    }
+    if (e.key === '?' && !typing) { e.preventDefault(); openShortcuts(); return; }
+    if (!mod) return;
+
+    if (e.key.toLowerCase() === 'k') { e.preventDefault(); expandComposer(); el.prompt.focus(); el.prompt.select(); }
+    else if (e.key.toLowerCase() === 's' && S.html) { e.preventDefault(); download(); }
+    else if (e.key.toLowerCase() === 'c' && e.shiftKey && S.html) { e.preventDefault(); copyCode(); }
+    else if (e.key.toLowerCase() === 'r' && S.html) { e.preventDefault(); mount(S.html); }
+    else if (e.key.toLowerCase() === 'o' && !typing) { e.preventDefault(); expandComposer(); el.optsBtn.click(); }
+    else if (e.key === '.') { e.preventDefault(); toggleZen(); }
+    else if (e.key === '1' && !el.workspace.classList.contains('hidden')) { e.preventDefault(); setPane('preview'); }
+    else if (e.key === '2' && !el.workspace.classList.contains('hidden')) { e.preventDefault(); setPane('code'); }
+    else if (e.key === '3' && !el.workspace.classList.contains('hidden')) { e.preventDefault(); setPane('console'); }
+    else if (e.key === '4' && !el.workspace.classList.contains('hidden')) { e.preventDefault(); setPane('audit'); }
+  });
+
+  /* ================================================================
+     BOOT
+     ================================================================ */
+  (function boot() {
+    let t = 'dark';
+    try { t = localStorage.getItem('blvkware.theme') || 'dark'; } catch (e) {}
+    setTheme(t);
+    renderPresets();
+    loadHistory();
+    autosize();
+    setDevice(0);
+    renderLogs();
+    renderAudit();
+    loadProviders();
+    if (window.innerWidth <= 900) hideRail();
+    if (!AI) {
+      setStatus('AI runtime not detected', 'err');
+      el.docSub.textContent = 'Preview mode — generation needs the AI plugin';
+    }
+    setTimeout(() => el.prompt.focus(), 120);
+  })();
+})();
+</script>
