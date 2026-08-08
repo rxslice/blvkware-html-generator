@@ -663,6 +663,108 @@ generateText = {import:ai-text-plugin}
 
   .scrim { position: fixed; inset: 0; z-index: 40; background: rgba(8,6,4,.5); backdrop-filter: blur(3px); animation: fade 160ms var(--ease); }
 
+  /* ============================================================
+     SUPPORT SCREEN
+     ============================================================ */
+  .sup-back {
+    position: fixed; inset: 0; z-index: 120;
+    background: rgba(6,5,3,.74); backdrop-filter: blur(9px);
+    display: grid; place-items: center; padding: 20px;
+    animation: fade 240ms var(--ease);
+  }
+  .sup {
+    width: min(680px, 100%); max-height: 92vh; overflow: auto;
+    border-radius: var(--r-xl); position: relative;
+    background: linear-gradient(168deg, #17130d 0%, #100d09 55%, #0b0906 100%);
+    box-shadow: 0 40px 90px -24px rgba(0,0,0,.9), inset 0 0 0 1px rgba(217,182,92,.22);
+    animation: supIn 420ms var(--ease);
+  }
+  @keyframes supIn {
+    from { opacity: 0; transform: translateY(18px) scale(.965); }
+    to { opacity: 1; transform: none; }
+  }
+
+  /* decorative header band */
+  .sup-art { position: relative; height: 112px; overflow: hidden; border-radius: var(--r-xl) var(--r-xl) 0 0; }
+  .sup-art::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 35%, #14100b 100%);
+  }
+  .sup-art svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  .sup-badge {
+    position: absolute; left: 50%; bottom: -30px; transform: translateX(-50%);
+    width: 66px; height: 66px; border-radius: 19px; z-index: 2;
+    background: radial-gradient(circle at 50% 28%, #1d1509, #0a0806);
+    display: grid; place-items: center;
+    box-shadow: inset 0 0 0 1px rgba(217,182,92,.4), 0 12px 28px -10px rgba(0,0,0,.95);
+  }
+  .sup-badge svg { width: 50px; height: 50px; }
+
+  .sup-body { padding: 46px 30px 26px; text-align: center; }
+  .sup-kicker {
+    font-size: 10.5px; font-weight: 750; letter-spacing: .19em; text-transform: uppercase;
+    color: var(--accent-ink); margin-bottom: 10px;
+  }
+  .sup h2 {
+    margin: 0 0 10px; font-size: 25px; font-weight: 700; letter-spacing: -.022em; color: var(--ink);
+  }
+  .sup p { margin: 0 auto; max-width: 46ch; font-size: 13.6px; line-height: 1.62; color: var(--ink-2); }
+
+  .sup-grid {
+    display: flex; gap: 22px; align-items: center; justify-content: center;
+    margin-top: 22px; flex-wrap: wrap;
+  }
+  /* QR must sit on light with a quiet zone or scanners struggle */
+  .qr-panel {
+    width: 178px; height: 178px; flex: none; border-radius: 14px;
+    background: #fff; padding: 11px;
+    box-shadow: 0 10px 26px -10px rgba(0,0,0,.85), inset 0 0 0 1px rgba(0,0,0,.08);
+    display: grid; place-items: center;
+  }
+  .qr-panel img { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
+  .qr-empty {
+    width: 100%; height: 100%; border-radius: 7px;
+    border: 2px dashed #c9c1ae; display: grid; place-items: center;
+    text-align: center; padding: 10px; color: #6b6355;
+    font-size: 10.5px; line-height: 1.45; font-family: var(--mono);
+  }
+  .sup-side { text-align: left; max-width: 250px; }
+  .sup-side h3 { margin: 0 0 6px; font-size: 14px; font-weight: 640; color: var(--ink); }
+  .sup-side p { margin: 0 0 14px; font-size: 12.6px; line-height: 1.55; color: var(--ink-3); text-align: left; }
+
+  .sup-actions { display: flex; gap: 9px; flex-wrap: wrap; }
+  .btn.gold {
+    color: #1a1204;
+    background: linear-gradient(150deg, #F2DC9E, #D9B65C 55%, #C9A44E);
+    box-shadow: 0 8px 22px -9px rgba(217,182,92,.7), inset 0 1px 0 rgba(255,255,255,.5);
+    font-weight: 680;
+  }
+  .btn.gold:hover { background: linear-gradient(150deg, #F7E7B6, #E2C371 55%, #D3AE57); }
+
+  .sup-foot {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 15px 22px 18px; border-top: 1px solid rgba(217,182,92,.13);
+    margin-top: 22px; flex-wrap: wrap;
+  }
+  .sup-never { display: inline-flex; align-items: center; gap: 8px; font-size: 12.2px; color: var(--ink-3); cursor: pointer; user-select: none; }
+  .sup-x {
+    position: absolute; top: 12px; right: 12px; z-index: 3;
+    width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center;
+    color: #d8cbab; background: rgba(10,8,5,.5); backdrop-filter: blur(4px);
+    box-shadow: inset 0 0 0 1px rgba(217,182,92,.22);
+    transition: color var(--t-fast), background var(--t-fast);
+  }
+  .sup-x:hover { color: #fff; background: rgba(10,8,5,.8); }
+
+  @media (max-width: 560px) {
+    .sup-body { padding: 44px 18px 20px; }
+    .sup h2 { font-size: 21px; }
+    .sup-side { text-align: center; max-width: none; }
+    .sup-side p { text-align: center; }
+    .sup-actions { justify-content: center; }
+  }
+
   /* focus mode */
   body.zen .rail, body.zen .composer-shell, body.zen .topbar { display: none !important; }
   body.zen .stage-area { padding: 0; }
@@ -846,6 +948,9 @@ generateText = {import:ai-text-plugin}
   <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
     <path d="M15.8 4.2a2.3 2.3 0 0 1 3.3 3.3L8.4 18.2l-4.3 1 1-4.3L15.8 4.2Z"/>
   </symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 20.4S3.6 15.1 3.6 9.5a4.9 4.9 0 0 1 8.4-3.4 4.9 4.9 0 0 1 8.4 3.4c0 5.6-8.4 10.9-8.4 10.9Z"/>
+  </symbol>
   <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 2.9 4.6 6v5.4c0 4.3 3.1 8.3 7.4 9.7 4.3-1.4 7.4-5.4 7.4-9.7V6L12 2.9Z"/>
     <path d="m9 11.9 2.1 2.1 4-4.2"/>
@@ -958,6 +1063,7 @@ generateText = {import:ai-text-plugin}
     <div class="rail-foot">
       <button class="btn ghost icon" id="themeBtn" data-tip="Theme" aria-label="Toggle theme"><svg class="ic ic-16" id="themeIcon"><use href="#i-moon"/></svg></button>
       <button class="btn ghost icon" id="kbBtn" data-tip="Shortcuts" aria-label="Keyboard shortcuts"><svg class="ic ic-16"><use href="#i-keyboard"/></svg></button>
+      <button class="btn ghost icon" id="supOpen" data-tip="Support the developer" aria-label="Support the developer"><svg class="ic ic-16" style="color:var(--accent-ink)"><use href="#i-heart"/></svg></button>
       <div class="spacer"></div>
       <button class="btn ghost sm icon" id="railHide" data-tip="Hide panel" aria-label="Hide panel"><svg class="ic ic-16"><use href="#i-panel"/></svg></button>
     </div>
@@ -1198,6 +1304,89 @@ generateText = {import:ai-text-plugin}
   </div>
 </div>
 
+<!-- ===== SUPPORT SCREEN ===== -->
+<div class="sup-back hidden" id="supBack">
+  <div class="sup" role="dialog" aria-modal="true" aria-labelledby="supTitle" id="supCard">
+    <button class="sup-x" id="supX" aria-label="Close"><svg class="ic ic-16"><use href="#i-close"/></svg></button>
+
+    <div class="sup-art" aria-hidden="true">
+      <svg viewBox="0 0 680 112" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <linearGradient id="supGlow" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#D9B65C" stop-opacity=".30"/>
+            <stop offset="55%" stop-color="#E8734A" stop-opacity=".16"/>
+            <stop offset="100%" stop-color="#d4f24a" stop-opacity=".10"/>
+          </linearGradient>
+          <g id="supCog">
+            <circle r="26" fill="none" stroke="currentColor" stroke-width="3"/>
+            <circle r="11" fill="none" stroke="currentColor" stroke-width="3"/>
+            <g>
+              <rect x="-2.6" y="-34" width="5.2" height="8" rx="1.6" fill="currentColor"/>
+              <rect x="-2.6" y="-34" width="5.2" height="8" rx="1.6" fill="currentColor" transform="rotate(45)"/>
+              <rect x="-2.6" y="-34" width="5.2" height="8" rx="1.6" fill="currentColor" transform="rotate(90)"/>
+              <rect x="-2.6" y="-34" width="5.2" height="8" rx="1.6" fill="currentColor" transform="rotate(135)"/>
+              <rect x="-2.6" y="-34" width="5.2" height="8" rx="1.6" fill="currentColor" transform="rotate(180)"/>
+              <rect x="-2.6" y="-34" width="5.2" height="8" rx="1.6" fill="currentColor" transform="rotate(225)"/>
+              <rect x="-2.6" y="-34" width="5.2" height="8" rx="1.6" fill="currentColor" transform="rotate(270)"/>
+              <rect x="-2.6" y="-34" width="5.2" height="8" rx="1.6" fill="currentColor" transform="rotate(315)"/>
+            </g>
+          </g>
+        </defs>
+        <rect width="680" height="112" fill="url(#supGlow)"/>
+        <g color="#D9B65C" opacity=".30">
+          <use href="#supCog" x="92"  y="34"/>
+          <use href="#supCog" x="146" y="86" transform="scale(.72)" style="transform-origin:146px 86px"/>
+          <use href="#supCog" x="590" y="30"/>
+          <use href="#supCog" x="534" y="88" transform="scale(.62)" style="transform-origin:534px 88px"/>
+        </g>
+        <g stroke="#D9B65C" stroke-width="1.4" opacity=".26" fill="none">
+          <path d="M0 78h120M190 78h120M370 78h120M560 78h120"/>
+          <path d="M240 22v34M440 22v34"/>
+          <circle cx="240" cy="20" r="3.2" fill="#D9B65C" stroke="none"/>
+          <circle cx="440" cy="20" r="3.2" fill="#D9B65C" stroke="none"/>
+        </g>
+      </svg>
+      <div class="sup-badge"><svg viewBox="0 0 64 64"><use href="#i-blvkmark"/></svg></div>
+    </div>
+
+    <div class="sup-body">
+      <div class="sup-kicker">Independent &amp; free</div>
+      <h2 id="supTitle">Built by one person</h2>
+      <p>BlvkWare is free, self-contained, and has no ads, no tracking and no
+         paywall. If it saved you an afternoon, a small donation keeps it being
+         built and maintained.</p>
+
+      <div class="sup-grid">
+        <div class="qr-panel">
+          <img id="supQr" alt="PayPal donation QR code" style="display:none">
+          <div class="qr-empty" id="supQrEmpty">
+            QR NOT EMBEDDED YET<br><br>
+            save your PayPal QR to<br><b>assets/paypal-qr.png</b><br>then run<br><b>python dev/embed-qr.py</b>
+          </div>
+        </div>
+        <div class="sup-side">
+          <h3>Scan to donate</h3>
+          <p>Point your phone camera at the code, or open PayPal directly.
+             Any amount genuinely helps.</p>
+          <div class="sup-actions">
+            <a class="btn gold" id="supPaypal" href="#" target="_blank" rel="noopener noreferrer" style="display:none">
+              <svg class="ic ic-16"><use href="#i-external"/></svg> Open PayPal
+            </a>
+            <button class="btn" id="supCopy" style="display:none">
+              <svg class="ic ic-16"><use href="#i-copy"/></svg> Copy link
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sup-foot">
+      <label class="sup-never"><input type="checkbox" id="supNever"> Don't show this again</label>
+      <button class="btn" id="supLater">Continue to the app</button>
+    </div>
+  </div>
+</div>
+
 <div class="toasts" id="toasts"></div>
 <div class="sr" id="live" aria-live="polite"></div>
 
@@ -1234,7 +1423,11 @@ generateText = {import:ai-text-plugin}
     auditScore: $('#auditScore'), auditSummary: $('#auditSummary'),
     auditFixBtn: $('#auditFixBtn'), auditRunBtn: $('#auditRunBtn'),
     refineInput: $('#refineInput'), refineBtn: $('#refineBtn'),
-    toasts: $('#toasts'), live: $('#live')
+    toasts: $('#toasts'), live: $('#live'),
+    supBack: $('#supBack'), supCard: $('#supCard'), supX: $('#supX'),
+    supLater: $('#supLater'), supNever: $('#supNever'), supOpen: $('#supOpen'),
+    supQr: $('#supQr'), supQrEmpty: $('#supQrEmpty'),
+    supPaypal: $('#supPaypal'), supCopy: $('#supCopy')
   };
 
   const S = {
@@ -2532,6 +2725,77 @@ generateText = {import:ai-text-plugin}
   });
 
   /* ================================================================
+     SUPPORT SCREEN
+
+     `qr` and `paypal` are the only things to fill in. The QR is embedded as a
+     data URI so the file stays self-contained — run dev/embed-qr.py to inject
+     your own image byte-for-byte rather than regenerating it, so the payment
+     destination is never re-encoded by anything.
+     ================================================================ */
+  const SUPPORT = {
+    qr: '',       // data:image/png;base64,... — injected by dev/embed-qr.py
+    paypal: ''    // e.g. 'https://paypal.me/yourhandle'
+  };
+
+  const SUP_KEY = 'blvkware.support.never';
+  let supPrevFocus = null;
+
+  function supConfigure() {
+    if (SUPPORT.qr) {
+      el.supQr.src = SUPPORT.qr;
+      el.supQr.style.display = '';
+      el.supQrEmpty.style.display = 'none';
+    }
+    if (SUPPORT.paypal) {
+      el.supPaypal.href = SUPPORT.paypal;
+      el.supPaypal.style.display = '';
+      el.supCopy.style.display = '';
+    }
+  }
+
+  function openSupport() {
+    supPrevFocus = document.activeElement;
+    el.supBack.classList.remove('hidden');
+    el.supNever.checked = false;
+    setTimeout(() => el.supLater.focus(), 60);
+  }
+
+  function closeSupport() {
+    if (el.supNever.checked) {
+      try { localStorage.setItem(SUP_KEY, '1'); } catch (e) {}
+      toast('Hidden — the heart icon in the sidebar reopens it', 'info');
+    }
+    el.supBack.classList.add('hidden');
+    if (supPrevFocus && supPrevFocus.focus) supPrevFocus.focus();
+    else el.prompt.focus();
+  }
+
+  el.supX.addEventListener('click', closeSupport);
+  el.supLater.addEventListener('click', closeSupport);
+  el.supOpen.addEventListener('click', openSupport);
+  el.supBack.addEventListener('mousedown', (e) => { if (e.target === el.supBack) closeSupport(); });
+
+  el.supCopy.addEventListener('click', function () {
+    if (!SUPPORT.paypal) return;
+    const done = () => { toast('Donation link copied', 'ok'); flash(this, 'i-check'); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(SUPPORT.paypal).then(done, () => toast('Copy failed', 'err'));
+    }
+  }.bind($('#supCopy')));
+
+  // Keep keyboard focus inside the dialog while it is open.
+  el.supBack.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { e.preventDefault(); closeSupport(); return; }
+    if (e.key !== 'Tab') return;
+    const f = $$('button, a[href], input, [tabindex]:not([tabindex="-1"])', el.supCard)
+      .filter(x => x.offsetParent !== null);
+    if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  /* ================================================================
      BOOT
      ================================================================ */
   (function boot() {
@@ -2545,6 +2809,10 @@ generateText = {import:ai-text-plugin}
     renderLogs();
     renderAudit();
     loadProviders();
+    supConfigure();
+    let supSkip = false;
+    try { supSkip = localStorage.getItem(SUP_KEY) === '1'; } catch (e) {}
+    if (!supSkip) setTimeout(openSupport, 420);
     if (window.innerWidth <= 900) hideRail();
     if (!AI) {
       setStatus('AI runtime not detected', 'err');

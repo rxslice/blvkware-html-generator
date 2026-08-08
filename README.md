@@ -98,6 +98,26 @@ The two checks are complementary: a page can run without throwing and still be i
 
 ---
 
+## Support screen
+
+A donation screen appears on load: a custom gear-motif header, the brand mark, a short pitch, your PayPal QR on a white panel (QR codes need a light background and quiet zone to scan reliably), and an optional **Open PayPal** button.
+
+It's dismissible, has a **Don't show this again** opt-out persisted in `localStorage`, and stays reachable afterwards from the heart icon in the sidebar footer. Escape, the backdrop and the close button all dismiss it; focus is trapped while it's open and restored on close.
+
+**Adding your QR:**
+
+```bash
+# 1. save your PayPal QR image here
+assets/paypal-qr.png
+
+# 2. embed it
+python dev/embed-qr.py --paypal https://paypal.me/yourhandle
+```
+
+Your image is embedded **verbatim** as a data URI — never decoded, never re-encoded, so the payment destination cannot be altered by the tooling. The only processing is an optional nearest-neighbour downscale if the source is over 512px (nearest, because smooth filters blur module edges and cost you scans). Until you run it, the panel shows a labelled placeholder rather than a fake code.
+
+---
+
 ## Keyboard
 
 | | |
