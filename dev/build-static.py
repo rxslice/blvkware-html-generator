@@ -20,8 +20,10 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 APP = os.path.join(ROOT, "app.html")
-OUT_DIR = os.path.join(ROOT, "docs")
-OUT = os.path.join(OUT_DIR, "index.html")
+SITE = os.path.join(ROOT, "site", "index.html")
+OUT_DIR = os.path.join(ROOT, "docs")            # blvkware.dev/
+TOOL_DIR = os.path.join(OUT_DIR, "html-generator")  # blvkware.dev/html-generator/
+OUT = os.path.join(TOOL_DIR, "index.html")
 CUSTOM_DOMAIN = "blvkware.dev"
 
 # Browser-side runtime. Same contract as the platform's ai-text-plugin:
@@ -260,10 +262,17 @@ SHIM = r"""
     }
   };
 
-  /* a way back into the key dialog once a key is set */
+  /* a way back into the key dialog once a key is set, plus a route home */
   document.addEventListener("DOMContentLoaded", function () {
     var foot = document.querySelector(".rail-foot");
     if (!foot) return;
+    var home = document.createElement("a");
+    home.className = "btn ghost icon";
+    home.href = "/";
+    home.setAttribute("data-tip", "BlvkWare home");
+    home.setAttribute("aria-label", "Back to BlvkWare");
+    home.innerHTML = '<svg class="ic ic-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 10.4 12 3.6l8.4 6.8V20a1.4 1.4 0 0 1-1.4 1.4H5A1.4 1.4 0 0 1 3.6 20Z"/><path d="M9.6 21.4v-7h4.8v7"/></svg>';
+    foot.insertBefore(home, foot.querySelector(".spacer"));
     var b = document.createElement("button");
     b.className = "btn ghost icon";
     b.setAttribute("data-tip", "Model / API key");
@@ -324,10 +333,22 @@ def main():
 
     page = head + body + "\n</body>\n</html>\n"
 
-    if not os.path.isdir(OUT_DIR):
-        os.makedirs(OUT_DIR)
+    for d in (OUT_DIR, TOOL_DIR):
+        if not os.path.isdir(d):
+            os.makedirs(d)
     with io.open(OUT, "w", encoding="utf-8") as fh:
         fh.write(page)
+
+    # The marketing site is the root of blvkware.dev; the tool is a sub-page.
+    if os.path.isfile(SITE):
+        with io.open(SITE, encoding="utf-8") as fh:
+            site_html = fh.read()
+        with io.open(os.path.join(OUT_DIR, "index.html"), "w", encoding="utf-8") as fh:
+            fh.write(site_html)
+        print("Built docs/index.html            (%.1f KB)  marketing site"
+              % (len(site_html.encode("utf-8")) / 1024.0))
+    else:
+        print("WARNING: site/index.html missing - root page not built")
     # Pages would otherwise run the output through Jekyll.
     with io.open(os.path.join(OUT_DIR, ".nojekyll"), "w", encoding="utf-8") as fh:
         fh.write("")
@@ -336,7 +357,8 @@ def main():
     with io.open(os.path.join(OUT_DIR, "CNAME"), "w", encoding="utf-8") as fh:
         fh.write(CUSTOM_DOMAIN)
 
-    print("Built %s  (%.1f KB)" % (os.path.relpath(OUT, ROOT), len(page.encode("utf-8")) / 1024.0))
+    print("Built docs/html-generator/index.html (%.1f KB)  tool"
+          % (len(page.encode("utf-8")) / 1024.0))
     print("  no developer keys embedded - visitors supply their own")
     return 0
 
