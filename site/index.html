@@ -38,7 +38,7 @@
 
         /* --- GLOBAL RESETS & STYLES --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; scroll-padding-top: 100px; }
+        html { scroll-behavior: smooth; scroll-padding-top: 140px; }
         body {
             background-color: var(--color-background);
             color: var(--color-text-primary);
@@ -69,14 +69,14 @@
         }
 
         /* --- HEADER / NAVIGATION --- */
-        .header { position: fixed; top: 0; left: 0; width: 100%; padding: 1.25rem 0; z-index: 1000; transition: background-color 0.3s ease, backdrop-filter 0.3s ease; }
+        .header { position: fixed; top: 0; left: 0; width: 100%; padding: 0.85rem 0; z-index: 1000; transition: background-color 0.3s ease, backdrop-filter 0.3s ease; }
         .header.scrolled { background-color: var(--glass-background); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); }
         .navbar { display: flex; justify-content: space-between; align-items: center; }
         .logo { display: inline-flex; align-items: center; gap: 0.7rem; font-size: 1.4rem; font-weight: 800; color: var(--color-text-primary); text-decoration: none; letter-spacing: -0.01em; }
         .logo-text { display: inline-block; }
         .logo-dot { color: var(--color-primary-accent); }
         /* The mark supplies its own black field and brass ring; the tile just rounds it. */
-        .logo-mark { width: 42px; height: 42px; border-radius: 12px; flex: none; background: #060504; overflow: hidden; display: grid; place-items: center; }
+        .logo-mark { width: 78px; height: 78px; border-radius: 20px; flex: none; background: #060504; overflow: hidden; display: grid; place-items: center; }
         .logo-mark img { width: 100%; height: 100%; display: block; }
         .nav-links { display: flex; list-style: none; gap: 2.5rem; }
         .nav-links a { color: var(--color-text-secondary); text-decoration: none; font-weight: 600; transition: color 0.3s ease; }
@@ -88,7 +88,7 @@
         .btn-ghost:hover { box-shadow: inset 0 0 0 1px rgba(212,242,74,.4); transform: translateY(-3px); }
 
         /* --- HERO --- */
-        #hero { padding-top: 12rem; text-align: center; }
+        #hero { padding-top: 14rem; text-align: center; }
         .hero-title { font-size: 4.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; letter-spacing: -0.02em; }
         .hero-title .highlight { background: linear-gradient(90deg, var(--color-primary-accent), var(--color-brass)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
         #hero-title { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
@@ -96,8 +96,15 @@
         .hero-subtitle { font-size: 1.25rem; max-width: 700px; margin: 0 auto 2.5rem; color: var(--color-text-secondary); }
         .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 
-        /* --- TOOLS --- */
-        .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+        /* --- THE BLVK LAB --- */
+        .lab-eyebrow {
+            text-align: center; font-family: var(--font-code); font-size: 0.82rem; font-weight: 500;
+            letter-spacing: 0.34em; text-transform: uppercase; color: var(--color-brass); margin-bottom: 1rem;
+        }
+        .lab-note { text-align: center; color: var(--color-text-secondary); font-size: 0.95rem; margin-top: 2.5rem; }
+        /* Few tools, each given room — the Lab is a shortlist, not a directory. */
+        /* min() so a narrow phone gets a full-width card instead of a 340px track that overflows. */
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: 2rem; max-width: 900px; margin: 0 auto; }
         .tool-card {
             background-color: var(--glass-background); border: 1px solid var(--glass-border); border-radius: 16px;
             padding: 2.25rem; transition: all 0.3s ease; position: relative; overflow: hidden;
@@ -144,6 +151,9 @@
         /* --- MOBILE --- */
         @media (max-width: 768px) {
             .nav-links { display: none; }
+            .logo-mark { width: 60px; height: 60px; border-radius: 16px; }
+            .logo { font-size: 1.2rem; gap: 0.55rem; }
+            #hero { padding-top: 11rem; }
             .hero-title { font-size: 2.75rem; }
             .section-title { font-size: 2.25rem; }
             section { padding: 5rem 0; }
@@ -170,7 +180,7 @@
             </a>
             <nav>
                 <ul class="nav-links">
-                    <li><a href="#tools">Tools</a></li>
+                    <li><a href="#lab">The Lab</a></li>
                     <li><a href="#services">Services</a></li>
                     <li><a href="#cta">Contact</a></li>
                 </ul>
@@ -193,10 +203,11 @@
             </div>
         </section>
 
-        <section id="tools">
+        <section id="lab">
             <div class="container">
-                <h2 class="section-title fade-in">Tools You Can Use Today</h2>
-                <p class="section-sub fade-in">Free, self-contained software we've built and released. No sign-up, no tracking, no paywall.</p>
+                <p class="lab-eyebrow fade-in">The Blvk Lab</p>
+                <h2 class="section-title fade-in">Experimental software. Real utility.</h2>
+                <p class="section-sub fade-in">Every tool in the Lab is something we'd normally build for a client — released here instead, finished, free, and running in your browser. No sign-up, no tracking, no paywall.</p>
                 <div class="tools-grid">
 
                     <a href="/scry/" class="tool-card fade-in" style="transition-delay: 100ms;">
@@ -213,33 +224,22 @@
                         </span>
                     </a>
 
-                    <a href="/html-generator/" class="tool-card fade-in" style="transition-delay: 200ms;">
+                    <a href="/sigil/" class="tool-card fade-in" style="transition-delay: 200ms;">
                         <div class="tool-head">
                             <div class="tool-icon">
-                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.6 21 18.2H3Z"></path><circle cx="12" cy="13.4" r="3.1"></circle></svg>
                             </div>
                             <span class="tool-status live">Live</span>
                         </div>
-                        <h3 class="tool-title">AI HTML Generator</h3>
-                        <p class="tool-desc">Describe a website, game, tool or app in plain language and get a complete, working, single-file HTML page back — streamed live, with a runtime console, a quality audit, and AI repair loops.</p>
-                        <span class="tool-link">Open the generator
+                        <h3 class="tool-title">SIGIL</h3>
+                        <p class="tool-desc">Write down what you want and watch it become real software. SIGIL streams a complete, working, single-file application into the page — then runs it, reads its own console, audits its quality, and repairs what it broke.</p>
+                        <span class="tool-link">Inscribe something
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
                         </span>
                     </a>
 
-                    <div class="tool-card placeholder fade-in" style="transition-delay: 300ms;">
-                        <div class="tool-head">
-                            <div class="tool-icon">
-                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"></rect><path d="M3 9h18M9 21V9"></path></svg>
-                            </div>
-                            <span class="tool-status soon">In build</span>
-                        </div>
-                        <h3 class="tool-title">More tools shipping</h3>
-                        <p class="tool-desc">New software and app tools are added here as they're released. Each one ships as its own page on this site, free to use.</p>
-                        <span class="tool-link" style="color: var(--color-text-secondary)">Coming soon</span>
-                    </div>
-
                 </div>
+                <p class="lab-note fade-in">Two of five in the Lab. The rest are being built — each one ships finished or not at all.</p>
             </div>
         </section>
 
@@ -292,8 +292,9 @@
     <footer class="footer">
         <div class="container">
             <ul class="footer-links">
+                <li><a href="#lab">The Lab</a></li>
                 <li><a href="/scry/">SCRY</a></li>
-                <li><a href="/html-generator/">AI HTML Generator</a></li>
+                <li><a href="/sigil/">SIGIL</a></li>
                 <li><a href="https://github.com/rxslice/blvkware-html-generator" target="_blank" rel="noopener noreferrer">GitHub</a></li>
             </ul>
             <p class="footer-text">Copyright © 2026 BlvkWare / William Russell Wheeler. All Rights Reserved.</p>

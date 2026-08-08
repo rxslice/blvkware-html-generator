@@ -327,7 +327,7 @@
   /* ---------- shell ---------- */
   #app { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; }
   .topbar {
-    flex: none; height: 58px; display: flex; align-items: center; gap: 12px; padding: 0 16px;
+    flex: none; height: 88px; display: flex; align-items: center; gap: 12px; padding: 0 16px;
     border-bottom: 1px solid var(--line);
     background: color-mix(in oklab, var(--bg-2) 66%, transparent); backdrop-filter: blur(14px);
   }
@@ -335,7 +335,7 @@
   /* The mark brings its own black field and brass ring — the tile only rounds
      the corners, so we do not stack a second border around it. */
   .mark {
-    width: 38px; height: 38px; border-radius: 11px; flex: none;
+    width: 70px; height: 70px; border-radius: 18px; flex: none;
     background: #060504; overflow: hidden;
     display: grid; place-items: center;
   }
@@ -685,7 +685,7 @@
           </button>
         </div>
         <p style="font-size:11.5px;color:var(--ink-3);margin:10px 2px 0;line-height:1.5">
-          Hands the architecture to the BlvkWare HTML Generator and builds a live, clickable prototype.
+          Hands the architecture to SIGIL and builds a live, clickable prototype.
         </p>
       </div>
     </div>
@@ -1158,7 +1158,7 @@
       '- Seeded demo data so it feels alive, and a clear note that figures are projections, not real business data.\n' +
       'Dark, premium operations-console aesthetic. Every control must actually work.';
     try { sessionStorage.setItem('blvkware.forge.prompt', spec); } catch (e) {}
-    window.location.href = '/html-generator/?prompt=' + encodeURIComponent(spec).slice(0, 1800);
+    window.location.href = '/sigil/?prompt=' + encodeURIComponent(spec).slice(0, 1800);
   });
 
   el.scryBtn.addEventListener('click', run);

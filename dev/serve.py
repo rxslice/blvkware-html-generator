@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Local dev server for the BlvkWare AI HTML Generator — backed by a real LLM API.
+Local dev server for the BlvkWare tools — backed by a real LLM API.
 
     python dev/serve.py
 
@@ -302,7 +302,7 @@ def favicon_from_mark(src):
     return "data:image/svg+xml," + urllib.parse.quote(svg, safe="")
 
 
-def build_page(src_name="app.html", title="BlvkWare AI HTML Generator"):
+def build_page(src_name="app.html", title="SIGIL by BlvkWare"):
     path = os.path.join(ROOT, src_name)
     with io.open(path, encoding="utf-8") as fh:
         src = fh.read()
@@ -323,12 +323,12 @@ def build_page(src_name="app.html", title="BlvkWare AI HTML Generator"):
 
 # path prefix -> (source file, title)
 PAGES = {
-    "/": ("app.html", "BlvkWare AI HTML Generator"),
-    "/index.html": ("app.html", "BlvkWare AI HTML Generator"),
-    "/app.html": ("app.html", "BlvkWare AI HTML Generator"),
+    "/": ("app.html", "SIGIL by BlvkWare"),
+    "/index.html": ("app.html", "SIGIL by BlvkWare"),
+    "/app.html": ("app.html", "SIGIL by BlvkWare"),
     # mirrors the deployed layout so SCRY's hand-off link resolves locally too
-    "/html-generator": ("app.html", "BlvkWare AI HTML Generator"),
-    "/html-generator/": ("app.html", "BlvkWare AI HTML Generator"),
+    "/sigil": ("app.html", "SIGIL by BlvkWare"),
+    "/sigil/": ("app.html", "SIGIL by BlvkWare"),
     "/scry": ("scry.html", "SCRY by BlvkWare"),
     "/scry/": ("scry.html", "SCRY by BlvkWare"),
     "/scry.html": ("scry.html", "SCRY by BlvkWare"),
@@ -692,7 +692,7 @@ def main():
         return 1
 
     print("")
-    print("  BlvkWare AI HTML Generator - local dev server")
+    print("  SIGIL / SCRY - BlvkWare local dev server")
     print("  http://localhost:%d/" % args.port)
     if KEY:
         print("  provider: %s" % CFG["label"])

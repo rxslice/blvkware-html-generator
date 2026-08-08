@@ -28,11 +28,11 @@ CUSTOM_DOMAIN = "blvkware.dev"
 TOOLS = [
     {
         "src": "app.html",
-        "slug": "html-generator",
-        "title": "BlvkWare AI HTML Generator",
-        "desc": ("Describe a website, game, tool or app in plain language and get a complete, "
-                 "working, single-file HTML page back — streamed live, with a runtime console "
-                 "and a quality audit."),
+        "slug": "sigil",
+        "title": "SIGIL by BlvkWare | Describe it, watch it get built",
+        "desc": ("Write down what you want and watch it become real software — a complete, "
+                 "working, single-file application streamed into the page, then run, audited "
+                 "and repaired."),
     },
     {
         "src": "scry.html",
@@ -307,6 +307,35 @@ SHIM = r"""
 """
 
 
+# old path -> current slug. Static hosting has no rewrite rules, so a renamed
+# tool keeps its previous address alive with a real page that forwards.
+REDIRECTS = [("html-generator", "sigil")]
+
+
+def redirect_page(slug):
+    """A redirect that works without a server: header, meta refresh, and script.
+
+    The query string is carried across so SCRY's `?prompt=` hand-off still lands
+    if anything is holding the old URL.
+    """
+    url = "/%s/" % slug
+    close_script = "<" + "/script>"
+    return (
+        "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n"
+        "<meta charset=\"utf-8\">\n"
+        "<meta http-equiv=\"refresh\" content=\"0; url=" + url + "\">\n"
+        "<link rel=\"canonical\" href=\"https://" + CUSTOM_DOMAIN + url + "\">\n"
+        "<meta name=\"robots\" content=\"noindex\">\n"
+        "<title>Moved to SIGIL</title>\n"
+        "<script>location.replace('" + url + "' + location.search + location.hash);"
+        + close_script + "\n"
+        "</head>\n<body style=\"background:#0a0908;color:#a89d8b;font:15px/1.6 system-ui,sans-serif;"
+        "display:grid;place-items:center;height:100vh;margin:0\">\n"
+        "<p>The HTML generator is now <a href=\"" + url + "\" style=\"color:#d4f24a\">SIGIL</a>.</p>\n"
+        "</body>\n</html>\n"
+    )
+
+
 KEY_RE = re.compile(
     r"(AIza[0-9A-Za-z_\-]{30,}|sk-or-v1-[0-9a-f]{40,}"
     r"|gsk_[0-9A-Za-z]{40,}|sk-ant-[0-9A-Za-z\-]{40,})"
@@ -376,6 +405,16 @@ def main():
             fh.write(page)
         print("Built docs/%s/index.html (%.1f KB)"
               % (tool["slug"], len(page.encode("utf-8")) / 1024.0))
+
+    # /html-generator/ was the tool's address before it was named SIGIL. Links to
+    # it are already out in the world, so it stays as a redirect rather than a 404.
+    for old, new in REDIRECTS:
+        d = os.path.join(OUT_DIR, old)
+        if not os.path.isdir(d):
+            os.makedirs(d)
+        with io.open(os.path.join(d, "index.html"), "w", encoding="utf-8") as fh:
+            fh.write(redirect_page(new))
+        print("Built docs/%s/index.html  -> /%s/ (redirect)" % (old, new))
 
     # The marketing site is the root of blvkware.dev; the tools are sub-pages.
     if os.path.isfile(SITE):
