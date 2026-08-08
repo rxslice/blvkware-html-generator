@@ -514,9 +514,12 @@
   // Browsers cannot fetch an arbitrary origin directly, so the page is pulled
   // through public read-only relays. Each returns something different, and each
   // fails on a different set of sites, so we try them in order and validate.
+  // corsproxy is first because it is the one that answers from the deployed
+  // https origin — allorigins works from localhost but is refused there, and
+  // fails in single-digit milliseconds, so keeping it as fallback costs nothing.
   var RAW_READERS = [
-    function (u) { return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u); },
-    function (u) { return 'https://corsproxy.io/?url=' + encodeURIComponent(u); }
+    function (u) { return 'https://corsproxy.io/?url=' + encodeURIComponent(u); },
+    function (u) { return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u); }
   ];
   var TEXT_READER = function (u) { return 'https://r.jina.ai/' + u; };
 
