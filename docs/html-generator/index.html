@@ -44,6 +44,10 @@
   var SYSTEM = "You are a world-class front-end engineer and product designer. " +
     "You output complete, self-contained, single-file HTML documents and nothing else.";
 
+  // A tool that needs a different persona (SCRY asks for JSON, not HTML) sets
+  // window.__blvkSystem before calling and clears it afterwards.
+  function system() { return window.__blvkSystem || SYSTEM; }
+
   function creds() {
     try {
       return { p: localStorage.getItem(LS_P) || "gemini", k: localStorage.getItem(LS_K) || "" };
@@ -178,7 +182,7 @@
           max_tokens: cfg.max,
           stream: true,
           messages: [
-            { role: "system", content: SYSTEM },
+            { role: "system", content: system() },
             { role: "user", content: content }
           ]
         })
@@ -3068,6 +3072,28 @@
     renderAudit();
     loadProviders();
     supConfigure();
+
+    // Hand-off from SCRY: it forges a prototype by sending the architecture here.
+    // sessionStorage carries the full brief; the query string is the fallback for
+    // a link opened in a fresh tab, so it can be truncated.
+    (function handoff() {
+      let spec = '';
+      try {
+        spec = sessionStorage.getItem('blvkware.forge.prompt') || '';
+        sessionStorage.removeItem('blvkware.forge.prompt');
+      } catch (e) {}
+      if (!spec) {
+        try { spec = new URLSearchParams(location.search).get('prompt') || ''; } catch (e) {}
+      }
+      if (!spec) return;
+      el.prompt.value = spec;
+      autosize();
+      expandComposer();
+      // Drop the query string so a reload does not silently refill the composer.
+      try { history.replaceState(null, '', location.pathname); } catch (e) {}
+      setStatus('Brief received from SCRY');
+    })();
+
     let supSkip = false;
     try { supSkip = localStorage.getItem(SUP_KEY) === '1'; } catch (e) {}
     if (!supSkip) setTimeout(openSupport, 420);

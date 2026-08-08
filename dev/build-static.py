@@ -19,12 +19,30 @@ import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-APP = os.path.join(ROOT, "app.html")
 SITE = os.path.join(ROOT, "site", "index.html")
 OUT_DIR = os.path.join(ROOT, "docs")            # blvkware.dev/
-TOOL_DIR = os.path.join(OUT_DIR, "html-generator")  # blvkware.dev/html-generator/
-OUT = os.path.join(TOOL_DIR, "index.html")
 CUSTOM_DOMAIN = "blvkware.dev"
+
+# Each tool is a single source file built into its own sub-directory of the
+# site. Adding a tool means adding a row here and a card to site/index.html.
+TOOLS = [
+    {
+        "src": "app.html",
+        "slug": "html-generator",
+        "title": "BlvkWare AI HTML Generator",
+        "desc": ("Describe a website, game, tool or app in plain language and get a complete, "
+                 "working, single-file HTML page back — streamed live, with a runtime console "
+                 "and a quality audit."),
+    },
+    {
+        "src": "scry.html",
+        "slug": "scry",
+        "title": "SCRY by BlvkWare | Find the software hiding in your business",
+        "desc": ("Describe how your business works. SCRY maps the operation, finds the "
+                 "bottlenecks and missing systems, and turns them into a live operating "
+                 "console you can click through."),
+    },
+]
 
 # Browser-side runtime. Same contract as the platform's ai-text-plugin:
 #   root.generateText({instruction, startWith, onChunk}) -> Promise<{text, generatedText}>
@@ -69,6 +87,10 @@ SHIM = r"""
 
   var SYSTEM = "You are a world-class front-end engineer and product designer. " +
     "You output complete, self-contained, single-file HTML documents and nothing else.";
+
+  // A tool that needs a different persona (SCRY asks for JSON, not HTML) sets
+  // window.__blvkSystem before calling and clears it afterwards.
+  function system() { return window.__blvkSystem || SYSTEM; }
 
   function creds() {
     try {
@@ -204,7 +226,7 @@ SHIM = r"""
           max_tokens: cfg.max,
           stream: true,
           messages: [
-            { role: "system", content: SYSTEM },
+            { role: "system", content: system() },
             { role: "user", content: content }
           ]
         })
@@ -285,70 +307,91 @@ SHIM = r"""
 """
 
 
-def main():
-    if not os.path.isfile(APP):
-        print("ERROR: app.html not found")
-        return 1
+KEY_RE = re.compile(
+    r"(AIza[0-9A-Za-z_\-]{30,}|sk-or-v1-[0-9a-f]{40,}"
+    r"|gsk_[0-9A-Za-z]{40,}|sk-ant-[0-9A-Za-z\-]{40,})"
+)
 
-    with io.open(APP, encoding="utf-8") as fh:
+# The brand mark lives in app.html; every tool page reuses it as its favicon.
+def favicon():
+    path = os.path.join(ROOT, "app.html")
+    if not os.path.isfile(path):
+        return ""
+    with io.open(path, encoding="utf-8") as fh:
+        m = re.search(r'<symbol id="i-blvkmark"[^>]*>([\s\S]*?)</symbol>', fh.read())
+    if not m:
+        return ""
+    import urllib.parse
+    svg = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">'
+           '<rect width="64" height="64" rx="14" fill="#0b0806"/>' + m.group(1) + "</svg>")
+    return "data:image/svg+xml," + urllib.parse.quote(" ".join(svg.split()), safe="")
+
+
+def build_tool(tool, icon):
+    """Wrap a tool source file in a real HTML document plus the BYOK runtime."""
+    src_path = os.path.join(ROOT, tool["src"])
+    if not os.path.isfile(src_path):
+        print("ERROR: %s not found" % tool["src"])
+        return None
+
+    with io.open(src_path, encoding="utf-8") as fh:
         src = fh.read()
 
     # Refuse to publish if a developer key ever leaked into the source.
-    leak = re.search(r"(AIza[0-9A-Za-z_\-]{30,}|sk-or-v1-[0-9a-f]{40,}|gsk_[0-9A-Za-z]{40,}|sk-ant-[0-9A-Za-z\-]{40,})", src)
-    if leak:
-        print("ABORTED: what looks like a live API key is present in app.html.")
+    if KEY_RE.search(src):
+        print("ABORTED: what looks like a live API key is present in %s." % tool["src"])
         print("         Remove it before building a public bundle.")
-        return 1
+        return None
 
-    idx = src.index("<style>")
-    body = src[idx:]
-
-    m = re.search(r'<symbol id="i-blvkmark"[^>]*>([\s\S]*?)</symbol>', src)
-    icon = ""
-    if m:
-        import urllib.parse
-        svg = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">'
-               '<rect width="64" height="64" rx="14" fill="#0b0806"/>' + m.group(1) + "</svg>")
-        icon = "data:image/svg+xml," + urllib.parse.quote(" ".join(svg.split()), safe="")
-
+    body = src[src.index("<style>"):]
     close_script = "<" + "/script>"
-    desc = ("Describe a website, game, tool or app in plain language and get a complete, "
-            "working, single-file HTML page back — streamed live, with a runtime console "
-            "and a quality audit.")
 
     head = (
         "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n"
         "<meta charset=\"utf-8\">\n"
         "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n"
-        "<title>BlvkWare AI HTML Generator</title>\n"
-        "<meta name=\"description\" content=\"" + desc + "\">\n"
-        "<meta property=\"og:title\" content=\"BlvkWare AI HTML Generator\">\n"
-        "<meta property=\"og:description\" content=\"" + desc + "\">\n"
+        "<title>" + tool["title"] + "</title>\n"
+        "<meta name=\"description\" content=\"" + tool["desc"] + "\">\n"
+        "<meta property=\"og:title\" content=\"" + tool["title"] + "\">\n"
+        "<meta property=\"og:description\" content=\"" + tool["desc"] + "\">\n"
         "<meta property=\"og:type\" content=\"website\">\n"
         "<meta name=\"twitter:card\" content=\"summary\">\n"
         + ('<link rel="icon" href="%s">\n' % icon if icon else "")
         + "<script>" + SHIM + close_script + "\n"
         "</head>\n<body>\n"
     )
+    return head + body + "\n</body>\n</html>\n"
 
-    page = head + body + "\n</body>\n</html>\n"
 
-    for d in (OUT_DIR, TOOL_DIR):
-        if not os.path.isdir(d):
-            os.makedirs(d)
-    with io.open(OUT, "w", encoding="utf-8") as fh:
-        fh.write(page)
+def main():
+    icon = favicon()
 
-    # The marketing site is the root of blvkware.dev; the tool is a sub-page.
+    if not os.path.isdir(OUT_DIR):
+        os.makedirs(OUT_DIR)
+
+    for tool in TOOLS:
+        page = build_tool(tool, icon)
+        if page is None:
+            return 1
+        out_dir = os.path.join(OUT_DIR, tool["slug"])
+        if not os.path.isdir(out_dir):
+            os.makedirs(out_dir)
+        with io.open(os.path.join(out_dir, "index.html"), "w", encoding="utf-8") as fh:
+            fh.write(page)
+        print("Built docs/%s/index.html (%.1f KB)"
+              % (tool["slug"], len(page.encode("utf-8")) / 1024.0))
+
+    # The marketing site is the root of blvkware.dev; the tools are sub-pages.
     if os.path.isfile(SITE):
         with io.open(SITE, encoding="utf-8") as fh:
             site_html = fh.read()
         with io.open(os.path.join(OUT_DIR, "index.html"), "w", encoding="utf-8") as fh:
             fh.write(site_html)
-        print("Built docs/index.html            (%.1f KB)  marketing site"
+        print("Built docs/index.html (%.1f KB)  marketing site"
               % (len(site_html.encode("utf-8")) / 1024.0))
     else:
         print("WARNING: site/index.html missing - root page not built")
+
     # Pages would otherwise run the output through Jekyll.
     with io.open(os.path.join(OUT_DIR, ".nojekyll"), "w", encoding="utf-8") as fh:
         fh.write("")
@@ -357,8 +400,6 @@ def main():
     with io.open(os.path.join(OUT_DIR, "CNAME"), "w", encoding="utf-8") as fh:
         fh.write(CUSTOM_DOMAIN)
 
-    print("Built docs/html-generator/index.html (%.1f KB)  tool"
-          % (len(page.encode("utf-8")) / 1024.0))
     print("  no developer keys embedded - visitors supply their own")
     return 0
 

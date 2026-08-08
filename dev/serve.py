@@ -227,6 +227,7 @@ SHIM = r"""
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           instruction: instruction, startWith: startWith,
+          system: window.__blvkSystem || "",
           provider: sel.provider || "", model: sel.model || ""
         }),
         signal: ctrl.signal
@@ -301,23 +302,40 @@ def favicon_from_mark(src):
     return "data:image/svg+xml," + urllib.parse.quote(svg, safe="")
 
 
-def build_page():
-    with io.open(APP, encoding="utf-8") as fh:
+def build_page(src_name="app.html", title="BlvkWare AI HTML Generator"):
+    path = os.path.join(ROOT, src_name)
+    with io.open(path, encoding="utf-8") as fh:
         src = fh.read()
     idx = src.index("<style>")
     body = src[idx:]
     close_script = "<" + "/script>"
-    icon = favicon_from_mark(src)
+    # The brand mark lives in app.html; every tool page reuses it as its favicon.
+    with io.open(APP, encoding="utf-8") as fh:
+        icon = favicon_from_mark(fh.read())
     head = (
         "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n"
         "<meta charset=\"utf-8\">\n"
         "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n"
-        "<title>BlvkWare AI HTML Generator</title>\n"
+        "<title>" + title + "</title>\n"
         + ('<link rel="icon" href="%s">\n' % icon if icon else "") +
         "<script>" + SHIM + close_script + "\n"
         "</head>\n<body>\n"
     )
     return (head + body + "\n</body>\n</html>\n").encode("utf-8")
+
+
+# path prefix -> (source file, title)
+PAGES = {
+    "/": ("app.html", "BlvkWare AI HTML Generator"),
+    "/index.html": ("app.html", "BlvkWare AI HTML Generator"),
+    "/app.html": ("app.html", "BlvkWare AI HTML Generator"),
+    # mirrors the deployed layout so SCRY's hand-off link resolves locally too
+    "/html-generator": ("app.html", "BlvkWare AI HTML Generator"),
+    "/html-generator/": ("app.html", "BlvkWare AI HTML Generator"),
+    "/scry": ("scry.html", "SCRY by BlvkWare"),
+    "/scry/": ("scry.html", "SCRY by BlvkWare"),
+    "/scry.html": ("scry.html", "SCRY by BlvkWare"),
+}
 
 
 # ---------------------------------------------------------------------------
@@ -330,9 +348,14 @@ def user_content(instruction, start_with):
     return instruction
 
 
-def build_request(instruction, start_with):
-    """Return (urllib.Request, wire) for the active provider."""
+def build_request(instruction, start_with, system=None):
+    """Return (urllib.Request, wire) for the active provider.
+
+    `system` lets a tool swap the persona — the HTML generator wants "output
+    HTML only", SCRY wants "output JSON only".
+    """
     content = user_content(instruction, start_with)
+    system = system or SYSTEM_PROMPT
     wire = CFG["wire"]
 
     if wire == "anthropic":
@@ -341,7 +364,7 @@ def build_request(instruction, start_with):
             "model": MODEL,
             "max_tokens": MAX_TOKENS,
             "stream": True,
-            "system": SYSTEM_PROMPT,
+            "system": system,
             "messages": [{"role": "user", "content": content}],
         }
         headers = {
@@ -360,7 +383,7 @@ def build_request(instruction, start_with):
             "max_tokens": MAX_TOKENS,
             "stream": True,
             "messages": [
-                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "system", "content": system},
                 {"role": "user", "content": content},
             ],
         }
@@ -405,7 +428,7 @@ def extract_delta(wire, ev):
 RETRYABLE = (408, 409, 425, 429, 500, 502, 503, 504, 529)
 
 
-def attempt_stream(cfg, key, model, instruction, start_with, write_line):
+def attempt_stream(cfg, key, model, instruction, start_with, write_line, system=None):
     """One provider attempt.
 
     Returns (ok, emitted_any, error_text, retryable). `emitted_any` matters: once
@@ -416,7 +439,7 @@ def attempt_stream(cfg, key, model, instruction, start_with, write_line):
     CFG, KEY, MODEL = cfg, key, model
     emitted = False
     try:
-        req, wire = build_request(instruction, start_with)
+        req, wire = build_request(instruction, start_with, system)
     except Exception as e:
         return False, False, "Could not build request: " + str(e), False
 
@@ -471,7 +494,8 @@ def available_providers():
     return out
 
 
-def stream_completion(instruction, start_with, write_line, prefer=None, model_override=None):
+def stream_completion(instruction, start_with, write_line, prefer=None, model_override=None,
+                      system=None):
     global MAX_TOKENS
     """Stream with bounded retry, then fail over to another provider.
 
@@ -498,7 +522,7 @@ def stream_completion(instruction, start_with, write_line, prefer=None, model_ov
 
         for attempt in range(3):
             ok, emitted, err, retryable = attempt_stream(
-                cfg, key, model, instruction, start_with, write_line)
+                cfg, key, model, instruction, start_with, write_line, system)
             if ok:
                 return
             last = err
@@ -531,9 +555,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
     def do_GET(self):
         path = self.path.split("?", 1)[0]
-        if path in ("/", "/index.html", "/app.html"):
+        if path in PAGES:
             try:
-                page = build_page()
+                page = build_page(*PAGES[path])
             except Exception as e:
                 self.send_error(500, "Could not build page: %s" % e)
                 return
@@ -595,6 +619,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
                     body.get("instruction", ""), body.get("startWith", ""), write_line,
                     prefer=body.get("provider") or None,
                     model_override=body.get("model") or None,
+                    system=body.get("system") or None,
                 )
             except (BrokenPipeError, ConnectionResetError):
                 return

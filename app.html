@@ -2814,6 +2814,28 @@ generateText = {import:ai-text-plugin}
     renderAudit();
     loadProviders();
     supConfigure();
+
+    // Hand-off from SCRY: it forges a prototype by sending the architecture here.
+    // sessionStorage carries the full brief; the query string is the fallback for
+    // a link opened in a fresh tab, so it can be truncated.
+    (function handoff() {
+      let spec = '';
+      try {
+        spec = sessionStorage.getItem('blvkware.forge.prompt') || '';
+        sessionStorage.removeItem('blvkware.forge.prompt');
+      } catch (e) {}
+      if (!spec) {
+        try { spec = new URLSearchParams(location.search).get('prompt') || ''; } catch (e) {}
+      }
+      if (!spec) return;
+      el.prompt.value = spec;
+      autosize();
+      expandComposer();
+      // Drop the query string so a reload does not silently refill the composer.
+      try { history.replaceState(null, '', location.pathname); } catch (e) {}
+      setStatus('Brief received from SCRY');
+    })();
+
     let supSkip = false;
     try { supSkip = localStorage.getItem(SUP_KEY) === '1'; } catch (e) {}
     if (!supSkip) setTimeout(openSupport, 420);
