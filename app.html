@@ -2752,9 +2752,10 @@ generateText = {import:ai-text-plugin}
     loadProviders();
     supConfigure();
 
-    // Hand-off from SCRY: it forges a prototype by sending the architecture here.
-    // sessionStorage carries the full brief; the query string is the fallback for
-    // a link opened in a fresh tab, so it can be truncated.
+    // Hand-off from another Lab tool (SCRY, AUGUR): it forges a prototype by
+    // sending the architecture here. sessionStorage carries the full brief; the
+    // query string is the fallback for a link opened in a fresh tab, so it can
+    // be truncated.
     (function handoff() {
       let spec = '';
       try {
@@ -2770,7 +2771,7 @@ generateText = {import:ai-text-plugin}
       expandComposer();
       // Drop the query string so a reload does not silently refill the composer.
       try { history.replaceState(null, '', location.pathname); } catch (e) {}
-      setStatus('Brief received from SCRY');
+      setStatus('Brief received — ready to build');
     })();
 
     let supSkip = false;

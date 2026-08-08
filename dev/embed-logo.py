@@ -139,14 +139,15 @@ def main():
         '  </symbol>',
         "app.html brand symbol")
 
-    # --- scry.html ---
-    ok &= patch(
-        os.path.join(ROOT, "scry.html"),
-        r'<span class="mark">[\s\S]*?</span>',
-        '<span class="mark">\n'
-        '        <img src="' + uri + '" alt="" width="160" height="160">\n'
-        '      </span>',
-        "scry.html brand mark")
+    # --- tools that carry the mark inline in a <span class="mark"> ---
+    for name in ("scry.html", "augur.html"):
+        ok &= patch(
+            os.path.join(ROOT, name),
+            r'<span class="mark">[\s\S]*?</span>',
+            '<span class="mark">\n'
+            '        <img src="' + uri + '" alt="" width="160" height="160">\n'
+            '      </span>',
+            name + " brand mark")
 
     # --- marketing site: real file, it is not a single-file artifact ---
     ok &= patch(

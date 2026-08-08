@@ -35,6 +35,14 @@ TOOLS = [
                  "and repaired."),
     },
     {
+        "src": "augur.html",
+        "slug": "augur",
+        "title": "AUGUR by BlvkWare | Read a company from the outside",
+        "desc": ("Point AUGUR at a company's website. It reads the public page, extracts the "
+                 "real technical signals, and returns the revenue, operational and competitive "
+                 "systems that business should be running but isn't."),
+    },
+    {
         "src": "scry.html",
         "slug": "scry",
         "title": "SCRY by BlvkWare | Find the software hiding in your business",

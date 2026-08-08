@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AUGUR by BlvkWare | Read a company from the outside</title>
+<meta name="description" content="Point AUGUR at a company's website. It reads the public page, extracts the real technical signals, and returns the revenue, operational and competitive systems that business should be running but isn't.">
+<meta property="og:title" content="AUGUR by BlvkWare | Read a company from the outside">
+<meta property="og:description" content="Point AUGUR at a company's website. It reads the public page, extracts the real technical signals, and returns the revenue, operational and competitive systems that business should be running but isn't.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://blvkware.dev/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+<link rel="apple-touch-icon" href="/assets/logo-192.png">
+<script>
+(function () {
+  var LS_P = "blvkware.byok.provider", LS_K = "blvkware.byok.key";
+
+  var PROVIDERS = {
+    gemini: {
+      label: "Google AI Studio (Gemini)",
+      url: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+      model: "gemini-3.5-flash",
+      max: 32000,
+      get: "https://aistudio.google.com/apikey",
+      hint: "starts with AIza"
+    },
+    openrouter: {
+      label: "OpenRouter",
+      url: "https://openrouter.ai/api/v1/chat/completions",
+      model: "nvidia/nemotron-3-super-120b-a12b:free",
+      max: 32000,
+      get: "https://openrouter.ai/keys",
+      hint: "starts with sk-or-"
+    },
+    groq: {
+      label: "Groq",
+      url: "https://api.groq.com/openai/v1/chat/completions",
+      model: "llama-3.3-70b-versatile",
+      max: 8000,
+      get: "https://console.groq.com/keys",
+      hint: "starts with gsk_"
+    }
+  };
+
+  var SYSTEM = "You are a world-class front-end engineer and product designer. " +
+    "You output complete, self-contained, single-file HTML documents and nothing else.";
+
+  // A tool that needs a different persona (SCRY asks for JSON, not HTML) sets
+  // window.__blvkSystem before calling and clears it afterwards.
+  function system() { return window.__blvkSystem || SYSTEM; }
+
+  function creds() {
+    try {
+      return { p: localStorage.getItem(LS_P) || "gemini", k: localStorage.getItem(LS_K) || "" };
+    } catch (e) { return { p: "gemini", k: "" }; }
+  }
+
+  function guessProvider(key) {
+    if (/^AIza/.test(key)) return "gemini";
+    if (/^sk-or-/.test(key)) return "openrouter";
+    if (/^gsk_/.test(key)) return "groq";
+    return "";
+  }
+
+  /* ---------------- key dialog ---------------- */
+  function keyDialog() {
+    if (document.getElementById("byokBack")) return;
+    var c = creds();
+    var opts = "";
+    for (var id in PROVIDERS) {
+      opts += '<option value="' + id + '"' + (id === c.p ? " selected" : "") + '>' +
+              PROVIDERS[id].label + "</option>";
+    }
+    var back = document.createElement("div");
+    back.id = "byokBack";
+    back.className = "modal-back";
+    back.innerHTML =
+      '<div class="modal" role="dialog" aria-modal="true" aria-label="Connect an API key" style="width:min(520px,100%)">' +
+        '<div class="modal-head">' +
+          '<svg class="ic ic-20" style="color:var(--accent-ink)"><use href="#i-cpu"/></svg>' +
+          "<h3>Connect a model</h3><div class=\"spacer\"></div>" +
+          '<button class="btn ghost sm icon" data-x aria-label="Close"><svg class="ic ic-16"><use href="#i-close"/></svg></button>' +
+        "</div>" +
+        '<div class="modal-body">' +
+          '<p style="margin:0 0 16px;font-size:13px;line-height:1.6;color:var(--ink-2)">' +
+            "This is a static site with no server, so generation runs from your browser using your own key. " +
+            "It is stored only in this browser and sent only to the provider you pick — never to this site or anyone else." +
+          "</p>" +
+          '<div class="opt-title">Provider</div>' +
+          '<select class="picker" id="byokProv" style="max-width:none;width:100%;height:36px;margin-bottom:14px">' + opts + "</select>" +
+          '<div class="opt-title">API key</div>' +
+          '<input class="refine-input" id="byokKey" type="password" autocomplete="off" spellcheck="false" ' +
+            'placeholder="paste your key" style="width:100%;height:36px;margin-bottom:8px" value="' +
+            (c.k ? c.k.replace(/"/g, "&quot;") : "") + '">' +
+          '<p id="byokHint" style="margin:0 0 18px;font-size:11.5px;color:var(--ink-3)"></p>' +
+          '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+            '<button class="btn primary" id="byokSave"><svg class="ic ic-16"><use href="#i-check"/></svg> Save key</button>' +
+            '<a class="btn" id="byokGet" href="#" target="_blank" rel="noopener noreferrer">' +
+              '<svg class="ic ic-16"><use href="#i-external"/></svg> Get a free key</a>' +
+            '<div class="spacer"></div>' +
+            '<button class="btn ghost" id="byokClear">Forget key</button>' +
+          "</div>" +
+        "</div>" +
+      "</div>";
+    document.body.appendChild(back);
+
+    var sel = back.querySelector("#byokProv");
+    var inp = back.querySelector("#byokKey");
+    var hint = back.querySelector("#byokHint");
+    var get = back.querySelector("#byokGet");
+
+    function sync() {
+      var cfg = PROVIDERS[sel.value];
+      hint.textContent = "Free tier, no credit card. Key " + cfg.hint + ". Model: " + cfg.model + ".";
+      get.href = cfg.get;
+    }
+    sync();
+    sel.addEventListener("change", sync);
+
+    inp.addEventListener("input", function () {
+      var g = guessProvider(inp.value.trim());
+      if (g && g !== sel.value) { sel.value = g; sync(); }
+    });
+
+    function close() { back.remove(); }
+    back.addEventListener("click", function (e) {
+      if (e.target === back || e.target.closest("[data-x]")) close();
+    });
+    back.querySelector("#byokSave").addEventListener("click", function () {
+      var k = inp.value.trim();
+      if (!k) return;
+      try {
+        localStorage.setItem(LS_P, sel.value);
+        localStorage.setItem(LS_K, k);
+      } catch (e) {}
+      close();
+      if (window.__blvkToast) window.__blvkToast("Key saved — you're ready to generate", "ok");
+    });
+    back.querySelector("#byokClear").addEventListener("click", function () {
+      try { localStorage.removeItem(LS_K); } catch (e) {}
+      inp.value = "";
+      close();
+      if (window.__blvkToast) window.__blvkToast("Key removed from this browser", "info");
+    });
+    setTimeout(function () { inp.focus(); }, 60);
+  }
+
+  window.__blvkKeyDialog = keyDialog;
+
+  /* ---------------- generation ---------------- */
+  var CONTINUE = "\n\nYou have already written the beginning of this file. Here it is, " +
+    "verbatim, between markers:\n\n<<<PARTIAL_FILE_START>>>\n{P}\n<<<PARTIAL_FILE_END>>>\n\n" +
+    "Continue the file from exactly where it stops. Output ONLY the continuation — do not " +
+    "repeat any of the text above, do not restart the document, do not explain. Your first " +
+    "character must be the character that comes next.";
+
+  window.root = {
+    generateText: function (o) {
+      var instruction = o.instruction || "";
+      var startWith = o.startWith || "";
+      var onChunk = o.onChunk;
+      var ctrl = new AbortController();
+      var generated = "";
+
+      var c = creds();
+      if (!c.k) {
+        keyDialog();
+        var p0 = Promise.reject(new Error(
+          "No API key connected. Add a free key to generate — it stays in your browser."));
+        p0.stop = function () {};
+        return p0;
+      }
+
+      var cfg = PROVIDERS[c.p] || PROVIDERS.gemini;
+      var content = startWith ? instruction + CONTINUE.replace("{P}", startWith) : instruction;
+
+      var p = fetch(cfg.url, {
+        method: "POST",
+        headers: { "content-type": "application/json", "authorization": "Bearer " + c.k },
+        signal: ctrl.signal,
+        body: JSON.stringify({
+          model: cfg.model,
+          max_tokens: cfg.max,
+          stream: true,
+          messages: [
+            { role: "system", content: system() },
+            { role: "user", content: content }
+          ]
+        })
+      }).then(function (res) {
+        if (!res.ok) {
+          return res.text().then(function (t) {
+            var msg = t.slice(0, 300);
+            if (res.status === 401 || res.status === 403) {
+              keyDialog();
+              msg = "That key was rejected by " + cfg.label + ". Check it and try again.";
+            } else if (res.status === 429) {
+              msg = cfg.label + " rate limit reached. Wait a moment, or connect a different provider.";
+            }
+            throw new Error(msg);
+          });
+        }
+        var reader = res.body.getReader();
+        var dec = new TextDecoder();
+        var buf = "";
+
+        function handle(line) {
+          line = line.trim();
+          if (line.indexOf("data:") !== 0) return;
+          var d = line.slice(5).trim();
+          if (!d || d === "[DONE]") return;
+          var ev;
+          try { ev = JSON.parse(d); } catch (e) { return; }
+          if (ev.error) throw new Error(ev.error.message || "stream error");
+          var ch = ev.choices && ev.choices[0];
+          var piece = ch && ch.delta && ch.delta.content;
+          if (typeof piece === "string" && piece) {
+            generated += piece;
+            if (onChunk) onChunk({ fullTextSoFar: startWith + generated, isFromStartWith: false });
+          }
+        }
+
+        function pump() {
+          return reader.read().then(function (r) {
+            if (r.done) {
+              if (buf.trim()) handle(buf);
+              return { text: startWith + generated, generatedText: generated };
+            }
+            buf += dec.decode(r.value, { stream: true });
+            var lines = buf.split("\n");
+            buf = lines.pop();
+            for (var i = 0; i < lines.length; i++) handle(lines[i]);
+            return pump();
+          });
+        }
+        return pump();
+      });
+
+      p.stop = function () { try { ctrl.abort(); } catch (e) {} };
+      return p;
+    }
+  };
+
+  /* a way back into the key dialog once a key is set, plus a route home */
+  document.addEventListener("DOMContentLoaded", function () {
+    var foot = document.querySelector(".rail-foot");
+    if (!foot) return;
+    var home = document.createElement("a");
+    home.className = "btn ghost icon";
+    home.href = "/";
+    home.setAttribute("data-tip", "BlvkWare home");
+    home.setAttribute("aria-label", "Back to BlvkWare");
+    home.innerHTML = '<svg class="ic ic-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 10.4 12 3.6l8.4 6.8V20a1.4 1.4 0 0 1-1.4 1.4H5A1.4 1.4 0 0 1 3.6 20Z"/><path d="M9.6 21.4v-7h4.8v7"/></svg>';
+    foot.insertBefore(home, foot.querySelector(".spacer"));
+    var b = document.createElement("button");
+    b.className = "btn ghost icon";
+    b.setAttribute("data-tip", "Model / API key");
+    b.setAttribute("aria-label", "Model and API key");
+    b.innerHTML = '<svg class="ic ic-16"><use href="#i-cpu"/></svg>';
+    b.addEventListener("click", keyDialog);
+    foot.insertBefore(b, foot.querySelector(".spacer"));
+  });
+})();
+</script>
+</head>
+<body>
+<style>
+  /* ============================================================
+     AUGUR — read a company from the outside, then build what's missing
+     BlvkWare "Carbon & Acid"
+     ============================================================ */
+  :root {
+    color-scheme: dark;
+    --bg:        #0a0908;
+    --bg-2:      #100e0b;
+    --surface:   #17140f;
+    --surface-2: #1e1a15;
+    --surface-3: #29241d;
+    --line:      #2e2820;
+    --line-2:    #423a2e;
+    --ink:   #f5f0e6;
+    --ink-2: #a89d8b;
+    --ink-3: #726858;
+    --accent:     #d4f24a;
+    --accent-ink: #d4f24a;
+    --on-accent:  #14170a;
+    --clay:  #e8734a;
+    --jade:  #6ec8a8;
+    --brass: #d9b65c;
+    --info:  #8fbfd8;
+    --accent-soft: rgba(212,242,74,.11);
+    --accent-line: rgba(212,242,74,.34);
+    --r-sm: 10px; --r-md: 14px; --r-lg: 18px; --r-xl: 24px;
+    --sh-2: 0 4px 16px -4px rgba(0,0,0,.55), 0 1px 2px rgba(0,0,0,.4);
+    --sh-3: 0 20px 52px -14px rgba(0,0,0,.75);
+    --ease: cubic-bezier(.2,.8,.2,1);
+    --t: 190ms var(--ease);
+    --font: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    margin: 0; font-family: var(--font); font-size: 14px; line-height: 1.5;
+    color: var(--ink); background: var(--bg); -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(820px 460px at 6% -8%, rgba(212,242,74,.09), transparent 62%),
+      radial-gradient(700px 420px at 96% 2%, rgba(232,115,74,.09), transparent 62%);
+  }
+  button, input, textarea, select { font: inherit; color: inherit; }
+  button { background: none; border: none; cursor: pointer; }
+  ::selection { background: rgba(212,242,74,.3); }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 20px; border: 3px solid transparent; background-clip: content-box; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 5px; }
+  .ic { width: 18px; height: 18px; flex: none; display: block; }
+  .ic-14 { width: 14px; height: 14px; } .ic-16 { width: 16px; height: 16px; }
+  .ic-20 { width: 20px; height: 20px; } .ic-28 { width: 28px; height: 28px; }
+  .spacer { flex: 1; }
+  .hidden { display: none !important; }
+  .sr { position: fixed; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+  /* ---------- shell ---------- */
+  #app { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; }
+  .topbar {
+    flex: none; height: 88px; display: flex; align-items: center; gap: 12px; padding: 0 16px;
+    border-bottom: 1px solid var(--line);
+    background: color-mix(in oklab, var(--bg-2) 66%, transparent); backdrop-filter: blur(14px);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+  /* The mark brings its own black field and brass ring — the tile only rounds
+     the corners, so we do not stack a second border around it. */
+  .mark {
+    width: 70px; height: 70px; border-radius: 18px; flex: none;
+    background: #060504; overflow: hidden;
+    display: grid; place-items: center;
+  }
+  .mark img { width: 100%; height: 100%; display: block; }
+  .wordmark { font-size: 17px; font-weight: 800; letter-spacing: .2em; }
+  .wordmark i { color: var(--accent-ink); font-style: normal; }
+  .by { font-size: 10.5px; color: var(--ink-3); letter-spacing: .04em; margin-top: 1px; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    height: 34px; padding: 0 13px; border-radius: var(--r-sm);
+    font-size: 13px; font-weight: 620; color: var(--ink);
+    background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line);
+    transition: background var(--t), box-shadow var(--t), transform var(--t);
+    white-space: nowrap;
+  }
+  .btn:hover { background: var(--surface-3); }
+  .btn:active { transform: translateY(1px); }
+  .btn.ghost { background: transparent; box-shadow: none; color: var(--ink-2); }
+  .btn.ghost:hover { background: var(--surface-2); color: var(--ink); }
+  .btn.icon { width: 34px; padding: 0; justify-content: center; }
+  .btn.primary {
+    background: var(--accent); color: var(--on-accent); box-shadow: none; font-weight: 730;
+  }
+  .btn.primary:hover { background: #e2ff63; }
+  .btn.lg { height: 46px; padding: 0 22px; font-size: 15px; border-radius: var(--r-md); }
+  .btn:disabled { opacity: .5; pointer-events: none; }
+  .status { font-size: 12px; color: var(--ink-3); font-family: var(--mono); }
+
+  .stage { flex: 1; overflow-y: auto; }
+
+  /* ---------- stage 1: target ---------- */
+  .aim-wrap { min-height: 100%; display: grid; place-items: center; padding: 44px 20px; }
+  .aim { width: min(760px, 100%); text-align: center; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 7px; margin-bottom: 18px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--brass); padding: 6px 12px; border-radius: 100px;
+    background: rgba(217,182,92,.08); box-shadow: inset 0 0 0 1px rgba(217,182,92,.24);
+  }
+  .aim h1 { font-size: clamp(28px, 5vw, 46px); font-weight: 800; letter-spacing: -.025em; line-height: 1.12; margin: 0 0 16px; }
+  .aim h1 em { font-style: normal; background: linear-gradient(90deg, var(--accent), var(--brass)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .aim p.lede { font-size: 15.5px; color: var(--ink-2); max-width: 58ch; margin: 0 auto 30px; line-height: 1.65; }
+
+  .form { text-align: left; background: var(--bg-2); border-radius: var(--r-lg); box-shadow: inset 0 0 0 1px var(--line), var(--sh-2); padding: 20px; }
+  .field { margin-bottom: 14px; }
+  .field:last-of-type { margin-bottom: 18px; }
+  .lbl { display: flex; align-items: baseline; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 7px; }
+  .lbl small { font-family: var(--font); font-size: 11px; font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--ink-3); }
+  .inp {
+    width: 100%; height: 44px; padding: 0 13px; border: none; border-radius: var(--r-sm);
+    background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line);
+    font-size: 14.5px; color: var(--ink); outline: none; transition: box-shadow var(--t);
+  }
+  .inp::placeholder { color: var(--ink-3); }
+  .inp:focus { box-shadow: inset 0 0 0 1px var(--accent-line), 0 0 0 3px var(--accent-soft); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .aim-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .aim-note { font-size: 11.5px; color: var(--ink-3); margin-top: 14px; line-height: 1.6; }
+
+  .samples { margin-top: 22px; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .chip {
+    font-size: 12.4px; color: var(--ink-2); padding: 7px 12px; border-radius: 100px;
+    background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); transition: all var(--t);
+  }
+  .chip:hover { color: var(--ink); box-shadow: inset 0 0 0 1px var(--line-2); transform: translateY(-1px); }
+
+  /* ---------- stage 2: recon ---------- */
+  .recon-wrap { min-height: 100%; display: grid; place-items: center; padding: 40px 20px; }
+  .recon { width: min(660px, 100%); }
+  .recon h2 { font-size: 21px; font-weight: 750; margin: 0 0 6px; text-align: center; }
+  .recon .sub { text-align: center; color: var(--ink-3); font-size: 13px; margin: 0 0 26px; }
+  .scan { background: var(--bg-2); border-radius: var(--r-lg); box-shadow: inset 0 0 0 1px var(--line); padding: 8px; font-family: var(--mono); font-size: 12.6px; }
+  .scan-line { display: flex; align-items: flex-start; gap: 10px; padding: 9px 12px; border-radius: var(--r-sm); color: var(--ink-3); }
+  .scan-line.on { color: var(--ink); background: var(--surface); }
+  .scan-line.done { color: var(--ink-2); }
+  .scan-line.fail { color: var(--clay); }
+  .scan-dot { width: 15px; flex: none; text-align: center; color: var(--ink-3); }
+  .scan-line.on .scan-dot { color: var(--accent-ink); }
+  .scan-line.done .scan-dot { color: var(--jade); }
+  .scan-line.fail .scan-dot { color: var(--clay); }
+  .scan-meta { color: var(--ink-3); font-size: 11.6px; }
+  @keyframes blink { 0%,100% { opacity: 1 } 50% { opacity: .25 } }
+  .scan-line.on .scan-dot { animation: blink 1s infinite; }
+
+  /* ---------- stage 3: report ---------- */
+  .rep { max-width: 1180px; margin: 0 auto; padding: 26px 20px 90px; }
+  .rep-head { display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
+  .rep-title { font-size: clamp(21px, 3.4vw, 31px); font-weight: 800; letter-spacing: -.02em; margin: 0; }
+  .rep-sub { color: var(--ink-2); font-size: 14px; margin: 8px 0 0; max-width: 78ch; line-height: 1.6; }
+  .rep-url { font-family: var(--mono); font-size: 12.4px; color: var(--accent-ink); text-decoration: none; }
+  .rep-url:hover { text-decoration: underline; }
+
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 26px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 11.4px; font-weight: 640;
+    letter-spacing: .04em; padding: 5px 10px; border-radius: 100px;
+  }
+  .badge.obs { color: var(--jade); background: rgba(110,200,168,.1); box-shadow: inset 0 0 0 1px rgba(110,200,168,.28); }
+  .badge.mod { color: var(--brass); background: rgba(217,182,92,.1); box-shadow: inset 0 0 0 1px rgba(217,182,92,.28); }
+  .badge.warn { color: var(--clay); background: rgba(232,115,74,.1); box-shadow: inset 0 0 0 1px rgba(232,115,74,.3); }
+
+  .sec-title {
+    display: flex; align-items: center; gap: 10px; margin: 34px 0 4px;
+    font-size: 12px; font-weight: 730; letter-spacing: .17em; text-transform: uppercase; color: var(--ink-2);
+  }
+  .sec-title svg { color: var(--brass); }
+  .sec-note { font-size: 12.6px; color: var(--ink-3); margin: 0 0 16px; }
+
+  /* observed signals */
+  .sig-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(190px,100%), 1fr)); gap: 10px; }
+  .sig {
+    background: var(--bg-2); border-radius: var(--r-md); box-shadow: inset 0 0 0 1px var(--line);
+    padding: 12px 13px;
+  }
+  .sig-k { font-size: 10.6px; letter-spacing: .11em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+  .sig-v { font-size: 14px; font-weight: 650; display: flex; align-items: center; gap: 7px; }
+  .sig-v.yes { color: var(--jade); } .sig-v.no { color: var(--clay); } .sig-v.neutral { color: var(--ink); }
+
+  /* domain panels */
+  .domains { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(420px,100%), 1fr)); gap: 16px; }
+  .dom {
+    background: var(--bg-2); border-radius: var(--r-lg); box-shadow: inset 0 0 0 1px var(--line);
+    padding: 18px; display: flex; flex-direction: column;
+  }
+  .dom-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .dom-ico { width: 34px; height: 34px; border-radius: 10px; flex: none; display: grid; place-items: center; }
+  .dom-ico.rev { color: var(--jade); background: rgba(110,200,168,.11); }
+  .dom-ico.ops { color: var(--clay); background: rgba(232,115,74,.11); }
+  .dom-ico.cmp { color: var(--brass); background: rgba(217,182,92,.11); }
+  .dom-ico.inf { color: var(--info); background: rgba(143,191,216,.11); }
+  .dom h3 { margin: 0; font-size: 15px; font-weight: 730; }
+  .dom-sub { font-size: 11.8px; color: var(--ink-3); margin: 0 0 12px 44px; }
+  .find {
+    display: block; width: 100%; text-align: left; padding: 11px 12px; border-radius: var(--r-sm);
+    transition: background var(--t); border-top: 1px solid var(--line);
+  }
+  .find:hover { background: var(--surface); }
+  .find-t { font-size: 13.6px; font-weight: 660; margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .find-d { font-size: 12.8px; color: var(--ink-2); line-height: 1.55; }
+  .find-e {
+    display: inline-flex; align-items: center; gap: 5px; margin-top: 7px;
+    font-family: var(--mono); font-size: 10.8px; color: var(--jade);
+    background: rgba(110,200,168,.08); padding: 3px 8px; border-radius: 6px;
+  }
+  .tag { font-size: 10.2px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-3); flex: none; }
+
+  /* opportunities */
+  .opps { display: flex; flex-direction: column; gap: 16px; }
+  .opp {
+    background: linear-gradient(168deg, var(--surface) 0%, var(--bg-2) 60%);
+    border-radius: var(--r-lg); box-shadow: inset 0 0 0 1px var(--line-2), var(--sh-2);
+    padding: 22px; position: relative; overflow: hidden;
+  }
+  .opp::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: linear-gradient(180deg, var(--accent), var(--brass));
+  }
+  .opp-n { font-family: var(--mono); font-size: 11.4px; letter-spacing: .14em; text-transform: uppercase; color: var(--brass); margin-bottom: 7px; }
+  .opp h3 { margin: 0 0 14px; font-size: clamp(17px, 2.4vw, 21px); font-weight: 780; letter-spacing: -.015em; }
+  .opp-money {
+    display: inline-flex; align-items: baseline; gap: 9px; flex-wrap: wrap;
+    background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent-line);
+    border-radius: var(--r-sm); padding: 9px 13px; margin-bottom: 15px;
+  }
+  .opp-money b { font-size: 19px; font-weight: 800; color: var(--accent-ink); letter-spacing: -.01em; }
+  .opp-money span { font-size: 11.4px; color: var(--ink-3); }
+  .opp-block { margin-bottom: 14px; }
+  .opp-k { font-size: 10.8px; font-weight: 720; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+  .opp-v { font-size: 13.6px; color: var(--ink-2); line-height: 1.6; }
+  .pipe { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+  .pipe-node {
+    font-family: var(--mono); font-size: 11.6px; padding: 6px 11px; border-radius: 7px;
+    background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line-2); color: var(--ink);
+    white-space: nowrap;
+  }
+  .pipe-arrow { color: var(--ink-3); flex: none; }
+  .opp-meta { display: flex; gap: 22px; flex-wrap: wrap; margin: 16px 0 18px; }
+  .meta-k { font-size: 10.6px; letter-spacing: .11em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+  .meta-v { font-size: 13.6px; font-weight: 650; }
+  .meta-v.med { color: var(--brass); } .meta-v.low { color: var(--jade); } .meta-v.high { color: var(--clay); }
+
+  /* architecture modal */
+  .modal-back {
+    position: fixed; inset: 0; z-index: 80; background: rgba(6,5,3,.76); backdrop-filter: blur(6px);
+    display: grid; place-items: center; padding: 18px; animation: fade 180ms var(--ease);
+  }
+  @keyframes fade { from { opacity: 0 } to { opacity: 1 } }
+  .modal {
+    background: var(--bg-2); border-radius: var(--r-lg); box-shadow: var(--sh-3), inset 0 0 0 1px var(--line-2);
+    width: min(1080px, 100%); max-height: 92vh; display: flex; flex-direction: column; overflow: hidden;
+  }
+  .modal-head { flex: none; display: flex; align-items: center; gap: 11px; padding: 15px 18px; border-bottom: 1px solid var(--line); }
+  .modal-head h3 { margin: 0; font-size: 15.5px; font-weight: 730; }
+  .modal-body { padding: 18px; overflow-y: auto; }
+  .arch-svg { width: 100%; height: auto; display: block; background: var(--bg); border-radius: var(--r-md); box-shadow: inset 0 0 0 1px var(--line); }
+  .arch-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px,100%), 1fr)); gap: 16px; margin-top: 18px; }
+  .arch-card { background: var(--surface); border-radius: var(--r-md); box-shadow: inset 0 0 0 1px var(--line); padding: 14px 15px; }
+  .arch-card h4 { margin: 0 0 9px; font-size: 12px; font-weight: 730; letter-spacing: .12em; text-transform: uppercase; color: var(--brass); }
+  .arch-card ul { margin: 0; padding-left: 17px; }
+  .arch-card li { font-size: 13px; color: var(--ink-2); line-height: 1.62; margin-bottom: 5px; }
+  .phase { display: flex; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
+  .phase:first-of-type { border-top: none; }
+  .phase-w { font-family: var(--mono); font-size: 11.4px; color: var(--accent-ink); flex: none; width: 74px; padding-top: 2px; }
+  .phase-n { font-size: 13.4px; font-weight: 650; margin-bottom: 3px; }
+  .phase-d { font-size: 12.6px; color: var(--ink-2); line-height: 1.55; }
+
+  /* drawer for drill-downs */
+  .drawer-back { position: fixed; inset: 0; z-index: 70; background: rgba(6,5,3,.6); backdrop-filter: blur(3px); animation: fade 160ms var(--ease); }
+  .drawer {
+    position: fixed; top: 0; right: 0; bottom: 0; z-index: 71; width: min(600px, 100%);
+    background: var(--bg-2); box-shadow: var(--sh-3), inset 1px 0 0 var(--line-2);
+    display: flex; flex-direction: column; animation: slideIn 240ms var(--ease);
+  }
+  @keyframes slideIn { from { transform: translateX(26px); opacity: .4 } to { transform: none; opacity: 1 } }
+  .drawer-head { flex: none; display: flex; align-items: center; gap: 11px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+  .drawer-head h3 { margin: 0; font-size: 15px; font-weight: 720; }
+  .drawer-body { padding: 18px; overflow-y: auto; }
+  .md h3 { font-size: 13px; font-weight: 730; letter-spacing: .09em; text-transform: uppercase; color: var(--brass); margin: 20px 0 8px; }
+  .md h3:first-child { margin-top: 0; }
+  .md p { margin: 0 0 12px; font-size: 13.8px; line-height: 1.68; color: var(--ink-2); }
+  .md ul, .md ol { margin: 0 0 12px; padding-left: 19px; }
+  .md li { font-size: 13.8px; line-height: 1.62; color: var(--ink-2); margin-bottom: 5px; }
+  .md strong { color: var(--ink); font-weight: 680; }
+  .md code { font-family: var(--mono); font-size: 12.4px; background: var(--surface-2); padding: 1px 5px; border-radius: 5px; color: var(--brass); }
+  .md pre { background: var(--surface); border-radius: var(--r-sm); padding: 12px; overflow-x: auto; box-shadow: inset 0 0 0 1px var(--line); }
+  .md pre code { background: none; padding: 0; color: var(--ink-2); }
+  .md hr { border: none; border-top: 1px solid var(--line); margin: 18px 0; }
+
+  .dots span { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--ink-3); margin-right: 4px; animation: blink 1.1s infinite; }
+  .dots span:nth-child(2) { animation-delay: .18s } .dots span:nth-child(3) { animation-delay: .36s }
+
+  .toasts { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 95; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+  .toast {
+    background: var(--surface-2); box-shadow: var(--sh-2), inset 0 0 0 1px var(--line-2);
+    border-radius: var(--r-sm); padding: 10px 15px; font-size: 13px; animation: fade 180ms var(--ease);
+  }
+  .toast.err { color: var(--clay); } .toast.ok { color: var(--jade); }
+
+  /* BYOK key dialog (styled by the static shim) */
+  .opt-title { font-size: 11px; font-weight: 730; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 7px; }
+  .picker, .refine-input {
+    background: var(--surface-2); border: none; border-radius: var(--r-sm); padding: 0 11px;
+    box-shadow: inset 0 0 0 1px var(--line); outline: none; font-size: 13.4px; color: var(--ink);
+  }
+  .picker:focus, .refine-input:focus { box-shadow: inset 0 0 0 1px var(--accent-line); }
+  .btn.sm { height: 30px; padding: 0 10px; font-size: 12.4px; }
+  .btn.sm.icon { width: 30px; padding: 0; }
+
+  @media (max-width: 760px) {
+    .topbar { height: 72px; }
+    .mark { width: 54px; height: 54px; border-radius: 14px; }
+    .row2 { grid-template-columns: 1fr; }
+    .rep { padding: 20px 14px 70px; }
+    .by, .status { display: none; }
+  }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-augur" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="7.4"/><path d="M12 1.6v3M12 19.4v3M1.6 12h3M19.4 12h3"/><circle cx="12" cy="12" r="2.6"/>
+  </symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18Z"/>
+  </symbol>
+  <symbol id="i-cash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2.8v18.4"/><path d="M16.6 6.6H9.8a2.9 2.9 0 0 0 0 5.8h4.4a2.9 2.9 0 0 1 0 5.8H7"/>
+  </symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="3.2"/>
+    <path d="M19.2 14.4a1.5 1.5 0 0 0 .3 1.66l.06.06a1.85 1.85 0 1 1-2.62 2.62l-.06-.06a1.5 1.5 0 0 0-1.66-.3 1.5 1.5 0 0 0-.9 1.37V20a1.85 1.85 0 1 1-3.7 0v-.1a1.5 1.5 0 0 0-.98-1.37 1.5 1.5 0 0 0-1.66.3l-.06.06a1.85 1.85 0 1 1-2.62-2.62l.06-.06a1.5 1.5 0 0 0 .3-1.66 1.5 1.5 0 0 0-1.37-.9H4a1.85 1.85 0 1 1 0-3.7h.1a1.5 1.5 0 0 0 1.37-.98 1.5 1.5 0 0 0-.3-1.66l-.06-.06a1.85 1.85 0 1 1 2.62-2.62l.06.06a1.5 1.5 0 0 0 1.66.3H9.6a1.5 1.5 0 0 0 .9-1.37V4a1.85 1.85 0 1 1 3.7 0v.1a1.5 1.5 0 0 0 .9 1.37 1.5 1.5 0 0 0 1.66-.3l.06-.06a1.85 1.85 0 1 1 2.62 2.62l-.06.06a1.5 1.5 0 0 0-.3 1.66v.1a1.5 1.5 0 0 0 1.37.9H20a1.85 1.85 0 1 1 0 3.7h-.1a1.5 1.5 0 0 0-1.37.9Z"/>
+  </symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4.6 21V3.6"/><path d="M4.6 4.4h10.2l-1.5 3.4 1.5 3.4H4.6"/><path d="M19.4 8.6v9.2H9.2"/>
+  </symbol>
+  <symbol id="i-server" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2.8" y="3.2" width="18.4" height="7" rx="1.8"/><rect x="2.8" y="13.8" width="18.4" height="7" rx="1.8"/>
+    <path d="M6.6 6.7h.01M6.6 17.3h.01"/>
+  </symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M13.4 2.4 4 13.6h7L10.6 21.6 20 10.4h-7Z"/>
+  </symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4.5 12.4 5 5 10-10.8"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5.6 5.6 18.4 18.4M18.4 5.6 5.6 18.4"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-restart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20.4 11.4a8.4 8.4 0 1 1-2.5-5.9"/><path d="M20.4 3.6v5.4H15"/>
+  </symbol>
+  <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3.6 10.4 12 3.6l8.4 6.8V20a1.4 1.4 0 0 1-1.4 1.4H5A1.4 1.4 0 0 1 3.6 20Z"/><path d="M9.6 21.4v-7h4.8v7"/>
+  </symbol>
+  <symbol id="i-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M13.4 4.6H19.4V10.6M19.4 4.6 11 13"/><path d="M18.2 14.6V19a1.4 1.4 0 0 1-1.4 1.4H5A1.4 1.4 0 0 1 3.6 19V7.2A1.4 1.4 0 0 1 5 5.8h4.4"/>
+  </symbol>
+  <symbol id="i-cpu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="6.4" y="6.4" width="11.2" height="11.2" rx="2"/><rect x="9.8" y="9.8" width="4.4" height="4.4" rx="1"/>
+    <path d="M9.6 2.6v3.8M14.4 2.6v3.8M9.6 17.6v3.8M14.4 17.6v3.8M2.6 9.6h3.8M2.6 14.4h3.8M17.6 9.6h3.8M17.6 14.4h3.8"/>
+  </symbol>
+  <symbol id="i-blueprint" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2.8" y="4.4" width="18.4" height="15.2" rx="2"/><path d="M2.8 9.2h18.4M8.2 9.2v10.4"/><path d="M12 13h5.4M12 16.2h5.4"/>
+  </symbol>
+</svg>
+
+<div id="app">
+
+  <div class="topbar">
+    <a class="brand" href="/">
+      <span class="mark">
+        <img src="data:image/webp;base64,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" alt="" width="160" height="160">
+      </span>
+      <span>
+        <span class="wordmark">AUGU<i>R</i></span>
+        <div class="by">by BlvkWare</div>
+      </span>
+    </a>
+    <div class="spacer"></div>
+    <div class="status" id="status"></div>
+    <button class="btn ghost" id="restartBtn" style="display:none"><svg class="ic ic-16"><use href="#i-restart"/></svg> New target</button>
+    <button class="btn ghost icon hidden" id="keyBtn" aria-label="Model and API key" title="Model / API key"><svg class="ic ic-16"><use href="#i-cpu"/></svg></button>
+    <a class="btn ghost icon" href="/" aria-label="BlvkWare home"><svg class="ic ic-16"><use href="#i-home"/></svg></a>
+  </div>
+
+  <!-- stage 1 -->
+  <div class="stage" id="stageAim">
+    <div class="aim-wrap">
+      <div class="aim">
+        <div class="eyebrow"><svg class="ic ic-14"><use href="#i-augur"/></svg> Competitive intelligence</div>
+        <h1>Every company leaves its<br><em>strategy in public view.</em></h1>
+        <p class="lede">AUGUR reads a company's public surface the way an engineer would — what it sells, how it captures customers, what it automates, what it clearly doesn't — and returns the systems it should be running but isn't.</p>
+
+        <div class="form">
+          <div class="field">
+            <div class="lbl">Company URL</div>
+            <input class="inp" id="fUrl" type="url" inputmode="url" spellcheck="false" placeholder="acmelandscaping.com">
+          </div>
+          <div class="row2">
+            <div class="field">
+              <div class="lbl">Industry <small>optional</small></div>
+              <input class="inp" id="fInd" spellcheck="false" placeholder="residential landscaping">
+            </div>
+            <div class="field">
+              <div class="lbl">Competitor <small>optional</small></div>
+              <input class="inp" id="fCmp" type="url" inputmode="url" spellcheck="false" placeholder="competitor.com">
+            </div>
+          </div>
+          <div class="aim-actions">
+            <button class="btn primary lg" id="runBtn"><svg class="ic ic-16"><use href="#i-augur"/></svg> Read this company</button>
+            <span class="status" id="hint"></span>
+          </div>
+          <p class="aim-note">AUGUR fetches only what a visitor's browser can already see — the public page. It never signs in, never touches private data, and holds nothing after you close the tab.</p>
+        </div>
+
+        <div class="samples" id="samples"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- stage 2 -->
+  <div class="stage hidden" id="stageRecon">
+    <div class="recon-wrap">
+      <div class="recon">
+        <h2>Reading the target</h2>
+        <p class="sub">Fetching the public surface, then reasoning over it.</p>
+        <div class="scan" id="scan"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- stage 3 -->
+  <div class="stage hidden" id="stageRep">
+    <div class="rep">
+      <div class="rep-head">
+        <div style="min-width:0;flex:1">
+          <h1 class="rep-title" id="repTitle">—</h1>
+          <a class="rep-url" id="repUrl" target="_blank" rel="noopener noreferrer"></a>
+          <p class="rep-sub" id="repSub"></p>
+        </div>
+      </div>
+      <div class="badges" id="repBadges"></div>
+
+      <div class="sec-title"><svg class="ic ic-16"><use href="#i-server"/></svg> Observed signals</div>
+      <p class="sec-note">Read directly off the live page. These are facts, not estimates.</p>
+      <div class="sig-grid" id="sigs"></div>
+
+      <div class="sec-title"><svg class="ic ic-16"><use href="#i-augur"/></svg> Intelligence</div>
+      <p class="sec-note">Interpretation of the evidence above. Click any finding to go deeper.</p>
+      <div class="domains" id="domains"></div>
+
+      <div class="sec-title"><svg class="ic ic-16"><use href="#i-bolt"/></svg> What I'd build if this were my company</div>
+      <p class="sec-note" id="oppNote"></p>
+      <div class="opps" id="opps"></div>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts"></div>
+  <div class="sr" id="live" aria-live="polite"></div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var AI = (typeof root !== 'undefined' && root && typeof root.generateText === 'function') ? root : null;
+
+  var $ = function (s) { return document.querySelector(s); };
+  var el = {
+    stageAim: $('#stageAim'), stageRecon: $('#stageRecon'), stageRep: $('#stageRep'),
+    fUrl: $('#fUrl'), fInd: $('#fInd'), fCmp: $('#fCmp'),
+    runBtn: $('#runBtn'), restartBtn: $('#restartBtn'), hint: $('#hint'),
+    scan: $('#scan'), status: $('#status'), toasts: $('#toasts'), live: $('#live'),
+    repTitle: $('#repTitle'), repUrl: $('#repUrl'), repSub: $('#repSub'), repBadges: $('#repBadges'),
+    sigs: $('#sigs'), domains: $('#domains'), opps: $('#opps'), oppNote: $('#oppNote'), samples: $('#samples')
+  };
+
+  var S = { busy: false, report: null, recon: null, target: '', competitor: '' };
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  function toast(msg, kind) {
+    var d = document.createElement('div');
+    d.className = 'toast' + (kind ? ' ' + kind : '');
+    d.textContent = msg;
+    el.toasts.appendChild(d);
+    setTimeout(function () { d.remove(); }, 4200);
+  }
+  function setStatus(t) { el.status.textContent = t || ''; el.live.textContent = t || ''; }
+  function show(stage) {
+    el.stageAim.classList.toggle('hidden', stage !== 'aim');
+    el.stageRecon.classList.toggle('hidden', stage !== 'recon');
+    el.stageRep.classList.toggle('hidden', stage !== 'rep');
+    el.restartBtn.style.display = stage === 'aim' ? 'none' : '';
+    var s = document.querySelector('.stage:not(.hidden)');
+    if (s) s.scrollTop = 0;
+  }
+
+  /* ============================================================
+     RECON — real fetches of the public page
+     ============================================================ */
+
+  // Browsers cannot fetch an arbitrary origin directly, so the page is pulled
+  // through public read-only relays. Each returns something different, and each
+  // fails on a different set of sites, so we try them in order and validate.
+  var RAW_READERS = [
+    function (u) { return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u); },
+    function (u) { return 'https://corsproxy.io/?url=' + encodeURIComponent(u); }
+  ];
+  var TEXT_READER = function (u) { return 'https://r.jina.ai/' + u; };
+
+  function normalizeUrl(v) {
+    var s = String(v || '').trim();
+    if (!s) return '';
+    if (!/^https?:\/\//i.test(s)) s = 'https://' + s;
+    try {
+      var u = new URL(s);
+      if (!/\./.test(u.hostname)) return '';
+      return u.origin + (u.pathname === '/' ? '' : u.pathname);
+    } catch (e) { return ''; }
+  }
+
+  function timeoutSignal(ms) {
+    try { return AbortSignal.timeout(ms); } catch (e) {}
+    var c = new AbortController();
+    setTimeout(function () { c.abort(); }, ms);
+    return c.signal;
+  }
+
+  // A relay that fails often answers 200 with its own error page. Treat a short
+  // body that names the relay as a failure rather than as the target's content.
+  function looksLikeRelayError(html) {
+    if (html.length > 14000) return false;
+    return /corsproxy\.io\s*\||allorigins|SSL handshake failed|Error 5\d\d|cloudflare/i.test(html.slice(0, 2500));
+  }
+
+  async function fetchRaw(url) {
+    var lastErr = '';
+    for (var i = 0; i < RAW_READERS.length; i++) {
+      try {
+        var res = await fetch(RAW_READERS[i](url), { signal: timeoutSignal(22000) });
+        var html = await res.text();
+        if (!res.ok) { lastErr = 'HTTP ' + res.status; continue; }
+        if (!html || html.length < 300) { lastErr = 'empty response'; continue; }
+        if (looksLikeRelayError(html)) { lastErr = 'relay could not reach the site'; continue; }
+        return { ok: true, html: html };
+      } catch (e) {
+        lastErr = (e && e.name === 'TimeoutError') ? 'timed out' : 'network error';
+      }
+    }
+    return { ok: false, error: lastErr || 'unreachable' };
+  }
+
+  async function fetchText(url) {
+    try {
+      var res = await fetch(TEXT_READER(url), { signal: timeoutSignal(26000) });
+      if (!res.ok) return { ok: false, error: 'HTTP ' + res.status };
+      var t = await res.text();
+      if (!t || t.length < 120) return { ok: false, error: 'no readable text' };
+      return { ok: true, text: t };
+    } catch (e) {
+      return { ok: false, error: (e && e.name === 'TimeoutError') ? 'timed out' : 'network error' };
+    }
+  }
+
+  // Everything here is measured off the returned document. Nothing is guessed —
+  // this is the evidence the model is later asked to interpret.
+  function extractSignals(html, url) {
+    var doc = new DOMParser().parseFromString(html, 'text/html');
+    var host = '';
+    try { host = new URL(url).hostname.replace(/^www\./, ''); } catch (e) {}
+
+    var scripts = [].slice.call(doc.querySelectorAll('script[src]')).map(function (s) {
+      return s.getAttribute('src') || '';
+    });
+    var hosts = {};
+    scripts.forEach(function (src) {
+      try {
+        var h = new URL(src, url).hostname.replace(/^www\./, '');
+        if (h && h !== host) hosts[h] = 1;
+      } catch (e) {}
+    });
+
+    var inputs = [].slice.call(doc.querySelectorAll('input, textarea, select'));
+    var imgs = [].slice.call(doc.images || []);
+    var links = [].slice.call(doc.querySelectorAll('a[href]')).map(function (a) {
+      return (a.getAttribute('href') || '').toLowerCase();
+    });
+    var heads = [].slice.call(doc.querySelectorAll('h1, h2')).map(function (h) {
+      return (h.textContent || '').trim().replace(/\s+/g, ' ');
+    }).filter(Boolean).slice(0, 22);
+
+    function any(re) { return re.test(html); }
+    function hasPath(re) { return links.some(function (h) { return re.test(h); }); }
+
+    var metaDesc = doc.querySelector('meta[name="description"]');
+
+    return {
+      host: host,
+      title: (doc.title || '').trim().slice(0, 160),
+      metaDescription: metaDesc ? (metaDesc.getAttribute('content') || '').trim().slice(0, 300) : '',
+      hasMetaDescription: !!(metaDesc && (metaDesc.getAttribute('content') || '').trim()),
+      hasViewport: !!doc.querySelector('meta[name="viewport"]'),
+      lang: (doc.documentElement.getAttribute('lang') || '').slice(0, 12),
+      https: /^https:/i.test(url),
+      bytes: html.length,
+      headings: heads,
+
+      forms: doc.querySelectorAll('form').length,
+      inputs: inputs.length,
+      emailField: inputs.some(function (i) {
+        return /email/i.test((i.getAttribute('type') || '') + (i.getAttribute('name') || '') + (i.getAttribute('placeholder') || ''));
+      }),
+      phoneField: inputs.some(function (i) {
+        return /tel|phone/i.test((i.getAttribute('type') || '') + (i.getAttribute('name') || '') + (i.getAttribute('placeholder') || ''));
+      }),
+      telLink: any(/href=["']tel:/i),
+      mailtoLink: any(/href=["']mailto:/i),
+
+      images: imgs.length,
+      imagesMissingAlt: imgs.filter(function (i) { return !(i.getAttribute('alt') || '').trim(); }).length,
+      scripts: scripts.length,
+      thirdParty: Object.keys(hosts).slice(0, 18),
+
+      analytics: any(/googletagmanager|google-analytics|gtag\(|plausible\.io|matomo|segment\.com|posthog/i),
+      adPixel: any(/connect\.facebook\.net|fbq\(|snap\.licdn\.com|tiktok.*pixel|ads\.google/i),
+      chat: any(/intercom|drift\.com|tawk\.to|crisp\.chat|tidio|livechatinc|hubspot.*conversations|zendesk/i),
+      booking: any(/calendly|acuityscheduling|squarespace-scheduling|youcanbook|setmore|cal\.com/i),
+      payments: any(/js\.stripe\.com|paypal\.com\/sdk|squareup|braintree/i),
+      emailMarketing: any(/mailchimp|klaviyo|convertkit|activecampaign|hubspot|drip\.com|constantcontact/i),
+      reviews: any(/trustpilot|yotpo|judge\.me|birdeye|podium/i),
+      ecommerce: any(/cdn\.shopify|woocommerce|bigcommerce|snipcart|squarespace-commerce/i),
+
+      platform: /wp-content|wp-includes/i.test(html) ? 'WordPress'
+              : /cdn\.shopify|shopify\.com/i.test(html) ? 'Shopify'
+              : /squarespace/i.test(html) ? 'Squarespace'
+              : /wix\.com|wixstatic/i.test(html) ? 'Wix'
+              : /webflow/i.test(html) ? 'Webflow'
+              : /_next\/static/i.test(html) ? 'Next.js'
+              : /framer\.com|framerusercontent/i.test(html) ? 'Framer'
+              : 'custom or undetected',
+
+      pricingPage: hasPath(/pricing|plans|packages|rates/),
+      bookingPage: hasPath(/book|appointment|schedule|consult/),
+      quotePage: hasPath(/quote|estimate|get-started|request/),
+      blog: hasPath(/blog|news|articles|insights|resources/),
+      careers: hasPath(/career|jobs|hiring/),
+      login: hasPath(/login|signin|portal|account|dashboard/),
+      social: ['facebook', 'instagram', 'linkedin', 'youtube', 'tiktok', 'x.com', 'twitter'].filter(function (n) {
+        return links.some(function (h) { return h.indexOf(n) !== -1; });
+      })
+    };
+  }
+
+  /* ---------- scan log ---------- */
+  var steps = [];
+  function renderScan() {
+    var h = '';
+    for (var i = 0; i < steps.length; i++) {
+      var s = steps[i];
+      var dot = s.state === 'done' ? '✓' : s.state === 'fail' ? '!' : s.state === 'on' ? '▸' : '·';
+      h += '<div class="scan-line ' + s.state + '">' +
+             '<span class="scan-dot">' + dot + '</span>' +
+             '<span style="flex:1">' + esc(s.label) +
+               (s.meta ? '<div class="scan-meta">' + esc(s.meta) + '</div>' : '') +
+             '</span></div>';
+    }
+    el.scan.innerHTML = h;
+  }
+  function step(label) {
+    steps.push({ label: label, state: 'on', meta: '' });
+    renderScan();
+    return steps.length - 1;
+  }
+  function finish(i, state, meta) {
+    if (steps[i]) { steps[i].state = state; steps[i].meta = meta || ''; }
+    renderScan();
+  }
+
+  /* ============================================================
+     MODEL
+     ============================================================ */
+  var SYS_JSON = 'You are a principal software engineer and business systems consultant performing ' +
+    'competitive intelligence on a company from its public web presence. You are blunt, concrete and ' +
+    'commercially sharp. You reply with STRICT JSON only — no markdown, no code fences, no commentary.';
+
+  var SYS_MD = 'You are a principal software engineer advising a business owner. You write tight, ' +
+    'concrete Markdown prose. No filler, no generic consulting language, no HTML documents.';
+
+  // The shared runtime defaults to a "single-file HTML only" persona for SIGIL.
+  // Every call from AUGUR must override it or the model answers with a web page.
+  async function ask(system, opts) {
+    window.__blvkSystem = system;
+    try { return await AI.generateText(opts); }
+    finally { window.__blvkSystem = null; }
+  }
+
+  function evidenceBlock(sig, text) {
+    if (!sig) return 'No page could be fetched. You have no observed evidence.';
+    var L = [];
+    L.push('host: ' + sig.host);
+    L.push('page title: ' + (sig.title || '(none)'));
+    if (sig.metaDescription) L.push('meta description: ' + sig.metaDescription);
+    L.push('platform detected: ' + sig.platform);
+    L.push('page weight: ' + Math.round(sig.bytes / 1024) + ' KB of HTML, ' +
+           sig.scripts + ' external scripts, ' + sig.images + ' images (' + sig.imagesMissingAlt + ' without alt text)');
+    L.push('forms on page: ' + sig.forms + ' (' + sig.inputs + ' fields' +
+           (sig.emailField ? ', captures email' : ', no email field') +
+           (sig.phoneField ? ', captures phone' : '') + ')');
+    L.push('contact affordances: ' + [
+      sig.telLink ? 'click-to-call' : '', sig.mailtoLink ? 'mailto link' : ''
+    ].filter(Boolean).join(', ') || 'none found');
+    L.push('analytics: ' + (sig.analytics ? 'present' : 'NOT DETECTED'));
+    L.push('ad pixel: ' + (sig.adPixel ? 'present' : 'NOT DETECTED'));
+    L.push('live chat: ' + (sig.chat ? 'present' : 'NOT DETECTED'));
+    L.push('online booking: ' + (sig.booking ? 'present' : 'NOT DETECTED'));
+    L.push('payments: ' + (sig.payments ? 'present' : 'NOT DETECTED'));
+    L.push('email marketing: ' + (sig.emailMarketing ? 'present' : 'NOT DETECTED'));
+    L.push('reviews platform: ' + (sig.reviews ? 'present' : 'NOT DETECTED'));
+    L.push('ecommerce: ' + (sig.ecommerce ? 'present' : 'NOT DETECTED'));
+    L.push('customer login/portal link: ' + (sig.login ? 'yes' : 'no'));
+    L.push('pages linked: ' + [
+      sig.pricingPage ? 'pricing' : '', sig.bookingPage ? 'booking' : '', sig.quotePage ? 'quote/estimate' : '',
+      sig.blog ? 'blog' : '', sig.careers ? 'careers' : ''
+    ].filter(Boolean).join(', ') || 'none of pricing/booking/quote/blog/careers');
+    L.push('social profiles linked: ' + (sig.social.length ? sig.social.join(', ') : 'none'));
+    L.push('third-party hosts: ' + (sig.thirdParty.length ? sig.thirdParty.join(', ') : 'none'));
+    L.push('mobile viewport tag: ' + (sig.hasViewport ? 'yes' : 'NO'));
+    L.push('meta description: ' + (sig.hasMetaDescription ? 'yes' : 'NO'));
+    if (sig.headings.length) L.push('headings on page: ' + sig.headings.join(' | '));
+    var out = L.join('\n');
+    if (text) out += '\n\nREADABLE PAGE COPY (truncated):\n' + text.slice(0, 7000);
+    return out;
+  }
+
+  function analysisPrompt(ctx) {
+    return 'Analyse this company from its public web presence and return a competitive intelligence report.\n\n' +
+      'TARGET: ' + ctx.url + '\n' +
+      (ctx.industry ? 'INDUSTRY (stated by the person asking): ' + ctx.industry + '\n' : '') +
+      '\nOBSERVED EVIDENCE FROM THE LIVE PAGE:\n' + ctx.evidence + '\n\n' +
+      (ctx.compEvidence
+        ? 'COMPETITOR: ' + ctx.competitor + '\nOBSERVED EVIDENCE FROM THE COMPETITOR PAGE:\n' + ctx.compEvidence + '\n\n'
+        : '') +
+      'Return ONLY this JSON:\n' +
+      '{\n' +
+      '  "company": {"name":"", "what":"one sentence on what they actually sell", ' +
+      '"audience":"who buys", "model":"how they make money"},\n' +
+      '  "confidence": "high | medium | low",\n' +
+      '  "confidenceWhy": "one short sentence on what limited or supported your read",\n' +
+      '  "revenue": [ {"title":"", "detail":"", "evidence":"the specific observed fact this rests on, or empty if inferred", "tag":"missed monetization | pricing | upsell | segment | product gap"} ],\n' +
+      '  "operations": [ {"title":"", "detail":"", "evidence":"", "tag":"manual process | repetitive work | automation | bottleneck"} ],\n' +
+      '  "competitive": [ {"title":"", "detail":"", "evidence":"", "tag":"their advantage | their weakness | differentiation | market gap"} ],\n' +
+      '  "infrastructure": [ {"title":"", "detail":"", "evidence":"", "tag":"ux | conversion | performance | integration | acquisition"} ],\n' +
+      '  "opportunities": [ {\n' +
+      '     "name":"Automated Quote Recovery System",\n' +
+      '     "problem":"what is happening now that costs them money",\n' +
+      '     "monthlyLow": 4200, "monthlyHigh": 11800,\n' +
+      '     "basis":"one sentence on how the range was derived",\n' +
+      '     "pipeline":["Website","Lead Capture","Qualification AI","CRM","SMS","Follow-up Agent","Quote","Recovery"],\n' +
+      '     "complexity":"Low | Medium | High", "weeksLow":2, "weeksHigh":4\n' +
+      '  } ]\n' +
+      '}\n\n' +
+      'RULES\n' +
+      '- 3 to 5 findings in each of the four categories. 3 opportunities, ordered by value.\n' +
+      '- Anchor findings to the observed evidence wherever you can, and put the exact fact in "evidence". ' +
+      'If a finding is an industry inference rather than something observed, leave "evidence" empty. Never invent an observation.\n' +
+      '- Do not report the absence of a tracking script as a privacy virtue or a security finding; read it commercially.\n' +
+      '- Money ranges are monthly recurring revenue or cost recovered, modelled from public industry benchmarks for a ' +
+      'business of this apparent size. Be specific and defensible in "basis". Never imply you have their real numbers.\n' +
+      '- Opportunity names are systems a software engineer would build and ship, not marketing advice. ' +
+      '"Automated Quote Recovery System", not "improve your follow-up".\n' +
+      '- pipeline is 5 to 9 short technical stages naming real components.\n' +
+      '- Be specific to THIS company. A finding that would apply to any business on earth is a failed finding.\n' +
+      'Output raw JSON only, starting with { and ending with }.';
+  }
+
+  function archPrompt(opp, company) {
+    return 'Design the production architecture for this system.\n\n' +
+      'COMPANY: ' + company + '\n' +
+      'SYSTEM: ' + opp.name + '\n' +
+      'PROBLEM IT SOLVES: ' + opp.problem + '\n' +
+      'INTENDED FLOW: ' + opp.pipeline.join(' -> ') + '\n\n' +
+      'Return ONLY this JSON:\n' +
+      '{\n' +
+      '  "summary":"two sentences on how the system works end to end",\n' +
+      '  "layers":[ {"name":"Capture","nodes":[{"name":"Landing form","tech":"Next.js"}]} ],\n' +
+      '  "stack":["concrete named technologies"],\n' +
+      '  "integrations":["external services it must talk to"],\n' +
+      '  "data":["the records this system owns"],\n' +
+      '  "phases":[ {"name":"","weeks":"1-2","work":"what ships in this phase"} ],\n' +
+      '  "risks":["what could go wrong or block delivery"]\n' +
+      '}\n\n' +
+      'RULES\n' +
+      '- 4 to 6 layers, ordered from entry point to outcome. 1 to 4 nodes per layer.\n' +
+      '- Node names are short (2-4 words). "tech" names a real product or library.\n' +
+      '- 3 to 4 phases covering the stated timeline. 3 to 5 items in each list.\n' +
+      '- Choose boring, provable technology a small team can actually run.\n' +
+      'Output raw JSON only, starting with { and ending with }.';
+  }
+
+  /* ---------- JSON handling ---------- */
+  function parseJSON(text) {
+    var t = String(text || '').trim();
+    var fence = /```(?:json)?\s*([\s\S]*?)(?:```|$)/i.exec(t);
+    if (fence && fence[1].indexOf('{') !== -1) t = fence[1].trim();
+    var a = t.indexOf('{'), b = t.lastIndexOf('}');
+    if (a === -1 || b === -1 || b < a) throw new Error('The model did not return a usable report.');
+    return JSON.parse(t.slice(a, b + 1));
+  }
+
+  // Providers key the same idea differently, and a missing key must never render
+  // an empty card. Everything downstream reads this shape, never the raw JSON.
+  function pick(o, keys, dflt) {
+    if (typeof o === 'string') return o;
+    for (var i = 0; i < keys.length; i++) {
+      var v = o && o[keys[i]];
+      if (typeof v === 'number') return String(v);
+      if (typeof v === 'string' && v.trim()) return v.trim();
+    }
+    return dflt || '';
+  }
+  function arr(v) { return Array.isArray(v) ? v : []; }
+  function num(v, d) {
+    if (typeof v === 'number' && isFinite(v)) return v;
+    var n = parseFloat(String(v == null ? '' : v).replace(/[^0-9.]/g, ''));
+    return isFinite(n) ? n : d;
+  }
+
+  function normFindings(list) {
+    return arr(list).map(function (f) {
+      return {
+        title: pick(f, ['title', 'name', 'headline', 'label']),
+        detail: pick(f, ['detail', 'description', 'summary', 'why', 'explanation']),
+        evidence: pick(f, ['evidence', 'observed', 'basis', 'signal']),
+        tag: pick(f, ['tag', 'type', 'category', 'kind'])
+      };
+    }).filter(function (f) { return f.title; });
+  }
+
+  function normalize(raw) {
+    var m = raw || {};
+    var c = m.company || {};
+    var opps = arr(m.opportunities || m.builds || m.systems).map(function (o) {
+      var lo = num(o && (o.monthlyLow != null ? o.monthlyLow : o.low), 0);
+      var hi = num(o && (o.monthlyHigh != null ? o.monthlyHigh : o.high), 0);
+      if (hi && lo && hi < lo) { var t = lo; lo = hi; hi = t; }
+      var pipe = arr(o && (o.pipeline || o.flow || o.stages))
+        .map(function (x) { return pick(x, ['name', 'label', 'stage', 'title']); })
+        .filter(Boolean);
+      var cx = pick(o, ['complexity', 'buildComplexity', 'difficulty'], 'Medium');
+      cx = /low|simple/i.test(cx) ? 'Low' : /high|complex/i.test(cx) ? 'High' : 'Medium';
+      return {
+        name: pick(o, ['name', 'title', 'system', 'label']),
+        problem: pick(o, ['problem', 'problemDetected', 'detail', 'issue', 'description']),
+        basis: pick(o, ['basis', 'assumption', 'rationale', 'how']),
+        monthlyLow: lo, monthlyHigh: hi,
+        pipeline: pipe.length ? pipe : ['Website', 'Capture', 'Qualify', 'CRM', 'Follow-up', 'Close'],
+        complexity: cx,
+        weeksLow: num(o && (o.weeksLow != null ? o.weeksLow : o.weeks), 2),
+        weeksHigh: num(o && o.weeksHigh, 0)
+      };
+    }).filter(function (o) { return o.name; });
+
+    return {
+      company: {
+        name: pick(c, ['name', 'company', 'title'], ''),
+        what: pick(c, ['what', 'sells', 'description', 'summary']),
+        audience: pick(c, ['audience', 'customers', 'who']),
+        model: pick(c, ['model', 'revenueModel', 'how'])
+      },
+      confidence: (pick(m, ['confidence'], 'medium') || 'medium').toLowerCase(),
+      confidenceWhy: pick(m, ['confidenceWhy', 'confidenceNote', 'note']),
+      revenue: normFindings(m.revenue || m.revenueOpportunities),
+      operations: normFindings(m.operations || m.operational || m.operationalWeaknesses),
+      competitive: normFindings(m.competitive || m.competitivePositioning || m.competition),
+      infrastructure: normFindings(m.infrastructure || m.digital || m.digitalInfrastructure),
+      opportunities: opps
+    };
+  }
+
+  /* ============================================================
+     RENDER
+     ============================================================ */
+  function money(n) {
+    if (!n) return '';
+    return '$' + Math.round(n).toLocaleString('en-US');
+  }
+
+  function renderSignals(sig) {
+    if (!sig) {
+      el.sigs.innerHTML = '<div class="sig" style="grid-column:1/-1">' +
+        '<div class="sig-k">No page fetched</div>' +
+        '<div class="sig-v no">Everything below is modelled, not observed</div></div>';
+      return;
+    }
+    function cell(k, v, cls) {
+      return '<div class="sig"><div class="sig-k">' + esc(k) + '</div>' +
+             '<div class="sig-v ' + cls + '">' + esc(v) + '</div></div>';
+    }
+    function yn(k, on, yes, no) {
+      return cell(k, on ? (yes || 'Present') : (no || 'Not detected'), on ? 'yes' : 'no');
+    }
+    var h = '';
+    h += cell('Platform', sig.platform, 'neutral');
+    h += cell('Page weight', Math.round(sig.bytes / 1024) + ' KB · ' + sig.scripts + ' scripts', 'neutral');
+    h += yn('Analytics', sig.analytics);
+    h += yn('Ad pixel', sig.adPixel);
+    h += yn('Live chat', sig.chat);
+    h += yn('Online booking', sig.booking);
+    h += yn('Payments', sig.payments);
+    h += yn('Email marketing', sig.emailMarketing);
+    h += yn('Reviews platform', sig.reviews);
+    h += cell('Lead capture', sig.forms ? sig.forms + ' form' + (sig.forms > 1 ? 's' : '') + ' · ' + sig.inputs + ' fields' : 'No form on page',
+              sig.forms ? 'yes' : 'no');
+    h += yn('Captures email', sig.emailField, 'Yes', 'No');
+    h += yn('Click to call', sig.telLink, 'Yes', 'No');
+    h += yn('Pricing page', sig.pricingPage, 'Linked', 'Not linked');
+    h += yn('Customer portal', sig.login, 'Linked', 'None');
+    h += cell('Social profiles', sig.social.length ? sig.social.join(', ') : 'None linked', sig.social.length ? 'neutral' : 'no');
+    h += cell('Images without alt', sig.imagesMissingAlt + ' of ' + sig.images,
+              sig.images && sig.imagesMissingAlt / sig.images > 0.4 ? 'no' : 'neutral');
+    el.sigs.innerHTML = h;
+  }
+
+  var DOMAINS = [
+    { key: 'revenue', cls: 'rev', icon: 'i-cash', title: 'Revenue opportunities', sub: 'Money the current setup cannot capture' },
+    { key: 'operations', cls: 'ops', icon: 'i-gear', title: 'Operational weaknesses', sub: 'Work being done by hand that should not be' },
+    { key: 'competitive', cls: 'cmp', icon: 'i-flag', title: 'Competitive positioning', sub: 'Where they stand and where the gap is' },
+    { key: 'infrastructure', cls: 'inf', icon: 'i-server', title: 'Digital infrastructure', sub: 'The machine that acquires and serves customers' }
+  ];
+
+  function renderDomains(rep) {
+    var h = '';
+    DOMAINS.forEach(function (d) {
+      var list = rep[d.key] || [];
+      h += '<div class="dom">' +
+             '<div class="dom-head"><div class="dom-ico ' + d.cls + '"><svg class="ic ic-20"><use href="#' + d.icon + '"/></svg></div>' +
+             '<h3>' + esc(d.title) + '</h3></div>' +
+             '<p class="dom-sub">' + esc(d.sub) + '</p>';
+      if (!list.length) {
+        h += '<p class="find-d" style="padding:10px 12px">Nothing conclusive here.</p>';
+      }
+      list.forEach(function (f, i) {
+        h += '<button class="find" data-dom="' + d.key + '" data-i="' + i + '">' +
+               '<div class="find-t"><span style="flex:1">' + esc(f.title) + '</span>' +
+                 (f.tag ? '<span class="tag">' + esc(f.tag) + '</span>' : '') + '</div>' +
+               '<div class="find-d">' + esc(f.detail) + '</div>' +
+               (f.evidence ? '<span class="find-e"><svg class="ic ic-14"><use href="#i-check"/></svg>' + esc(f.evidence) + '</span>' : '') +
+             '</button>';
+      });
+      h += '</div>';
+    });
+    el.domains.innerHTML = h;
+  }
+
+  function renderOpps(rep) {
+    var h = '';
+    rep.opportunities.forEach(function (o, i) {
+      var range = (o.monthlyLow && o.monthlyHigh)
+        ? money(o.monthlyLow) + '–' + money(o.monthlyHigh)
+        : (o.monthlyHigh ? money(o.monthlyHigh) : 'Not sized');
+      var weeks = o.weeksHigh && o.weeksHigh !== o.weeksLow
+        ? o.weeksLow + '–' + o.weeksHigh + ' weeks' : o.weeksLow + ' weeks';
+      h += '<div class="opp">' +
+        '<div class="opp-n">Opportunity #' + (i + 1) + '</div>' +
+        '<h3>' + esc(o.name) + '</h3>' +
+        '<div class="opp-money"><b>' + esc(range) + '</b><span>estimated monthly opportunity · modelled from industry benchmarks</span></div>' +
+        (o.problem ? '<div class="opp-block"><div class="opp-k">Problem detected</div><div class="opp-v">' + esc(o.problem) + '</div></div>' : '') +
+        '<div class="opp-block"><div class="opp-k">Proposed system</div><div class="pipe">' +
+          o.pipeline.map(function (n, j) {
+            return (j ? '<svg class="ic ic-14 pipe-arrow"><use href="#i-arrow"/></svg>' : '') +
+                   '<span class="pipe-node">' + esc(n) + '</span>';
+          }).join('') +
+        '</div></div>' +
+        (o.basis ? '<div class="opp-block"><div class="opp-k">How the range was derived</div><div class="opp-v">' + esc(o.basis) + '</div></div>' : '') +
+        '<div class="opp-meta">' +
+          '<div><div class="meta-k">Build complexity</div><div class="meta-v ' + o.complexity.toLowerCase() + '">' + esc(o.complexity) + '</div></div>' +
+          '<div><div class="meta-k">Estimated implementation</div><div class="meta-v">' + esc(weeks) + '</div></div>' +
+        '</div>' +
+        '<button class="btn primary lg" data-build="' + i + '"><svg class="ic ic-16"><use href="#i-blueprint"/></svg> BUILD THIS</button>' +
+      '</div>';
+    });
+    el.opps.innerHTML = h;
+  }
+
+  function renderReport(rep, ctx) {
+    var name = rep.company.name || (ctx.sig && ctx.sig.host) || ctx.url;
+    el.repTitle.textContent = name;
+    el.repUrl.textContent = ctx.url;
+    el.repUrl.href = ctx.url;
+    el.repSub.textContent = [rep.company.what, rep.company.audience, rep.company.model]
+      .filter(Boolean).join(' · ');
+
+    var b = '';
+    if (ctx.sig) {
+      b += '<span class="badge obs"><svg class="ic ic-14"><use href="#i-check"/></svg> Live page read · ' +
+           Math.round(ctx.sig.bytes / 1024) + ' KB</span>';
+    } else {
+      b += '<span class="badge warn"><svg class="ic ic-14"><use href="#i-close"/></svg> Page could not be fetched</span>';
+    }
+    if (ctx.compSig) b += '<span class="badge obs"><svg class="ic ic-14"><use href="#i-check"/></svg> Competitor read</span>';
+    b += '<span class="badge mod">Dollar figures are modelled, not their books</span>';
+    b += '<span class="badge mod">Confidence: ' + esc(rep.confidence) +
+         (rep.confidenceWhy ? ' — ' + esc(rep.confidenceWhy) : '') + '</span>';
+    el.repBadges.innerHTML = b;
+
+    renderSignals(ctx.sig);
+    renderDomains(rep);
+    el.oppNote.textContent = 'Systems worth building, largest opportunity first. Every figure is a projection from ' +
+      'public benchmarks for a business of this apparent size — not a claim about their actual revenue.';
+    renderOpps(rep);
+  }
+
+  /* ============================================================
+     ARCHITECTURE DIAGRAM
+     ============================================================ */
+  function normArch(raw) {
+    var a = raw || {};
+    var layers = arr(a.layers || a.tiers).map(function (L) {
+      return {
+        name: pick(L, ['name', 'title', 'layer'], 'Layer'),
+        nodes: arr(L && (L.nodes || L.components || L.items)).map(function (n) {
+          return { name: pick(n, ['name', 'title', 'label']), tech: pick(n, ['tech', 'technology', 'stack', 'using']) };
+        }).filter(function (n) { return n.name; })
+      };
+    }).filter(function (L) { return L.nodes.length; });
+    return {
+      summary: pick(a, ['summary', 'overview', 'description']),
+      layers: layers,
+      stack: arr(a.stack || a.technologies).map(function (x) { return pick(x, ['name', 'title']); }).filter(Boolean),
+      integrations: arr(a.integrations || a.services).map(function (x) { return pick(x, ['name', 'title']); }).filter(Boolean),
+      data: arr(a.data || a.entities || a.records).map(function (x) { return pick(x, ['name', 'title']); }).filter(Boolean),
+      phases: arr(a.phases || a.plan).map(function (p) {
+        return { name: pick(p, ['name', 'title', 'phase']), weeks: pick(p, ['weeks', 'timeline', 'when']), work: pick(p, ['work', 'detail', 'description', 'scope']) };
+      }).filter(function (p) { return p.name; }),
+      risks: arr(a.risks || a.blockers).map(function (x) { return pick(x, ['name', 'title', 'risk']); }).filter(Boolean)
+    };
+  }
+
+  // Layered band diagram: each tier is a labelled row of component boxes with a
+  // connector down to the next. Laid out here rather than by the model, so the
+  // geometry is always valid however the JSON comes back.
+  function archSVG(arch) {
+    var W = 980, PADX = 26, LABEL = 128, BOXH = 56, GAPY = 34, ROWPAD = 15;
+    var rows = arch.layers;
+    var H = 26 + rows.length * (BOXH + ROWPAD * 2) + (rows.length - 1) * GAPY + 26;
+    var s = '<svg class="arch-svg" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="System architecture diagram">';
+    s += '<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
+         '<path d="M0 0 10 5 0 10z" fill="#726858"/></marker></defs>';
+
+    var y = 26;
+    rows.forEach(function (L, ri) {
+      var bandH = BOXH + ROWPAD * 2;
+      s += '<rect x="' + PADX + '" y="' + y + '" width="' + (W - PADX * 2) + '" height="' + bandH +
+           '" rx="14" fill="#17140f" stroke="#2e2820"/>';
+      // The label column is narrow and the band only needs to name its tier, so a
+      // compound name is cut at the conjunction ("Verification & Enrichment" ->
+      // "VERIFICATION") and whatever remains wraps on words rather than mid-syllable.
+      var nm = L.name.split(/\s*(?:&|\/|,|\band\b)\s*/i)[0].trim() || L.name;
+      var words = nm.toUpperCase().split(/\s+/).filter(Boolean);
+      var lines = [], cur = '';
+      for (var w = 0; w < words.length; w++) {
+        var next = cur ? cur + ' ' + words[w] : words[w];
+        if (next.length > 13 && cur) { lines.push(cur); cur = words[w]; }
+        else { cur = next; }
+      }
+      if (cur) lines.push(cur);
+      lines = lines.slice(0, 2).map(function (t) { return t.length > 14 ? t.slice(0, 13) + '…' : t; });
+      var ly = y + bandH / 2 + 4 - (lines.length - 1) * 7;
+      s += '<text x="' + (PADX + 16) + '" y="' + ly + '" fill="#d9b65c" ' +
+           'font-family="ui-monospace,Menlo,Consolas,monospace" font-size="11" letter-spacing="1.3">' +
+           lines.map(function (t, li) {
+             return '<tspan x="' + (PADX + 16) + '" dy="' + (li ? 14 : 0) + '">' + esc(t) + '</tspan>';
+           }).join('') + '</text>';
+
+      var zoneX = PADX + LABEL, zoneW = W - PADX * 2 - LABEL - 16;
+      var n = L.nodes.length, gap = 12;
+      var bw = Math.max(96, Math.floor((zoneW - gap * (n - 1)) / n));
+      L.nodes.forEach(function (nd, i) {
+        var bx = zoneX + i * (bw + gap), by = y + ROWPAD;
+        s += '<rect x="' + bx + '" y="' + by + '" width="' + bw + '" height="' + BOXH +
+             '" rx="10" fill="#1e1a15" stroke="#423a2e"/>';
+        var nm = nd.name.length > Math.floor(bw / 6.6) ? nd.name.slice(0, Math.floor(bw / 6.6) - 1) + '…' : nd.name;
+        s += '<text x="' + (bx + bw / 2) + '" y="' + (by + (nd.tech ? 23 : 32)) + '" text-anchor="middle" fill="#f5f0e6" ' +
+             'font-family="Inter,system-ui,sans-serif" font-size="12.5" font-weight="600">' + esc(nm) + '</text>';
+        if (nd.tech) {
+          var tc = nd.tech.length > Math.floor(bw / 5.6) ? nd.tech.slice(0, Math.floor(bw / 5.6) - 1) + '…' : nd.tech;
+          s += '<text x="' + (bx + bw / 2) + '" y="' + (by + 40) + '" text-anchor="middle" fill="#726858" ' +
+               'font-family="ui-monospace,Menlo,Consolas,monospace" font-size="10.5">' + esc(tc) + '</text>';
+        }
+      });
+
+      if (ri < rows.length - 1) {
+        var cx = W / 2, y1 = y + bandH, y2 = y + bandH + GAPY;
+        s += '<line x1="' + cx + '" y1="' + y1 + '" x2="' + cx + '" y2="' + (y2 - 2) +
+             '" stroke="#726858" stroke-width="1.6" marker-end="url(#ah)"/>';
+      }
+      y += bandH + GAPY;
+    });
+    return s + '</svg>';
+  }
+
+  function openArch(opp, arch) {
+    var back = document.createElement('div');
+    back.className = 'modal-back';
+    function list(title, items) {
+      if (!items || !items.length) return '';
+      return '<div class="arch-card"><h4>' + esc(title) + '</h4><ul>' +
+             items.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
+    }
+    var phases = arch.phases.length
+      ? '<div class="arch-card" style="grid-column:1/-1"><h4>Delivery plan</h4>' +
+        arch.phases.map(function (p) {
+          return '<div class="phase"><div class="phase-w">' + esc(p.weeks || '') + '</div><div>' +
+                 '<div class="phase-n">' + esc(p.name) + '</div>' +
+                 '<div class="phase-d">' + esc(p.work) + '</div></div></div>';
+        }).join('') + '</div>'
+      : '';
+
+    back.innerHTML =
+      '<div class="modal" role="dialog" aria-modal="true" aria-label="System architecture">' +
+        '<div class="modal-head">' +
+          '<svg class="ic ic-20" style="color:var(--accent-ink)"><use href="#i-blueprint"/></svg>' +
+          '<h3>' + esc(opp.name) + '</h3><div class="spacer"></div>' +
+          '<button class="btn ghost sm" data-forge><svg class="ic ic-14"><use href="#i-bolt"/></svg> Prototype it in SIGIL</button>' +
+          '<button class="btn ghost sm icon" data-x aria-label="Close"><svg class="ic ic-16"><use href="#i-close"/></svg></button>' +
+        '</div>' +
+        '<div class="modal-body">' +
+          (arch.summary ? '<p style="margin:0 0 16px;font-size:13.8px;line-height:1.65;color:var(--ink-2)">' + esc(arch.summary) + '</p>' : '') +
+          archSVG(arch) +
+          '<div class="arch-cols">' +
+            list('Stack', arch.stack) + list('Integrations', arch.integrations) + list('Data it owns', arch.data) +
+            phases + list('Risks', arch.risks) +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(back);
+    back.addEventListener('click', function (e) {
+      if (e.target === back || e.target.closest('[data-x]')) back.remove();
+      else if (e.target.closest('[data-forge]')) forge(opp, arch);
+    });
+    document.addEventListener('keydown', function onEsc(e) {
+      if (e.key === 'Escape') { back.remove(); document.removeEventListener('keydown', onEsc); }
+    });
+  }
+
+  // Hand the architecture to SIGIL, which builds a working prototype from it.
+  function forge(opp, arch) {
+    var name = (S.report && S.report.company.name) || S.target;
+    var spec = 'A working prototype of "' + opp.name + '" for ' + name + '.\n\n' +
+      (arch.summary ? arch.summary + '\n\n' : '') +
+      'Build an operations dashboard for this system with:\n' +
+      arch.layers.map(function (L) {
+        return '- A "' + L.name + '" section with working UI for: ' + L.nodes.map(function (n) { return n.name; }).join(', ');
+      }).join('\n') +
+      '\n\nInclude realistic sample data throughout, clearly labelled as sample. ' +
+      'Make every control actually work — filters filter, forms validate, states change. ' +
+      'The pipeline it implements is: ' + opp.pipeline.join(' -> ') + '.';
+    try { sessionStorage.setItem('blvkware.forge.prompt', spec); } catch (e) {}
+    window.location.href = '/sigil/?prompt=' + encodeURIComponent(spec).slice(0, 1800);
+  }
+
+  /* ---------- markdown for drill-downs ---------- */
+  function markdown(src) {
+    var pre = [];
+    var s = esc(src);
+    s = s.replace(/```[a-z]*\n?([\s\S]*?)(?:```|$)/gi, function (m0, code) {
+      return '\n\n@@PRE' + (pre.push(code.replace(/\n+$/, '')) - 1) + '@@\n\n';
+    });
+    s = s.replace(/^[ \t]*(#{1,3} .+)$/gm, '\n\n$1\n\n');
+    s = s.replace(/^[ \t]*(-{3,}|\*{3,})[ \t]*$/gm, '\n\n---\n\n');
+    s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    s = s.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+    return s.split(/\n{2,}/).map(function (block) {
+      block = block.replace(/^\n+|\n+$/g, '');
+      if (!block) return '';
+      var m = /^@@PRE(\d+)@@$/.exec(block);
+      if (m) return '<pre><code>' + pre[+m[1]] + '</code></pre>';
+      if (/^-{3,}$/.test(block)) return '<hr>';
+      m = /^(#{1,3}) (.+)$/.exec(block);
+      if (m) { var n = m[1].length; return '<h' + n + '>' + m[2] + '</h' + n + '>'; }
+      var lines = block.split('\n');
+      var bullets = lines.filter(function (l) { return /^\s*[-*+] +\S/.test(l); });
+      var numbers = lines.filter(function (l) { return /^\s*\d+[.)] +\S/.test(l); });
+      if (bullets.length && bullets.length >= lines.length - 1) {
+        return '<ul>' + bullets.map(function (l) { return '<li>' + l.replace(/^\s*[-*+] +/, '') + '</li>'; }).join('') + '</ul>';
+      }
+      if (numbers.length && numbers.length >= lines.length - 1) {
+        return '<ol>' + numbers.map(function (l) { return '<li>' + l.replace(/^\s*\d+[.)] +/, '') + '</li>'; }).join('') + '</ol>';
+      }
+      return '<p>' + lines.join('<br>') + '</p>';
+    }).join('');
+  }
+
+  function openDrawer(title) {
+    var back = document.createElement('div');
+    back.className = 'drawer-back';
+    var d = document.createElement('aside');
+    d.className = 'drawer';
+    d.innerHTML =
+      '<div class="drawer-head">' +
+        '<svg class="ic ic-20" style="color:var(--accent-ink)"><use href="#i-augur"/></svg>' +
+        '<h3>' + esc(title) + '</h3><div class="spacer"></div>' +
+        '<button class="btn ghost icon" data-x aria-label="Close"><svg class="ic ic-16"><use href="#i-close"/></svg></button>' +
+      '</div>' +
+      '<div class="drawer-body"><div class="md" id="drawerMd">' +
+        '<p class="dots"><span></span><span></span><span></span> Working through it…</p></div></div>';
+    function close() { back.remove(); d.remove(); document.removeEventListener('keydown', onEsc); }
+    function onEsc(e) { if (e.key === 'Escape') close(); }
+    back.addEventListener('click', close);
+    d.addEventListener('click', function (e) { if (e.target.closest('[data-x]')) close(); });
+    document.addEventListener('keydown', onEsc);
+    document.body.appendChild(back);
+    document.body.appendChild(d);
+    return d.querySelector('#drawerMd');
+  }
+
+  async function drill(f, domainTitle) {
+    if (!AI || S.busy) return;
+    var target = openDrawer(f.title);
+    S.busy = true;
+    try {
+      var out = '', last = 0;
+      await ask(SYS_MD, {
+        instruction: 'You are advising the owner of ' + (S.report.company.name || S.target) +
+          ' (' + S.target + ').\n\n' +
+          'CONTEXT — what they do: ' + S.report.company.what + '\n' +
+          'OBSERVED EVIDENCE FROM THEIR LIVE SITE:\n' + (S.recon.evidence || 'none') + '\n\n' +
+          'THE FINDING (' + domainTitle + '): ' + f.title + '\n' + f.detail + '\n' +
+          (f.evidence ? 'It rests on this observation: ' + f.evidence + '\n' : '') + '\n' +
+          'Go deeper. Use these four headings exactly: "What we can see", "Why it costs them", ' +
+          '"What to build instead", "What it is worth".\n\n' +
+          'Hard limits: under 400 words. Markdown only — no HTML, no code fences, no full web page. ' +
+          'Be specific to this company. Where you cite numbers, make clear they are projections from ' +
+          'industry benchmarks, not their real figures. Start directly with the first heading.',
+        onChunk: function (d) {
+          out = (d && d.fullTextSoFar) || out;
+          var t = Date.now();
+          if (t - last < 90) return;
+          last = t;
+          target.innerHTML = markdown(out);
+        }
+      });
+      target.innerHTML = out.trim() ? markdown(out)
+        : '<p style="color:var(--clay)">No answer came back. Try again.</p>';
+    } catch (err) {
+      target.innerHTML = '<p style="color:var(--clay)">' + esc((err && err.message) || String(err)) + '</p>';
+    } finally { S.busy = false; }
+  }
+
+  async function build(i) {
+    if (!AI || S.busy) return;
+    var opp = S.report.opportunities[i];
+    if (!opp) return;
+    S.busy = true;
+    setStatus('Designing the architecture…');
+    var btn = document.querySelector('[data-build="' + i + '"]');
+    if (btn) { btn.disabled = true; btn.innerHTML = '<span class="dots"><span></span><span></span><span></span></span> Designing…'; }
+    try {
+      var res = await ask(SYS_JSON, {
+        instruction: archPrompt(opp, (S.report.company.name || S.target) + ' — ' + S.report.company.what)
+      });
+      var arch = normArch(parseJSON(res && res.text));
+      if (!arch.layers.length) throw new Error('The architecture came back unreadable. Try again.');
+      openArch(opp, arch);
+      setStatus('');
+    } catch (err) {
+      toast((err && err.message) || String(err), 'err');
+      setStatus('');
+    } finally {
+      S.busy = false;
+      if (btn) { btn.disabled = false; btn.innerHTML = '<svg class="ic ic-16"><use href="#i-blueprint"/></svg> BUILD THIS'; }
+    }
+  }
+
+  /* ============================================================
+     RUN
+     ============================================================ */
+  async function run() {
+    if (S.busy) return;
+    var url = normalizeUrl(el.fUrl.value);
+    if (!url) {
+      el.hint.textContent = 'Enter a company web address, like acmelandscaping.com';
+      el.fUrl.focus();
+      return;
+    }
+    if (!AI) { toast('AI runtime not detected on this page.', 'err'); return; }
+    el.hint.textContent = '';
+    var competitor = normalizeUrl(el.fCmp.value);
+    var industry = el.fInd.value.trim();
+
+    S.busy = true; S.target = url; S.competitor = competitor;
+    el.runBtn.disabled = true;
+    steps = [];
+    show('recon');
+    setStatus('Reading ' + url);
+
+    var sig = null, compSig = null, pageText = '', evidence = '', compEvidence = '';
+
+    try {
+      var i1 = step('Fetching ' + url);
+      var raw = await fetchRaw(url);
+      if (raw.ok) {
+        sig = extractSignals(raw.html, url);
+        finish(i1, 'done', Math.round(raw.html.length / 1024) + ' KB of HTML');
+        var i2 = step('Extracting technical signals');
+        finish(i2, 'done', sig.platform + ' · ' + sig.scripts + ' scripts · ' +
+               sig.thirdParty.length + ' third-party hosts');
+      } else {
+        finish(i1, 'fail', raw.error + ' — continuing without observed evidence');
+      }
+
+      var i3 = step('Reading the page copy');
+      var txt = await fetchText(url);
+      if (txt.ok) { pageText = txt.text; finish(i3, 'done', Math.round(txt.text.length / 1024) + ' KB of text'); }
+      else { finish(i3, 'fail', txt.error); }
+
+      if (!sig && !pageText) {
+        throw new Error('Could not reach ' + url + '. Check the address, or the site may be blocking automated reads.');
+      }
+      evidence = evidenceBlock(sig, pageText);
+
+      if (competitor) {
+        var i4 = step('Fetching competitor ' + competitor);
+        var craw = await fetchRaw(competitor);
+        if (craw.ok) {
+          compSig = extractSignals(craw.html, competitor);
+          var ctxt = await fetchText(competitor);
+          compEvidence = evidenceBlock(compSig, ctxt.ok ? ctxt.text.slice(0, 3500) : '');
+          finish(i4, 'done', compSig.platform + ' · read for comparison');
+        } else {
+          finish(i4, 'fail', craw.error);
+        }
+      }
+
+      var i5 = step('Analysing the business');
+      var res = await ask(SYS_JSON, {
+        instruction: analysisPrompt({
+          url: url, industry: industry, evidence: evidence,
+          competitor: competitor, compEvidence: compEvidence
+        })
+      });
+      var rep = normalize(parseJSON(res && res.text));
+      var total = rep.revenue.length + rep.operations.length + rep.competitive.length + rep.infrastructure.length;
+      if (!total && !rep.opportunities.length) {
+        throw new Error('The model returned a report we could not read. Try again.');
+      }
+      finish(i5, 'done', total + ' findings · ' + rep.opportunities.length + ' systems worth building');
+
+      S.report = rep;
+      S.recon = { evidence: evidence, sig: sig, compSig: compSig };
+      await new Promise(function (r) { setTimeout(r, 420); });
+      renderReport(rep, { url: url, sig: sig, compSig: compSig });
+      show('rep');
+      setStatus('');
+      toast('Report ready — dollar figures are projections', 'ok');
+    } catch (err) {
+      var msg = (err && err.message) || String(err);
+      if (steps.length) finish(steps.length - 1, 'fail', msg);
+      setStatus('');
+      toast(msg, 'err');
+      setTimeout(function () { if (!S.report) show('aim'); }, 2600);
+    } finally {
+      S.busy = false;
+      el.runBtn.disabled = false;
+    }
+  }
+
+  /* ---------- wiring ---------- */
+  var SAMPLES = [
+    { label: 'A landscaping company', url: 'greenscapesolutions.com', ind: 'residential landscaping' },
+    { label: 'A dental practice', url: 'brightsmiledental.com', ind: 'dental practice' },
+    { label: 'An HVAC contractor', url: 'comforthvac.com', ind: 'HVAC installation and service' },
+    { label: 'A law firm', url: 'harborlegal.com', ind: 'personal injury law' }
+  ];
+  el.samples.innerHTML = SAMPLES.map(function (s, i) {
+    return '<button class="chip" data-s="' + i + '">' + esc(s.label) + '</button>';
+  }).join('');
+  el.samples.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-s]');
+    if (!b) return;
+    var s = SAMPLES[+b.dataset.s];
+    el.fUrl.value = s.url;
+    el.fInd.value = s.ind;
+    el.fUrl.focus();
+    el.hint.textContent = 'Example address — swap in a real company you want read';
+  });
+
+  el.runBtn.addEventListener('click', run);
+  [el.fUrl, el.fInd, el.fCmp].forEach(function (f) {
+    f.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); run(); }
+    });
+  });
+
+  el.domains.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-dom]');
+    if (!b || !S.report) return;
+    var d = DOMAINS.filter(function (x) { return x.key === b.dataset.dom; })[0];
+    var f = S.report[b.dataset.dom][+b.dataset.i];
+    if (f) drill(f, d ? d.title : '');
+  });
+
+  el.opps.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-build]');
+    if (b) build(+b.dataset.build);
+  });
+
+  el.restartBtn.addEventListener('click', function () {
+    S.report = null; S.recon = null; show('aim'); setStatus(''); el.fUrl.focus();
+  });
+
+  // On the static build the shim exposes a BYOK dialog; locally the dev proxy
+  // holds the key and there is nothing for the visitor to connect.
+  var keyBtn = $('#keyBtn');
+  if (typeof window.__blvkKeyDialog === 'function') {
+    keyBtn.classList.remove('hidden');
+    keyBtn.addEventListener('click', window.__blvkKeyDialog);
+  }
+
+  setTimeout(function () { el.fUrl.focus(); }, 150);
+  if (!AI) setStatus('AI runtime not detected');
+})();
+</script>
+
+</body>
+</html>

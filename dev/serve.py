@@ -332,6 +332,9 @@ PAGES = {
     "/scry": ("scry.html", "SCRY by BlvkWare"),
     "/scry/": ("scry.html", "SCRY by BlvkWare"),
     "/scry.html": ("scry.html", "SCRY by BlvkWare"),
+    "/augur": ("augur.html", "AUGUR by BlvkWare"),
+    "/augur/": ("augur.html", "AUGUR by BlvkWare"),
+    "/augur.html": ("augur.html", "AUGUR by BlvkWare"),
 }
 
 

@@ -104,7 +104,7 @@
         .lab-note { text-align: center; color: var(--color-text-secondary); font-size: 0.95rem; margin-top: 2.5rem; }
         /* Few tools, each given room — the Lab is a shortlist, not a directory. */
         /* min() so a narrow phone gets a full-width card instead of a 340px track that overflows. */
-        .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: 2rem; max-width: 900px; margin: 0 auto; }
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(330px, 100%), 1fr)); gap: 2rem; max-width: 1120px; margin: 0 auto; }
         .tool-card {
             background-color: var(--glass-background); border: 1px solid var(--glass-border); border-radius: 16px;
             padding: 2.25rem; transition: all 0.3s ease; position: relative; overflow: hidden;
@@ -210,7 +210,21 @@
                 <p class="section-sub fade-in">Every tool in the Lab is something we'd normally build for a client — released here instead, finished, free, and running in your browser. No sign-up, no tracking, no paywall.</p>
                 <div class="tools-grid">
 
-                    <a href="/scry/" class="tool-card fade-in" style="transition-delay: 100ms;">
+                    <a href="/augur/" class="tool-card fade-in" style="transition-delay: 100ms;">
+                        <div class="tool-head">
+                            <div class="tool-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7.4"></circle><circle cx="12" cy="12" r="2.6"></circle><path d="M12 1.6v3M12 19.4v3M1.6 12h3M19.4 12h3"></path></svg>
+                            </div>
+                            <span class="tool-status live">Live</span>
+                        </div>
+                        <h3 class="tool-title">AUGUR</h3>
+                        <p class="tool-desc">Every company leaves its strategy in public view. Point AUGUR at any website — yours or a competitor's — and it reads the live page, extracts the real technical signals, and returns the revenue and automation systems that business should be running but isn't. Then it draws the architecture.</p>
+                        <span class="tool-link">Read a company
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+                        </span>
+                    </a>
+
+                    <a href="/scry/" class="tool-card fade-in" style="transition-delay: 200ms;">
                         <div class="tool-head">
                             <div class="tool-icon">
                                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.6 12S6.2 5.6 12 5.6 21.4 12 21.4 12 17.8 18.4 12 18.4 2.6 12 2.6 12Z"></path><circle cx="12" cy="12" r="2.85"></circle></svg>
@@ -224,7 +238,7 @@
                         </span>
                     </a>
 
-                    <a href="/sigil/" class="tool-card fade-in" style="transition-delay: 200ms;">
+                    <a href="/sigil/" class="tool-card fade-in" style="transition-delay: 300ms;">
                         <div class="tool-head">
                             <div class="tool-icon">
                                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.6 21 18.2H3Z"></path><circle cx="12" cy="13.4" r="3.1"></circle></svg>
@@ -239,7 +253,7 @@
                     </a>
 
                 </div>
-                <p class="lab-note fade-in">Two of five in the Lab. The rest are being built — each one ships finished or not at all.</p>
+                <p class="lab-note fade-in">Three of five in the Lab. The rest are being built — each one ships finished or not at all.</p>
             </div>
         </section>
 
@@ -293,6 +307,7 @@
         <div class="container">
             <ul class="footer-links">
                 <li><a href="#lab">The Lab</a></li>
+                <li><a href="/augur/">AUGUR</a></li>
                 <li><a href="/scry/">SCRY</a></li>
                 <li><a href="/sigil/">SIGIL</a></li>
                 <li><a href="https://github.com/rxslice/blvkware-html-generator" target="_blank" rel="noopener noreferrer">GitHub</a></li>
