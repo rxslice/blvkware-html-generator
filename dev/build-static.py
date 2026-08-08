@@ -312,22 +312,7 @@ KEY_RE = re.compile(
     r"|gsk_[0-9A-Za-z]{40,}|sk-ant-[0-9A-Za-z\-]{40,})"
 )
 
-# The brand mark lives in app.html; every tool page reuses it as its favicon.
-def favicon():
-    path = os.path.join(ROOT, "app.html")
-    if not os.path.isfile(path):
-        return ""
-    with io.open(path, encoding="utf-8") as fh:
-        m = re.search(r'<symbol id="i-blvkmark"[^>]*>([\s\S]*?)</symbol>', fh.read())
-    if not m:
-        return ""
-    import urllib.parse
-    svg = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">'
-           '<rect width="64" height="64" rx="14" fill="#0b0806"/>' + m.group(1) + "</svg>")
-    return "data:image/svg+xml," + urllib.parse.quote(" ".join(svg.split()), safe="")
-
-
-def build_tool(tool, icon):
+def build_tool(tool):
     """Wrap a tool source file in a real HTML document plus the BYOK runtime."""
     src_path = os.path.join(ROOT, tool["src"])
     if not os.path.isfile(src_path):
@@ -355,8 +340,12 @@ def build_tool(tool, icon):
         "<meta property=\"og:title\" content=\"" + tool["title"] + "\">\n"
         "<meta property=\"og:description\" content=\"" + tool["desc"] + "\">\n"
         "<meta property=\"og:type\" content=\"website\">\n"
-        "<meta name=\"twitter:card\" content=\"summary\">\n"
-        + ('<link rel="icon" href="%s">\n' % icon if icon else "")
+        "<meta property=\"og:image\" content=\"https://" + CUSTOM_DOMAIN + "/assets/og.png\">\n"
+        "<meta name=\"twitter:card\" content=\"summary_large_image\">\n"
+        # Absolute paths: the tools live one directory down, and the assets are
+        # generated from the master logo by dev/embed-logo.py.
+        "<link rel=\"icon\" type=\"image/png\" sizes=\"48x48\" href=\"/assets/favicon-48.png\">\n"
+        "<link rel=\"apple-touch-icon\" href=\"/assets/logo-192.png\">\n"
         + "<script>" + SHIM + close_script + "\n"
         "</head>\n<body>\n"
     )
@@ -364,13 +353,20 @@ def build_tool(tool, icon):
 
 
 def main():
-    icon = favicon()
-
     if not os.path.isdir(OUT_DIR):
         os.makedirs(OUT_DIR)
 
+    # The logo assets are a build input, not a build product — regenerate them
+    # with dev/embed-logo.py whenever the master changes.
+    missing = [n for n in ("favicon-48.png", "logo-192.png", "og.png")
+               if not os.path.isfile(os.path.join(OUT_DIR, "assets", n))]
+    if missing:
+        print("ABORTED: docs/assets is missing %s" % ", ".join(missing))
+        print("         Run: python dev/embed-logo.py")
+        return 1
+
     for tool in TOOLS:
-        page = build_tool(tool, icon)
+        page = build_tool(tool)
         if page is None:
             return 1
         out_dir = os.path.join(OUT_DIR, tool["slug"])

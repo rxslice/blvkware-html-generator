@@ -309,15 +309,12 @@ def build_page(src_name="app.html", title="BlvkWare AI HTML Generator"):
     idx = src.index("<style>")
     body = src[idx:]
     close_script = "<" + "/script>"
-    # The brand mark lives in app.html; every tool page reuses it as its favicon.
-    with io.open(APP, encoding="utf-8") as fh:
-        icon = favicon_from_mark(fh.read())
     head = (
         "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n"
         "<meta charset=\"utf-8\">\n"
         "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n"
         "<title>" + title + "</title>\n"
-        + ('<link rel="icon" href="%s">\n' % icon if icon else "") +
+        '<link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">\n'
         "<script>" + SHIM + close_script + "\n"
         "</head>\n<body>\n"
     )
@@ -567,6 +564,25 @@ class Handler(http.server.BaseHTTPRequestHandler):
             self.send_header("Cache-Control", "no-store")
             self.end_headers()
             self.wfile.write(page)
+        elif path.startswith("/assets/"):
+            # Mirrors the deployed layout so favicons and og images resolve the
+            # same way locally. Confined to docs/assets, no traversal.
+            name = os.path.basename(path)
+            fp = os.path.join(ROOT, "docs", "assets", name)
+            if not name or not os.path.isfile(fp):
+                self.send_error(404, "Not found")
+                return
+            ext = os.path.splitext(name)[1].lower()
+            ctype = {".png": "image/png", ".webp": "image/webp",
+                     ".jpg": "image/jpeg", ".svg": "image/svg+xml"}.get(ext, "application/octet-stream")
+            with open(fp, "rb") as fh:
+                blob = fh.read()
+            self.send_response(200)
+            self.send_header("Content-Type", ctype)
+            self.send_header("Content-Length", str(len(blob)))
+            self.send_header("Cache-Control", "no-store")
+            self.end_headers()
+            self.wfile.write(blob)
         elif path in ("/api/status", "/api/providers"):
             avail = available_providers()
             info = json.dumps({
