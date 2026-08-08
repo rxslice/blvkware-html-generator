@@ -22,6 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 APP = os.path.join(ROOT, "app.html")
 OUT_DIR = os.path.join(ROOT, "docs")
 OUT = os.path.join(OUT_DIR, "index.html")
+CUSTOM_DOMAIN = "blvkware.dev"
 
 # Browser-side runtime. Same contract as the platform's ai-text-plugin:
 #   root.generateText({instruction, startWith, onChunk}) -> Promise<{text, generatedText}>
@@ -330,6 +331,10 @@ def main():
     # Pages would otherwise run the output through Jekyll.
     with io.open(os.path.join(OUT_DIR, ".nojekyll"), "w", encoding="utf-8") as fh:
         fh.write("")
+    # Custom domain. Kept in the build so a rebuild can never silently drop it —
+    # losing this file reverts the site to the github.io URL.
+    with io.open(os.path.join(OUT_DIR, "CNAME"), "w", encoding="utf-8") as fh:
+        fh.write(CUSTOM_DOMAIN)
 
     print("Built %s  (%.1f KB)" % (os.path.relpath(OUT, ROOT), len(page.encode("utf-8")) / 1024.0))
     print("  no developer keys embedded - visitors supply their own")
