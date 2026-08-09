@@ -25,6 +25,13 @@ OUT_DIR = os.path.join(ROOT, "docs")            # blvkware.dev/
 CUSTOM_DOMAIN = "blvkware.dev"
 BUILD_DATE = datetime.date.today().isoformat()
 
+# IndexNow lets us tell Bing (and Yandex, Seznam, Naver) about a change the
+# moment it ships, instead of waiting to be crawled. Bing feeds ChatGPT's web
+# results, so this is the shortest path from "deployed" to "an assistant can
+# cite it". The key is published as a text file at the site root — that file
+# IS the proof of ownership, so it must stay deployed.
+INDEXNOW_KEY = "444ff8a4e1c76e0935d7c8e40fa40ccd"
+
 # Each tool is a single source file built into its own sub-directory of the
 # site. Adding a tool means adding a row here and a card to site/index.html.
 TOOLS = [
@@ -502,7 +509,10 @@ payment, no server. They exist as the work sample in place of case studies.
     with io.open(os.path.join(OUT_DIR, "llms.txt"), "w", encoding="utf-8") as fh:
         fh.write(llms)
 
-    print("Built robots.txt, sitemap.xml (%d urls), llms.txt" % len(SITEMAP))
+    with io.open(os.path.join(OUT_DIR, INDEXNOW_KEY + ".txt"), "w", encoding="utf-8") as fh:
+        fh.write(INDEXNOW_KEY)
+
+    print("Built robots.txt, sitemap.xml (%d urls), llms.txt, IndexNow key file" % len(SITEMAP))
 
 
 def redirect_page(slug):
