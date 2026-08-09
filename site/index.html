@@ -101,7 +101,9 @@
             text-align: center; font-family: var(--font-code); font-size: 0.82rem; font-weight: 500;
             letter-spacing: 0.34em; text-transform: uppercase; color: var(--color-brass); margin-bottom: 1rem;
         }
-        .lab-note { text-align: center; color: var(--color-text-secondary); font-size: 0.95rem; margin-top: 2.5rem; }
+        .cta-direct { margin-top: 1.5rem; color: var(--color-text-secondary); font-size: 0.95rem; }
+        .cta-direct a { color: var(--color-primary-accent); text-decoration: none; }
+        .lab-note { text-align: center; max-width: 620px; margin-left: auto; margin-right: auto; color: var(--color-text-secondary); font-size: 0.95rem; margin-top: 2.5rem; }
         /* Few tools, each given room — the Lab is a shortlist, not a directory. */
         /* min() so a narrow phone gets a full-width card instead of a 340px track that overflows. */
         .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(330px, 100%), 1fr)); gap: 2rem; max-width: 1120px; margin: 0 auto; }
@@ -195,10 +197,10 @@
                 <h1 class="hero-title" id="hero-title">
                     We Don't Just Build Software. <br>We Engineer <span class="highlight">Competitive Advantages.</span>
                 </h1>
-                <p class="hero-subtitle">BlvkWare translates the abstract power of artificial intelligence into tangible, measurable business results. We architect bespoke AI solutions and intelligent software that drive efficiency, growth, and market leadership.</p>
+                <p class="hero-subtitle">I build the software a business is missing — the follow-up that never happens, the quote that never gets chased, the report nobody has time to run. Start with the free tools below. They do real work, and they show you exactly how I think.</p>
                 <div class="hero-actions">
-                    <a href="#cta" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.125rem;">Become an AI-First Leader</a>
-                    <a href="/scry/" class="btn btn-ghost" style="padding: 1rem 2rem; font-size: 1.125rem;">Scry Your Business — Free</a>
+                    <a href="#lab" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.125rem;">See what it finds in your business</a>
+                    <a href="#cta" class="btn btn-ghost" style="padding: 1rem 2rem; font-size: 1.125rem;">Work with me</a>
                 </div>
             </div>
         </section>
@@ -253,13 +255,14 @@
                     </a>
 
                 </div>
-                <p class="lab-note fade-in">Three of five in the Lab. The rest are being built — each one ships finished or not at all.</p>
+                <p class="lab-note fade-in">No case studies and no logo wall. The tools above are the portfolio — that is the standard of work you get, and you can go use them right now without talking to me.</p>
             </div>
         </section>
 
         <section id="services">
             <div class="container">
-                <h2 class="section-title fade-in">Our Arsenal of Services</h2>
+                <h2 class="section-title fade-in">What I Build</h2>
+                <p class="section-sub fade-in">Fixed scope, fixed timeline, one person building it — me. Tell me the problem and you get a number back the same day, not a discovery-call sequence.</p>
                 <div class="services-grid">
                     <div class="service-card fade-in" style="transition-delay: 100ms;">
                         <div class="service-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"></path><rect x="4" y="4" width="16" height="16" rx="2"></rect><path d="M2 14h2"></path><path d="M20 14h2"></path><path d="M15 2v2"></path><path d="M9 2v2"></path></svg></div>
@@ -283,10 +286,10 @@
         <section id="cta">
             <div class="container">
                 <div class="cta-content fade-in">
-                    <h2 class="cta-title">Ready to Build Your Unfair Advantage?</h2>
-                    <p class="cta-text">The next wave of innovation is here. Don't just adapt—dominate. Let's have a conversation about how a bespoke AI strategy can redefine your position in the market.</p>
-
-                    <a href="https://www.google.com/calendar/render?action=TEMPLATE&amp;text=Strategic%20Consultation%20with%20BlvkWare&amp;details=This%2030-minute%20session%20is%20designed%20to%20explore%20a%20potential%20strategic%20partnership.%20Please%20come%20prepared%20to%20discuss%20your%20business%20goals,%20current%20challenges,%20and%20AI%20objectives.%0A%0A-%20William%20Wheeler,%20BlvkWare" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.125rem;">Schedule a Strategic Consultation</a>
+                    <h2 class="cta-title">Tell me what's broken</h2>
+                    <p class="cta-text">Describe the process that's costing you time or money. I'll tell you straight whether software fixes it, roughly what it costs, and how long it takes — before you commit to anything.</p>
+                    <a href="mailto:hello@blvkware.dev?subject=Project%20enquiry&amp;body=What%20I%20do%3A%0A%0AThe%20process%20that%27s%20costing%20me%20time%20or%20money%3A%0A%0ARoughly%20what%20I%20can%20spend%3A%0A" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.125rem;">Email me about a project</a>
+                    <p class="cta-direct">Or just write to <a href="mailto:hello@blvkware.dev">hello@blvkware.dev</a>. I answer everything myself, usually same day.</p>
 
                     <div class="secondary-cta">
                         <a href="https://github.com/rxslice" target="_blank" rel="noopener noreferrer" class="secondary-cta-link">
@@ -312,6 +315,7 @@
                 <li><a href="/sigil/">SIGIL</a></li>
                 <li><a href="https://github.com/rxslice/blvkware-html-generator" target="_blank" rel="noopener noreferrer">GitHub</a></li>
             </ul>
+            <p class="footer-text"><a href="mailto:hello@blvkware.dev" style="color:var(--color-primary-accent);text-decoration:none">hello@blvkware.dev</a></p>
             <p class="footer-text">Copyright © 2026 BlvkWare / William Russell Wheeler. All Rights Reserved.</p>
         </div>
     </footer>

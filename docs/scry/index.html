@@ -531,6 +531,19 @@
   .toast.ok .ic { color: var(--jade); }
   .status { display: inline-flex; align-items: center; gap: 7px; font-size: 12.2px; color: var(--ink-3); }
 
+  /* ---------- keep it / lead capture ---------- */
+  .keep { display: flex; flex-direction: column; gap: 8px; }
+  .keep-input {
+    width: 100%; height: 36px; padding: 0 11px; border: none; border-radius: var(--r-sm);
+    background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line);
+    font-size: 13.4px; color: var(--ink); outline: none; transition: box-shadow var(--t);
+  }
+  .keep-input::placeholder { color: var(--ink-3); }
+  .keep-input:focus { box-shadow: inset 0 0 0 1px var(--accent-line), 0 0 0 3px var(--accent-soft); }
+  .keep-input.bad { box-shadow: inset 0 0 0 1px rgba(232,115,74,.6); }
+  .keep-note { font-size: 11.5px; color: var(--ink-3); margin: 10px 2px 0; line-height: 1.5; }
+  .keep-note.ok { color: var(--jade); }
+
   /* ---------- BYOK key dialog (styled by the static shim) ---------- */
   .modal-back { position: fixed; inset: 0; z-index: 90; background: rgba(6,5,3,.72); backdrop-filter: blur(6px); display: grid; place-items: center; padding: 20px; animation: fade 180ms var(--ease); }
   .modal { background: var(--bg-2); border-radius: var(--r-lg); box-shadow: var(--sh-3), inset 0 0 0 1px var(--line-2); max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
@@ -571,6 +584,9 @@
   </symbol>
   <symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
     <path d="M7.5 4.8 19 12 7.5 19.2Z"/>
+  </symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2.8" y="4.8" width="18.4" height="14.4" rx="2.2"/><path d="m3.4 6.6 8.6 6 8.6-6"/>
   </symbol>
   <symbol id="i-hammer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
     <path d="m13.5 8.5-9 9a2.1 2.1 0 0 0 3 3l9-9"/><path d="M14.2 3.4 21 10.2l-2.6 2.6-6.8-6.8Z"/>
@@ -687,6 +703,19 @@
         <p style="font-size:11.5px;color:var(--ink-3);margin:10px 2px 0;line-height:1.5">
           Hands the architecture to SIGIL and builds a live, clickable prototype.
         </p>
+
+        <div class="side-title" style="margin-top:22px">Keep it</div>
+        <form class="keep" id="keepForm" novalidate>
+          <input class="keep-input" id="keepEmail" type="email" autocomplete="email"
+                 spellcheck="false" placeholder="you@company.com" aria-label="Your email">
+          <button class="act" type="submit" id="keepBtn">
+            <svg class="ic ic-16"><use href="#i-mail"/></svg>
+            Email me this map
+          </button>
+        </form>
+        <p class="keep-note" id="keepNote">
+          The whole map, plus the systems worth building. No account, no list — one email, from a person.
+        </p>
       </div>
     </div>
   </div>
@@ -707,7 +736,8 @@
     steps: $('#steps'), pipeTitle: $('#pipeTitle'), pipeSub: $('#pipeSub'),
     osTitle: $('#osTitle'), osSub: $('#osSub'),
     metrics: $('#metrics'), finds: $('#finds'), systems: $('#systems'), acts: $('#acts'),
-    forgeBtn: $('#forgeBtn'), toasts: $('#toasts')
+    forgeBtn: $('#forgeBtn'), toasts: $('#toasts'),
+    keepForm: $('#keepForm'), keepEmail: $('#keepEmail'), keepBtn: $('#keepBtn'), keepNote: $('#keepNote')
   };
 
   var S = { model: null, brief: '', busy: false };
@@ -1146,6 +1176,92 @@
     if (f) drill(f.title, 'Go deep on this issue: "' + f.title + ' - ' + f.detail + '". How do we fix it with software, and what is it worth?', b);
   });
 
+  /* ---------------- keep it ----------------
+     Somebody who scries their business has just described their bottlenecks and
+     their intent. Losing them at this exact moment is the whole leak.
+
+     This is a static site with no backend. Set CAPTURE_ENDPOINT to a form
+     endpoint (Web3Forms, Formspree, a Worker — anything that accepts a JSON
+     POST) and the field becomes a true inline capture. Left empty, it falls
+     back to opening the visitor's mail client with the map already written,
+     which still delivers the map and still puts their address in your inbox. */
+  var CAPTURE_ENDPOINT = '';
+  var CAPTURE_TO = 'hello@blvkware.dev';
+
+  function mapAsText() {
+    var m = S.model;
+    if (!m) return '';
+    var L = [];
+    L.push(m.osName);
+    if (m.summary) L.push(m.summary);
+    L.push('');
+    L.push('THE BUSINESS AS DESCRIBED');
+    L.push(S.brief);
+    L.push('');
+    L.push('PROJECTED OPERATING PICTURE (modelled from industry benchmarks, not real figures)');
+    (m.metrics || []).forEach(function (x) {
+      L.push('  ' + x.label + ': ' + x.value + (x.note ? ' (' + x.note + ')' : ''));
+    });
+    L.push('');
+    L.push('WHAT IS COSTING YOU');
+    (m.findings || []).forEach(function (f) {
+      L.push('  [' + f.type + '] ' + f.title);
+      if (f.detail) L.push('      ' + f.detail);
+    });
+    L.push('');
+    L.push('SYSTEMS WORTH BUILDING');
+    (m.systems || []).forEach(function (sys) {
+      L.push('  ' + sys.name + (sys.purpose ? ' — ' + sys.purpose : ''));
+      if (sys.modules && sys.modules.length) L.push('      modules: ' + sys.modules.join(', '));
+    });
+    L.push('');
+    L.push('Mapped by SCRY — blvkware.dev/scry');
+    return L.join('\n');
+  }
+
+  function keepNote(msg, ok) {
+    el.keepNote.textContent = msg;
+    el.keepNote.classList.toggle('ok', !!ok);
+  }
+
+  el.keepForm.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    if (!S.model) return;
+    var email = el.keepEmail.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      el.keepEmail.classList.add('bad');
+      keepNote('That address does not look right — check it and try again.');
+      el.keepEmail.focus();
+      return;
+    }
+    el.keepEmail.classList.remove('bad');
+    el.keepBtn.disabled = true;
+
+    var body = mapAsText();
+    if (CAPTURE_ENDPOINT) {
+      try {
+        var res = await fetch(CAPTURE_ENDPOINT, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ email: email, subject: 'SCRY map — ' + S.model.osName, map: body })
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        el.keepForm.classList.add('hidden');
+        keepNote('Sent. Check your inbox in a minute.', true);
+        return;
+      } catch (err) {
+        keepNote('Could not send that — opening your mail app instead.');
+      }
+    }
+    // No endpoint configured: hand it to their mail client, pre-written.
+    var sub = encodeURIComponent('SCRY map — ' + S.model.osName);
+    var text = encodeURIComponent('Send this and I will email the full map back to ' + email +
+      '.\n\n----------------------------------------\n\n' + body);
+    window.location.href = 'mailto:' + CAPTURE_TO + '?subject=' + sub + '&body=' + text;
+    keepNote('Your mail app should open with the map in it — just hit send.', true);
+    el.keepBtn.disabled = false;
+  });
+
   /* ---------------- forge ---------------- */
   el.forgeBtn.addEventListener('click', function () {
     if (!S.model) return;
@@ -1164,6 +1280,11 @@
   el.scryBtn.addEventListener('click', run);
   el.restartBtn.addEventListener('click', function () {
     S.model = null; show('ask'); setStatus(''); el.biz.focus();
+    el.keepForm.classList.remove('hidden');
+    el.keepBtn.disabled = false;
+    el.keepEmail.value = '';
+    el.keepEmail.classList.remove('bad');
+    keepNote('The whole map, plus the systems worth building. No account, no list — one email, from a person.');
   });
 
   // On the static build the shim exposes a BYOK dialog; locally the dev proxy
