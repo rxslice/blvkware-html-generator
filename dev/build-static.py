@@ -335,6 +335,56 @@ SITEMAP = [
 ]
 
 
+def sync_faq_schema(html):
+    """Rebuild the FAQPage node from the FAQ a visitor actually reads.
+
+    The structured data and the visible copy have to say the same thing —
+    Google treats a mismatch as a markup violation, and an assistant quoting
+    stale schema would misrepresent the business. Generating one from the other
+    on every build makes drift impossible rather than merely unlikely.
+    """
+    import json
+
+    pairs = re.findall(
+        r'<summary class="faq-q">(.*?)</summary>\s*<div class="faq-a">(.*?)</div>',
+        html, re.S)
+    if not pairs:
+        print("WARNING: no FAQ found in site/index.html - schema left as-is")
+        return html
+
+    def plain(fragment):
+        text = re.sub(r"<[^>]+>", " ", fragment)
+        text = (text.replace("&mdash;", "—").replace("&ndash;", "–")
+                    .replace("&amp;", "&").replace("&nbsp;", " ")
+                    .replace("&quot;", '"').replace("&#39;", "'"))
+        return re.sub(r"\s+", " ", text).strip()
+
+    m = re.search(r'<script type="application/ld\+json">\s*(\{[\s\S]*?\})\s*<' + r'/script>', html)
+    if not m:
+        print("WARNING: no JSON-LD block found - FAQ schema not synced")
+        return html
+
+    data = json.loads(m.group(1))
+    for node in data.get("@graph", []):
+        if node.get("@type") == "FAQPage":
+            node["mainEntity"] = [
+                {"@type": "Question", "name": plain(q),
+                 "acceptedAnswer": {"@type": "Answer", "text": plain(a)}}
+                for q, a in pairs
+            ]
+            break
+    else:
+        print("WARNING: no FAQPage node in JSON-LD")
+        return html
+
+    blob = json.dumps(data, ensure_ascii=False, indent=2)
+    if "</" in blob:
+        print("ABORTED: JSON-LD contains a closing tag sequence")
+        raise SystemExit(1)
+    print("Synced FAQ schema (%d questions) from rendered HTML" % len(pairs))
+    return html[:m.start(1)] + blob + html[m.end(1):]
+
+
 def write_seo_files():
     """robots.txt, sitemap.xml and llms.txt.
 
@@ -393,8 +443,9 @@ clinics, professional practices and agencies. Contact: russ@blvkware.dev
 - **Missed-Call Recovery** — $499 setup, then $149/month. Every unanswered call
   gets an automatic text back within 60 seconds; two-way texting from the
   business's existing number; automatic follow-up until the customer replies or
-  opts out; dashboard of calls recovered. Live in about 1 week. Industry data puts
-  recovery of otherwise-lost calls at 30-60%.
+  opts out; dashboard of calls recovered. Live in about 1 week. Operators typically
+  report recovering a meaningful share of calls that would otherwise be lost; BlvkWare
+  publishes no guaranteed recovery rate.
 - **AI Front Desk** — $1,500 setup, then $349/month. An AI receptionist answering
   calls, texts and web chat 24/7, trained on the business's services, hours and
   pricing, booking appointments directly into the calendar and escalating when it
@@ -473,6 +524,38 @@ KEY_RE = re.compile(
     r"|gsk_[0-9A-Za-z]{40,}|sk-ant-[0-9A-Za-z\-]{40,})"
 )
 
+def check_js(src, name):
+    """Parse the tool's script block before shipping it.
+
+    A single bad escape produces a page that loads, renders, and silently does
+    nothing — no visible error, no failed request. That shipped once. If node is
+    available this gate makes it impossible to ship again; if it isn't, the build
+    says so rather than pretending it checked.
+    """
+    import subprocess
+    import tempfile
+
+    m = re.search(r"<script>\n([\s\S]*)\n<" + r"/script>\s*$", src)
+    if not m:
+        return True
+    path = os.path.join(tempfile.gettempdir(), "_blvk_check.js")
+    with io.open(path, "w", encoding="utf-8") as fh:
+        fh.write(m.group(1))
+    try:
+        res = subprocess.run(["node", "--check", path],
+                             capture_output=True, text=True)
+    except (OSError, ValueError):
+        print("  note: node not found - JS syntax not verified for %s" % name)
+        return True
+    if res.returncode != 0:
+        first = (res.stderr.strip().splitlines() or ["unknown error"])
+        print("ABORTED: %s contains invalid JavaScript" % name)
+        for line in first[:6]:
+            print("         " + line)
+        return False
+    return True
+
+
 def build_tool(tool):
     """Wrap a tool source file in a real HTML document plus the BYOK runtime."""
     src_path = os.path.join(ROOT, tool["src"])
@@ -482,6 +565,9 @@ def build_tool(tool):
 
     with io.open(src_path, encoding="utf-8") as fh:
         src = fh.read()
+
+    if not check_js(src, tool["src"]):
+        return None
 
     # Refuse to publish if a developer key ever leaked into the source.
     if KEY_RE.search(src):
@@ -552,6 +638,7 @@ def main():
     if os.path.isfile(SITE):
         with io.open(SITE, encoding="utf-8") as fh:
             site_html = fh.read()
+        site_html = sync_faq_schema(site_html)
         with io.open(os.path.join(OUT_DIR, "index.html"), "w", encoding="utf-8") as fh:
             fh.write(site_html)
         print("Built docs/index.html (%.1f KB)  marketing site"

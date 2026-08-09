@@ -518,6 +518,29 @@
   .meta-v { font-size: 13.6px; font-weight: 650; }
   .meta-v.med { color: var(--brass); } .meta-v.low { color: var(--jade); } .meta-v.high { color: var(--clay); }
 
+  /* ---------- keep it / lead capture ----------
+     Sits at the end of the report, where intent is highest: they have just
+     read a costed plan for their own company. */
+  .keep-card {
+    margin-top: 30px; padding: 24px;
+    background: linear-gradient(168deg, var(--surface) 0%, var(--bg-2) 70%);
+    border-radius: var(--r-lg); box-shadow: inset 0 0 0 1px var(--accent-line);
+    display: flex; gap: 26px; align-items: center; flex-wrap: wrap;
+  }
+  .keep-card > div { flex: 1 1 300px; min-width: 0; }
+  .keep-card h3 { margin: 0 0 7px; font-size: 17px; font-weight: 750; letter-spacing: -.01em; }
+  .keep-card #keepNote { margin: 0; font-size: 13px; color: var(--ink-2); line-height: 1.6; }
+  .keep-card #keepNote.ok { color: var(--jade); }
+  .keep { display: flex; gap: 9px; flex: 1 1 320px; flex-wrap: wrap; }
+  .keep-input {
+    flex: 1 1 180px; height: 46px; padding: 0 13px; border: none; border-radius: var(--r-sm);
+    background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line);
+    font-size: 14.5px; color: var(--ink); outline: none; transition: box-shadow var(--t);
+  }
+  .keep-input::placeholder { color: var(--ink-3); }
+  .keep-input:focus { box-shadow: inset 0 0 0 1px var(--accent-line), 0 0 0 3px var(--accent-soft); }
+  .keep-input.bad { box-shadow: inset 0 0 0 1px rgba(232,115,74,.6); }
+
   /* architecture modal */
   .modal-back {
     position: fixed; inset: 0; z-index: 80; background: rgba(6,5,3,.76); backdrop-filter: blur(6px);
@@ -634,6 +657,9 @@
     <rect x="6.4" y="6.4" width="11.2" height="11.2" rx="2"/><rect x="9.8" y="9.8" width="4.4" height="4.4" rx="1"/>
     <path d="M9.6 2.6v3.8M14.4 2.6v3.8M9.6 17.6v3.8M14.4 17.6v3.8M2.6 9.6h3.8M2.6 14.4h3.8M17.6 9.6h3.8M17.6 14.4h3.8"/>
   </symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2.8" y="4.8" width="18.4" height="14.4" rx="2.2"/><path d="m3.4 6.6 8.6 6 8.6-6"/>
+  </symbol>
   <symbol id="i-blueprint" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
     <rect x="2.8" y="4.4" width="18.4" height="15.2" rx="2"/><path d="M2.8 9.2h18.4M8.2 9.2v10.4"/><path d="M12 13h5.4M12 16.2h5.4"/>
   </symbol>
@@ -727,6 +753,20 @@
       <div class="sec-title"><svg class="ic ic-16"><use href="#i-bolt"/></svg> What I'd build if this were my company</div>
       <p class="sec-note" id="oppNote"></p>
       <div class="opps" id="opps"></div>
+
+      <div class="keep-card" id="keepCard">
+        <div>
+          <h3>Want this report in writing?</h3>
+          <p id="keepNote">The whole thing &mdash; every finding, every system, every number &mdash; sent to you. No account, no list, no follow-up sequence. One email, from a person.</p>
+        </div>
+        <form class="keep" id="keepForm" novalidate>
+          <input class="keep-input" id="keepEmail" type="email" autocomplete="email"
+                 spellcheck="false" placeholder="you@company.com" aria-label="Your email">
+          <button class="btn primary lg" type="submit" id="keepBtn">
+            <svg class="ic ic-16"><use href="#i-mail"/></svg> Email me this report
+          </button>
+        </form>
+      </div>
     </div>
   </div>
 
@@ -747,7 +787,9 @@
     runBtn: $('#runBtn'), restartBtn: $('#restartBtn'), hint: $('#hint'),
     scan: $('#scan'), status: $('#status'), toasts: $('#toasts'), live: $('#live'),
     repTitle: $('#repTitle'), repUrl: $('#repUrl'), repSub: $('#repSub'), repBadges: $('#repBadges'),
-    sigs: $('#sigs'), domains: $('#domains'), opps: $('#opps'), oppNote: $('#oppNote'), samples: $('#samples')
+    sigs: $('#sigs'), domains: $('#domains'), opps: $('#opps'), oppNote: $('#oppNote'), samples: $('#samples'),
+    keepCard: $('#keepCard'), keepForm: $('#keepForm'), keepEmail: $('#keepEmail'),
+    keepBtn: $('#keepBtn'), keepNote: $('#keepNote')
   };
 
   var S = { busy: false, report: null, recon: null, target: '', competitor: '' };
@@ -1441,6 +1483,104 @@
     window.location.href = '/sigil/?prompt=' + encodeURIComponent(spec).slice(0, 1800);
   }
 
+  /* ---------------- keep it ----------------
+     Someone who has just read a costed plan for their own company is at the
+     highest intent this page produces. Losing them here is the whole leak.
+
+     Static site, no backend: POSTs to CAPTURE_ENDPOINT when one is configured,
+     otherwise opens the visitor's own mail client with the report already
+     written, which still delivers it and still puts their address in the inbox. */
+  var CAPTURE_ENDPOINT = '';
+  var CAPTURE_TO = 'russ@blvkware.dev';
+
+  function reportAsText() {
+    var r = S.report;
+    if (!r) return '';
+    var L = [];
+    L.push('AUGUR REPORT — ' + (r.company.name || S.target));
+    L.push(S.target);
+    if (r.company.what) L.push(r.company.what);
+    L.push('');
+    if (S.recon && S.recon.sig) {
+      L.push('OBSERVED ON THE LIVE PAGE');
+      var g = S.recon.sig;
+      L.push('  platform: ' + g.platform);
+      L.push('  analytics: ' + (g.analytics ? 'present' : 'not detected'));
+      L.push('  live chat: ' + (g.chat ? 'present' : 'not detected'));
+      L.push('  online booking: ' + (g.booking ? 'present' : 'not detected'));
+      L.push('  lead capture: ' + (g.forms ? g.forms + ' form(s)' : 'no form on page'));
+      L.push('');
+    }
+    DOMAINS.forEach(function (d) {
+      var list = r[d.key] || [];
+      if (!list.length) return;
+      L.push(d.title.toUpperCase());
+      list.forEach(function (f) {
+        L.push('  - ' + f.title);
+        if (f.detail) L.push('      ' + f.detail);
+        if (f.evidence) L.push('      observed: ' + f.evidence);
+      });
+      L.push('');
+    });
+    L.push('WHAT I WOULD BUILD');
+    r.opportunities.forEach(function (o, i) {
+      L.push('  ' + (i + 1) + '. ' + o.name);
+      if (o.problem) L.push('     problem: ' + o.problem);
+      if (o.monthlyLow && o.monthlyHigh) {
+        L.push('     modelled opportunity: ' + money(o.monthlyLow) + '-' + money(o.monthlyHigh) + '/month');
+      }
+      L.push('     pipeline: ' + o.pipeline.join(' -> '));
+      L.push('     complexity: ' + o.complexity);
+      L.push('');
+    });
+    L.push('Every figure above is a projection modelled from public industry');
+    L.push('benchmarks — not a measurement of the real finances of this business.');
+    L.push('');
+    L.push('Produced by AUGUR — blvkware.dev/augur');
+    return L.join('\n');
+  }
+
+  function keepNote(msg, ok) {
+    el.keepNote.textContent = msg;
+    el.keepNote.classList.toggle('ok', !!ok);
+  }
+
+  el.keepForm.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    if (!S.report) return;
+    var email = el.keepEmail.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      el.keepEmail.classList.add('bad');
+      keepNote('That address does not look right — check it and try again.');
+      el.keepEmail.focus();
+      return;
+    }
+    el.keepEmail.classList.remove('bad');
+    el.keepBtn.disabled = true;
+    var body = reportAsText();
+
+    if (CAPTURE_ENDPOINT) {
+      try {
+        var res = await fetch(CAPTURE_ENDPOINT, {
+          method: 'POST', headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ email: email, subject: 'AUGUR report — ' + S.target, report: body })
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        el.keepForm.classList.add('hidden');
+        keepNote('Sent. Check your inbox in a minute.', true);
+        return;
+      } catch (err) {
+        keepNote('Could not send that — opening your mail app instead.');
+      }
+    }
+    var sub = encodeURIComponent('AUGUR report — ' + S.target);
+    var text = encodeURIComponent('Send this and I will email the full report back to ' + email +
+      '.\n\n----------------------------------------\n\n' + body);
+    window.location.href = 'mailto:' + CAPTURE_TO + '?subject=' + sub + '&body=' + text;
+    keepNote('Your mail app should open with the report in it — just hit send.', true);
+    el.keepBtn.disabled = false;
+  });
+
   /* ---------- markdown for drill-downs ---------- */
   function markdown(src) {
     var pre = [];
@@ -1689,6 +1829,12 @@
 
   el.restartBtn.addEventListener('click', function () {
     S.report = null; S.recon = null; show('aim'); setStatus(''); el.fUrl.focus();
+    el.keepForm.classList.remove('hidden');
+    el.keepBtn.disabled = false;
+    el.keepEmail.value = '';
+    el.keepEmail.classList.remove('bad');
+    keepNote('The whole thing — every finding, every system, every number — sent to you. '
+      + 'No account, no list, no follow-up sequence. One email, from a person.');
   });
 
   // On the static build the shim exposes a BYOK dialog; locally the dev proxy
