@@ -5,8 +5,10 @@
 > fixed prices. Also publishes three free browser-based business analysis tools.
 
 BlvkWare is a solo software engineering practice run by William Russell Wheeler,
-serving small and local businesses in the United States — home services, trades,
-clinics, professional practices and agencies. Contact: russ@blvkware.dev
+based in Mississippi and working remotely with small businesses across the United
+States — home services, trades, clinics, professional practices and agencies. All
+work is delivered remotely; there is nothing requiring an on-site visit.
+Contact: russ@blvkware.dev
 
 ## Services and prices
 
