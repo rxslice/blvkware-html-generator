@@ -28,6 +28,14 @@ clinics, professional practices and agencies. Contact: russ@blvkware.dev
 Monthly services can be cancelled any month. There is no discovery-call
 requirement before getting a price.
 
+## How to get in touch
+
+- Book a call directly: https://cal.com/blvkware/30min (30 minutes, for scoping
+  custom work) or https://cal.com/blvkware/15min (15 minutes, to get one of the
+  productized services started).
+- Or email russ@blvkware.dev. Replies come from the person who does the work,
+  usually the same day.
+
 ## Free tools
 
 All three run entirely in the visitor's browser. No account, no sign-up, no

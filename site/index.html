@@ -47,7 +47,14 @@
       "sameAs": [
         "https://github.com/rxslice",
         "https://www.linkedin.com/in/william-wheeler-aiwinlab/"
-      ]
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "sales",
+        "email": "russ@blvkware.dev",
+        "url": "https://cal.com/blvkware/30min",
+        "availableLanguage": "English"
+      }
     },
     {
       "@type": "WebSite",
@@ -130,7 +137,35 @@
             "availability": "https://schema.org/InStock"
           }
         ]
-      }
+      },
+      "potentialAction": {
+        "@type": "ReserveAction",
+        "name": "Book a call with BlvkWare",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://cal.com/blvkware/30min",
+          "actionPlatform": [
+            "https://schema.org/DesktopWebPlatform",
+            "https://schema.org/MobileWebPlatform"
+          ]
+        },
+        "result": {
+          "@type": "Reservation",
+          "name": "30-minute consultation"
+        }
+      },
+      "availableChannel": [
+        {
+          "@type": "ServiceChannel",
+          "name": "Book a call",
+          "serviceUrl": "https://cal.com/blvkware/30min"
+        },
+        {
+          "@type": "ServiceChannel",
+          "name": "Email",
+          "serviceUrl": "mailto:russ@blvkware.dev"
+        }
+      ]
     },
     {
       "@type": "FAQPage",
@@ -352,6 +387,9 @@
             text-align: center; font-family: var(--font-code); font-size: 0.82rem; font-weight: 500;
             letter-spacing: 0.34em; text-transform: uppercase; color: var(--color-brass); margin-bottom: 1rem;
         }
+        .cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .service-alt { display: block; margin-top: 0.75rem; font-size: 0.9rem; color: var(--color-text-secondary); text-decoration: none; }
+        .service-alt:hover { color: var(--color-text-primary); text-decoration: underline; }
         .cta-direct { margin-top: 1.5rem; color: var(--color-text-secondary); font-size: 0.95rem; }
         .cta-direct a { color: var(--color-primary-accent); text-decoration: none; }
         .lab-note { text-align: center; max-width: 620px; margin-left: auto; margin-right: auto; color: var(--color-text-secondary); font-size: 0.95rem; margin-top: 2.5rem; }
@@ -553,9 +591,10 @@
                             <li>Dashboard showing calls recovered and revenue booked</li>
                         </ul>
                         <div class="service-meta">Live in 1 week &middot; cancel any month</div>
-                        <a class="service-cta" href="mailto:russ@blvkware.dev?subject=Missed-Call%20Recovery">Get this running
+                        <a class="service-cta" href="https://cal.com/blvkware/15min" target="_blank" rel="noopener noreferrer">Book a 15-min call
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
                         </a>
+                        <a class="service-alt" href="mailto:russ@blvkware.dev?subject=Missed-Call%20Recovery">or email me instead</a>
                     </div>
                     <div class="service-card fade-in" style="transition-delay: 200ms;">
                         <div class="service-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v1a7 7 0 0 1-14 0v-1"></path><path d="M12 18v4"></path></svg></div>
@@ -569,9 +608,10 @@
                             <li>Escalates to you when it should</li>
                         </ul>
                         <div class="service-meta">Live in 2 weeks &middot; cancel any month</div>
-                        <a class="service-cta" href="mailto:russ@blvkware.dev?subject=AI%20Front%20Desk">Get this running
+                        <a class="service-cta" href="https://cal.com/blvkware/15min" target="_blank" rel="noopener noreferrer">Book a 15-min call
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
                         </a>
+                        <a class="service-alt" href="mailto:russ@blvkware.dev?subject=AI%20Front%20Desk">or email me instead</a>
                     </div>
                     <div class="service-card fade-in" style="transition-delay: 300ms;">
                         <div class="service-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></div>
@@ -585,9 +625,10 @@
                             <li>30 days of fixes included</li>
                         </ul>
                         <div class="service-meta">Not sure what you need? Run SCRY first &mdash; it's free</div>
-                        <a class="service-cta" href="mailto:russ@blvkware.dev?subject=Custom%20Build">Tell me what's broken
+                        <a class="service-cta" href="https://cal.com/blvkware/30min" target="_blank" rel="noopener noreferrer">Book a 30-min scoping call
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
                         </a>
+                        <a class="service-alt" href="mailto:russ@blvkware.dev?subject=Custom%20Build">or email me instead</a>
                     </div>
                 </div>
             </div>
@@ -643,8 +684,11 @@
                 <div class="cta-content fade-in">
                     <h2 class="cta-title">Tell me what's broken</h2>
                     <p class="cta-text">Describe the process that's costing you time or money. I'll tell you straight whether software fixes it, roughly what it costs, and how long it takes — before you commit to anything.</p>
-                    <a href="mailto:russ@blvkware.dev?subject=Project%20enquiry&amp;body=What%20I%20do%3A%0A%0AThe%20process%20that%27s%20costing%20me%20time%20or%20money%3A%0A%0ARoughly%20what%20I%20can%20spend%3A%0A" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.125rem;">Email me about a project</a>
-                    <p class="cta-direct">Or just write to <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a>. I answer everything myself, usually same day.</p>
+                    <div class="cta-actions">
+                        <a href="https://cal.com/blvkware/30min" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.125rem;">Book a 30-minute call</a>
+                        <a href="mailto:russ@blvkware.dev?subject=Project%20enquiry&amp;body=What%20I%20do%3A%0A%0AThe%20process%20that%27s%20costing%20me%20time%20or%20money%3A%0A%0ARoughly%20what%20I%20can%20spend%3A%0A" class="btn btn-ghost" style="padding: 1rem 2rem; font-size: 1.125rem;">Email me instead</a>
+                    </div>
+                    <p class="cta-direct">Rather not do either? Just write to <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a>. I answer everything myself, usually same day.</p>
 
                     <div class="secondary-cta">
                         <a href="https://github.com/rxslice" target="_blank" rel="noopener noreferrer" class="secondary-cta-link">
