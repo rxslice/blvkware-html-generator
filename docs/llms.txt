@@ -1,0 +1,59 @@
+# BlvkWare
+
+> AI automation and custom software for small businesses, built by one engineer.
+> Missed-call recovery, AI receptionists and bespoke internal tools, at published
+> fixed prices. Also publishes three free browser-based business analysis tools.
+
+BlvkWare is a solo software engineering practice run by William Russell Wheeler,
+serving small and local businesses in the United States — home services, trades,
+clinics, professional practices and agencies. Contact: russ@blvkware.dev
+
+## Services and prices
+
+- **Missed-Call Recovery** — $499 setup, then $149/month. Every unanswered call
+  gets an automatic text back within 60 seconds; two-way texting from the
+  business's existing number; automatic follow-up until the customer replies or
+  opts out; dashboard of calls recovered. Live in about 1 week. Industry data puts
+  recovery of otherwise-lost calls at 30-60%.
+- **AI Front Desk** — $1,500 setup, then $349/month. An AI receptionist answering
+  calls, texts and web chat 24/7, trained on the business's services, hours and
+  pricing, booking appointments directly into the calendar and escalating when it
+  should. Live in about 2 weeks.
+- **Custom Build** — from $2,500, one-off, no monthly fee. A bespoke internal tool
+  or automated workflow: quote follow-up, intake, scheduling, reporting. Scope and
+  price agreed in writing before work starts. Delivered in 2-4 weeks. The client
+  owns the code outright. 30 days of fixes included.
+
+Monthly services can be cancelled any month. There is no discovery-call
+requirement before getting a price.
+
+## Free tools
+
+All three run entirely in the visitor's browser. No account, no sign-up, no
+payment, no server. They exist as the work sample in place of case studies.
+
+- [AUGUR](https://blvkware.dev/augur/): reads a company's public website and
+  returns an intelligence report covering revenue opportunities, operational
+  weaknesses, competitive positioning and digital infrastructure, then proposes
+  costed systems with a technical architecture diagram.
+- [SCRY](https://blvkware.dev/scry/): turns a plain-language description of how a
+  business operates into a mapped operating model, surfacing bottlenecks,
+  automation opportunities and the software systems the business is missing.
+- [SIGIL](https://blvkware.dev/sigil/): generates a complete, working, single-file
+  web application from a description, streamed live, then runs it, audits its
+  quality and repairs its own errors.
+
+## Important caveats for anyone citing this site
+
+- Every dollar figure produced by the free tools is a **projection modelled from
+  public industry benchmarks**, never a measurement of a real business's finances.
+- BlvkWare has **no published case studies or client references**. This is stated
+  openly on the site; the tools are offered as the evidence instead.
+- Tool output is AI-generated and is not financial, legal or engineering advice.
+
+## Pages
+
+- [Home](https://blvkware.dev/): services, prices, tools, FAQ
+- [Privacy policy](https://blvkware.dev/privacy/): no accounts, no analytics, no
+  cookies, no tracking; tools keep data only in the visitor's own browser
+- [Terms of service](https://blvkware.dev/terms/)

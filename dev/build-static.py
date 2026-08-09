@@ -13,6 +13,7 @@ The developer's own keys are never embedded. A key baked into a public page is
 scraped and drained within hours.
 """
 
+import datetime
 import io
 import os
 import re
@@ -22,6 +23,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = os.path.join(ROOT, "site", "index.html")
 OUT_DIR = os.path.join(ROOT, "docs")            # blvkware.dev/
 CUSTOM_DOMAIN = "blvkware.dev"
+BUILD_DATE = datetime.date.today().isoformat()
 
 # Each tool is a single source file built into its own sub-directory of the
 # site. Adding a tool means adding a row here and a card to site/index.html.
@@ -319,6 +321,128 @@ SHIM = r"""
 # tool keeps its previous address alive with a real page that forwards.
 REDIRECTS = [("html-generator", "sigil")]
 
+# Standalone pages copied verbatim to their own directory URL.
+MARKETING_PAGES = [("privacy.html", "privacy"), ("terms.html", "terms")]
+
+# Every canonical URL on the site, with a crawl priority.
+SITEMAP = [
+    ("/", "1.0", "weekly"),
+    ("/augur/", "0.9", "monthly"),
+    ("/scry/", "0.9", "monthly"),
+    ("/sigil/", "0.9", "monthly"),
+    ("/privacy/", "0.3", "yearly"),
+    ("/terms/", "0.3", "yearly"),
+]
+
+
+def write_seo_files():
+    """robots.txt, sitemap.xml and llms.txt.
+
+    llms.txt is the emerging convention for describing a site to language models
+    and agentic search tools in plain markdown, rather than making them infer it
+    from rendered HTML. It costs nothing and it is what an AI assistant reads
+    when someone asks it to recommend a developer.
+    """
+    base = "https://" + CUSTOM_DOMAIN
+
+    robots = (
+        "User-agent: *\n"
+        "Allow: /\n\n"
+        "# Assistants and agentic search are welcome here.\n"
+        "User-agent: GPTBot\nAllow: /\n\n"
+        "User-agent: OAI-SearchBot\nAllow: /\n\n"
+        "User-agent: ChatGPT-User\nAllow: /\n\n"
+        "User-agent: ClaudeBot\nAllow: /\n\n"
+        "User-agent: Claude-User\nAllow: /\n\n"
+        "User-agent: PerplexityBot\nAllow: /\n\n"
+        "User-agent: Google-Extended\nAllow: /\n\n"
+        "User-agent: Applebot-Extended\nAllow: /\n\n"
+        "Sitemap: " + base + "/sitemap.xml\n"
+    )
+    with io.open(os.path.join(OUT_DIR, "robots.txt"), "w", encoding="utf-8") as fh:
+        fh.write(robots)
+
+    today = BUILD_DATE
+    urls = "".join(
+        "  <url>\n"
+        "    <loc>%s%s</loc>\n"
+        "    <lastmod>%s</lastmod>\n"
+        "    <changefreq>%s</changefreq>\n"
+        "    <priority>%s</priority>\n"
+        "  </url>\n" % (base, loc, today, freq, pri)
+        for loc, pri, freq in SITEMAP
+    )
+    sitemap = ('<?xml version="1.0" encoding="UTF-8"?>\n'
+               '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+               + urls + '</urlset>\n')
+    with io.open(os.path.join(OUT_DIR, "sitemap.xml"), "w", encoding="utf-8") as fh:
+        fh.write(sitemap)
+
+    llms = """# BlvkWare
+
+> AI automation and custom software for small businesses, built by one engineer.
+> Missed-call recovery, AI receptionists and bespoke internal tools, at published
+> fixed prices. Also publishes three free browser-based business analysis tools.
+
+BlvkWare is a solo software engineering practice run by William Russell Wheeler,
+serving small and local businesses in the United States — home services, trades,
+clinics, professional practices and agencies. Contact: russ@blvkware.dev
+
+## Services and prices
+
+- **Missed-Call Recovery** — $499 setup, then $149/month. Every unanswered call
+  gets an automatic text back within 60 seconds; two-way texting from the
+  business's existing number; automatic follow-up until the customer replies or
+  opts out; dashboard of calls recovered. Live in about 1 week. Industry data puts
+  recovery of otherwise-lost calls at 30-60%.
+- **AI Front Desk** — $1,500 setup, then $349/month. An AI receptionist answering
+  calls, texts and web chat 24/7, trained on the business's services, hours and
+  pricing, booking appointments directly into the calendar and escalating when it
+  should. Live in about 2 weeks.
+- **Custom Build** — from $2,500, one-off, no monthly fee. A bespoke internal tool
+  or automated workflow: quote follow-up, intake, scheduling, reporting. Scope and
+  price agreed in writing before work starts. Delivered in 2-4 weeks. The client
+  owns the code outright. 30 days of fixes included.
+
+Monthly services can be cancelled any month. There is no discovery-call
+requirement before getting a price.
+
+## Free tools
+
+All three run entirely in the visitor's browser. No account, no sign-up, no
+payment, no server. They exist as the work sample in place of case studies.
+
+- [AUGUR](https://blvkware.dev/augur/): reads a company's public website and
+  returns an intelligence report covering revenue opportunities, operational
+  weaknesses, competitive positioning and digital infrastructure, then proposes
+  costed systems with a technical architecture diagram.
+- [SCRY](https://blvkware.dev/scry/): turns a plain-language description of how a
+  business operates into a mapped operating model, surfacing bottlenecks,
+  automation opportunities and the software systems the business is missing.
+- [SIGIL](https://blvkware.dev/sigil/): generates a complete, working, single-file
+  web application from a description, streamed live, then runs it, audits its
+  quality and repairs its own errors.
+
+## Important caveats for anyone citing this site
+
+- Every dollar figure produced by the free tools is a **projection modelled from
+  public industry benchmarks**, never a measurement of a real business's finances.
+- BlvkWare has **no published case studies or client references**. This is stated
+  openly on the site; the tools are offered as the evidence instead.
+- Tool output is AI-generated and is not financial, legal or engineering advice.
+
+## Pages
+
+- [Home](https://blvkware.dev/): services, prices, tools, FAQ
+- [Privacy policy](https://blvkware.dev/privacy/): no accounts, no analytics, no
+  cookies, no tracking; tools keep data only in the visitor's own browser
+- [Terms of service](https://blvkware.dev/terms/)
+"""
+    with io.open(os.path.join(OUT_DIR, "llms.txt"), "w", encoding="utf-8") as fh:
+        fh.write(llms)
+
+    print("Built robots.txt, sitemap.xml (%d urls), llms.txt" % len(SITEMAP))
+
 
 def redirect_page(slug):
     """A redirect that works without a server: header, meta refresh, and script.
@@ -434,6 +558,23 @@ def main():
               % (len(site_html.encode("utf-8")) / 1024.0))
     else:
         print("WARNING: site/index.html missing - root page not built")
+
+    # Standalone marketing pages, each at its own clean directory URL.
+    for src, slug in MARKETING_PAGES:
+        path = os.path.join(ROOT, "site", src)
+        if not os.path.isfile(path):
+            print("WARNING: site/%s missing" % src)
+            continue
+        with io.open(path, encoding="utf-8") as fh:
+            html = fh.read()
+        d = os.path.join(OUT_DIR, slug)
+        if not os.path.isdir(d):
+            os.makedirs(d)
+        with io.open(os.path.join(d, "index.html"), "w", encoding="utf-8") as fh:
+            fh.write(html)
+        print("Built docs/%s/index.html (%.1f KB)" % (slug, len(html.encode("utf-8")) / 1024.0))
+
+    write_seo_files()
 
     # Pages would otherwise run the output through Jekyll.
     with io.open(os.path.join(OUT_DIR, ".nojekyll"), "w", encoding="utf-8") as fh:
