@@ -456,6 +456,15 @@
   .sig-v { font-size: 14px; font-weight: 650; display: flex; align-items: center; gap: 7px; }
   .sig-v.yes { color: var(--jade); } .sig-v.no { color: var(--clay); } .sig-v.neutral { color: var(--ink); }
 
+  .shared-note {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent-line);
+    border-radius: var(--r-md); padding: 13px 16px; margin-bottom: 22px;
+    font-size: 13px; color: var(--ink-2); line-height: 1.55;
+  }
+  .shared-note span { flex: 1 1 320px; min-width: 0; }
+  .shared-note svg { color: var(--accent-ink); flex: none; }
+
   /* head-to-head */
   .cmp-scroll { overflow-x: auto; border-radius: var(--r-md); box-shadow: inset 0 0 0 1px var(--line); }
   .cmp { width: 100%; border-collapse: collapse; background: var(--bg-2); font-size: 13.2px; }
@@ -707,6 +716,14 @@
   <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
     <rect x="2.8" y="4.8" width="18.4" height="14.4" rx="2.2"/><path d="m3.4 6.6 8.6 6 8.6-6"/>
   </symbol>
+  <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9.6 13.4a3.6 3.6 0 0 0 5.4.4l3-3a3.6 3.6 0 1 0-5.1-5.1l-1.7 1.7"/>
+    <path d="M14.4 10.6a3.6 3.6 0 0 0-5.4-.4l-3 3a3.6 3.6 0 1 0 5.1 5.1l1.7-1.7"/>
+  </symbol>
+  <symbol id="i-print" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6.4 9.2V3.4h11.2v5.8"/><rect x="6.4" y="14" width="11.2" height="6.6"/>
+    <path d="M6.4 17.2H3.6V11a1.8 1.8 0 0 1 1.8-1.8h13.2A1.8 1.8 0 0 1 20.4 11v6.2h-2.8"/>
+  </symbol>
   <symbol id="i-blueprint" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
     <rect x="2.8" y="4.4" width="18.4" height="15.2" rx="2"/><path d="M2.8 9.2h18.4M8.2 9.2v10.4"/><path d="M12 13h5.4M12 16.2h5.4"/>
   </symbol>
@@ -726,6 +743,8 @@
     </a>
     <div class="spacer"></div>
     <div class="status" id="status"></div>
+    <button class="btn ghost hidden" id="shareBtn"><svg class="ic ic-16"><use href="#i-link"/></svg> Copy shareable link</button>
+    <button class="btn ghost icon hidden" id="printBtn" aria-label="Print report" title="Print or save as PDF"><svg class="ic ic-16"><use href="#i-print"/></svg></button>
     <button class="btn ghost" id="restartBtn" style="display:none"><svg class="ic ic-16"><use href="#i-restart"/></svg> New target</button>
     <button class="btn ghost icon hidden" id="keyBtn" aria-label="Model and API key" title="Model / API key"><svg class="ic ic-16"><use href="#i-cpu"/></svg></button>
     <a class="btn ghost icon" href="/" aria-label="BlvkWare home"><svg class="ic ic-16"><use href="#i-home"/></svg></a>
@@ -780,6 +799,12 @@
   <!-- stage 3 -->
   <div class="stage hidden" id="stageRep">
     <div class="rep">
+      <div class="shared-note hidden" id="sharedNote">
+        <svg class="ic ic-16"><use href="#i-link"/></svg>
+        <span>You are looking at a report someone shared with you. It was generated from this company&rsquo;s public website &mdash; every dollar figure is a projection, not their real finances.</span>
+        <a class="btn primary sm" href="/augur/">Run one yourself</a>
+      </div>
+
       <div class="rep-head">
         <div style="min-width:0;flex:1">
           <h1 class="rep-title" id="repTitle">—</h1>
@@ -842,6 +867,7 @@
     repTitle: $('#repTitle'), repUrl: $('#repUrl'), repSub: $('#repSub'), repBadges: $('#repBadges'),
     sigs: $('#sigs'), domains: $('#domains'), opps: $('#opps'), oppNote: $('#oppNote'), samples: $('#samples'),
     compareWrap: $('#compareWrap'), compare: $('#compare'), compareNote: $('#compareNote'),
+    shareBtn: $('#shareBtn'), printBtn: $('#printBtn'), sharedNote: $('#sharedNote'),
     keepCard: $('#keepCard'), keepForm: $('#keepForm'), keepEmail: $('#keepEmail'),
     keepBtn: $('#keepBtn'), keepNote: $('#keepNote')
   };
@@ -1579,6 +1605,8 @@
     el.oppNote.textContent = 'Systems worth building, largest opportunity first. Every figure is a projection from ' +
       'public benchmarks for a business of this apparent size — not a claim about their actual revenue.';
     renderOpps(rep);
+    el.shareBtn.classList.remove('hidden');
+    el.printBtn.classList.remove('hidden');
   }
 
   /* ============================================================
@@ -1729,6 +1757,125 @@
       'The pipeline it implements is: ' + opp.pipeline.join(' -> ') + '.';
     try { sessionStorage.setItem('blvkware.forge.prompt', spec); } catch (e) {}
     window.location.href = '/sigil/?prompt=' + encodeURIComponent(spec).slice(0, 1800);
+  }
+
+  /* ---------------- shareable report ----------------
+     The whole report rides in the URL fragment, gzipped. A fragment is never
+     sent to a server, so a shared report still touches no backend and the
+     privacy promise on the site stays literally true — no storage, no expiry,
+     no account, nothing to run. A realistic report packs to well under 2 KB. */
+  var SHARE_V = 1;
+
+  // Only the fields the report actually renders from; headings and third-party
+  // host lists would double the payload for nothing.
+  function slimSig(g) {
+    if (!g) return null;
+    var keep = ['host', 'platform', 'pagesRead', 'bytes', 'scripts', 'prices', 'socialProof',
+                'booking', 'forms', 'inputs', 'telLink', 'ctas', 'chat', 'reviews',
+                'credentials', 'hours', 'address', 'emergency', 'analytics', 'adPixel',
+                'emailMarketing', 'payments', 'social'];
+    var o = {};
+    keep.forEach(function (k) { if (g[k] !== undefined) o[k] = g[k]; });
+    return o;
+  }
+
+  function b64urlEncode(bytes) {
+    var bin = '';
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  function b64urlDecode(str) {
+    var b = str.replace(/-/g, '+').replace(/_/g, '/');
+    while (b.length % 4) b += '=';
+    var bin = atob(b), out = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
+
+  async function packShare() {
+    if (!S.report) return '';
+    var payload = {
+      v: SHARE_V, u: S.target, r: S.report,
+      s: slimSig(S.recon && S.recon.sig),
+      c: slimSig(S.recon && S.recon.compSig),
+      e: (S.recon && S.recon.evidence ? S.recon.evidence.slice(0, 3000) : '')
+    };
+    var bytes = new TextEncoder().encode(JSON.stringify(payload));
+    if (typeof CompressionStream === 'undefined') return 'u' + b64urlEncode(bytes);
+    var cs = new CompressionStream('gzip');
+    var w = cs.writable.getWriter(); w.write(bytes); w.close();
+    var packed = new Uint8Array(await new Response(cs.readable).arrayBuffer());
+    return 'z' + b64urlEncode(packed);
+  }
+
+  async function unpackShare(str) {
+    var mode = str.charAt(0), body = b64urlDecode(str.slice(1));
+    if (mode === 'z') {
+      if (typeof DecompressionStream === 'undefined') throw new Error('This browser cannot open compressed links.');
+      try {
+        var ds = new DecompressionStream('gzip');
+        var w = ds.writable.getWriter();
+        w.write(body); w.close();
+        body = new Uint8Array(await new Response(ds.readable).arrayBuffer());
+      } catch (e) {
+        // A truncated or edited link surfaces here as a raw stream error.
+        // Say something a person can act on instead.
+        throw new Error('That link looks incomplete — it was probably cut short in transit. Ask for it again.');
+      }
+    } else if (mode !== 'u') {
+      throw new Error('Unrecognised link format.');
+    }
+    var data;
+    try { data = JSON.parse(new TextDecoder().decode(body)); }
+    catch (e) { throw new Error('That link could not be read as a report.'); }
+    if (!data || data.v !== SHARE_V || !data.r) throw new Error('That link is not a readable report.');
+    return data;
+  }
+
+  async function copyShareLink() {
+    if (!S.report) return;
+    el.shareBtn.disabled = true;
+    try {
+      var frag = await packShare();
+      var link = location.origin + location.pathname + '#r=' + frag;
+      try {
+        await navigator.clipboard.writeText(link);
+        toast('Link copied — ' + Math.round(link.length / 100) / 10 + ' KB, opens the full report', 'ok');
+      } catch (e) {
+        // Clipboard is blocked in some contexts; put it in the URL bar instead
+        // so it can still be copied by hand rather than lost.
+        history.replaceState(null, '', '#r=' + frag);
+        toast('Copy the address bar — the report is in the link', 'info');
+      }
+    } catch (err) {
+      toast('Could not build a link: ' + ((err && err.message) || err), 'err');
+    } finally { el.shareBtn.disabled = false; }
+  }
+
+  async function hydrateFromHash() {
+    var m = /[#&]r=([A-Za-z0-9\-_]+)/.exec(location.hash || '');
+    if (!m) return false;
+    try {
+      var data = await unpackShare(m[1]);
+      S.report = data.r;
+      S.target = data.u || '';
+      S.recon = { evidence: data.e || '', sig: data.s || null, compSig: data.c || null };
+      renderReport(data.r, { url: S.target, sig: data.s, compSig: data.c });
+      el.sharedNote.classList.remove('hidden');
+      show('rep');
+      setStatus('Shared report');
+      return true;
+    } catch (err) {
+      S.report = null; S.recon = null;
+      el.sharedNote.classList.add('hidden');
+      el.shareBtn.classList.add('hidden');
+      el.printBtn.classList.add('hidden');
+      show('aim');
+      setStatus('');
+      history.replaceState(null, '', location.pathname);
+      toast((err && err.message) || 'That link could not be opened.', 'err');
+      return false;
+    }
   }
 
   /* ---------------- keep it ----------------
@@ -2116,8 +2263,15 @@
     if (b) build(+b.dataset.build);
   });
 
+  el.shareBtn.addEventListener('click', copyShareLink);
+  el.printBtn.addEventListener('click', function () { window.print(); });
+
   el.restartBtn.addEventListener('click', function () {
     S.report = null; S.recon = null; show('aim'); setStatus(''); el.fUrl.focus();
+    el.shareBtn.classList.add('hidden');
+    el.printBtn.classList.add('hidden');
+    el.sharedNote.classList.add('hidden');
+    if (location.hash) history.replaceState(null, '', location.pathname);
     el.keepForm.classList.remove('hidden');
     el.keepBtn.disabled = false;
     el.keepEmail.value = '';
@@ -2134,7 +2288,15 @@
     keyBtn.addEventListener('click', window.__blvkKeyDialog);
   }
 
-  setTimeout(function () { el.fUrl.focus(); }, 150);
+  hydrateFromHash().then(function (opened) {
+    if (!opened) setTimeout(function () { el.fUrl.focus(); }, 150);
+  });
+
+  // Changing only the fragment never reloads the page, so pasting a second
+  // shared link while viewing the first would otherwise do nothing at all.
+  window.addEventListener('hashchange', function () {
+    if (/[#&]r=/.test(location.hash)) hydrateFromHash();
+  });
   if (!AI) setStatus('AI runtime not detected');
 })();
 </script>
