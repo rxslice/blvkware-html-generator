@@ -438,7 +438,7 @@ def write_seo_files():
     llms = """# BlvkWare
 
 > AI automation and custom software for small businesses, built by one engineer.
-> Automated quote follow-up, AI receptionists and bespoke internal tools, at
+> Automated quote follow-up, automated review requests and bespoke internal tools, at
 > published fixed prices. Also publishes three free browser-based business
 > analysis tools.
 
@@ -458,10 +458,17 @@ Contact: russ@blvkware.dev
   on email and needs no phone-carrier registration. BlvkWare publishes no
   recovery-rate statistic and makes no performance claim: how much a business
   recovers depends on how many quotes it sends and what they are worth.
-- **AI Front Desk** — $1,500 setup, then $349/month. An AI receptionist answering
-  calls, texts and web chat 24/7, trained on the business's services, hours and
-  pricing, booking appointments directly into the calendar and escalating when it
-  should. Live in about 2 weeks.
+- **Review Engine** — $1,500 setup, then $349/month. After every completed job the
+  customer is emailed once and asked to rate the work, with follow-ups on day 3
+  and 7. Rating is one tap, with no app and no account. A rating of 4 or 5 hands
+  the customer straight to the business's public Google review page. A rating of
+  1 to 3 opens a private feedback form and emails the owner immediately, so an
+  unhappy customer is reached the same day rather than read about later. **Live in
+  about 3 days**, because it runs on email and needs no phone-carrier
+  registration. This is explicitly not review gating: every customer is asked the
+  same question, and the public review link is still offered after private
+  feedback is given, so nobody is filtered out and nobody is prevented from
+  posting.
 - **Custom Build** — from $2,500, one-off, no monthly fee. A bespoke internal tool
   or automated workflow: quote follow-up, intake, scheduling, reporting. Scope and
   price agreed in writing before work starts. Delivered in 2-4 weeks. The client
