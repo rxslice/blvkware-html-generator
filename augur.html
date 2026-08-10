@@ -189,6 +189,21 @@
   .sig-v { font-size: 14px; font-weight: 650; display: flex; align-items: center; gap: 7px; }
   .sig-v.yes { color: var(--jade); } .sig-v.no { color: var(--clay); } .sig-v.neutral { color: var(--ink); }
 
+  /* head-to-head */
+  .cmp-scroll { overflow-x: auto; border-radius: var(--r-md); box-shadow: inset 0 0 0 1px var(--line); }
+  .cmp { width: 100%; border-collapse: collapse; background: var(--bg-2); font-size: 13.2px; }
+  .cmp th { text-align: left; padding: 11px 14px; font-size: 11px; font-weight: 730; letter-spacing: .1em;
+            text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--line); white-space: nowrap; }
+  .cmp th:nth-child(2) { color: var(--accent-ink); }
+  .cmp td { padding: 10px 14px; border-top: 1px solid var(--line); }
+  .cmp tr:first-child td { border-top: none; }
+  .cmp-k { color: var(--ink-2); white-space: nowrap; }
+  .cmp-v { font-weight: 620; }
+  .cmp-j { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); text-align: right; white-space: nowrap; }
+  .cmp-behind td { background: rgba(232,115,74,.07); }
+  .cmp-behind .cmp-j { color: var(--clay); }
+  .cmp-ahead .cmp-j { color: var(--jade); }
+
   /* domain panels */
   .domains { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(420px,100%), 1fr)); gap: 16px; }
   .dom {
@@ -342,6 +357,37 @@
   .btn.sm { height: 30px; padding: 0 10px; font-size: 12.4px; }
   .btn.sm.icon { width: 30px; padding: 0; }
 
+  /* ---------- print ----------
+     The report is a sales artifact: someone will want to hand it to a partner
+     or a client. Dark-on-black is unreadable and ruinous on ink, so print gets
+     a real light treatment rather than a hidden-nav hack. */
+  @media print {
+    @page { margin: 14mm; }
+    html, body { height: auto; overflow: visible; background: #fff; color: #111; }
+    body::before, .topbar, .toasts, .keep-card, .drawer, .drawer-back,
+    .modal-back, #stageAim, #stageRecon { display: none !important; }
+    #app { height: auto; display: block; }
+    .stage { overflow: visible; }
+    .rep { max-width: none; padding: 0; }
+    .rep-title, .sec-title, .dom h3, .opp h3, .cmp th { color: #111; }
+    .rep-sub, .sec-note, .find-d, .opp-v, .dom-sub, .cmp-k { color: #333; }
+    .rep-url { color: #444; }
+    .sig, .dom, .opp, .cmp, .cmp-scroll {
+      background: #fff !important; box-shadow: none !important;
+      border: 1px solid #bbb; break-inside: avoid;
+    }
+    .opp::before { display: none; }
+    .opp-money { background: #f4f4f4; box-shadow: none; }
+    .opp-money b, .opp-n, .sig-v.yes, .sig-v.no, .badge, .find-e { color: #111 !important; }
+    .badge { box-shadow: none; border: 1px solid #bbb; }
+    .find-e { background: #f4f4f4; }
+    .pipe-node { background: #f4f4f4; box-shadow: none; border: 1px solid #ccc; color: #111; }
+    .sec-title svg, .dom-ico { color: #111; background: none; }
+    [data-build] { display: none !important; }
+    .cmp-behind td { background: #f7f7f7 !important; }
+    a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 10px; color: #666; }
+  }
+
   @media (max-width: 760px) {
     .topbar { height: 72px; }
     .mark { width: 54px; height: 54px; border-radius: 14px; }
@@ -480,6 +526,12 @@
       <p class="sec-note">Read directly off the live page. These are facts, not estimates.</p>
       <div class="sig-grid" id="sigs"></div>
 
+      <div id="compareWrap" class="hidden">
+        <div class="sec-title"><svg class="ic ic-16"><use href="#i-flag"/></svg> Head to head</div>
+        <p class="sec-note" id="compareNote"></p>
+        <div class="cmp-scroll"><table class="cmp" id="compare"></table></div>
+      </div>
+
       <div class="sec-title"><svg class="ic ic-16"><use href="#i-augur"/></svg> Intelligence</div>
       <p class="sec-note">Interpretation of the evidence above. Click any finding to go deeper.</p>
       <div class="domains" id="domains"></div>
@@ -522,6 +574,7 @@
     scan: $('#scan'), status: $('#status'), toasts: $('#toasts'), live: $('#live'),
     repTitle: $('#repTitle'), repUrl: $('#repUrl'), repSub: $('#repSub'), repBadges: $('#repBadges'),
     sigs: $('#sigs'), domains: $('#domains'), opps: $('#opps'), oppNote: $('#oppNote'), samples: $('#samples'),
+    compareWrap: $('#compareWrap'), compare: $('#compare'), compareNote: $('#compareNote'),
     keepCard: $('#keepCard'), keepForm: $('#keepForm'), keepEmail: $('#keepEmail'),
     keepBtn: $('#keepBtn'), keepNote: $('#keepNote')
   };
@@ -705,8 +758,139 @@
       login: hasPath(/login|signin|portal|account|dashboard/),
       social: ['facebook', 'instagram', 'linkedin', 'youtube', 'tiktok', 'x.com', 'twitter'].filter(function (n) {
         return links.some(function (h) { return h.indexOf(n) !== -1; });
-      })
+      }),
+
+      /* ---- how this business actually sells ----
+         These are the signals that separate a commercial read from an SEO
+         audit. Whether a price appears anywhere, whether anyone else vouches
+         for them, and how much work the visitor must do to make contact. */
+      prices: (function () {
+        var body = (doc.body ? doc.body.textContent : '') || '';
+        var found = body.match(/\$\s?\d[\d,]*(?:\.\d{2})?/g) || [];
+        var uniq = [];
+        found.forEach(function (p) {
+          p = p.replace(/\s/g, '');
+          if (uniq.indexOf(p) === -1 && uniq.length < 12) uniq.push(p);
+        });
+        return uniq;
+      })(),
+      socialProof: any(/testimonial|what our (?:clients|customers)|client stories|case stud|\d+\+? (?:happy|satisfied) (?:clients|customers)|★|⭐/i) ||
+                   !!doc.querySelector('[class*="testimonial" i], [class*="review" i]'),
+      structuredData: doc.querySelectorAll('script[type="application/ld+json"]').length,
+      h1: (function () {
+        var h = doc.querySelector('h1');
+        return h ? (h.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 140) : '';
+      })(),
+      ctas: (function () {
+        var re = /^(book|call|get (?:a )?(?:quote|started|estimate)|schedule|request|buy|shop|order|contact|start|try)/i;
+        return [].slice.call(doc.querySelectorAll('a, button')).filter(function (n) {
+          return re.test(((n.textContent || '').trim()));
+        }).length;
+      })(),
+      hours: any(/\b(?:mon|tue|wed|thu|fri|sat|sun)[a-z]*\s*[-–—]\s*(?:mon|tue|wed|thu|fri|sat|sun)|open (?:24|daily)|business hours|hours of operation/i),
+      address: any(/\b\d{1,6}\s+[A-Z][A-Za-z.'-]+\s+(?:St|Street|Ave|Avenue|Rd|Road|Blvd|Boulevard|Dr|Drive|Ln|Lane|Way|Hwy|Highway|Suite|Ste)\b/) ||
+               any(/\b[A-Z]{2}\s+\d{5}(?:-\d{4})?\b/),
+      credentials: any(/licen[sc]ed|insured|bonded|certified|accredited|BBB|better business bureau|\bEPA\b|\bOSHA\b/i),
+      emergency: any(/24\/7|24-7|emergency service|same[- ]day|available (?:24|anytime)/i)
     };
+  }
+
+  /* ---------- multi-page reconnaissance ----------
+     Reading only the homepage was the single biggest limit on the quality of
+     the read: pricing, proof and process almost never live there. These pick
+     the handful of pages that carry commercial meaning and read those too. */
+  var PAGE_KINDS = [
+    { kind: 'pricing',  re: /pricing|\/plans|packages|our-rates|\/rates/i,               weight: 10 },
+    { kind: 'services', re: /service|what-we-do|solutions|treatments|our-work|capabilit/i, weight: 8 },
+    { kind: 'contact',  re: /contact|book|appointment|schedule|quote|estimate|consult/i, weight: 7 },
+    { kind: 'about',    re: /about|our-story|who-we-are|\/team|meet-/i,                  weight: 6 },
+    { kind: 'proof',    re: /testimonial|review|case-stud|portfolio|gallery|results/i,   weight: 5 }
+  ];
+
+  function discoverPages(doc, baseUrl, limit) {
+    var origin = '', seen = {}, out = [];
+    try { origin = new URL(baseUrl).origin; } catch (e) { return out; }
+    var base = baseUrl.replace(/\/+$/, '');
+    seen[base] = 1;
+    seen[base + '/'] = 1;
+
+    [].slice.call(doc.querySelectorAll('a[href]')).forEach(function (a) {
+      var abs;
+      try { abs = new URL(a.getAttribute('href'), baseUrl); } catch (e) { return; }
+      if (abs.origin !== origin) return;
+      if (/\.(pdf|jpg|jpeg|png|gif|svg|zip|mp4|webp|ico|css|js)$/i.test(abs.pathname)) return;
+      abs.hash = '';
+      var clean = (abs.origin + abs.pathname).replace(/\/+$/, '') || abs.origin;
+      if (seen[clean]) return;
+      var path = abs.pathname.toLowerCase();
+      if (path === '/' || path === '') return;
+      for (var i = 0; i < PAGE_KINDS.length; i++) {
+        if (PAGE_KINDS[i].re.test(path)) {
+          seen[clean] = 1;
+          out.push({ url: clean, kind: PAGE_KINDS[i].kind, weight: PAGE_KINDS[i].weight });
+          return;
+        }
+      }
+    });
+
+    // One page per kind, most commercially useful first.
+    out.sort(function (a, b) { return b.weight - a.weight; });
+    var kinds = {}, picked = [];
+    out.forEach(function (p) {
+      if (kinds[p.kind] || picked.length >= limit) return;
+      kinds[p.kind] = 1;
+      picked.push(p);
+    });
+    return picked;
+  }
+
+  // Readable text straight from the parsed document, so an extra page costs one
+  // request rather than two.
+  function textFromDoc(doc) {
+    var clone = doc.body ? doc.body.cloneNode(true) : null;
+    if (!clone) return '';
+    ['script', 'style', 'noscript', 'svg', 'nav', 'footer', 'header'].forEach(function (t) {
+      [].slice.call(clone.querySelectorAll(t)).forEach(function (n) { n.remove(); });
+    });
+    return (clone.textContent || '').replace(/\s+/g, ' ').trim();
+  }
+
+  async function readPage(url) {
+    var raw = await fetchRaw(url);
+    if (!raw.ok) return { ok: false, url: url, error: raw.error };
+    var doc = new DOMParser().parseFromString(raw.html, 'text/html');
+    return {
+      ok: true, url: url, doc: doc,
+      sig: extractSignals(raw.html, url),
+      text: textFromDoc(doc),
+      bytes: raw.html.length
+    };
+  }
+
+  // Site-level truth: a capability counts if it exists ANYWHERE, and prices
+  // found on the pricing page matter as much as prices on the homepage.
+  function mergeSignals(home, extras) {
+    var m = {};
+    for (var k in home) m[k] = home[k];
+    var ORS = ['analytics', 'adPixel', 'chat', 'booking', 'payments', 'emailMarketing',
+               'reviews', 'ecommerce', 'telLink', 'mailtoLink', 'emailField', 'phoneField',
+               'socialProof', 'hours', 'address', 'credentials', 'emergency'];
+    extras.forEach(function (p) {
+      if (!p || !p.ok) return;
+      ORS.forEach(function (key) { m[key] = m[key] || p.sig[key]; });
+      m.forms += p.sig.forms;
+      m.inputs += p.sig.inputs;
+      m.ctas += p.sig.ctas;
+      m.structuredData += p.sig.structuredData;
+      p.sig.prices.forEach(function (v) {
+        if (m.prices.indexOf(v) === -1 && m.prices.length < 14) m.prices.push(v);
+      });
+      p.sig.thirdParty.forEach(function (h) {
+        if (m.thirdParty.indexOf(h) === -1 && m.thirdParty.length < 24) m.thirdParty.push(h);
+      });
+    });
+    m.pagesRead = 1 + extras.filter(function (p) { return p && p.ok; }).length;
+    return m;
   }
 
   /* ---------- scan log ---------- */
@@ -784,6 +968,18 @@
     L.push('third-party hosts: ' + (sig.thirdParty.length ? sig.thirdParty.join(', ') : 'none'));
     L.push('mobile viewport tag: ' + (sig.hasViewport ? 'yes' : 'NO'));
     L.push('meta description: ' + (sig.hasMetaDescription ? 'yes' : 'NO'));
+    L.push('structured data blocks: ' + sig.structuredData);
+    if (sig.h1) L.push('main headline (h1): ' + sig.h1);
+
+    /* how they sell */
+    L.push('prices published anywhere on the pages read: ' +
+           (sig.prices && sig.prices.length ? sig.prices.join(', ') : 'NONE FOUND — no figure anywhere'));
+    L.push('social proof on the page (testimonials/reviews/stars): ' + (sig.socialProof ? 'yes' : 'NOT DETECTED'));
+    L.push('action buttons/links (book, call, quote, buy): ' + sig.ctas);
+    L.push('business hours stated: ' + (sig.hours ? 'yes' : 'no'));
+    L.push('physical address stated: ' + (sig.address ? 'yes' : 'no'));
+    L.push('licensing / insured / accreditation claims: ' + (sig.credentials ? 'yes' : 'no'));
+    L.push('24/7 or same-day availability claimed: ' + (sig.emergency ? 'yes' : 'no'));
     if (sig.headings.length) L.push('headings on page: ' + sig.headings.join(' | '));
     var out = L.join('\n');
     if (text) out += '\n\nREADABLE PAGE COPY (truncated):\n' + text.slice(0, 7000);
@@ -958,25 +1154,73 @@
       return cell(k, on ? (yes || 'Present') : (no || 'Not detected'), on ? 'yes' : 'no');
     }
     var h = '';
-    h += cell('Platform', sig.platform, 'neutral');
-    h += cell('Page weight', Math.round(sig.bytes / 1024) + ' KB · ' + sig.scripts + ' scripts', 'neutral');
+    // How they sell comes first — it is what a buyer and an operator both care
+    // about, and it is what separates this from an SEO audit.
+    h += cell('Prices published',
+              sig.prices && sig.prices.length ? sig.prices.slice(0, 4).join('  ') : 'None anywhere',
+              sig.prices && sig.prices.length ? 'yes' : 'no');
+    h += yn('Social proof', sig.socialProof, 'On the page', 'None found');
+    h += yn('Online booking', sig.booking);
+    h += cell('Lead capture', sig.forms ? sig.forms + ' form' + (sig.forms > 1 ? 's' : '') + ' · ' + sig.inputs + ' fields' : 'No form found',
+              sig.forms ? 'yes' : 'no');
+    h += yn('Click to call', sig.telLink, 'Yes', 'No');
+    h += cell('Action buttons', String(sig.ctas), sig.ctas ? 'neutral' : 'no');
+    h += yn('Live chat', sig.chat);
+    h += yn('Reviews platform', sig.reviews);
+    h += yn('Credentials shown', sig.credentials, 'Licensed/insured', 'Not stated');
+    h += yn('Hours stated', sig.hours, 'Yes', 'No');
+    h += yn('Address stated', sig.address, 'Yes', 'No');
+    h += yn('24/7 or same-day', sig.emergency, 'Claimed', 'Not claimed');
+    // Then the machine behind it.
     h += yn('Analytics', sig.analytics);
     h += yn('Ad pixel', sig.adPixel);
-    h += yn('Live chat', sig.chat);
-    h += yn('Online booking', sig.booking);
-    h += yn('Payments', sig.payments);
     h += yn('Email marketing', sig.emailMarketing);
-    h += yn('Reviews platform', sig.reviews);
-    h += cell('Lead capture', sig.forms ? sig.forms + ' form' + (sig.forms > 1 ? 's' : '') + ' · ' + sig.inputs + ' fields' : 'No form on page',
-              sig.forms ? 'yes' : 'no');
-    h += yn('Captures email', sig.emailField, 'Yes', 'No');
-    h += yn('Click to call', sig.telLink, 'Yes', 'No');
-    h += yn('Pricing page', sig.pricingPage, 'Linked', 'Not linked');
-    h += yn('Customer portal', sig.login, 'Linked', 'None');
+    h += yn('Payments', sig.payments);
+    h += cell('Platform', sig.platform, 'neutral');
+    h += cell('Pages read', String(sig.pagesRead || 1), 'neutral');
+    h += cell('Page weight', Math.round(sig.bytes / 1024) + ' KB · ' + sig.scripts + ' scripts', 'neutral');
     h += cell('Social profiles', sig.social.length ? sig.social.join(', ') : 'None linked', sig.social.length ? 'neutral' : 'no');
-    h += cell('Images without alt', sig.imagesMissingAlt + ' of ' + sig.images,
-              sig.images && sig.imagesMissingAlt / sig.images > 0.4 ? 'no' : 'neutral');
     el.sigs.innerHTML = h;
+  }
+
+  /* ---------- competitor comparison ----------
+     The competitor field only paid off inside the model's prose before. Set
+     side by side, the gaps are visible in about two seconds. */
+  var COMPARE = [
+    { k: 'Prices published', get: function (s) { return s.prices && s.prices.length ? s.prices.length + ' found' : 'None'; },
+      good: function (s) { return s.prices && s.prices.length > 0; } },
+    { k: 'Online booking',   get: function (s) { return s.booking ? 'Yes' : 'No'; },       good: function (s) { return s.booking; } },
+    { k: 'Social proof',     get: function (s) { return s.socialProof ? 'Yes' : 'No'; },   good: function (s) { return s.socialProof; } },
+    { k: 'Live chat',        get: function (s) { return s.chat ? 'Yes' : 'No'; },          good: function (s) { return s.chat; } },
+    { k: 'Lead form',        get: function (s) { return s.forms ? s.forms + ' form' + (s.forms > 1 ? 's' : '') : 'None'; }, good: function (s) { return s.forms > 0; } },
+    { k: 'Click to call',    get: function (s) { return s.telLink ? 'Yes' : 'No'; },       good: function (s) { return s.telLink; } },
+    { k: 'Reviews platform', get: function (s) { return s.reviews ? 'Yes' : 'No'; },       good: function (s) { return s.reviews; } },
+    { k: 'Email marketing',  get: function (s) { return s.emailMarketing ? 'Yes' : 'No'; },good: function (s) { return s.emailMarketing; } },
+    { k: 'Analytics',        get: function (s) { return s.analytics ? 'Yes' : 'No'; },     good: function (s) { return s.analytics; } },
+    { k: 'Credentials',      get: function (s) { return s.credentials ? 'Yes' : 'No'; },   good: function (s) { return s.credentials; } }
+  ];
+
+  function renderCompare(sig, compSig, host, compHost) {
+    if (!sig || !compSig) { el.compareWrap.classList.add('hidden'); return; }
+    var rows = '', behind = 0;
+    COMPARE.forEach(function (c) {
+      var mine = c.good(sig), theirs = c.good(compSig);
+      var verdict = mine && !theirs ? 'ahead' : (!mine && theirs ? 'behind' : 'level');
+      if (verdict === 'behind') behind++;
+      rows += '<tr class="cmp-' + verdict + '">' +
+        '<td class="cmp-k">' + esc(c.k) + '</td>' +
+        '<td class="cmp-v">' + esc(c.get(sig)) + '</td>' +
+        '<td class="cmp-v">' + esc(c.get(compSig)) + '</td>' +
+        '<td class="cmp-j">' + (verdict === 'ahead' ? 'ahead' : verdict === 'behind' ? 'behind' : '—') + '</td>' +
+      '</tr>';
+    });
+    el.compareWrap.classList.remove('hidden');
+    el.compareNote.textContent = behind
+      ? behind + ' thing' + (behind > 1 ? 's' : '') + ' the competitor does that this business does not.'
+      : 'Nothing observable that the competitor does and this business does not.';
+    el.compare.innerHTML =
+      '<thead><tr><th></th><th>' + esc(host) + '</th><th>' + esc(compHost) + '</th><th></th></tr></thead>' +
+      '<tbody>' + rows + '</tbody>';
   }
 
   var DOMAINS = [
@@ -1062,6 +1306,8 @@
     el.repBadges.innerHTML = b;
 
     renderSignals(ctx.sig);
+    renderCompare(ctx.sig, ctx.compSig, (ctx.sig && ctx.sig.host) || name,
+                  (ctx.compSig && ctx.compSig.host) || 'competitor');
     renderDomains(rep);
     el.oppNote.textContent = 'Systems worth building, largest opportunity first. Every figure is a projection from ' +
       'public benchmarks for a business of this apparent size — not a claim about their actual revenue.';
@@ -1455,37 +1701,78 @@
 
     try {
       var i1 = step('Fetching ' + url);
-      var raw = await fetchRaw(url);
-      if (raw.ok) {
-        sig = extractSignals(raw.html, url);
-        finish(i1, 'done', Math.round(raw.html.length / 1024) + ' KB of HTML');
-        var i2 = step('Extracting technical signals');
-        finish(i2, 'done', sig.platform + ' · ' + sig.scripts + ' scripts · ' +
-               sig.thirdParty.length + ' third-party hosts');
+      var home = await readPage(url);
+      if (home.ok) {
+        finish(i1, 'done', Math.round(home.bytes / 1024) + ' KB of HTML');
       } else {
-        finish(i1, 'fail', raw.error + ' — continuing without observed evidence');
+        finish(i1, 'fail', home.error + ' — continuing without observed evidence');
       }
 
-      var i3 = step('Reading the page copy');
+      // Pricing, proof and process almost never live on the homepage, so go
+      // and find the pages that carry them.
+      var extras = [];
+      if (home.ok) {
+        var targets = discoverPages(home.doc, url, 4);
+        if (targets.length) {
+          var i2 = step('Following ' + targets.length + ' more page' + (targets.length > 1 ? 's' : ''));
+          extras = await Promise.all(targets.map(function (t) {
+            return readPage(t.url).then(function (r) { r.kind = t.kind; return r; })
+                                  .catch(function () { return { ok: false, kind: t.kind }; });
+          }));
+          var got = extras.filter(function (p) { return p.ok; });
+          finish(i2, got.length ? 'done' : 'fail',
+                 got.length ? got.map(function (p) { return p.kind; }).join(', ') + ' read'
+                            : 'none of them could be fetched');
+        }
+        sig = mergeSignals(home.sig, extras);
+        var i3 = step('Extracting commercial signals');
+        finish(i3, 'done', sig.platform + ' · ' + sig.pagesRead + ' page' + (sig.pagesRead > 1 ? 's' : '') +
+               ' · ' + (sig.prices.length ? sig.prices.length + ' prices found' : 'no prices published'));
+      }
+
+      var i4 = step('Reading the page copy');
       var txt = await fetchText(url);
-      if (txt.ok) { pageText = txt.text; finish(i3, 'done', Math.round(txt.text.length / 1024) + ' KB of text'); }
-      else { finish(i3, 'fail', txt.error); }
+      if (txt.ok) { pageText = txt.text; finish(i4, 'done', Math.round(txt.text.length / 1024) + ' KB of text'); }
+      else if (home.ok && home.text) { pageText = home.text; finish(i4, 'done', 'extracted from the page itself'); }
+      else { finish(i4, 'fail', txt.error); }
 
       if (!sig && !pageText) {
         throw new Error('Could not reach ' + url + '. Check the address, or the site may be blocking automated reads.');
       }
-      evidence = evidenceBlock(sig, pageText);
+
+      // Copy from the deeper pages is where pricing and process language lives.
+      // Budgeted, because a visitor on a small-context provider would otherwise
+      // hit a hard failure — and a dropped page is reported, never silent.
+      var COPY_BUDGET = 7000, spent = 0, dropped = 0, extraCopy = '';
+      extras.filter(function (p) { return p.ok && p.text; }).forEach(function (p) {
+        var room = COPY_BUDGET - spent;
+        if (room < 400) { dropped++; return; }
+        var slice = p.text.slice(0, Math.min(2600, room));
+        spent += slice.length;
+        extraCopy += '\n\n--- ' + p.kind.toUpperCase() + ' PAGE (' + p.url + ') ---\n' + slice;
+      });
+      if (dropped) {
+        var iTrim = step('Trimmed ' + dropped + ' page' + (dropped > 1 ? 's' : '') + ' to fit the model context');
+        finish(iTrim, 'done', 'evidence capped at ' + COPY_BUDGET + ' characters');
+      }
+      evidence = evidenceBlock(sig, pageText) + extraCopy;
 
       if (competitor) {
-        var i4 = step('Fetching competitor ' + competitor);
-        var craw = await fetchRaw(competitor);
-        if (craw.ok) {
-          compSig = extractSignals(craw.html, competitor);
+        var i5 = step('Fetching competitor ' + competitor);
+        var chome = await readPage(competitor);
+        if (chome.ok) {
+          var cextras = await Promise.all(
+            discoverPages(chome.doc, competitor, 2).map(function (t) {
+              return readPage(t.url).then(function (r) { r.kind = t.kind; return r; })
+                                    .catch(function () { return { ok: false }; });
+            }));
+          compSig = mergeSignals(chome.sig, cextras);
           var ctxt = await fetchText(competitor);
-          compEvidence = evidenceBlock(compSig, ctxt.ok ? ctxt.text.slice(0, 3500) : '');
-          finish(i4, 'done', compSig.platform + ' · read for comparison');
+          compEvidence = evidenceBlock(compSig, ctxt.ok ? ctxt.text.slice(0, 3500) : chome.text.slice(0, 3500));
+          finish(i5, 'done', compSig.platform + ' · ' + compSig.pagesRead + ' page' +
+                 (compSig.pagesRead > 1 ? 's' : '') + ' read for comparison');
         } else {
-          finish(i4, 'fail', craw.error);
+          finish(i5, 'fail', chome.error);
         }
       }
 
