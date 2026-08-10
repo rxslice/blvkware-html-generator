@@ -32,10 +32,12 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MASTER = os.path.join(ROOT, "assets", "blvkware-logo.webp")
 ASSETS = os.path.join(ROOT, "docs", "assets")
 
-# Bounding box of the actual artwork inside the master, measured with a
-# luminance threshold — the source carries a wide flat-black margin that would
-# otherwise shrink the mark to nothing at favicon sizes.
-ART_BOX = (104, 51, 1149, 1155)
+# The artwork box is measured, not hardcoded. The master carries a wide flat-black
+# margin which, if kept, shrinks the mark to nothing at favicon sizes — and the
+# exact margin changes every time the owner supplies a new master, so a constant
+# here silently mis-crops the next logo instead of failing loudly.
+ART_THRESHOLD = 18          # luminance above which a pixel counts as artwork
+SPECK_FRACTION = 0.20       # a piece spanning under this share of the mark is a speck
 
 PNG_SIZES = [
     (512, "logo-512.png"),
@@ -49,10 +51,90 @@ PNG_SIZES = [
 INLINE_PX = 160
 
 
+def art_box(im):
+    """Measure the emblem's bounding box, ignoring stray specks.
+
+    Generated masters tend to carry a small decorative glyph off in a corner.
+    Taking a naive threshold bbox lets that speck drag the crop outward, which
+    both off-centres the mark and keeps a meaningless dot that survives all the
+    way down to the favicon. So: find connected blobs, keep the largest, and
+    measure that.
+
+    Blobs are found on a downsampled mask — the emblem is one connected shape at
+    any sane resolution, and 256x256 keeps a pure-Python flood fill instant.
+    """
+    w, h = im.size
+    a = np.asarray(im, dtype=np.float32)
+    lum = 0.2126 * a[:, :, 0] + 0.7152 * a[:, :, 1] + 0.0722 * a[:, :, 2]
+    mask = lum > ART_THRESHOLD
+    if not mask.any():
+        raise ValueError("master logo appears to be entirely black")
+
+    n = 256
+    by, bx = max(1, h // n), max(1, w // n)
+    small = mask[: (h // by) * by, : (w // bx) * bx]
+    small = small.reshape(h // by, by, w // bx, bx).any(axis=(1, 3))
+
+    seen = np.zeros_like(small)
+    blobs = []
+    ys, xs = np.nonzero(small)
+    for sy, sx in zip(ys, xs):
+        if seen[sy, sx]:
+            continue
+        stack, cells = [(sy, sx)], []
+        seen[sy, sx] = True
+        while stack:                                    # 8-connected flood fill
+            cy, cx = stack.pop()
+            cells.append((cy, cx))
+            for dy in (-1, 0, 1):
+                for dx in (-1, 0, 1):
+                    ny, nx = cy + dy, cx + dx
+                    if (0 <= ny < small.shape[0] and 0 <= nx < small.shape[1]
+                            and small[ny, nx] and not seen[ny, nx]):
+                        seen[ny, nx] = True
+                        stack.append((ny, nx))
+        blobs.append(cells)
+
+    # Keep every substantial piece, not just the biggest one. This mark is a ring,
+    # four detached spikes and a wizard that touches none of them — "largest blob"
+    # would silently crop to the wizard alone. Size is judged by extent rather
+    # than pixel count, because a thin 800px ring has fewer lit pixels than a
+    # small dense scribble.
+    def extent(b):
+        ys_, xs_ = [c[0] for c in b], [c[1] for c in b]
+        return max(max(ys_) - min(ys_), max(xs_) - min(xs_)) + 1
+
+    spans = [extent(b) for b in blobs]
+    keep = [b for b, s in zip(blobs, spans) if s >= SPECK_FRACTION * max(spans)]
+    specks = [b for b, s in zip(blobs, spans) if s < SPECK_FRACTION * max(spans)]
+
+    # Erasing them matters as much as excluding them from the measurement:
+    # squaring the crop around a centred mark can reach back out over a corner
+    # speck and drag it into the favicon.
+    if specks:
+        px = np.asarray(im).copy()
+        for b in specks:
+            for cy_, cx_ in b:
+                px[cy_ * by:(cy_ + 1) * by, cx_ * bx:(cx_ + 1) * bx] = 0
+        im.paste(Image.fromarray(px))
+        print("  erased %d stray speck(s) outside the mark" % len(specks))
+
+    cells = [c for b in keep for c in b]
+    cy = [c[0] for c in cells]
+    cx = [c[1] for c in cells]
+    # Back to full resolution, then tighten on the real pixels inside that band.
+    y0, y1 = min(cy) * by, min(h, (max(cy) + 1) * by)
+    x0, x1 = min(cx) * bx, min(w, (max(cx) + 1) * bx)
+    sub = mask[y0:y1, x0:x1]
+    sy, sx = np.nonzero(sub)
+    return (x0 + int(sx.min()), y0 + int(sy.min()),
+            x0 + int(sx.max()) + 1, y0 + int(sy.max()) + 1)
+
+
 def square(im):
     """Crop to a centred square that holds the whole artwork, nothing clipped."""
     w, h = im.size
-    x0, y0, x1, y1 = ART_BOX
+    x0, y0, x1, y1 = art_box(im)
     cx, cy = (x0 + x1) / 2.0, (y0 + y1) / 2.0
     half = max(x1 - x0, y1 - y0) / 2.0
     box = (int(round(cx - half)), int(round(cy - half)),
