@@ -438,8 +438,9 @@ def write_seo_files():
     llms = """# BlvkWare
 
 > AI automation and custom software for small businesses, built by one engineer.
-> Missed-call recovery, AI receptionists and bespoke internal tools, at published
-> fixed prices. Also publishes three free browser-based business analysis tools.
+> Automated quote follow-up, AI receptionists and bespoke internal tools, at
+> published fixed prices. Also publishes three free browser-based business
+> analysis tools.
 
 BlvkWare is a solo software engineering practice run by William Russell Wheeler,
 based in Mississippi and working remotely with small businesses across the United
@@ -449,13 +450,14 @@ Contact: russ@blvkware.dev
 
 ## Services and prices
 
-- **Missed-Call Recovery** — $499 setup, then $149/month. Every unanswered call
-  gets an automatic text back within 60 seconds; two-way texting from the
-  business's existing number; automatic follow-up until the customer replies or
-  opts out; dashboard of calls recovered. Live in about 1 week. BlvkWare publishes no
-  recovery-rate statistic and makes no performance claim: how many calls a business
-  recovers depends on its own call volume. The stated arithmetic is that at $149/month
-  the service costs less than one average service call in most trades.
+- **Quote Follow-Up Recovery** — $499 setup, then $149/month. Every quote the
+  business sends is followed up automatically on day 2, 5 and 10, by email, from
+  their own address. The customer answers in one click — interested, not right
+  now, or already booked — and the sequence stops the moment they reply. Dashboard
+  shows quotes recovered and revenue won. **Live in about 3 days**, because it runs
+  on email and needs no phone-carrier registration. BlvkWare publishes no
+  recovery-rate statistic and makes no performance claim: how much a business
+  recovers depends on how many quotes it sends and what they are worth.
 - **AI Front Desk** — $1,500 setup, then $349/month. An AI receptionist answering
   calls, texts and web chat 24/7, trained on the business's services, hours and
   pricing, booking appointments directly into the calendar and escalating when it
