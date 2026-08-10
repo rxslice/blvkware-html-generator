@@ -15,9 +15,10 @@ Contact: russ@blvkware.dev
 - **Missed-Call Recovery** — $499 setup, then $149/month. Every unanswered call
   gets an automatic text back within 60 seconds; two-way texting from the
   business's existing number; automatic follow-up until the customer replies or
-  opts out; dashboard of calls recovered. Live in about 1 week. Operators typically
-  report recovering a meaningful share of calls that would otherwise be lost; BlvkWare
-  publishes no guaranteed recovery rate.
+  opts out; dashboard of calls recovered. Live in about 1 week. BlvkWare publishes no
+  recovery-rate statistic and makes no performance claim: how many calls a business
+  recovers depends on its own call volume. The stated arithmetic is that at $149/month
+  the service costs less than one average service call in most trades.
 - **AI Front Desk** — $1,500 setup, then $349/month. An AI receptionist answering
   calls, texts and web chat 24/7, trained on the business's services, hours and
   pricing, booking appointments directly into the calendar and escalating when it

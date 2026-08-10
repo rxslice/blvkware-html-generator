@@ -38,7 +38,7 @@ TOOLS = [
     {
         "src": "app.html",
         "slug": "sigil",
-        "title": "SIGIL by BlvkWare | Describe it, watch it get built",
+        "title": "BlvkWare SIGIL — Describe it, watch it get built",
         "desc": ("Write down what you want and watch it become real software — a complete, "
                  "working, single-file application streamed into the page, then run, audited "
                  "and repaired."),
@@ -46,7 +46,7 @@ TOOLS = [
     {
         "src": "augur.html",
         "slug": "augur",
-        "title": "AUGUR by BlvkWare | Read a company from the outside",
+        "title": "BlvkWare AUGUR — Read a company from the outside",
         "desc": ("Point AUGUR at a company's website. It reads the public page, extracts the "
                  "real technical signals, and returns the revenue, operational and competitive "
                  "systems that business should be running but isn't."),
@@ -54,7 +54,7 @@ TOOLS = [
     {
         "src": "scry.html",
         "slug": "scry",
-        "title": "SCRY by BlvkWare | Find the software hiding in your business",
+        "title": "BlvkWare SCRY — Find the software hiding in your business",
         "desc": ("Describe how your business works. SCRY maps the operation, finds the "
                  "bottlenecks and missing systems, and turns them into a live operating "
                  "console you can click through."),
@@ -452,9 +452,10 @@ Contact: russ@blvkware.dev
 - **Missed-Call Recovery** — $499 setup, then $149/month. Every unanswered call
   gets an automatic text back within 60 seconds; two-way texting from the
   business's existing number; automatic follow-up until the customer replies or
-  opts out; dashboard of calls recovered. Live in about 1 week. Operators typically
-  report recovering a meaningful share of calls that would otherwise be lost; BlvkWare
-  publishes no guaranteed recovery rate.
+  opts out; dashboard of calls recovered. Live in about 1 week. BlvkWare publishes no
+  recovery-rate statistic and makes no performance claim: how many calls a business
+  recovers depends on its own call volume. The stated arithmetic is that at $149/month
+  the service costs less than one average service call in most trades.
 - **AI Front Desk** — $1,500 setup, then $349/month. An AI receptionist answering
   calls, texts and web chat 24/7, trained on the business's services, hours and
   pricing, booking appointments directly into the calendar and escalating when it
