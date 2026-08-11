@@ -10,6 +10,44 @@
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://blvkware.dev/assets/og.png">
 <meta name="twitter:card" content="summary_large_image">
+<meta property="og:url" content="https://blvkware.dev/sigil/">
+<meta property="og:site_name" content="BlvkWare">
+<link rel="canonical" href="https://blvkware.dev/sigil/">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "@id": "https://blvkware.dev/sigil/#app",
+  "name": "SIGIL",
+  "alternateName": "BlvkWare SIGIL",
+  "url": "https://blvkware.dev/sigil/",
+  "description": "Write down what you want and watch it become real software — a complete, working, single-file application streamed into the page, then run, audited and repaired.",
+  "applicationCategory": "BusinessApplication",
+  "applicationSubCategory": "AI code generation",
+  "operatingSystem": "Any (runs in a web browser)",
+  "browserRequirements": "Requires JavaScript.",
+  "featureList": [
+    "Streams a complete single-file web application",
+    "Runs the result and reads its own console",
+    "Audits quality and repairs its own errors",
+    "Runs entirely in the browser, no account"
+  ],
+  "image": "https://blvkware.dev/assets/og.png",
+  "isAccessibleForFree": true,
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "publisher": {
+    "@id": "https://blvkware.dev/#org"
+  },
+  "isPartOf": {
+    "@id": "https://blvkware.dev/#website"
+  }
+}
+</script>
 <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
 <link rel="apple-touch-icon" href="/assets/logo-192.png">
 <script>
@@ -426,9 +464,12 @@
   [data-theme="light"] .logo {
     box-shadow: inset 0 0 0 1px rgba(217,182,92,.28), 0 4px 12px -6px rgba(40,30,10,.5);
   }
+  /* This is an h1: it is the page's actual title, and the page had none, which
+     is a real on-page SEO gap rather than a style choice. Margin is reset
+     explicitly so promoting the element changed nothing visually. */
   .brand-name {
     font-size: 15px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase;
-    line-height: 1.1; color: var(--ink);
+    line-height: 1.1; color: var(--ink); margin: 0;
   }
   .brand-name i { color: var(--accent-ink); font-style: normal; }
   .brand-name b { color: var(--brass); font-weight: 800; }
@@ -1237,7 +1278,7 @@
     <div class="brand">
       <div class="logo"><svg class="ic ic-28" viewBox="0 0 64 64"><use href="#i-blvkmark"/></svg></div>
       <div style="min-width:0">
-        <div class="brand-name"><b>BLVKWARE</b> SIGI<i>L</i></div>
+        <h1 class="brand-name"><b>BLVKWARE</b> SIGI<i>L</i></h1>
         <div class="brand-sub">Describe it, it gets built</div>
       </div>
     </div>

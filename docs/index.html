@@ -475,7 +475,12 @@
             font-family: var(--font-code); font-size: 0.82rem; letter-spacing: 0.12em;
             color: var(--color-brass); margin-bottom: 1.4rem;
         }
-        .hero-subtitle { font-size: 1.25rem; max-width: 700px; margin: 0 auto 2.5rem; color: var(--color-text-secondary); }
+        /* Two paragraphs, not one: the first states plainly what this is and
+           where it operates, the second is the offer. Splitting them keeps the
+           commercial intent explicit in the opening lines without compacting it
+           into a single unreadable keyword-dense sentence. */
+        .hero-subtitle { font-size: 1.25rem; max-width: 700px; margin: 0 auto 1.1rem; color: var(--color-text-secondary); }
+        .hero-subtitle-2 { font-size: 1.1rem; margin-bottom: 2.5rem; }
         .hero-trust {
             font-family: var(--font-code); font-size: 0.74rem; letter-spacing: 0.06em;
             color: var(--color-text-secondary); opacity: 0.75; margin-top: 1.4rem;
@@ -764,7 +769,8 @@
                 <h1 class="hero-title" id="hero-title">
                     Stop losing jobs to<br><span class="highlight">quotes nobody chased.</span>
                 </h1>
-                <p class="hero-subtitle">Give AUGUR your website and it reads the live page, then tells you which revenue and automation systems you should be running and aren't. Free, no sign-up, about a minute. Fix it yourself or have me build it &mdash; fixed prices, live in days.</p>
+                <p class="hero-subtitle">BlvkWare builds AI automation and custom software for small businesses across the United States, from Mississippi. Quote follow-up, review requests, and the business process automation and internal tools you keep meaning to build.</p>
+                <p class="hero-subtitle hero-subtitle-2">Start free: give AUGUR your website and it reads the live page, then tells you which revenue and workflow automation systems you should be running and aren't. About a minute, no sign-up. Fix it yourself, or have me build it &mdash; fixed prices, live in days.</p>
                 <div class="hero-actions">
                     <a href="/augur/" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.125rem;">Show me what's broken <span aria-hidden="true">&rarr;</span></a>
                     <a href="#services" class="btn btn-ghost" style="padding: 1rem 2rem; font-size: 1.125rem;">See prices</a>

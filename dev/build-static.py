@@ -38,6 +38,13 @@ TOOLS = [
     {
         "src": "app.html",
         "slug": "sigil",
+        "name": "SIGIL",
+        "role": "Build",
+        "subcategory": "AI code generation",
+        "features": ["Streams a complete single-file web application",
+                     "Runs the result and reads its own console",
+                     "Audits quality and repairs its own errors",
+                     "Runs entirely in the browser, no account"],
         "title": "BlvkWare SIGIL — Describe it, watch it get built",
         "desc": ("Write down what you want and watch it become real software — a complete, "
                  "working, single-file application streamed into the page, then run, audited "
@@ -46,6 +53,13 @@ TOOLS = [
     {
         "src": "augur.html",
         "slug": "augur",
+        "name": "AUGUR",
+        "role": "Analyse",
+        "subcategory": "Competitive and business analysis",
+        "features": ["Reads a company's live public website",
+                     "Extracts pricing, social proof and technical signals",
+                     "Reports missing revenue and automation systems",
+                     "Draws a costed architecture for what to build"],
         "title": "BlvkWare AUGUR — Read a company from the outside",
         "desc": ("Point AUGUR at a company's website. It reads the public page, extracts the "
                  "real technical signals, and returns the revenue, operational and competitive "
@@ -54,6 +68,13 @@ TOOLS = [
     {
         "src": "scry.html",
         "slug": "scry",
+        "name": "SCRY",
+        "role": "Architect",
+        "subcategory": "Business process mapping",
+        "features": ["Maps how a business actually operates",
+                     "Finds bottlenecks and missing systems",
+                     "Generates a live operating console",
+                     "Forges a working prototype"],
         "title": "BlvkWare SCRY — Find the software hiding in your business",
         "desc": ("Describe how your business works. SCRY maps the operation, finds the "
                  "bottlenecks and missing systems, and turns them into a live operating "
@@ -586,6 +607,41 @@ def check_js(src, name):
     return True
 
 
+def tool_schema(tool):
+    """A SoftwareApplication node per tool, bound to the Organization.
+
+    Each tool is free, browser-only and needs no sign-up; offers/price 0 and
+    isAccessibleForFree make that claim machine-readable instead of marketing copy.
+    """
+    import json as _json
+    base = "https://" + CUSTOM_DOMAIN
+    node = {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "@id": base + "/" + tool["slug"] + "/#app",
+        "name": tool["name"],
+        "alternateName": "BlvkWare " + tool["name"],
+        "url": base + "/" + tool["slug"] + "/",
+        "description": tool["desc"],
+        "applicationCategory": "BusinessApplication",
+        "applicationSubCategory": tool["subcategory"],
+        "operatingSystem": "Any (runs in a web browser)",
+        "browserRequirements": "Requires JavaScript.",
+        "featureList": tool["features"],
+        "image": base + "/assets/og.png",
+        "isAccessibleForFree": True,
+        "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+        "publisher": {"@id": base + "/#org"},
+        "isPartOf": {"@id": base + "/#website"},
+    }
+    return ('<script type="application/ld+json">\n'
+            + _json.dumps(node, indent=2, ensure_ascii=False)
+            # Split so this file never contains a literal closing script tag,
+            # which would end the block early when embedded in a page.
+            + "\n<" + "/script>\n")
+
+
+
 def build_tool(tool):
     """Wrap a tool source file in a real HTML document plus the BYOK runtime."""
     src_path = os.path.join(ROOT, tool["src"])
@@ -619,6 +675,16 @@ def build_tool(tool):
         "<meta property=\"og:type\" content=\"website\">\n"
         "<meta property=\"og:image\" content=\"https://" + CUSTOM_DOMAIN + "/assets/og.png\">\n"
         "<meta name=\"twitter:card\" content=\"summary_large_image\">\n"
+        "<meta property=\"og:url\" content=\"https://" + CUSTOM_DOMAIN + "/" + tool["slug"] + "/\">\n"
+        "<meta property=\"og:site_name\" content=\"BlvkWare\">\n"
+        # Without this each tool is an unclaimed URL, and any variant
+        # (trailing slash, index.html, a query string) splits its signals.
+        "<link rel=\"canonical\" href=\"https://" + CUSTOM_DOMAIN + "/" + tool["slug"] + "/\">\n"
+        "<meta name=\"robots\" content=\"index, follow, max-snippet:-1, max-image-preview:large\">\n"
+        # The tools are products, not pages. Declaring each as a
+        # SoftwareApplication published by the Organization is what turns
+        # "some pages on blvkware.dev" into named entities.
+        + tool_schema(tool) +
         # Absolute paths: the tools live one directory down, and the assets are
         # generated from the master logo by dev/embed-logo.py.
         "<link rel=\"icon\" type=\"image/png\" sizes=\"48x48\" href=\"/assets/favicon-48.png\">\n"
