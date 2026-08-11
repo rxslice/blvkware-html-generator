@@ -412,8 +412,34 @@
         .logo-mark { width: 78px; height: 78px; border-radius: 20px; flex: none; background: #060504; overflow: hidden; display: grid; place-items: center; }
         .logo-mark img { width: 100%; height: 100%; display: block; }
         .nav-links { display: flex; list-style: none; gap: 2.5rem; }
+        /* The panel carries [hidden] so its links leave the tab order on mobile.
+           Above the breakpoint that attribute is meaningless, and this says so
+           explicitly rather than leaving it to author-beats-UA cascade trivia. */
+        .nav-links[hidden] { display: flex; }
         .nav-links a { color: var(--color-text-secondary); text-decoration: none; font-weight: 600; transition: color 0.3s ease; }
         .nav-links a:hover { color: var(--color-text-primary); }
+
+        /* --- Mobile navigation ---
+           Hiding the links below 768px left the site with no navigation at all
+           on the device most visitors arrive on. This is a real menu: a labelled
+           button, a panel the button owns via aria-controls, and Escape to close. */
+        .nav-end { display: flex; align-items: center; gap: 0.75rem; }
+        .nav-toggle {
+            display: none; width: 44px; height: 44px;   /* 44px: minimum comfortable touch target */
+            align-items: center; justify-content: center;
+            background: transparent; border: 1px solid var(--glass-border);
+            border-radius: 10px; cursor: pointer; padding: 0; flex: none;
+        }
+        .nav-toggle:focus-visible { outline: 2px solid var(--color-primary-accent); outline-offset: 2px; }
+        .nav-toggle-bars { display: block; width: 18px; }
+        .nav-toggle-bars i {
+            display: block; height: 2px; background: var(--color-text-primary);
+            border-radius: 2px; transition: transform 0.25s ease, opacity 0.2s ease;
+        }
+        .nav-toggle-bars i + i { margin-top: 4px; }
+        .nav-toggle[aria-expanded="true"] .nav-toggle-bars i:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .nav-toggle[aria-expanded="true"] .nav-toggle-bars i:nth-child(2) { opacity: 0; }
+        .nav-toggle[aria-expanded="true"] .nav-toggle-bars i:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
         .btn { padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 700; transition: all 0.3s ease; display: inline-block; border: none; cursor: pointer; }
         .btn-primary { background-color: var(--color-primary-accent); color: #14170A; box-shadow: 0 0 20px rgba(212, 242, 74, 0.25); }
         .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 0 30px rgba(212, 242, 74, 0.45); }
@@ -426,7 +452,18 @@
         .hero-title .highlight { background: linear-gradient(90deg, var(--color-primary-accent), var(--color-brass)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
         #hero-title { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
         #hero-title.visible { opacity: 1; transform: translateY(0); }
+        /* The premise, stated before the headline. It does the diagnosing; the
+           headline names the symptom. Same device as the closing CTA, so the
+           page opens and shuts on the same idea. */
+        .hero-premise {
+            font-family: var(--font-code); font-size: 0.82rem; letter-spacing: 0.12em;
+            color: var(--color-brass); margin-bottom: 1.4rem;
+        }
         .hero-subtitle { font-size: 1.25rem; max-width: 700px; margin: 0 auto 2.5rem; color: var(--color-text-secondary); }
+        .hero-trust {
+            font-family: var(--font-code); font-size: 0.74rem; letter-spacing: 0.06em;
+            color: var(--color-text-secondary); opacity: 0.75; margin-top: 1.4rem;
+        }
         .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 
         /* --- Instrument system -------------------------------------------
@@ -619,7 +656,35 @@
 
         /* --- MOBILE --- */
         @media (max-width: 768px) {
-            .nav-links { display: none; }
+            .nav-toggle { display: inline-flex; }
+            /* The panel is closed by default and opened by the button. Using
+               [hidden] rather than display:none means the links are genuinely
+               removed from the tab order while closed, instead of being
+               invisible but still focusable. */
+            .nav-links {
+                position: absolute; top: 100%; left: 0; right: 0;
+                flex-direction: column; gap: 0; padding: 0.5rem 1.25rem 1rem;
+                /* Solid, not translucent. An open menu sitting over the hero
+                   headline has to be readable first and pretty second, and a
+                   blurred translucent panel over large display type is neither. */
+                background: #0A0908;
+                border-bottom: 1px solid var(--glass-border);
+                border-top: 1px solid var(--rule);
+                box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
+            }
+            .nav-links[hidden] { display: none; }
+            .nav-links li { border-bottom: 1px solid var(--glass-border); }
+            .nav-links li:last-child { border-bottom: none; }
+            .nav-links a {
+                display: block; padding: 0.95rem 0.25rem; font-size: 1.05rem;
+                color: var(--color-text-primary);
+            }
+            /* The header only paints a background once scrolled; an open menu
+               needs one immediately or the page shows through behind it. Driven
+               by a class the script sets rather than :has(), so it does not
+               depend on selector support. */
+            .header.menu-open { background-color: #0A0908; }
+            .nav-cta { padding: 0.6rem 1rem; font-size: 0.9rem; }
             .logo-mark { width: 60px; height: 60px; border-radius: 16px; }
             .logo { font-size: 1.2rem; gap: 0.55rem; }
             #hero { padding-top: 11rem; }
@@ -658,29 +723,37 @@
                 </span>
                 <span class="logo-text">BlvkWare<span class="logo-dot">.</span></span>
             </a>
-            <nav>
-                <ul class="nav-links">
+            <nav aria-label="Main">
+                <ul class="nav-links" id="nav-links" hidden>
                     <li><a href="#lab">The Lab</a></li>
                     <li><a href="#services">Pricing</a></li>
                     <li><a href="#faq">FAQ</a></li>
                     <li><a href="#cta">Contact</a></li>
                 </ul>
             </nav>
-            <a href="#services" class="btn btn-primary">See prices</a>
+            <div class="nav-end">
+                <a href="#services" class="btn btn-primary nav-cta">See prices</a>
+                <button type="button" class="nav-toggle" id="nav-toggle"
+                        aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">
+                    <span class="nav-toggle-bars" aria-hidden="true"><i></i><i></i><i></i></span>
+                </button>
+            </div>
         </div>
     </header>
 
     <main>
         <section id="hero">
             <div class="container hero-content">
+                <p class="hero-premise">Something in your business is being done by hand right now.</p>
                 <h1 class="hero-title" id="hero-title">
                     Stop losing jobs to<br><span class="highlight">quotes nobody chased.</span>
                 </h1>
-                <p class="hero-subtitle">AI automation and custom software for small businesses &mdash; automated quote follow-up, automated review requests, and the internal tools you keep meaning to build. Fixed prices, live in days. Start with the free tools below and judge the work before you spend anything.</p>
+                <p class="hero-subtitle">Give AUGUR your website and it reads the live page, then tells you which revenue and automation systems you should be running and aren't. Free, no sign-up, about a minute. Fix it yourself or have me build it &mdash; fixed prices, live in days.</p>
                 <div class="hero-actions">
-                    <a href="#lab" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.125rem;">Try it free on your own business</a>
-                    <a href="#cta" class="btn btn-ghost" style="padding: 1rem 2rem; font-size: 1.125rem;">See prices</a>
+                    <a href="/augur/" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.125rem;">Show me what's broken <span aria-hidden="true">&rarr;</span></a>
+                    <a href="#services" class="btn btn-ghost" style="padding: 1rem 2rem; font-size: 1.125rem;">See prices</a>
                 </div>
+                <p class="hero-trust">No sign-up, no card, nothing installed. It runs in your browser.</p>
             </div>
         </section>
 
@@ -871,7 +944,7 @@
         <section id="cta">
             <div class="container">
                 <div class="cta-content fade-in">
-                    <p class="cta-premise">Something in your business is being done by hand right now.</p>
+                    <p class="cta-premise">You already know which process it is.</p>
                     <h2 class="cta-title">Tell me what's broken<span class="cta-arrow" aria-hidden="true">&rarr;</span></h2>
                     <p class="cta-text">Describe the process that's costing you time or money. I'll tell you straight whether software should exist for it, roughly what it costs, and how long it takes — before you commit to anything. Sometimes the answer is that you don't need me.</p>
                     <div class="cta-actions">
@@ -942,6 +1015,49 @@
                 });
             } else if (glow) {
                 glow.style.display = 'none';
+            }
+
+            // 3b. Mobile menu.
+            // The panel is [hidden] in the markup so its links are out of the
+            // tab order until opened; above the breakpoint CSS ignores that.
+            const navToggle = document.getElementById('nav-toggle');
+            const navLinks = document.getElementById('nav-links');
+            if (navToggle && navLinks) {
+                const headerEl = document.getElementById('header');
+                const setMenu = (open) => {
+                    navToggle.setAttribute('aria-expanded', String(open));
+                    navToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+                    navLinks.hidden = !open;
+                    if (headerEl) headerEl.classList.toggle('menu-open', open);
+                };
+                const isOpen = () => navToggle.getAttribute('aria-expanded') === 'true';
+
+                navToggle.addEventListener('click', () => setMenu(!isOpen()));
+
+                // Every link is a same-page anchor, so without this the menu
+                // stays open covering the section it just scrolled to.
+                navLinks.addEventListener('click', (e) => {
+                    if (e.target.closest('a')) setMenu(false);
+                });
+
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && isOpen()) {
+                        setMenu(false);
+                        navToggle.focus();      // never strand focus inside a closed panel
+                    }
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (isOpen() && !e.target.closest('.nav-end') && !e.target.closest('.nav-links')) {
+                        setMenu(false);
+                    }
+                });
+
+                // Rotating a phone can cross the breakpoint with the menu open,
+                // which would leave aria-expanded lying about a desktop navbar.
+                window.matchMedia('(max-width: 768px)').addEventListener('change', (ev) => {
+                    if (!ev.matches) setMenu(false);
+                });
             }
 
             // 4. Hero title reveal
