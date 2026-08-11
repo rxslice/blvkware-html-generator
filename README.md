@@ -1,177 +1,138 @@
-# BlvkWare AI HTML Generator
+# The Blvk Lab
 
-Describe a website, game, tool or app in plain language — get a complete, working, single-file HTML page back, streamed live.
+Three browser-only tools that read a business, find the software it should have, and build it.
 
-`app.html` is the deliverable. It keeps the original platform contract exactly:
+**Live: [blvkware.dev](https://blvkware.dev)** · Built by [BlvkWare](https://blvkware.dev) — AI automation and custom software for small businesses.
 
-```
-$meta
-  title = ...
-  description = ...
-  tags = ...
-
-generateText = {import:ai-text-plugin}
-```
-
-…followed by the markup, calling `root.generateText({ instruction, startWith, onChunk })` the same way the starting version did. Paste it in as-is.
-
----
-
-## Running it locally against a real model
-
-`dev/serve.py` is a real harness — it streams from a live provider. There is no mock anywhere in this project.
-
-```bash
-python dev/serve.py
-```
-
-Then open <http://localhost:8777>. The server strips the `$meta` header, injects a genuine `root.generateText` implementation, and proxies generation with `stream: true`. Stdlib only — nothing to install.
-
-### It runs on a free API key
-
-The server is multi-provider and auto-detects whichever key you have, preferring free ones:
-
-| Provider | Free | Default model | Env var |
+| | Tool | What it does | Live |
 |---|---|---|---|
-| **Google AI Studio** | yes, no card | `gemini-3.5-flash` | `GEMINI_API_KEY` |
-| OpenRouter | yes, no card | `nvidia/nemotron-3-super-120b-a12b:free` | `OPENROUTER_API_KEY` |
-| Groq | yes | `llama-3.3-70b-versatile` | `GROQ_API_KEY` |
-| Cerebras | yes | `llama-3.3-70b` | `CEREBRAS_API_KEY` |
-| Mistral | yes (opts into training) | `mistral-large-latest` | `MISTRAL_API_KEY` |
-| Anthropic | no | `claude-opus-5` | `ANTHROPIC_API_KEY` |
+| **01** | **AUGUR** — *Analyse* | Reads a company's live public website and reports the revenue and automation systems it should be running but isn't | [blvkware.dev/augur](https://blvkware.dev/augur/) |
+| **02** | **SCRY** — *Architect* | Maps how a business actually operates, finds the missing systems, and turns them into a clickable operating console | [blvkware.dev/scry](https://blvkware.dev/scry/) |
+| **03** | **SIGIL** — *Build* | Streams a complete, working, single-file application into the page — then runs it, reads its own console, and repairs what it broke | [blvkware.dev/sigil](https://blvkware.dev/sigil/) |
 
-Get a free Google key at <https://aistudio.google.com/apikey> (no credit card). Put it in a `.env` next to `app.html` — see `.env.example` — or export it.
+No sign-up, no account, no server. Each tool is one HTML file that runs entirely in your browser using an API key you supply, stored only in your own `localStorage`.
 
-```bash
-python dev/serve.py --list                                  # all providers
-python dev/serve.py --provider openrouter --model cohere/north-mini-code:free
-python dev/serve.py --max-tokens 8000
+---
+
+## Why these exist
+
+They are the portfolio. Rather than a logo wall and case studies nobody can verify, the argument is: here is working software, go use it right now, judge the standard for yourself.
+
+They also happen to be the sales pipeline in order. AUGUR finds the problem, SCRY designs the fix, SIGIL builds it. Which is the same sequence used on a paying client.
+
+---
+
+## Architecture
+
+Each tool is a **single, self-contained HTML file** — markup, styles, and logic in one document, no build step, no framework, no dependencies. Open the file and it works.
+
+```
+app.html      → SIGIL   (156 KB)
+augur.html    → AUGUR   (113 KB)
+scry.html     → SCRY    (61 KB)
+site/         → the marketing site source
+dev/          → build and asset tooling
+docs/         → the built, published site (GitHub Pages serves this)
 ```
 
-A **provider picker** appears in the composer whenever the host exposes `/api/providers` (the dev server does; the plugin platform doesn't, so it stays hidden there). Leave it on *Auto* for retry + failover, or pin one provider for a run — the choice persists. After each build the subtitle names the model that actually served it, which matters once failover can silently move you.
+`dev/build-static.py` compiles the sources into `docs/`: injecting per-page metadata, canonicals and structured data, generating `sitemap.xml`, `robots.txt`, `llms.txt` and the IndexNow key, and wrapping each tool with a browser-side model runtime.
 
-**Free tiers rate-limit, so the server is built for it.** Each request retries with exponential backoff on 429/5xx, then fails over to your next available provider — but only while nothing has been streamed yet, so a partial page on screen is never yanked out from under you. The UI shows which provider actually served the run.
+### Bring-your-own-key runtime
 
-**Verified working**: Gemini free tier produced a complete 46.5 KB / 1,430-line pomodoro app in 52.9s — audit score 100, zero runtime errors, working timer, self-contained. Failover verified by forcing a bad model: Gemini failed, OpenRouter served it, the user saw a note rather than an error.
+GitHub Pages is static hosting — there is no server to proxy generation through. So the build injects a shim implementing the same contract the tools were written against:
 
-Two wire formats are implemented — `openai` (covers Gemini, OpenRouter, Groq, Cerebras, Mistral) and `anthropic`. Adding a provider is one entry in `PROVIDERS`.
-
-GitHub Models is **retired** (`410 github_models_retirement_brownout` as of Aug 2026) and is never auto-selected.
-
-### Two constraints worth knowing
-
-**Assistant prefill is unsupported on several current models** — Claude Opus 5 returns a 400 for a trailing assistant turn. The platform's `startWith` parameter is prefill-shaped, so the server never passes it through as one. Continuations hand the partial file back inside the **user** turn between explicit markers. That's `CONTINUE_TEMPLATE`.
-
-**Some providers sit behind a WAF that rejects urllib's default user-agent** — Groq answers Cloudflare `1010`. Every request sends a real `User-Agent`.
-
----
-
-## What it does
-
-**Generate**
-- Six form factors (Auto / Game / Site / App / Landing / Visual), each with a tailored instruction block
-- Nine aesthetic presets plus an accent-colour picker
-- Seven build rules that rewrite the prompt: animations, responsive, accessible, forced dark UI, CDN libraries, commented code, live preview
-- Auto-continuation — if the model runs out of room mid-file it reseeds and keeps going (up to 6 passes) instead of handing you a truncated page
-
-**Watch it build**
-- Code streams in with live syntax highlighting and line numbers
-- Switch to Preview mid-run and it mounts live, throttled, so you watch the page assemble itself — but only while that tab is actually open, since re-parsing a growing document nobody is looking at is pure waste
-- Live KB counter and elapsed timer
-
-**Verify — two independent checks**
-- A **runtime console** captures `log` / `warn` / `error` / unhandled rejections from inside the sandboxed preview, with filters — the generated page's actual errors, not just its markup
-- An **audit** statically inspects the file for what the console can't see: truncated documents, unbalanced tags, missing doctype/charset/viewport/title/lang, buttons wired to nothing, unlabelled inputs, images without alt, missing focus styles, absent media queries, ungated motion, leftover `TODO`/Lorem ipsum, and external resources when you asked for self-contained. Scored 0–100 with severity-ranked findings.
-
-**Fix and iterate**
-- **Repair with AI** — feeds captured runtime errors back to the model
-- **Fix with AI** — feeds the audit findings back as a repair brief (informational notes are left alone)
-- **Refine** — "add a scoreboard", "make it feel more premium"; each pass returns a full updated file
-- **Version chips** (v1, v2, v3…) label every pass and restore instantly
-
-The two checks are complementary: a page can run without throwing and still be inaccessible, truncated, or full of dead buttons.
-
-**Ship**
-- Download, copy, or open in a new tab
-- Viewport switcher: full width / tablet 834px / mobile 390px, with browser chrome around the framed preview
-- Library of your last 14 builds in `localStorage` — nothing leaves the browser
-
----
-
-## Support screen
-
-A donation screen appears on load: a custom gear-motif header, the brand mark, a short pitch, your PayPal QR on a white panel (QR codes need a light background and quiet zone to scan reliably), and an optional **Open PayPal** button.
-
-It's dismissible, has a **Don't show this again** opt-out persisted in `localStorage`, and stays reachable afterwards from the heart icon in the sidebar footer. Escape, the backdrop and the close button all dismiss it; focus is trapped while it's open and restored on close.
-
-**Adding your QR:**
-
-```bash
-# 1. save your PayPal QR image here
-assets/paypal-qr.png
-
-# 2. embed it
-python dev/embed-qr.py --paypal https://paypal.me/yourhandle
+```js
+root.generateText({ instruction, startWith, onChunk }) → Promise<{ text, generatedText }>
 ```
 
-Your image is embedded **verbatim** as a data URI — never decoded, never re-encoded, so the payment destination cannot be altered by the tooling. The only processing is an optional nearest-neighbour downscale if the source is over 512px (nearest, because smooth filters blur module edges and cost you scans). Until you run it, the panel shows a labelled placeholder rather than a fake code.
+…but pointed at whichever provider the *visitor* has a key for. The key lives in their `localStorage` and is sent only to that provider.
+
+**No developer key is ever embedded.** A key baked into a public page is scraped and drained within hours; the build refuses to emit one.
+
+Only providers that permit cross-origin browser calls are offered. Anthropic is deliberately absent — it blocks browser origins unless you opt into an override, and encouraging users to paste a paid key into someone else's website is not a pattern worth shipping.
 
 ---
 
-## Keyboard
+## Technical decisions worth explaining
 
-| | |
-|---|---|
-| `Ctrl K` | Focus the prompt |
-| `Ctrl ⏎` | Generate |
-| `Esc` | Stop / close overlay / exit focus mode |
-| `Ctrl 1–4` | Preview / Code / Console / Audit |
-| `Ctrl S` | Download |
-| `Ctrl Shift C` | Copy code |
-| `Ctrl R` | Reload preview |
-| `Ctrl O` | Toggle options |
-| `Ctrl .` | Focus mode |
-| `?` | Shortcuts |
+**Single-file, no framework.** These tools have to be readable and runnable by anyone who opens the file, including a prospective client who wants to check what it does before running it. A build step and a `node_modules` tree would defeat that.
 
----
+**AUGUR reads pages through a CORS relay chain.** Browsers cannot fetch arbitrary origins. AUGUR tries relays in order and falls back to a readability service, so a site that blocks one path is still readable. It crawls several pages, not just the homepage — the difference is not cosmetic: on one test site the homepage alone surfaced *0 prices*, while five pages surfaced *3*, moving the evidence from banner copy to the actual pricing model and cancellation policy.
 
-## The instruction prompt is the product
+**AUGUR's copy budget is explicit.** Page text is truncated against a token budget, and any trimmed page is reported in the scan log rather than silently dropped. A report that quietly analysed less than it claimed would be worse than no report.
 
-`buildInstruction()` in `app.html` is the single biggest lever on output quality, and it is written to fight the two default failure modes of every model on this task:
+**Shareable reports live in the URL fragment.** A report is gzipped and base64url-encoded into `#r=…`. Fragments are never transmitted to a server, which is what makes the published privacy policy literally true — there is no backend that *could* retain a report. The alternative (a Worker plus KV) would have been easier and would have made the privacy claim false.
 
-1. **Generic "AI slop" design.** Models converge hard on a recognisable default look, so the prompt explicitly bans it — overused font stacks, purple/indigo gradients, predictable card-grid-hero layouts, components with no point of view — and demands one signature detail the user didn't ask for.
-2. **Skeletons that look finished but do nothing.** It requires every control wired to real behaviour, real seeded content instead of Lorem ipsum, and the unhappy paths handled.
+**SIGIL audits and repairs its own output.** It runs what it generated, reads the runtime console, and feeds its own errors back for repair. Generating code that looks plausible is easy; noticing it threw on load is the part that matters.
 
-It closes with a short self-check (every control does something, no undefined references, layout holds at 360px, document complete through `</html>`), which measurably reduces dead controls and truncated files.
+**A tokenizer trap the hard way.** A literal `<!--` or `<script>`/`</script>` sequence inside an inline script silently breaks HTML parsing — the page loads and does nothing, with no error. Every generated script block splits those sequences (`"<" + "/script>"`). This cost real debugging time before it was understood.
 
-Edit that function, not the UI, when you want different output.
+**`node --check` gates every build.** A syntax error I introduced once shipped a page that loaded fine and did nothing at all. The build now refuses to emit any tool whose JavaScript does not parse, so that failure mode cannot recur.
 
-## Design notes
+**FAQ structured data is regenerated from the rendered HTML on every build.** Hand-maintained JSON-LD drifts from the visible page the first time someone edits the copy and forgets the schema — which is exactly what happened here. It is now derived, not maintained.
 
-**Palette — "Carbon & Acid."** Warm near-black (`#0a0908`, not blue-black), bone ink, and acid chartreuse (`#d4f24a`) as the primary, with clay and jade secondaries. Primary buttons are an acid fill with *dark* ink rather than white-on-gradient. The light theme is warm parchment (`#f2efe6`) with a darkened olive (`#5c7407`) for accent-coloured text, so contrast holds while the brand fill stays identical across themes.
-
-**Layout.** A fixed-height app shell — nothing scrolls but the panes that should. After the first build the composer collapses to a single line (prompt + Edit + Rebuild) and the workspace takes the entire remaining viewport, so you're never scrolling past the input to see your output.
-
-**Icons.** No emoji anywhere. Every glyph is a hand-authored SVG symbol on a 24px grid at 1.65 stroke weight, defined once in a sprite and referenced with `<use>`.
-
-**Brand mark.** `#i-blvkmark` is the BlvkWare artificer as vector art on a 64px grid — pointed wide-brim hat, brass-studded band, crown cog, goggles, and a coat with a shoulder cog. It's a bust rather than a face: a floating head reads as a cartoon mascot at small sizes, whereas the hat-and-shoulders silhouette stays legible down to ~24px. Full colour by design (it's a logo, not a `currentColor` UI icon), on a dark tile so it reads as it does on its own black field. The favicon is derived from the same symbol at serve time, so the tab icon can't drift from the rail.
-
-Self-contained: no external fonts, stylesheets, scripts or images. `prefers-reduced-motion` respected, `:focus-visible` rings throughout, tabs carry `role`/`aria-selected`, status changes announced via an `aria-live` region.
+**The logo is resampled in linear light.** The mark is thin brass linework on black. Averaging those strokes in sRGB space crushes them toward black, and below ~48px the emblem turns into a dark smudge. Converting to linear, resampling, then converting back preserves their true luminance. The difference at favicon size is dramatic. `dev/embed-logo.py` derives every size from one master.
 
 ---
 
-## Three things worth knowing if you edit `app.html`
+## Running locally
 
-**1. Never write an HTML open-comment or a script open/close tag literally inside the main `<script>` block.**
+Open any of `app.html`, `augur.html`, or `scry.html` directly in a browser. That is the whole setup — they will prompt for an API key.
 
-This is not style advice — it silently destroys the file. An open-comment sequence puts the HTML tokenizer into *script data escaped* state; a following script open tag escalates to *double escaped*, where the real closing tag stops terminating the element and the rest of the document is swallowed as script text. The app simply never boots, with no console error.
+For a real streaming harness against a live provider (no mocks anywhere in this project):
 
-The code works around this in three places (the highlighter regex, the comment-detection compare, and the console probe builder) — see the note above `highlight()`. Keep it that way. The same rule applies to the injected shim in `dev/serve.py`.
+```bash
+python dev/serve.py      # http://localhost:8777
+```
 
-**2. `<html>` needs `overflow: hidden`, not just `<body>`.**
+It auto-detects whichever key you have, preferring free ones:
 
-The out-of-flow toast and live-region nodes leave trailing whitespace that forms an anonymous line box after `#app`. Without it on the root element the whole document scrolls by a stray line-height even though the body can't.
+| Provider | Free tier | Env var |
+|---|---|---|
+| Google AI Studio | yes, no card | `GEMINI_API_KEY` |
+| OpenRouter | yes, no card | `OPENROUTER_API_KEY` |
+| Groq | yes | `GROQ_API_KEY` |
+| Cerebras | yes | `CEREBRAS_API_KEY` |
+| Anthropic | no | `ANTHROPIC_API_KEY` |
 
-**3. Runs are tagged with a token.**
+Get a free Google key at <https://aistudio.google.com/apikey> (no credit card). Put it in a `.env`, or export it.
 
-A stopped generation's promise still settles afterwards. Without the token guard, a stale run's `finally` would clear the busy state and stream buffer of a *newer* run started right after a stop. `runToken` / `stale()` prevent that.
+To build the published site:
+
+```bash
+python dev/build-static.py     # → docs/
+python dev/embed-logo.py       # regenerate logo assets from the master
+```
+
+Stdlib only for the server; the logo tooling needs Pillow and numpy.
+
+---
+
+## Limitations
+
+Worth stating plainly, since the point of publishing these is that you can check them.
+
+- **Output quality tracks the model behind the key.** A free-tier model produces free-tier results. This is the largest single variable and it is not under the tool's control.
+- **AUGUR can only read what is public and server-rendered.** A site that renders entirely client-side, or that blocks every relay, will yield a thin report. It says so rather than inventing findings.
+- **SCRY's operating console is projected, not connected.** It models what your systems *would* show, from what you describe. It has no access to your real data and does not pretend otherwise.
+- **SIGIL builds single-file front-ends.** No backend, no database, no auth. It is a fast way to get to a working artefact, not a replacement for building a product.
+- **Everything is browser-side**, so anything a browser cannot do, these cannot do.
+
+---
+
+## Roadmap
+
+- Screenshots and a recorded walkthrough in this README
+- Per-tool documentation pages with worked examples
+- A changelog, once the tools stabilise enough to have one
+- AUGUR: aggregate scanning, to publish findings across a whole industry rather than one company at a time
+
+---
+
+## Author
+
+Built and maintained by **W. Russell Wheeler** — [blvkware.dev](https://blvkware.dev) · <russ@blvkware.dev> · Mississippi, serving the United States remotely.
+
+BlvkWare builds AI automation and custom software for small businesses: automated quote follow-up, review requests, business process automation, and the internal tools you keep meaning to build. Fixed prices, published on the site.
+
+If you want the underlying business process found and turned into software rather than doing it yourself, that is the actual service — [see what it costs](https://blvkware.dev/#services).
