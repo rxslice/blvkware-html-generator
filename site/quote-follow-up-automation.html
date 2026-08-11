@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quote Follow-Up Automation for Small Businesses — BlvkWare</title>
+    <meta name="description" content="How automated quote follow-up works, what it costs, and how to work out whether it pays for your business. Email sequences, one-click replies, and why SMS adds weeks before you can go live.">
+    <link rel="canonical" href="https://blvkware.dev/quote-follow-up-automation/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta property="og:title" content="Quote Follow-Up Automation for Small Businesses">
+    <meta property="og:description" content="How automated quote follow-up works, what it costs, and the arithmetic for deciding whether it pays.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://blvkware.dev/quote-follow-up-automation/">
+    <meta property="og:image" content="https://blvkware.dev/assets/og.png">
+    <meta property="og:site_name" content="BlvkWare">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+    <link rel="apple-touch-icon" href="/assets/logo-192.png">
+    <meta name="theme-color" content="#0A0908">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "BlvkWare", "item": "https://blvkware.dev/"},
+        {"@type": "ListItem", "position": 2, "name": "Quote Follow-Up Automation", "item": "https://blvkware.dev/quote-follow-up-automation/"}
+      ]
+    },
+    {
+      "@type": "Article",
+      "headline": "Quote Follow-Up Automation for Small Businesses",
+      "description": "How automated quote follow-up works, what it costs, and how to work out whether it pays.",
+      "author": {"@type": "Person", "name": "William Russell Wheeler"},
+      "publisher": {"@id": "https://blvkware.dev/#org"},
+      "mainEntityOfPage": "https://blvkware.dev/quote-follow-up-automation/",
+      "about": ["Quote follow-up automation", "Sales follow-up", "Business process automation"]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How many follow-ups should a quote get?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Three is the practical ceiling for most trades: roughly day 2, day 5 and day 10. The first catches the quote that was genuinely missed, the second catches the one that got deprioritised, and the third exists to get a decision either way. Beyond three you are no longer following up, you are pestering, and the cost is the goodwill you would need to win the next job."}
+        },
+        {
+          "@type": "Question",
+          "name": "Should quote follow-up be sent by email or SMS?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Email, for two reasons. The quote itself was almost certainly sent by email, so the follow-up belongs in the thread the customer is already looking at. And in the United States, application-to-person SMS requires A2P 10DLC registration, which realistically takes three to six weeks including AT&T's manual review. An email sequence can be live in days."}
+        },
+        {
+          "@type": "Question",
+          "name": "How do I know if automated quote follow-up is worth it?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Do the arithmetic rather than trusting an industry statistic. Count the quotes you sent last month that nobody chased. Multiply by your normal close rate, then by your average job value. That is the ceiling of what follow-up could recover. If the ceiling is not several times the monthly cost, it is not worth doing."}
+        },
+        {
+          "@type": "Question",
+          "name": "Will automated follow-up annoy customers?",
+          "acceptedAnswer": {"@type": "Answer", "text": "It depends entirely on whether the sequence stops. A follow-up that keeps arriving after the customer has answered is spam. A sequence that stops the moment they click any reply, and that explicitly offers a way to say no, is a service. The final message should make declining easy, because a clean no is worth more to the business than a fourth unanswered email."}
+        }
+      ]
+    }
+  ]
+}
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Fira+Code:wght@500&display=swap');
+        :root {
+            --bg: #0A0908; --surface: #17140F; --accent: #D4F24A; --brass: #D9B65C;
+            --ink: #F5F0E6; --ink-2: #A89D8B; --line: rgba(245,240,230,0.1);
+            --font: 'Manrope', system-ui, -apple-system, sans-serif;
+            --mono: 'Fira Code', ui-monospace, monospace;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+        .wrap { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+        .top { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 3.5rem; text-decoration: none; color: inherit; }
+        .mark { width: 52px; height: 52px; border-radius: 14px; background: #060504; overflow: hidden; flex: none; }
+        .mark img { width: 100%; height: 100%; display: block; }
+        .wordmark { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; }
+        .wordmark span { color: var(--accent); }
+        .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--brass); margin-bottom: 1rem; }
+        h1 { font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 1rem; line-height: 1.12; }
+        .lede { font-size: 1.15rem; color: var(--ink-2); margin-bottom: 2.5rem; padding-bottom: 2.5rem; border-bottom: 1px solid var(--line); }
+        h2 { font-size: 1.5rem; font-weight: 700; margin: 3rem 0 1rem; letter-spacing: -0.01em; }
+        h3 { font-size: 1.05rem; font-weight: 700; margin: 1.75rem 0 0.6rem; color: var(--brass); }
+        p { color: var(--ink-2); margin-bottom: 1.1rem; }
+        ul, ol { margin: 0 0 1.1rem 1.2rem; color: var(--ink-2); }
+        li { margin-bottom: 0.6rem; }
+        strong { color: var(--ink); font-weight: 700; }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        code { font-family: var(--mono); font-size: 0.87em; background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; color: var(--brass); }
+        .box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem; margin: 1.75rem 0; }
+        .box p:last-child { margin-bottom: 0; }
+        .calc { font-family: var(--mono); font-size: 0.92rem; color: var(--ink); line-height: 2; }
+        .calc span { color: var(--brass); }
+        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
+        th, td { text-align: left; padding: 0.7rem 0.6rem; border-bottom: 1px solid var(--line); color: var(--ink-2); }
+        th { color: var(--ink); font-weight: 700; }
+        .cta { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 2rem; margin: 3rem 0 0; }
+        .btn { display: inline-block; background: var(--accent); color: #14170A; font-weight: 700; padding: 0.85rem 1.5rem; border-radius: 10px; margin-top: 0.5rem; }
+        .btn:hover { text-decoration: none; opacity: 0.92; }
+        .foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--ink-2); }
+        .foot a { margin-right: 1.25rem; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <a class="top" href="/">
+        <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
+        <span class="wordmark">BlvkWare<span>.</span></span>
+    </a>
+
+    <div class="eyebrow">Business process automation</div>
+    <h1>Quote follow-up automation</h1>
+
+    <p class="lede">Most small businesses lose more work to quotes nobody chased than to quotes that were rejected. This page explains how automated quote follow-up actually works, how to work out whether it pays for your business, and the one constraint that decides whether you can be live this week or next month.</p>
+
+    <h2>The problem is not the quote, it is the silence after it</h2>
+
+    <p>A quote gets sent on Tuesday. The customer reads it, thinks "I need to talk to my wife about this", and puts it aside. By Friday it is buried. Nobody rejected anything — the job simply evaporated.</p>
+
+    <p>Meanwhile the business owner is on a roof, under a sink, or driving between calls. Chasing quotes is the first thing that falls off the list when work gets busy, which means it fails hardest exactly when there is most to lose.</p>
+
+    <p>This is a scheduling problem wearing the costume of a sales problem. The fix is not better salesmanship. It is that the follow-up should not depend on a human remembering it.</p>
+
+    <h2>Work out whether it pays, before you buy anything</h2>
+
+    <p>There is no shortage of vendors quoting a recovery percentage. Ignore them — the number depends entirely on your trade, your close rate and your job values, and no vendor knows those. Do the arithmetic instead. It takes two minutes and it is checkable:</p>
+
+    <div class="box">
+        <p class="calc">
+            <span>A</span> = quotes you sent last month that nobody chased<br>
+            <span>B</span> = your normal close rate on quotes you <em>do</em> chase<br>
+            <span>C</span> = your average job value<br><br>
+            Ceiling of what follow-up could recover = <span>A &times; B &times; C</span>
+        </p>
+    </div>
+
+    <p>That is a ceiling, not a forecast — automated follow-up will not close every quote a human would have. But it tells you the shape of the decision. If a plumbing business sends 40 quotes a month, chases maybe 15, closes a third of what it chases, and averages $600 a job, the 25 unchased quotes represent roughly <strong>$5,000 of ceiling per month</strong>. Against a service costing $149/month, that is not a close call.</p>
+
+    <p>Run the same numbers with 6 quotes a month at $200 each and the answer flips. It genuinely is not worth doing. Anyone who tells you otherwise is selling.</p>
+
+    <h2>What an automated sequence actually does</h2>
+
+    <p>The mechanism is simpler than the marketing around it suggests.</p>
+
+    <table>
+        <tr><th>When</th><th>What it says</th><th>Why</th></tr>
+        <tr><td>Day 2</td><td>Checking you got the quote, happy to adjust anything</td><td>Catches the one that was genuinely missed or filtered</td></tr>
+        <tr><td>Day 5</td><td>Circling back — if the timing is wrong that is fine, just say so</td><td>Catches the one that got deprioritised, and gives permission to decline</td></tr>
+        <tr><td>Day 10</td><td>Last note; assuming you have gone another way unless you say otherwise</td><td>Forces a decision so the quote stops occupying your pipeline</td></tr>
+    </table>
+
+    <p>The important part is not the copy. It is that <strong>the sequence stops the moment the customer answers</strong>. A follow-up that keeps arriving after someone has replied is the difference between a service and spam, and it is the single most common way these systems are implemented badly.</p>
+
+    <h3>One-click replies, not "please reply to this email"</h3>
+
+    <p>Asking a customer to write a reply is asking for effort they will not spend. A better pattern is four buttons, each a signed link the recipient taps once:</p>
+
+    <ul>
+        <li><strong>I'm interested</strong> — the business gets alerted, chasing stops</li>
+        <li><strong>Not right now</strong> — sequence stops, the quote stays open for later</li>
+        <li><strong>Already booked it</strong> — marked won, no further contact</li>
+        <li><strong>Not going ahead</strong> — marked lost, and the reason is recorded</li>
+    </ul>
+
+    <p>No account, no login, no app. Practically, this also means the business does not need software that reads its inbox — which is a far heavier thing to build and maintain than most people expect.</p>
+
+    <h2>Why email, and why that is not a compromise</h2>
+
+    <p>Text messages feel more immediate, so the instinct is to chase by SMS. There are two reasons not to.</p>
+
+    <p>The first is context. The quote was sent by email, with the pricing in it. A follow-up in that same thread lands where the customer can actually re-read what they are deciding on. An SMS makes them go and find it.</p>
+
+    <p>The second is the constraint that catches almost everyone. In the United States, sending application-generated SMS to consumers requires <strong>A2P 10DLC registration</strong> — brand registration, then campaign registration, then carrier vetting. AT&T's manual review alone commonly runs two to four weeks, and full approval across carriers realistically takes <strong>three to six weeks</strong>. It costs roughly $44 for the brand plus $15 per campaign.</p>
+
+    <div class="box">
+        <p><strong>What this means practically:</strong> any vendor selling you SMS-based follow-up "live next week" either has not registered yet, or is sending through infrastructure that may be shut off. Email has no equivalent gate. A quote follow-up system running on email can genuinely be live in about three days.</p>
+    </div>
+
+    <h2>Staying on the right side of the rules</h2>
+
+    <p>Automated follow-up to people who asked you for a quote is legitimate commercial email, but it is still commercial email:</p>
+
+    <ul>
+        <li><strong>Only ever contact people who requested a quote from you.</strong> No purchased lists, ever. This is the line between follow-up and spam, and it is not a grey area.</li>
+        <li><strong>Honour opt-outs permanently and immediately.</strong> If someone unsubscribes, they must drop out of any sequence they are currently in — not merely be skipped next time.</li>
+        <li><strong>Identify the business clearly</strong> in every message, with a real reply address someone reads.</li>
+        <li><strong>Make declining easy.</strong> Beyond compliance, a clean "no" is genuinely worth more to you than a fourth unanswered email.</li>
+    </ul>
+
+    <h2>How the quotes get into the system</h2>
+
+    <p>This is the part that decides whether the system survives contact with a real week. Three workable patterns, in order of how much they ask of you:</p>
+
+    <ol>
+        <li><strong>Manual entry.</strong> Twenty seconds per quote — name, email, service, amount. Unglamorous, and completely reliable.</li>
+        <li><strong>Push from your existing software.</strong> If you quote through job-management software, it posts each new quote to the follow-up system automatically.</li>
+        <li><strong>Forwarding.</strong> You send quotes as normal and copy an address that files them.</li>
+    </ol>
+
+    <p>Start with the first. A system that requires an integration to be finished before it does anything tends never to start. Twenty seconds a quote is cheap next to a job you would otherwise have lost.</p>
+
+    <h2>What it will not do</h2>
+
+    <p>Worth being blunt, because the failure cases are predictable:</p>
+
+    <ul>
+        <li><strong>It will not fix a quote that is too expensive</strong>, unclear, or slow to arrive. Follow-up amplifies whatever you are already sending.</li>
+        <li><strong>It will not sell for you.</strong> When a customer says they are interested, a human still has to pick that up.</li>
+        <li><strong>It will not work on a bad email address.</strong> Whatever captures the address at quoting time is now load-bearing.</li>
+        <li><strong>It cannot recover a quote you never recorded.</strong></li>
+    </ul>
+
+    <h2>Build it yourself, or have it built</h2>
+
+    <p>If you want to build this: you need somewhere to store quotes, a scheduler that wakes up daily and finds what is due, an email sender with a verified sending domain (SPF, DKIM and DMARC all passing, or you will land in spam), signed one-click reply URLs, and an opt-out list that is genuinely honoured. It is a weekend for an experienced developer and considerably longer for anyone else — mostly because deliverability, not logic, is where the time goes.</p>
+
+    <p>Or you can use the one we run. <strong>Quote Follow-Up Recovery</strong> is $499 to set up and $149/month, live in about three days, cancel any month. Same mechanism described on this page, including the parts about stopping the sequence and honouring opt-outs, because those are what make it work rather than merely function.</p>
+
+    <div class="cta">
+        <h3 style="margin-top:0">Not sure whether it applies to you?</h3>
+        <p>Run <a href="/augur/">AUGUR</a> on your own website first — free, no sign-up, about a minute. It reads your live public page and reports which revenue and follow-up systems you are missing. If quote follow-up is not your biggest gap, it will tell you that instead.</p>
+        <a class="btn" href="/#services">See what it costs &rarr;</a>
+    </div>
+
+    <div class="foot">
+        <a href="/">Home</a><a href="/augur/">AUGUR</a><a href="/scry/">SCRY</a><a href="/sigil/">SIGIL</a><a href="/#services">Pricing</a><a href="/privacy/">Privacy</a>
+        <p style="margin-top:1rem">BlvkWare builds AI automation and custom software for small businesses. Mississippi, serving the United States remotely. <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a></p>
+    </div>
+</div>
+</body>
+</html>

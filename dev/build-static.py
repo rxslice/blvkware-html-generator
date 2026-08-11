@@ -350,7 +350,16 @@ SHIM = r"""
 REDIRECTS = [("html-generator", "sigil")]
 
 # Standalone pages copied verbatim to their own directory URL.
-MARKETING_PAGES = [("privacy.html", "privacy"), ("terms.html", "terms")]
+MARKETING_PAGES = [
+    ("privacy.html", "privacy"),
+    ("terms.html", "terms"),
+    # Commercial pages. Each one has to carry genuinely useful, original material
+    # about the workflow and its economics — a set of thin near-duplicates reads
+    # as a doorway network and can suppress the whole domain, which is a far
+    # worse outcome than having fewer pages.
+    ("quote-follow-up-automation.html", "quote-follow-up-automation"),
+    ("ai-automation-for-plumbers.html", "ai-automation-for-plumbers"),
+]
 
 # Every canonical URL on the site, with a crawl priority.
 SITEMAP = [
@@ -358,6 +367,8 @@ SITEMAP = [
     ("/augur/", "0.9", "monthly"),
     ("/scry/", "0.9", "monthly"),
     ("/sigil/", "0.9", "monthly"),
+    ("/quote-follow-up-automation/", "0.8", "monthly"),
+    ("/ai-automation-for-plumbers/", "0.8", "monthly"),
     ("/privacy/", "0.3", "yearly"),
     ("/terms/", "0.3", "yearly"),
 ]
@@ -533,6 +544,16 @@ payment, no server. They exist as the work sample in place of case studies.
 ## Pages
 
 - [Home](https://blvkware.dev/): services, prices, tools, FAQ
+- [Quote follow-up automation](https://blvkware.dev/quote-follow-up-automation/):
+  how automated quote follow-up works, the arithmetic for deciding whether it
+  pays, why the sequence must stop when the customer answers, and why US A2P
+  10DLC registration (3-6 weeks) makes SMS-based follow-up slow to launch where
+  email is live in days.
+- [AI automation for plumbers](https://blvkware.dev/ai-automation-for-plumbers/):
+  which plumbing processes are worth automating and which are not. Estimate
+  follow-up and review requests first; dispatch, pricing and emergency call
+  answering last or never. Includes the review-gating compliance line and why
+  replacing ServiceTitan or Jobber to gain follow-up is a bad trade.
 - [Privacy policy](https://blvkware.dev/privacy/): no accounts, no analytics, no
   cookies, no tracking; tools keep data only in the visitor's own browser
 - [Terms of service](https://blvkware.dev/terms/)

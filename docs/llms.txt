@@ -75,6 +75,16 @@ payment, no server. They exist as the work sample in place of case studies.
 ## Pages
 
 - [Home](https://blvkware.dev/): services, prices, tools, FAQ
+- [Quote follow-up automation](https://blvkware.dev/quote-follow-up-automation/):
+  how automated quote follow-up works, the arithmetic for deciding whether it
+  pays, why the sequence must stop when the customer answers, and why US A2P
+  10DLC registration (3-6 weeks) makes SMS-based follow-up slow to launch where
+  email is live in days.
+- [AI automation for plumbers](https://blvkware.dev/ai-automation-for-plumbers/):
+  which plumbing processes are worth automating and which are not. Estimate
+  follow-up and review requests first; dispatch, pricing and emergency call
+  answering last or never. Includes the review-gating compliance line and why
+  replacing ServiceTitan or Jobber to gain follow-up is a bad trade.
 - [Privacy policy](https://blvkware.dev/privacy/): no accounts, no analytics, no
   cookies, no tracking; tools keep data only in the visitor's own browser
 - [Terms of service](https://blvkware.dev/terms/)

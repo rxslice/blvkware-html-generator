@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Automation for Plumbers — What to Automate First | BlvkWare</title>
+    <meta name="description" content="Which plumbing business processes are worth automating, which are not, and how to work out the return. Written around how plumbing companies actually run: dispatch, estimates, callbacks and reviews.">
+    <link rel="canonical" href="https://blvkware.dev/ai-automation-for-plumbers/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta property="og:title" content="AI Automation for Plumbers — What to Automate First">
+    <meta property="og:description" content="Which plumbing business processes are worth automating, which are not, and how to work out the return.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://blvkware.dev/ai-automation-for-plumbers/">
+    <meta property="og:image" content="https://blvkware.dev/assets/og.png">
+    <meta property="og:site_name" content="BlvkWare">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+    <link rel="apple-touch-icon" href="/assets/logo-192.png">
+    <meta name="theme-color" content="#0A0908">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "BlvkWare", "item": "https://blvkware.dev/"},
+        {"@type": "ListItem", "position": 2, "name": "AI Automation for Plumbers", "item": "https://blvkware.dev/ai-automation-for-plumbers/"}
+      ]
+    },
+    {
+      "@type": "Article",
+      "headline": "AI Automation for Plumbers — What to Automate First",
+      "description": "Which plumbing business processes are worth automating, which are not, and how to work out the return.",
+      "author": {"@type": "Person", "name": "William Russell Wheeler"},
+      "publisher": {"@id": "https://blvkware.dev/#org"},
+      "mainEntityOfPage": "https://blvkware.dev/ai-automation-for-plumbers/",
+      "about": ["Plumbing business automation", "AI automation for contractors", "Field service software"]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What should a plumbing company automate first?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Whatever currently depends on someone remembering it. In most plumbing businesses that is estimate follow-up and review requests, because both get dropped precisely when work is busiest. Dispatch and pricing should be automated last, if at all, because they carry real judgement and the cost of getting them wrong is a ruined job rather than a missed email."}
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need to replace ServiceTitan or Jobber to automate follow-up?",
+          "acceptedAnswer": {"@type": "Answer", "text": "No, and you should not. Job management software is the system of record for scheduling, invoicing and dispatch. Follow-up automation sits alongside it and can be fed manually in about twenty seconds per estimate, or by a push from the software you already use. Replacing a working field service platform to gain follow-up is a bad trade."}
+        },
+        {
+          "@type": "Question",
+          "name": "Is AI automation worth it for a small plumbing company?",
+          "acceptedAnswer": {"@type": "Answer", "text": "It depends on volume, and the arithmetic is simple enough to do yourself. Count the estimates you sent last month that nobody chased, multiply by your close rate on estimates you do chase, then by your average job value. If that number is not several times the monthly cost of the tool, it is not worth it yet. A two-truck shop sending 40 estimates a month is usually well past that line; an owner-operator sending six is usually not."}
+        },
+        {
+          "@type": "Question",
+          "name": "Should an AI answer the phone for a plumbing company?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Cautiously, and not first. Emergency plumbing calls are the highest-value and least forgiving calls a plumbing business takes, and a caller with water coming through a ceiling has no patience for a system that mishandles them. Automating the follow-up around calls is low risk. Automating the call itself is not, and it also requires A2P 10DLC carrier registration in the US, which takes weeks."}
+        }
+      ]
+    }
+  ]
+}
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Fira+Code:wght@500&display=swap');
+        :root {
+            --bg: #0A0908; --surface: #17140F; --accent: #D4F24A; --brass: #D9B65C;
+            --ink: #F5F0E6; --ink-2: #A89D8B; --line: rgba(245,240,230,0.1);
+            --font: 'Manrope', system-ui, -apple-system, sans-serif;
+            --mono: 'Fira Code', ui-monospace, monospace;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+        .wrap { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+        .top { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 3.5rem; text-decoration: none; color: inherit; }
+        .mark { width: 52px; height: 52px; border-radius: 14px; background: #060504; overflow: hidden; flex: none; }
+        .mark img { width: 100%; height: 100%; display: block; }
+        .wordmark { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; }
+        .wordmark span { color: var(--accent); }
+        .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--brass); margin-bottom: 1rem; }
+        h1 { font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 1rem; line-height: 1.12; }
+        .lede { font-size: 1.15rem; color: var(--ink-2); margin-bottom: 2.5rem; padding-bottom: 2.5rem; border-bottom: 1px solid var(--line); }
+        h2 { font-size: 1.5rem; font-weight: 700; margin: 3rem 0 1rem; letter-spacing: -0.01em; }
+        h3 { font-size: 1.05rem; font-weight: 700; margin: 1.75rem 0 0.6rem; color: var(--brass); }
+        p { color: var(--ink-2); margin-bottom: 1.1rem; }
+        ul, ol { margin: 0 0 1.1rem 1.2rem; color: var(--ink-2); }
+        li { margin-bottom: 0.6rem; }
+        strong { color: var(--ink); font-weight: 700; }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem; margin: 1.75rem 0; }
+        .box p:last-child { margin-bottom: 0; }
+        .calc { font-family: var(--mono); font-size: 0.92rem; color: var(--ink); line-height: 2; }
+        .calc span { color: var(--brass); }
+        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
+        th, td { text-align: left; padding: 0.7rem 0.6rem; border-bottom: 1px solid var(--line); color: var(--ink-2); vertical-align: top; }
+        th { color: var(--ink); font-weight: 700; }
+        .yes { color: var(--accent); font-weight: 700; }
+        .no { color: #E8734A; font-weight: 700; }
+        .cta { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 2rem; margin: 3rem 0 0; }
+        .btn { display: inline-block; background: var(--accent); color: #14170A; font-weight: 700; padding: 0.85rem 1.5rem; border-radius: 10px; margin-top: 0.5rem; }
+        .btn:hover { text-decoration: none; opacity: 0.92; }
+        .foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--ink-2); }
+        .foot a { margin-right: 1.25rem; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <a class="top" href="/">
+        <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
+        <span class="wordmark">BlvkWare<span>.</span></span>
+    </a>
+
+    <div class="eyebrow">AI automation · Plumbing</div>
+    <h1>AI automation for plumbers</h1>
+
+    <p class="lede">Most advice about automating a plumbing business is written by people who have never dispatched a truck. This page is about which processes in a plumbing company are genuinely worth automating, which ones you should leave alone, and how to tell the difference before you spend anything.</p>
+
+    <h2>Plumbing has two businesses inside it, and they automate differently</h2>
+
+    <p>Almost every plumbing company runs two operations that look like one:</p>
+
+    <p><strong>Emergency work</strong> — burst pipes, blocked mains, no hot water. The customer calls whoever answers. Speed decides everything, the price is rarely negotiated, and there is no meaningful follow-up cycle because the job happens today.</p>
+
+    <p><strong>Planned work</strong> — repipes, water heater replacements, bathroom remodels, sewer line work. These get <em>estimated</em>, and estimates get considered, compared and forgotten. This is where the money leaks.</p>
+
+    <p>This distinction matters because the automation that helps one is useless for the other. Emergency work is a <em>capacity and response</em> problem. Planned work is a <em>memory</em> problem. Nearly all the cheap wins are on the planned side, and nearly all the expensive, risky automation projects target the emergency side.</p>
+
+    <h2>What to automate, in order</h2>
+
+    <table>
+        <tr><th>Process</th><th>Worth it?</th><th>Why</th></tr>
+        <tr>
+            <td><strong>Estimate follow-up</strong></td>
+            <td class="yes">First</td>
+            <td>Pure memory problem, no judgement required, directly attached to revenue you have already done the work to earn</td>
+        </tr>
+        <tr>
+            <td><strong>Review requests</strong></td>
+            <td class="yes">Second</td>
+            <td>Plumbing is chosen locally and on reputation. Asking every customer, every time, is trivially automatable and almost never done consistently</td>
+        </tr>
+        <tr>
+            <td><strong>Appointment reminders</strong></td>
+            <td class="yes">Third</td>
+            <td>Cuts no-shows and wasted truck rolls; usually already in your job software, just switched off</td>
+        </tr>
+        <tr>
+            <td><strong>Warranty &amp; maintenance callbacks</strong></td>
+            <td class="yes">Fourth</td>
+            <td>Water heaters installed six years ago are a list of near-certain future jobs nobody is calling</td>
+        </tr>
+        <tr>
+            <td><strong>Dispatch and scheduling</strong></td>
+            <td class="no">Rarely</td>
+            <td>Real judgement — who is closest, who is qualified, which job can slip. Your existing software plus a dispatcher beats a rules engine</td>
+        </tr>
+        <tr>
+            <td><strong>Pricing and quoting</strong></td>
+            <td class="no">No</td>
+            <td>Wrong numbers get committed to customers in writing. The downside is unbounded</td>
+        </tr>
+        <tr>
+            <td><strong>Answering emergency calls</strong></td>
+            <td class="no">Not first</td>
+            <td>Highest-value, least forgiving calls you take, and US carrier registration adds weeks before you can even start</td>
+        </tr>
+    </table>
+
+    <h2>The estimate leak, with real arithmetic</h2>
+
+    <p>Take a two-truck shop. It sends around 40 estimates a month for planned work. When someone actually chases an estimate it closes maybe a third of the time. Average ticket on planned work, say $600.</p>
+
+    <p>Now the honest question: how many of those 40 got chased more than once? For most shops of that size the answer is somewhere between 10 and 15, because chasing happens when there is a quiet afternoon, and there are no quiet afternoons in July.</p>
+
+    <div class="box">
+        <p class="calc">
+            <span>25</span> unchased estimates<br>
+            &times; <span>33%</span> close rate on chased estimates<br>
+            &times; <span>$600</span> average job<br>
+            = <span>~$5,000</span> per month of ceiling
+        </p>
+        <p style="margin-top:1rem">Ceiling, not forecast. Automated follow-up will not close everything a person would have. But even recovering a fifth of it is $1,000 a month against a tool costing a fraction of that.</p>
+    </div>
+
+    <p>Run your own numbers before believing any of this. If you send six estimates a month at $200 each, the arithmetic says do not bother, and that is the correct answer. <a href="/quote-follow-up-automation/">The full breakdown of how follow-up sequences work is here.</a></p>
+
+    <h2>Reviews are a plumbing problem specifically</h2>
+
+    <p>Plumbers get chosen from a map. Whoever has the most recent, most numerous reviews inside a few miles wins the click, and a single one-star sitting at the top costs enquiries for months.</p>
+
+    <p>Two things are true about most plumbing companies: they do good work, and they ask for reviews inconsistently — usually only when a job went unusually well and the tech happened to remember. That produces a review profile far worse than the actual quality of work, which is a marketing problem created by a memory problem.</p>
+
+    <p>Automating the ask fixes the volume. The part worth getting right is what happens when someone is <em>unhappy</em>: they should reach you privately and quickly, while they are still willing to talk to you rather than about you. That means capturing the rating first and alerting the owner immediately on a low one.</p>
+
+    <div class="box">
+        <p><strong>Where the line is:</strong> asking everyone and reaching unhappy customers first is legitimate. <em>Only</em> asking happy customers, or preventing unhappy ones from posting, is review gating — prohibited by Google's policies and targeted by the FTC's 2024 rule on consumer reviews. Any system you use should still show the public review link to an unhappy customer after they have had their say. If a vendor offers to suppress negative reviews, that is a liability, not a feature.</p>
+    </div>
+
+    <h2>You do not need to replace your job software</h2>
+
+    <p>If you run ServiceTitan, Jobber, Housecall Pro or ServiceM8, that is your system of record for scheduling, dispatch, invoicing and job history. Keep it. It is doing a job that follow-up automation is not trying to do.</p>
+
+    <p>The realistic integration options, cheapest first:</p>
+
+    <ol>
+        <li><strong>Add estimates manually.</strong> Name, email, service, amount — about twenty seconds. Reliable on day one, needs no API access, and survives your software vendor changing anything.</li>
+        <li><strong>Push from your platform.</strong> Most field service platforms can fire a webhook or Zapier action when an estimate is sent.</li>
+        <li><strong>Full two-way sync.</strong> Rarely worth it at small scale, and it is the option most likely to break silently.</li>
+    </ol>
+
+    <p>Start manual. A system waiting on an integration to be finished is a system that is not running.</p>
+
+    <h2>The phone answering question</h2>
+
+    <p>The most-marketed automation to plumbers is an AI that answers the phone. Be careful here.</p>
+
+    <p>The pitch is real — missed calls are lost jobs, and plumbing calls come at 7pm on Sunday. But the caller with water coming through a ceiling is the least patient customer you will ever have, and a system that mishandles that call costs you the job <em>and</em> the review. That is a materially different risk from an email that goes unanswered.</p>
+
+    <p>There is also a hard practical gate in the US: sending application-generated text messages to consumers requires <strong>A2P 10DLC registration</strong>, which realistically takes three to six weeks including AT&amp;T's manual review. Anyone promising you an SMS-based system live next week has either not started that process or is routing through infrastructure that may get shut off.</p>
+
+    <p>Sequence it properly: fix the follow-up and review gaps first, on email, where you can be live in days and nothing can go badly wrong. Consider voice once the cheap wins are running.</p>
+
+    <h2>What none of this fixes</h2>
+
+    <ul>
+        <li><strong>Not enough leads.</strong> Follow-up multiplies the estimates you already send. If you are not sending estimates, automation has nothing to work with.</li>
+        <li><strong>Estimates that take four days to go out.</strong> Speed of the first quote beats every follow-up sequence ever written.</li>
+        <li><strong>Pricing you cannot defend.</strong> Chasing a quote the customer thinks is too high just gets you a faster no.</li>
+        <li><strong>Techs who do not capture email addresses.</strong> Whatever collects the address at the job is now the load-bearing part of your funnel.</li>
+    </ul>
+
+    <h2>A realistic first 30 days</h2>
+
+    <ol>
+        <li><strong>Week 1</strong> — count last month's estimates and how many were chased. Do the arithmetic above. Decide with a number, not a feeling.</li>
+        <li><strong>Week 2</strong> — turn on estimate follow-up. Add quotes manually. Do not integrate anything yet.</li>
+        <li><strong>Week 3</strong> — turn on review requests for completed jobs, with private routing for unhappy customers.</li>
+        <li><strong>Week 4</strong> — check the numbers. Estimates recovered, reviews gained, complaints caught before they went public. Then decide whether anything else deserves automating.</li>
+    </ol>
+
+    <div class="cta">
+        <h3 style="margin-top:0">See what your own site says about you</h3>
+        <p>Run <a href="/augur/">AUGUR</a> on your plumbing company's website — free, no sign-up, about a minute. It reads the live page and reports which follow-up, review and booking systems you are missing. Most contractor sites come back with no review capture and no follow-up path at all.</p>
+        <a class="btn" href="/#services">See what it costs to fix &rarr;</a>
+    </div>
+
+    <div class="foot">
+        <a href="/">Home</a><a href="/quote-follow-up-automation/">Quote follow-up</a><a href="/augur/">AUGUR</a><a href="/#services">Pricing</a><a href="/privacy/">Privacy</a>
+        <p style="margin-top:1rem">BlvkWare builds AI automation and custom software for small businesses. Mississippi, serving the United States remotely. <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a></p>
+    </div>
+</div>
+</body>
+</html>
