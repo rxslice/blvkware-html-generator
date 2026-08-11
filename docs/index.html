@@ -357,6 +357,15 @@
             --color-text-secondary: #A89D8B;
             --glass-background: rgba(23, 20, 15, 0.68);
             --glass-border: rgba(245, 240, 230, 0.1);
+
+            /* Instrument system. The mark is a brass ring with four cardinal
+               nodes; these tokens carry that same construction into the page so
+               the layout itself is the brand, not the logo sitting on top of it. */
+            --rule: rgba(217, 182, 92, 0.22);
+            --rule-strong: rgba(217, 182, 92, 0.45);
+            --node: var(--color-brass);
+            --grid-line: rgba(245, 240, 230, 0.028);
+            --grid-size: 76px;
         }
 
         /* --- GLOBAL RESETS & STYLES --- */
@@ -373,7 +382,24 @@
         }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
         section { padding: 8rem 0; position: relative; z-index: 2; }
-        .section-title { font-size: 3rem; font-weight: 800; text-align: center; margin-bottom: 1rem; background: linear-gradient(90deg, var(--color-primary-accent), var(--color-text-primary)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        /* Solid, not gradient-filled. Gradient text is the house style of every
+           dark SaaS template; the identity here comes from the brass rule and
+           node underneath, which repeats the mark's construction. */
+        .section-title {
+            font-size: 3rem; font-weight: 800; text-align: center;
+            margin-bottom: 1rem; letter-spacing: -0.02em;
+            color: var(--color-text-primary); position: relative; padding-bottom: 1.1rem;
+        }
+        .section-title::after {
+            content: ''; position: absolute; left: 50%; bottom: 0;
+            transform: translateX(-50%); width: 132px; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--rule-strong), transparent);
+        }
+        .section-title::before {
+            content: ''; position: absolute; left: 50%; bottom: -2px;
+            transform: translateX(-50%); width: 5px; height: 5px;
+            border-radius: 50%; background: var(--node); opacity: 0.8;
+        }
         .section-sub { text-align: center; color: var(--color-text-secondary); max-width: 640px; margin: 0 auto 4rem; }
         .fade-in { transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
         .fade-in:not(.visible) { opacity: 0; transform: translateY(30px); }
@@ -419,7 +445,96 @@
         .hero-subtitle { font-size: 1.25rem; max-width: 700px; margin: 0 auto 2.5rem; color: var(--color-text-secondary); }
         .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 
+        /* --- Instrument system -------------------------------------------
+           Four devices, used everywhere, so the page reads as one machine:
+           a measured grid, hairline rules, cardinal nodes on every panel, and
+           monospace indices. Cover the logo and it should still be BlvkWare. */
+
+        /* Faint measured grid. Pure texture — it must never compete with text,
+           which is why the line colour sits at ~3% and the vignette pulls the
+           edges down. */
+        body::before {
+            content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+            background-image:
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: var(--grid-size) var(--grid-size);
+            mask-image: radial-gradient(ellipse 120% 80% at 50% 0%, #000 35%, transparent 78%);
+            -webkit-mask-image: radial-gradient(ellipse 120% 80% at 50% 0%, #000 35%, transparent 78%);
+        }
+        main, header, footer { position: relative; z-index: 1; }
+
+        /* The signature: four brass nodes at the cardinal points of a panel,
+           the same construction as the ring in the mark. */
+        .instrument { position: relative; }
+        .instrument::before,
+        .instrument::after {
+            content: ''; position: absolute; pointer-events: none;
+            width: 5px; height: 5px; border-radius: 50%;
+            background: var(--node); opacity: 0.55;
+        }
+        .instrument::before { top: -2.5px; left: 50%; transform: translateX(-50%); }
+        .instrument::after  { bottom: -2.5px; left: 50%; transform: translateX(-50%); }
+        .instrument > .node-w,
+        .instrument > .node-e {
+            position: absolute; top: 50%; width: 5px; height: 5px; border-radius: 50%;
+            background: var(--node); opacity: 0.55; pointer-events: none;
+        }
+        .instrument > .node-w { left: -2.5px; transform: translateY(-50%); }
+        .instrument > .node-e { right: -2.5px; transform: translateY(-50%); }
+        .instrument:hover::before,
+        .instrument:hover::after,
+        .instrument:hover > .node-w,
+        .instrument:hover > .node-e { opacity: 1; }
+
+        /* Monospace label with a leading tick. Reads as an instrument legend
+           rather than a marketing eyebrow. */
+        .legend {
+            font-family: var(--font-code); font-size: 0.7rem; font-weight: 500;
+            letter-spacing: 0.34em; text-transform: uppercase;
+            color: var(--color-brass); display: flex; align-items: center;
+            justify-content: center; gap: 0.85rem; margin-bottom: 1.1rem;
+        }
+        .legend::before, .legend::after {
+            content: ''; height: 1px; width: clamp(24px, 7vw, 74px);
+            background: linear-gradient(90deg, transparent, var(--rule-strong));
+        }
+        .legend::after { background: linear-gradient(90deg, var(--rule-strong), transparent); }
+
         /* --- THE BLVK LAB --- */
+        /* Sequence rail: the three tools are one pipeline, not three products.
+           The rail is the visual claim that they connect. */
+        .lab-sequence {
+            display: flex; align-items: center; justify-content: center;
+            gap: 0; max-width: 780px; margin: 0 auto 3.25rem; flex-wrap: wrap;
+        }
+        .seq-step {
+            font-family: var(--font-code); font-size: 0.78rem; letter-spacing: 0.16em;
+            text-transform: uppercase; color: var(--color-text-secondary);
+            display: inline-flex; align-items: center; gap: 0.6rem; white-space: nowrap;
+        }
+        .seq-step b { color: var(--color-text-primary); font-weight: 600; letter-spacing: 0.2em; }
+        .seq-step i {
+            font-style: normal; color: var(--color-brass); font-size: 0.68rem; opacity: 0.85;
+        }
+        .seq-rail {
+            flex: 1 1 40px; min-width: 28px; height: 1px; margin: 0 0.9rem;
+            background: linear-gradient(90deg, var(--rule), var(--rule-strong), var(--rule));
+            position: relative;
+        }
+        .seq-rail::after {
+            content: ''; position: absolute; right: -3px; top: 50%; transform: translateY(-50%);
+            width: 5px; height: 5px; border-radius: 50%; background: var(--node); opacity: 0.7;
+        }
+
+        /* Step index inside each tool card, tying card to rail. */
+        .tool-step {
+            font-family: var(--font-code); font-size: 0.68rem; letter-spacing: 0.22em;
+            text-transform: uppercase; color: var(--color-brass);
+            display: block; margin-bottom: 0.55rem;
+        }
+        .tool-step .n { opacity: 0.55; margin-right: 0.5rem; }
+
         .lab-eyebrow {
             text-align: center; font-family: var(--font-code); font-size: 0.82rem; font-weight: 500;
             letter-spacing: 0.34em; text-transform: uppercase; color: var(--color-brass); margin-bottom: 1rem;
@@ -435,7 +550,10 @@
         .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(330px, 100%), 1fr)); gap: 2rem; max-width: 1120px; margin: 0 auto; }
         .tool-card {
             background-color: var(--glass-background); border: 1px solid var(--glass-border); border-radius: 16px;
-            padding: 2.25rem; transition: all 0.3s ease; position: relative; overflow: hidden;
+            padding: 2.25rem; transition: all 0.3s ease; position: relative;
+            /* visible, not hidden: the cardinal nodes sit ON the border and would
+               be clipped away. Nothing here bleeds, so there is nothing to clip. */
+            overflow: visible;
             display: flex; flex-direction: column; text-decoration: none; color: inherit;
         }
         .tool-card:hover { transform: translateY(-8px); border-color: rgba(212, 242, 74, 0.35); box-shadow: 0 14px 40px rgba(0,0,0,0.45); }
@@ -486,7 +604,22 @@
         /* --- CTA --- */
         #cta { text-align: center; }
         .cta-content { background: linear-gradient(135deg, var(--color-surface), #100D09); padding: 5rem 2rem; border-radius: 20px; border: 1px solid var(--glass-border); }
-        .cta-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; }
+        /* The premise line does the persuading; the headline is the instruction.
+           Setting the premise small and monospaced above a large imperative makes
+           it read as a diagnosis rather than a slogan. */
+        .cta-premise {
+            font-family: var(--font-code); font-size: 0.82rem; letter-spacing: 0.12em;
+            color: var(--color-brass); margin-bottom: 1.1rem; text-transform: none;
+        }
+        .cta-title {
+            font-size: clamp(2.1rem, 6vw, 3.25rem); font-weight: 800;
+            margin-bottom: 1.25rem; letter-spacing: -0.02em; line-height: 1.08;
+        }
+        .cta-arrow {
+            color: var(--color-primary-accent); margin-left: 0.6rem;
+            display: inline-block; transition: transform 0.25s ease;
+        }
+        .cta-content:hover .cta-arrow { transform: translateX(8px); }
         .cta-text { font-size: 1.125rem; color: var(--color-text-secondary); max-width: 600px; margin: 0 auto 2.5rem; }
         .secondary-cta { margin-top: 2.5rem; display: flex; justify-content: center; align-items: center; gap: 2rem; flex-wrap: wrap; }
         .secondary-cta-link { color: var(--color-text-secondary); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; transition: color 0.3s ease; }
@@ -511,6 +644,17 @@
             section { padding: 5rem 0; }
             .cursor-glow { display: none; }
             .container { padding: 0 1.25rem; }
+
+            /* Stack the pipeline instead of letting it wrap — a wrapped row can
+               strand a connector rail alone on its own line, which reads as a
+               rendering fault rather than a sequence. */
+            .lab-sequence { flex-direction: column; gap: 0.55rem; }
+            .seq-rail { display: none; }
+            .seq-step { font-size: 0.72rem; }
+            .legend { letter-spacing: 0.24em; }
+            .legend::before, .legend::after { width: 18px; }
+            /* The grid is texture, and on a small screen it is only noise. */
+            body::before { background-size: 52px 52px; opacity: 0.6; }
         }
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
@@ -558,18 +702,27 @@
 
         <section id="lab">
             <div class="container">
-                <p class="lab-eyebrow fade-in">The Blvk Lab</p>
-                <h2 class="section-title fade-in">Free tools. Try them on your business.</h2>
-                <p class="section-sub fade-in">Each one is software we'd normally build for a paying client, released free instead. They run entirely in your browser — no sign-up, no download, no tracking. This is the fastest way to see the standard of work before you spend anything.</p>
+                <p class="legend fade-in">The Blvk Lab</p>
+                <h2 class="section-title fade-in">Three tools. One pipeline.</h2>
+                <p class="section-sub fade-in">Analyse the business, architect what's missing, build the thing. Each stage is software we'd normally build for a paying client, released free instead. They run entirely in your browser — no sign-up, no download, no tracking. This is the fastest way to see the standard of work before you spend anything.</p>
+                <div class="lab-sequence fade-in" aria-hidden="true">
+                    <span class="seq-step"><i>01</i><b>Augur</b> Analyse</span>
+                    <span class="seq-rail"></span>
+                    <span class="seq-step"><i>02</i><b>Scry</b> Architect</span>
+                    <span class="seq-rail"></span>
+                    <span class="seq-step"><i>03</i><b>Sigil</b> Build</span>
+                </div>
                 <div class="tools-grid">
 
-                    <a href="/augur/" class="tool-card fade-in" style="transition-delay: 100ms;">
+                    <a href="/augur/" class="tool-card instrument fade-in" style="transition-delay: 100ms;">
+                        <span class="node-w"></span><span class="node-e"></span>
                         <div class="tool-head">
                             <div class="tool-icon">
                                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7.4"></circle><circle cx="12" cy="12" r="2.6"></circle><path d="M12 1.6v3M12 19.4v3M1.6 12h3M19.4 12h3"></path></svg>
                             </div>
                             <span class="tool-status live">Live</span>
                         </div>
+                        <span class="tool-step"><span class="n">01</span>Analyse</span>
                         <h3 class="tool-title">AUGUR <span class="tool-what">Competitor &amp; business analyser</span></h3>
                         <p class="tool-desc">Every company leaves its strategy in public view. Point AUGUR at any website — yours or a competitor's — and it reads the live page, extracts the real technical signals, and returns the revenue and automation systems that business should be running but isn't. Then it draws the architecture.</p>
                         <span class="tool-link">Analyse a company — free
@@ -577,13 +730,15 @@
                         </span>
                     </a>
 
-                    <a href="/scry/" class="tool-card fade-in" style="transition-delay: 200ms;">
+                    <a href="/scry/" class="tool-card instrument fade-in" style="transition-delay: 200ms;">
+                        <span class="node-w"></span><span class="node-e"></span>
                         <div class="tool-head">
                             <div class="tool-icon">
                                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.6 12S6.2 5.6 12 5.6 21.4 12 21.4 12 17.8 18.4 12 18.4 2.6 12 2.6 12Z"></path><circle cx="12" cy="12" r="2.85"></circle></svg>
                             </div>
                             <span class="tool-status live">Live</span>
                         </div>
+                        <span class="tool-step"><span class="n">02</span>Architect</span>
                         <h3 class="tool-title">SCRY <span class="tool-what">Business systems finder</span></h3>
                         <p class="tool-desc">Your business is full of software that hasn't been built yet. Describe how you operate and SCRY maps it, finds the bottlenecks and missing systems, and turns them into a live operating console you can click through — then forges a working prototype.</p>
                         <span class="tool-link">Map my business — free
@@ -591,13 +746,15 @@
                         </span>
                     </a>
 
-                    <a href="/sigil/" class="tool-card fade-in" style="transition-delay: 300ms;">
+                    <a href="/sigil/" class="tool-card instrument fade-in" style="transition-delay: 300ms;">
+                        <span class="node-w"></span><span class="node-e"></span>
                         <div class="tool-head">
                             <div class="tool-icon">
                                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.6 21 18.2H3Z"></path><circle cx="12" cy="13.4" r="3.1"></circle></svg>
                             </div>
                             <span class="tool-status live">Live</span>
                         </div>
+                        <span class="tool-step"><span class="n">03</span>Build</span>
                         <h3 class="tool-title">SIGIL <span class="tool-what">Describe it, it gets built</span></h3>
                         <p class="tool-desc">Write down what you want and watch it become real software. SIGIL streams a complete, working, single-file application into the page — then runs it, reads its own console, audits its quality, and repairs what it broke.</p>
                         <span class="tool-link">Build something — free
@@ -612,6 +769,7 @@
 
         <section id="services">
             <div class="container">
+                <p class="legend fade-in">Fixed scope · Fixed price</p>
                 <h2 class="section-title fade-in">What I Build</h2>
                 <p class="section-sub fade-in">Prices are on the page because you should be able to decide without booking a call. Fixed scope, fixed timeline, one person building it — me.</p>
                 <div class="services-grid">
@@ -729,8 +887,9 @@
         <section id="cta">
             <div class="container">
                 <div class="cta-content fade-in">
-                    <h2 class="cta-title">Tell me what's broken</h2>
-                    <p class="cta-text">Describe the process that's costing you time or money. I'll tell you straight whether software fixes it, roughly what it costs, and how long it takes — before you commit to anything.</p>
+                    <p class="cta-premise">Something in your business is being done by hand right now.</p>
+                    <h2 class="cta-title">Tell me what's broken<span class="cta-arrow" aria-hidden="true">&rarr;</span></h2>
+                    <p class="cta-text">Describe the process that's costing you time or money. I'll tell you straight whether software should exist for it, roughly what it costs, and how long it takes — before you commit to anything. Sometimes the answer is that you don't need me.</p>
                     <div class="cta-actions">
                         <a href="https://cal.com/blvkware/30min" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.125rem;">Book a 30-minute call</a>
                         <a href="mailto:russ@blvkware.dev?subject=Project%20enquiry&amp;body=What%20I%20do%3A%0A%0AThe%20process%20that%27s%20costing%20me%20time%20or%20money%3A%0A%0ARoughly%20what%20I%20can%20spend%3A%0A" class="btn btn-ghost" style="padding: 1rem 2rem; font-size: 1.125rem;">Email me instead</a>
