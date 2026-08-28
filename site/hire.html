@@ -1050,7 +1050,70 @@ try {
         setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
     });
 
-    render();
+    /* ---- a design handed over from SCRY ----
+     * It travels in the URL fragment, which browsers never send to a server and
+     * which stays out of access logs. A buyer arriving from a design should land
+     * on their configuration already applied, not on an empty form asking them
+     * to describe their business a second time. */
+    function applyHandover() {
+        var m = /(?:^|[#&])d=([^&]+)/.exec(location.hash || "");
+        if (!m) return false;
+        var payload;
+        try {
+            payload = JSON.parse(decodeURIComponent(escape(atob(m[1]))));
+        } catch (e) { return false; }
+        if (!payload || !E.roleById(payload.role)) return false;
+
+        pickRole(payload.role);
+        if (state.roleId !== payload.role) return false;
+
+        state.caps = {};
+        (payload.caps || []).forEach(function (c) { if (E.capById(c)) state.caps[c] = true; });
+        state.systems = {};
+        (payload.systems || []).forEach(function (s2) { state.systems[s2] = true; });
+        state.channels = {};
+        (payload.channels || []).forEach(function (c) { state.channels[c] = true; });
+        if (payload.volume) state.volumeId = payload.volume;
+        if (payload.billing) state.billing = payload.billing;
+        state.trial = !!payload.trial;
+        state.answers = payload.answers || {};
+
+        // Reflect it in the controls, or the buyer sees a price that does not
+        // match the boxes and stops trusting the page.
+        renderCaps();
+        document.querySelectorAll("#systems .opt").forEach(function (l, i) {
+            var box = l.querySelector("input");
+            box.checked = !!state.systems[C.integrations[i].id];
+            var t = l.querySelector('input[type="text"]');
+            if (t) t.hidden = !box.checked;
+        });
+        document.querySelectorAll("#channels .opt").forEach(function (l, i) {
+            l.querySelector("input").checked = !!state.channels[C.channels[i].id];
+        });
+        document.querySelectorAll("#volume .opt").forEach(function (l, i) {
+            l.querySelector("input").checked = C.volume[i].id === state.volumeId;
+        });
+        document.getElementById("trial").checked = state.trial;
+        document.querySelectorAll("[data-bill]").forEach(function (n) {
+            n.setAttribute("aria-pressed", String(n.dataset.bill === state.billing));
+        });
+        ["business", "whatWeDo", "jobDescription", "neverDo", "email", "phone"]
+            .forEach(function (k) {
+                var f = document.querySelector('[data-a="' + k + '"]');
+                if (f && state.answers[k]) f.value = state.answers[k];
+            });
+        render();
+
+        var note = el("div", "notice brass");
+        note.innerHTML = "<b>Your design came through from SCRY.</b> Everything below " +
+            "is already set the way it was designed — change anything you like, " +
+            "and the price moves with you.";
+        var host = document.getElementById("role-detail");
+        if (host) host.appendChild(note);
+        return true;
+    }
+
+    if (!applyHandover()) render();
 })();
 </script>
 </body>

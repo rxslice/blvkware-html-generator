@@ -561,7 +561,7 @@
       <p class="sec-note">Interpretation of the evidence above. Click any finding to go deeper.</p>
       <div class="domains" id="domains"></div>
 
-      <div class="sec-title"><svg class="ic ic-16"><use href="#i-bolt"/></svg> What I'd build if this were my company</div>
+      <div class="sec-title"><svg class="ic ic-16"><use href="#i-bolt"/></svg> The jobs standing empty here</div>
       <p class="sec-note" id="oppNote"></p>
       <div class="opps" id="opps"></div>
 
@@ -585,6 +585,16 @@
   <div class="sr" id="live" aria-live="polite"></div>
 </div>
 
+<!-- Compiled at build time from dev/catalog.py, dev/engine.js and
+     dev/design.js. AUGUR reads a company; it does not decide what BlvkWare
+     sells or what it costs. -->
+<script id="blvk-catalog" type="application/json">/*CATALOG_JSON*/</script>
+<script>
+try { window.BLVK_CATALOG = JSON.parse(document.getElementById("blvk-catalog").textContent); }
+catch (e) { window.BLVK_CATALOG = null; }
+</script>
+<script>/*ENGINE_JS*/</script>
+<script>/*DESIGN_JS*/</script>
 <script>
 (function () {
   'use strict';
@@ -592,6 +602,7 @@
   var AI = (typeof root !== 'undefined' && root && typeof root.generateText === 'function') ? root : null;
 
   var $ = function (s) { return document.querySelector(s); };
+  var CAT = window.BLVK_CATALOG, ENG = window.BlvkEngine, DES = window.BlvkDesign;
   var el = {
     stageAim: $('#stageAim'), stageRecon: $('#stageRecon'), stageRep: $('#stageRep'),
     fUrl: $('#fUrl'), fInd: $('#fInd'), fCmp: $('#fCmp'),
@@ -1030,25 +1041,24 @@
       '  "operations": [ {"title":"", "detail":"", "evidence":"", "tag":"manual process | repetitive work | automation | bottleneck"} ],\n' +
       '  "competitive": [ {"title":"", "detail":"", "evidence":"", "tag":"their advantage | their weakness | differentiation | market gap"} ],\n' +
       '  "infrastructure": [ {"title":"", "detail":"", "evidence":"", "tag":"ux | conversion | performance | integration | acquisition"} ],\n' +
-      '  "opportunities": [ {\n' +
-      '     "name":"Automated Quote Recovery System",\n' +
-      '     "problem":"what is happening now that costs them money",\n' +
-      '     "monthlyLow": 4200, "monthlyHigh": 11800,\n' +
-      '     "basis":"one sentence on how the range was derived",\n' +
-      '     "pipeline":["Website","Lead Capture","Qualification AI","CRM","SMS","Follow-up Agent","Quote","Recovery"],\n' +
-      '     "complexity":"Low | Medium | High", "weeksLow":2, "weeksHigh":4\n' +
-      '  } ]\n' +
+      '  "signals": ["signal_id", "signal_id"],\n' +
+      '  "roles": ["role_id"],\n' +
+      '  "systems": ["system_id"],\n' +
+      '  "signalNotes": ["one short sentence of evidence per signal, in order"]\n' +
       '}\n\n' +
+      DES.vocabulary() + '\n\n' +
       'RULES\n' +
-      '- 3 to 5 findings in each of the four categories. 3 opportunities, ordered by value.\n' +
+      '- 3 to 5 findings in each of the four categories.\n' +
+      '- signals: 3 to 6 from the vocabulary below, most costly first, only where the page gives you evidence.\n' +
+      '- roles: 1 to 3 from the vocabulary, best first.\n' +
+      '- signalNotes: one per signal, naming the observed fact it rests on.\n' +
       '- Anchor findings to the observed evidence wherever you can, and put the exact fact in "evidence". ' +
       'If a finding is an industry inference rather than something observed, leave "evidence" empty. Never invent an observation.\n' +
       '- Do not report the absence of a tracking script as a privacy virtue or a security finding; read it commercially.\n' +
       '- Money ranges are monthly recurring revenue or cost recovered, modelled from public industry benchmarks for a ' +
       'business of this apparent size. Be specific and defensible in "basis". Never imply you have their real numbers.\n' +
-      '- Opportunity names are systems a software engineer would build and ship, not marketing advice. ' +
-      '"Automated Quote Recovery System", not "improve your follow-up".\n' +
-      '- pipeline is 5 to 9 short technical stages naming real components.\n' +
+      '- Never state a price, a fee, a timeline or a monthly figure anywhere. Those are computed from a\n' +
+      '  published catalog, and a number you invent is one a business would be held to.\n' +
       '- Be specific to THIS company. A finding that would apply to any business on earth is a failed finding.\n' +
       'Output raw JSON only, starting with { and ending with }.';
   }
@@ -1119,6 +1129,7 @@
   function normalize(raw) {
     var m = raw || {};
     var c = m.company || {};
+    var adopted = DES ? DES.adopt(m) : { signals: [], roles: [], systems: [] };
     var opps = arr(m.opportunities || m.builds || m.systems).map(function (o) {
       var lo = num(o && (o.monthlyLow != null ? o.monthlyLow : o.low), 0);
       var hi = num(o && (o.monthlyHigh != null ? o.monthlyHigh : o.high), 0);
@@ -1153,6 +1164,15 @@
       operations: normFindings(m.operations || m.operational || m.operationalWeaknesses),
       competitive: normFindings(m.competitive || m.competitivePositioning || m.competition),
       infrastructure: normFindings(m.infrastructure || m.digital || m.digitalInfrastructure),
+      // Everything the model says about which agents apply is filtered through
+      // BlvkDesign.adopt(), which drops any id that is not in the catalog. A
+      // fabricated role or signal never reaches the report.
+      signals: adopted.signals,
+      roles: adopted.roles,
+      systems: adopted.systems,
+      signalNotes: arr(m.signalNotes || m.notes).filter(function (x) {
+        return typeof x === 'string' && x.trim();
+      }),
       opportunities: opps
     };
   }
@@ -1280,34 +1300,86 @@
     el.domains.innerHTML = h;
   }
 
+  /* The agents this company could hire, ranked from the signals AUGUR observed
+   * and priced from the live catalog. Nothing here is invented: the read is
+   * AUGUR's, the product and the number are the catalog's. */
   function renderOpps(rep) {
+    if (!DES || !ENG || !rep.signals || !rep.signals.length) {
+      el.opps.innerHTML = '<div class="opp"><h3>No agent recommended</h3>' +
+        '<div class="opp-block"><div class="opp-v">Nothing on this page pointed clearly at a job ' +
+        'an agent should take over. That is a real answer, not a failure — ' +
+        '<a href="/scry/">describe the business to SCRY</a> and it will design against what you say ' +
+        'rather than what the website shows.</div></div></div>';
+      return;
+    }
+
+    var ranked = DES.rank(rep.signals, { limit: 3, nominated: rep.roles || [] });
     var h = '';
-    rep.opportunities.forEach(function (o, i) {
-      var range = (o.monthlyLow && o.monthlyHigh)
-        ? money(o.monthlyLow) + '–' + money(o.monthlyHigh)
-        : (o.monthlyHigh ? money(o.monthlyHigh) : 'Not sized');
-      var weeks = o.weeksHigh && o.weeksHigh !== o.weeksLow
-        ? o.weeksLow + '–' + o.weeksHigh + ' weeks' : o.weeksLow + ' weeks';
+    ranked.forEach(function (r, i) {
+      var d = DES.design(r.roleId, {
+        signals: rep.signals,
+        systems: (rep.systems && rep.systems.length) ? rep.systems : null,
+        answers: { business: (rep.company && rep.company.name) || '' }
+      });
+      if (!d) return;
+      var q = d.quote;
+      var ready = DES.readiness(d.spec);
+      var groups = [];
+      d.spec.capabilities.forEach(function (c) {
+        var cap = ENG.capById(c.id);
+        if (cap && groups.indexOf(cap.group) === -1) groups.push(cap.group);
+      });
+
       h += '<div class="opp">' +
-        '<div class="opp-n">Opportunity #' + (i + 1) + '</div>' +
-        '<h3>' + esc(o.name) + '</h3>' +
-        '<div class="opp-money"><b>' + esc(range) + '</b><span>estimated monthly opportunity · modelled from industry benchmarks</span></div>' +
-        (o.problem ? '<div class="opp-block"><div class="opp-k">Problem detected</div><div class="opp-v">' + esc(o.problem) + '</div></div>' : '') +
-        '<div class="opp-block"><div class="opp-k">Proposed system</div><div class="pipe">' +
-          o.pipeline.map(function (n, j) {
+        '<div class="opp-n">' + (i === 0 ? 'Hire this first' : 'Then this') + '</div>' +
+        '<h3>The ' + esc(r.role.name) + '</h3>' +
+        '<div class="opp-money"><b>' + money(q.build) + ' + ' + money(q.monthly) + '/mo</b>' +
+        '<span>' + esc(q.def.label) + ' · live in ' + q.days + ' business days · ' +
+        'a real catalog price, not an estimate</span></div>' +
+        '<div class="opp-block"><div class="opp-k">Why this one</div><div class="opp-v">' +
+          esc(r.reasons[0] || r.role.problem) + '</div></div>' +
+        '<div class="opp-block"><div class="opp-k">What it would own</div><div class="pipe">' +
+          d.spec.capabilities.slice(0, 8).map(function (c, j) {
+            var cap = ENG.capById(c.id);
             return (j ? '<svg class="ic ic-14 pipe-arrow"><use href="#i-arrow"/></svg>' : '') +
-                   '<span class="pipe-node">' + esc(n) + '</span>';
+                   '<span class="pipe-node">' + esc(cap ? cap.name : c.id) + '</span>';
           }).join('') +
         '</div></div>' +
-        (o.basis ? '<div class="opp-block"><div class="opp-k">How the range was derived</div><div class="opp-v">' + esc(o.basis) + '</div></div>' : '') +
         '<div class="opp-meta">' +
-          '<div><div class="meta-k">Build complexity</div><div class="meta-v ' + o.complexity.toLowerCase() + '">' + esc(o.complexity) + '</div></div>' +
-          '<div><div class="meta-k">Estimated implementation</div><div class="meta-v">' + esc(weeks) + '</div></div>' +
+          '<div><div class="meta-k">Standing on day one</div><div class="meta-v">' +
+            ready.percent + '%</div></div>' +
+          '<div><div class="meta-k">Spans</div><div class="meta-v">' +
+            groups.length + ' area' + (groups.length === 1 ? '' : 's') + ' of the business</div></div>' +
         '</div>' +
-        '<button class="btn primary lg" data-build="' + i + '"><svg class="ic ic-16"><use href="#i-blueprint"/></svg> BUILD THIS</button>' +
+        '<button class="btn primary lg" data-hire="' + esc(r.roleId) + '">' +
+          '<svg class="ic ic-16"><use href="#i-blueprint"/></svg> CONFIGURE AND PRICE THIS</button>' +
       '</div>';
     });
-    el.opps.innerHTML = h;
+    el.opps.innerHTML = h || '';
+  }
+
+  /* Carry a design to checkout the same way SCRY does — in the fragment, so it
+   * never reaches a server or a log. */
+  function hireHandover(roleId, rep) {
+    var d = DES.design(roleId, {
+      signals: rep.signals || [],
+      systems: (rep.systems && rep.systems.length) ? rep.systems : null,
+      answers: {
+        business: (rep.company && rep.company.name) || '',
+        whatWeDo: (rep.company && rep.company.what) || '',
+        jobDescription: (rep.signalNotes || []).join(' ')
+      }
+    });
+    if (!d) return '/hire/';
+    var payload = {
+      role: roleId, caps: Object.keys(d.state.caps),
+      systems: Object.keys(d.state.systems), channels: Object.keys(d.state.channels),
+      volume: d.state.volumeId, billing: d.state.billing, trial: false,
+      answers: d.state.answers
+    };
+    try {
+      return '/hire/#d=' + btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+    } catch (e) { return '/hire/'; }
   }
 
   function renderReport(rep, ctx) {
@@ -1335,8 +1407,8 @@
     renderCompare(ctx.sig, ctx.compSig, (ctx.sig && ctx.sig.host) || name,
                   (ctx.compSig && ctx.compSig.host) || 'competitor');
     renderDomains(rep);
-    el.oppNote.textContent = 'Systems worth building, largest opportunity first. Every figure is a projection from ' +
-      'public benchmarks for a business of this apparent size — not a claim about their actual revenue.';
+    el.oppNote.textContent = 'Agents this company could hire, best first. Every price here is real and published — ' +
+      'computed from the catalog, not estimated. The read of the business is a projection; the price is not.';
     renderOpps(rep);
     el.shareBtn.classList.remove('hidden');
     el.printBtn.classList.remove('hidden');
@@ -1799,7 +1871,7 @@
 
   async function build(i) {
     if (!AI || S.busy) return;
-    var opp = S.report.opportunities[i];
+    var opp = (S.report.opportunities || [])[i];
     if (!opp) return;
     S.busy = true;
     setStatus('Designing the architecture…');
@@ -1992,8 +2064,16 @@
   });
 
   el.opps.addEventListener('click', function (e) {
+    // The agent cards hand a configured design to checkout. The old
+    // architecture drawer stays for any legacy shared report that still
+    // carries model-authored opportunities.
+    var hire = e.target.closest('[data-hire]');
+    if (hire && S.report) {
+      window.location.href = hireHandover(hire.getAttribute('data-hire'), S.report);
+      return;
+    }
     var b = e.target.closest('[data-build]');
-    if (b) build(+b.dataset.build);
+    if (b && S.report && S.report.opportunities) build(+b.dataset.build);
   });
 
   el.shareBtn.addEventListener('click', copyShareLink);

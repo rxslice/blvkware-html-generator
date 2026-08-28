@@ -1331,6 +1331,305 @@ generateText = {import:ai-text-plugin}
 <div class="toasts" id="toasts"></div>
 <div class="sr" id="live" aria-live="polite"></div>
 
+<!-- The forge is mounted BEFORE SIGIL's own script, not after it.
+     SIGIL's JavaScript contains both an HTML open-comment sequence and a
+     literal "<script" inside a regex. Together those put the HTML tokenizer
+     into script-data-double-escaped state, where its closing tag is not
+     treated as a close — the element only ends because the file ends. Anything
+     appended after it is swallowed as script text instead of parsed as markup.
+     That trap has bitten this file before; mounting ahead of it sidesteps it
+     entirely rather than relying on the escaping staying correct. -->
+<!-- ============================================================
+     THE FORGE — an order in, a configured agent out.
+
+     SIGIL's generator builds single-file applications. The forge builds the
+     other thing BlvkWare sells: the configuration that turns a generic build
+     template into one business's agent. It opens on /sigil/#forge, or
+     automatically when an order arrives on the fragment after checkout.
+     ============================================================ -->
+<style>
+  #forge { position: fixed; inset: 0; z-index: 90; background: var(--bg, #0A0908);
+           overflow: auto; display: none; }
+  #forge.on { display: block; }
+  .fg-wrap { max-width: 1080px; margin: 0 auto; padding: 26px 20px 70px; }
+  .fg-top { display: flex; align-items: center; gap: 12px; margin-bottom: 26px; }
+  .fg-tag { font-family: var(--mono, monospace); font-size: 10.5px; letter-spacing: .22em;
+            text-transform: uppercase; color: #D9B65C; border: 1px solid rgba(217,182,92,.35);
+            border-radius: 999px; padding: 3px 10px; }
+  .fg-wrap h1 { font-size: clamp(24px, 4vw, 34px); font-weight: 800; letter-spacing: -.02em;
+                margin: 0 0 8px; }
+  .fg-lede { color: var(--ink-2, #A89D8B); max-width: 62ch; margin: 0 0 22px;
+             font-size: 14.5px; line-height: 1.65; }
+  .fg-card { background: var(--surface, #17140F); border: 1px solid rgba(245,240,230,.1);
+             border-radius: 14px; padding: 18px; margin-bottom: 14px; }
+  .fg-card h3 { font-size: 15px; font-weight: 800; margin: 0 0 4px; }
+  .fg-card p { color: var(--ink-2, #A89D8B); font-size: 13px; margin: 0 0 10px; line-height: 1.6; }
+  .fg-in { width: 100%; min-height: 130px; background: #0D0C0A; color: var(--ink, #F5F0E6);
+           border: 1px solid rgba(245,240,230,.12); border-radius: 10px; padding: 12px;
+           font-family: var(--mono, monospace); font-size: 11.5px; line-height: 1.6; resize: vertical; }
+  .fg-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; align-items: center; }
+  .fg-meter { height: 8px; border-radius: 99px; background: rgba(245,240,230,.09);
+              overflow: hidden; margin: 10px 0 6px; }
+  .fg-meter i { display: block; height: 100%; background: #D4F24A; transition: width .5s ease; }
+  .fg-stat { display: flex; gap: 18px; flex-wrap: wrap; font-family: var(--mono, monospace);
+             font-size: 11.5px; color: var(--ink-2, #A89D8B); }
+  .fg-stat b { color: #D4F24A; font-weight: 500; }
+  .fg-list { list-style: none; margin: 0; padding: 0; }
+  .fg-list li { display: flex; gap: 10px; padding: 7px 0;
+                border-bottom: 1px solid rgba(245,240,230,.07);
+                font-size: 13px; color: var(--ink-2, #A89D8B); align-items: flex-start; }
+  .fg-list li:last-child { border-bottom: 0; }
+  .fg-list .mk { flex: none; width: 15px; font-weight: 800; }
+  .fg-list .ok { color: #7FD44A; }
+  .fg-list .todo { color: #E8734A; }
+  .fg-list .gate { color: #D9B65C; }
+  .fg-list b { color: var(--ink, #F5F0E6); font-weight: 700; }
+  .fg-list span.n { display: block; font-size: 12px; opacity: .85; }
+  .fg-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 800px) { .fg-cols { grid-template-columns: 1fr; } }
+  .fg-note { font-size: 12px; color: var(--ink-2, #A89D8B); line-height: 1.6; margin-top: 10px; }
+  .fg-err { color: #E8524A; }
+</style>
+
+<div id="forge" role="dialog" aria-label="The Forge">
+  <div class="fg-wrap">
+    <div class="fg-top">
+      <span class="fg-tag">The Forge</span>
+      <div style="flex:1"></div>
+      <button class="btn ghost sm" id="fgClose">Back to SIGIL</button>
+      <a class="btn ghost sm" href="/">Home</a>
+    </div>
+
+    <h1 id="fgTitle">Turn a paid order into a working agent</h1>
+    <p class="fg-lede">Paste the order manifest. The forge writes the configuration that makes it
+      <em>this</em> business&rsquo;s agent &mdash; the labels, the routing, the chase cadence, the
+      words &mdash; then reports honestly on what still needs a human.</p>
+
+    <div class="fg-card" id="fgInputCard">
+      <h3>The order</h3>
+      <p>The JSON block from the order email, or the manifest downloaded at checkout.</p>
+      <textarea class="fg-in" id="fgIn" spellcheck="false"
+                placeholder='{ "schema": "blvkware.agent-order/1", ... }'></textarea>
+      <div class="fg-bar">
+        <button class="btn primary" id="fgRun"><svg class="ic ic-16"><use href="#i-spark"/></svg> Forge this agent</button>
+        <span class="status" id="fgStatus"></span>
+      </div>
+    </div>
+
+    <div id="fgOut"></div>
+  </div>
+</div>
+
+<script id="blvk-catalog" type="application/json">/*CATALOG_JSON*/</script>
+<script>
+try { window.BLVK_CATALOG = JSON.parse(document.getElementById("blvk-catalog").textContent); }
+catch (e) { window.BLVK_CATALOG = null; }
+</script>
+<script>/*ENGINE_JS*/</script>
+<script>/*DESIGN_JS*/</script>
+<script>/*FORGE_JS*/</script>
+<script>
+(function () {
+  'use strict';
+  var E = window.BlvkEngine, D = window.BlvkDesign, F = window.BlvkForge;
+  // The BYO-key runtime is injected after this script, so `root` is resolved
+  // when the forge actually runs rather than when it loads.
+  function ai() {
+    return (typeof root !== 'undefined' && root &&
+            typeof root.generateText === 'function') ? root : null;
+  }
+  var $ = function (s) { return document.querySelector(s); };
+  var fg = $('#forge'), out = $('#fgOut'), busy = false;
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function status(t) { $('#fgStatus').textContent = t || ''; }
+  function open_() { fg.classList.add('on'); document.body.style.overflow = 'hidden'; }
+  function close_() { fg.classList.remove('on'); document.body.style.overflow = ''; location.hash = ''; }
+
+  // Arrive with an order on the fragment (straight from checkout), or open
+  // empty and paste one.
+  function boot() {
+    var h = location.hash || '';
+    if (!/(^|[#&])forge/.test(h) && !/(^|[#&])order=/.test(h)) return;
+    var m = /(?:^|[#&])order=([^&]+)/.exec(h);
+    if (m) {
+      try {
+        $('#fgIn').value = JSON.stringify(
+          JSON.parse(decodeURIComponent(escape(atob(m[1])))), null, 2);
+      } catch (e) { /* leave it empty and let them paste */ }
+    }
+    open_();
+  }
+
+  function parse() {
+    var raw = $('#fgIn').value.trim();
+    if (!raw) throw new Error('Paste the order manifest first.');
+    var spec;
+    try { spec = JSON.parse(raw); }
+    catch (e) { throw new Error('That is not valid JSON: ' + e.message); }
+    if (spec.schema !== 'blvkware.agent-order/1') {
+      throw new Error('That is not a BlvkWare agent order.');
+    }
+    if (!spec.role || !E.roleById(spec.role.id)) {
+      throw new Error('That order names a role that is not in the catalog.');
+    }
+    return spec;
+  }
+
+  function render(spec, res) {
+    var o = res.outcome, biz = spec.business || {};
+    var h = '';
+
+    h += '<div class="fg-card"><h3>' + esc(spec.role.name) + ' &mdash; ' +
+         esc(spec.ref || 'no ref') + '</h3>' +
+         '<p>' + esc(biz.business || 'Unnamed business') +
+         '. Goes live at L1 Draft, whatever the order targets.</p>' +
+         '<div class="fg-meter"><i style="width:' + o.after + '%"></i></div>' +
+         '<div class="fg-stat">' +
+           '<span>standing <b>' + o.after + '%</b></span>' +
+           '<span>was <b>' + o.before + '%</b> before forging</span>' +
+           '<span>configured <b>' + res.forged.length + '</b> of ' + res.plan.can.length + '</span>' +
+           '<span>needs you <b>' + o.stillManual.length + '</b></span>' +
+           (o.gated.length ? '<span>blocked <b>' + o.gated.length + '</b></span>' : '') +
+         '</div></div>';
+
+    h += '<div class="fg-cols">';
+    h += '<div class="fg-card"><h3>Forged and standing</h3>' +
+         '<p>Configured from what the customer actually told us. No person needed.</p>' +
+         '<ul class="fg-list">';
+    var stood = o.forgedNow.concat(D.readiness(spec).auto);
+    h += (stood.map(function (c) {
+            return '<li><span class="mk ok">&#10003;</span><span><b>' + esc(c.name) + '</b>' +
+              '<span class="n">' + esc((E.capById(c.id) || {}).blurb || '') + '</span></span></li>';
+          }).join('') || '<li>Nothing could be forged from this order alone.</li>');
+    h += '</ul></div>';
+
+    h += '<div class="fg-card"><h3>Needs a human</h3>' +
+         '<p>Credentials, real samples and decisions the forge will not invent.</p>' +
+         '<ul class="fg-list">';
+    h += o.stillManual.map(function (c) {
+      return '<li><span class="mk todo">&#9679;</span><span><b>' + esc(c.name) + '</b>' +
+        '<span class="n">' + esc((c.needs || []).join('; ')) + '</span></span></li>';
+    }).join('');
+    h += o.gated.map(function (c) {
+      return '<li><span class="mk gate">&#9673;</span><span><b>' + esc(c.name) + '</b>' +
+        '<span class="n">waiting on ' + esc(c.gate) + ' &mdash; outside our control</span></span></li>';
+    }).join('');
+    h += '</ul></div></div>';
+
+    if (res.dropped.length) {
+      h += '<div class="fg-card"><h3>Discarded</h3>' +
+           '<p>The model produced these, they were not in the schema, and so they never ' +
+           'reached the manifest.</p><ul class="fg-list">' +
+           res.dropped.slice(0, 12).map(function (d) {
+             return '<li><span class="mk">&times;</span><span>' + esc(d) + '</span></li>';
+           }).join('') + '</ul></div>';
+    }
+
+    h += '<div class="fg-card"><h3>The build package</h3>' +
+         '<p>The manifest with its configuration attached. This is what <code>agentcore</code> ' +
+         'builds from and what the fulfilment console verifies before any work starts.</p>' +
+         '<textarea class="fg-in" id="fgPkg" spellcheck="false" style="min-height:220px"></textarea>' +
+         '<div class="fg-bar">' +
+           '<button class="btn primary" id="fgDl">Download the package</button>' +
+           '<button class="btn ghost" id="fgCopy">Copy it</button>' +
+           '<a class="btn ghost" id="fgMail" href="#">Send it to BlvkWare</a>' +
+         '</div>' +
+         '<p class="fg-note">Everything the forge could not finish is listed above and lands on ' +
+         'the build sheet. Nothing is reported as done that is not.</p></div>';
+
+    out.innerHTML = h;
+
+    var pkg = JSON.stringify(o.spec, null, 2);
+    $('#fgPkg').value = pkg;
+
+    $('#fgDl').addEventListener('click', function () {
+      var b = new Blob([pkg], { type: 'application/json' });
+      var u = URL.createObjectURL(b), a = document.createElement('a');
+      a.href = u;
+      a.download = (spec.ref || 'agent') + '-package.json';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(u); }, 800);
+    });
+    $('#fgCopy').addEventListener('click', function () {
+      var t = $('#fgPkg');
+      t.focus(); t.select();
+      try { document.execCommand('copy'); this.textContent = 'Copied'; } catch (e) { /* copy by hand */ }
+    });
+    $('#fgMail').href = 'mailto:russ@blvkware.dev?subject=' +
+      encodeURIComponent('Build package ' + (spec.ref || '')) +
+      '&body=' + encodeURIComponent('The forged package follows.\n\n' + pkg.slice(0, 6000));
+  }
+
+  async function run() {
+    if (busy) return;
+    out.innerHTML = '';
+    var spec;
+    try { spec = parse(); }
+    catch (e) {
+      out.innerHTML = '<div class="fg-card"><p class="fg-err">' + esc(e.message) + '</p></div>';
+      return;
+    }
+
+    busy = true; status('Forging…'); $('#fgRun').disabled = true;
+    try {
+      var plan = F.plan(spec);
+      var accepted = { config: {}, forged: [], dropped: [] };
+
+      var AI = ai();
+      if (AI && plan.can.length) {
+        window.__blvkSystem = 'You configure business agents. You write content and copy in the ' +
+          'customer own voice. You never invent facts, prices or policies, and you never add a key ' +
+          'you were not asked for. You reply with STRICT JSON only.';
+        try {
+          var res = await AI.generateText({ instruction: F.instruction(spec, spec.business || {}) });
+          var txt = ((res && res.text) || '').replace(/^```(?:json)?|```$/gm, '').trim();
+          var a = txt.indexOf('{'), b = txt.lastIndexOf('}');
+          if (a >= 0 && b > a) accepted = F.accept(JSON.parse(txt.slice(a, b + 1)));
+        } catch (e) {
+          // A failed forge is not a failed order. The agent is still buildable;
+          // it just arrives as more work for the operator, and we say so.
+          accepted.dropped.push('the model returned nothing usable (' + (e.message || e) + ')');
+        } finally { window.__blvkSystem = null; }
+      } else if (!AI) {
+        accepted.dropped.push('no model is connected, so only the parts that need no ' +
+                              'configuration are standing');
+      }
+
+      var outcome = F.outcome(spec, accepted.config);
+      var pack = F.knowledge(accepted.config);
+      if (pack.length) outcome.spec.knowledge = pack;
+
+      render(spec, { outcome: outcome, forged: accepted.forged,
+                     dropped: accepted.dropped, plan: plan });
+      status('');
+    } finally {
+      busy = false;
+      $('#fgRun').disabled = false;
+    }
+  }
+
+  if (!E || !D || !F) {
+    // Without the engines the forge cannot validate or measure anything, and a
+    // forge that guesses is worse than no forge at all.
+    var card = $('#fgInputCard');
+    if (card) {
+      card.innerHTML = '<p class="fg-err">The design engines did not load, so nothing can be ' +
+        'forged safely here. Email russ@blvkware.dev and it will be built by hand.</p>';
+    }
+  } else {
+    $('#fgRun').addEventListener('click', run);
+  }
+  $('#fgClose').addEventListener('click', close_);
+  window.addEventListener('hashchange', boot);
+  boot();
+})();
+</script>
+
+
 <script>
 /* ================================================================
    BLVKWARE AI HTML GENERATOR

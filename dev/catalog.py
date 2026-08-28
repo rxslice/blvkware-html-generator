@@ -610,6 +610,60 @@ AUTONOMY = [
 ]
 
 
+# --------------------------------------------------------------------------
+# What a capability needs from the customer before it can run for real.
+#
+# This is what separates "the forge built it" from "it is ready". Anything
+# listed here that a design cannot supply becomes operator work, and saying so
+# up front is what stops "live in 10 business days" from being a guess. It lives
+# in the catalog rather than in the tools so the buyer-facing readiness estimate
+# and the operator's handoff sheet can never disagree.
+# --------------------------------------------------------------------------
+
+SETUP_NEEDS = {
+    "knowledge.pack":   ["their documents, prices and policies"],
+    "email.triage":     ["a sample of real inbox traffic to calibrate against"],
+    "email.draft":      ["examples of how they already write to customers"],
+    "email.cleanup":    ["access to the existing backlog"],
+    "lead.qualify":     ["what a good customer looks like to them"],
+    "lead.enrich":      ["which sources they consider acceptable"],
+    "appt.book":        ["job durations, travel buffers and working hours"],
+    "appt.setting":     ["the list to work, and calling-hours rules"],
+    "doc.generate":     ["their document template and branding"],
+    "doc.parse":        ["ten real documents to check extraction against"],
+    "pay.collect":      ["a payment provider account"],
+    "pay.chase":        ["their escalation tone and terms"],
+    "recon.match":      ["a month of real transactions to reconcile against"],
+    "browser.operate":  ["portal credentials and a recorded walkthrough"],
+    "browser.extract":  ["portal credentials and the page layout"],
+    "api.custom":       ["API documentation and a credential"],
+    "files.watch":      ["the folder to watch and what should happen"],
+    "crm.sync":         ["field mapping to their CRM"],
+    "crm.hygiene":      ["a decision on what may be merged automatically"],
+    "crm.pipeline":     ["their stages and what counts as stale"],
+    "chan.sms":         ["A2P 10DLC registration — weeks, outside our control"],
+    "chan.whatsapp":    ["Meta business verification"],
+    "voice.inbound":    ["a phone number and a call-flow walkthrough"],
+    "voice.outbound":   ["a phone number and calling-hours rules"],
+    "whitelabel":       ["their domain and brand assets"],
+    "lang.extra":       ["which languages, and a native reviewer"],
+    "workflow.multistep": ["the process written down, step by step"],
+    "workflow.exception": ["the exceptions they already know about"],
+    "support.answer":   ["their documentation or help centre"],
+    "support.ticket":   ["their help desk and priority rules"],
+    "onboard.run":      ["their onboarding checklist"],
+    "data.collect":     ["credentials for each source"],
+    "data.analyze":     ["the questions they actually want answered"],
+    "data.report":      ["who receives it, and when"],
+    "data.alert":       ["the thresholds that matter to them"],
+    "research.web":     ["what a useful brief looks like to them"],
+    "training":         ["a date and the attendee list"],
+}
+
+for _cid in SETUP_NEEDS:
+    assert _cid in CAP_BY_ID, "SETUP_NEEDS references unknown capability %s" % _cid
+
+
 def payload():
     """The catalog as the browser sees it."""
     return {
@@ -625,6 +679,7 @@ def payload():
         "roleFamilies": ROLE_FAMILIES,
         "modifiers": MODIFIERS,
         "autonomy": AUTONOMY,
+        "setupNeeds": SETUP_NEEDS,
     }
 
 

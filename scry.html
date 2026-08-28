@@ -372,18 +372,18 @@
   <div class="scroll" id="stageAsk">
     <div class="ask-wrap">
       <div class="ask">
-        <div class="kicker">Business systems intelligence</div>
-        <h1>Your business is full of software<br>that <em>hasn't been built yet.</em></h1>
-        <p class="lede">Tell us how your business works. SCRY maps your operation, finds the systems hiding inside it,
-           and turns them into something you can actually click.</p>
+        <div class="kicker">Agent design</div>
+        <h1>There is a job in your business<br>that <em>nobody is doing.</em></h1>
+        <p class="lede">Describe how you actually operate. SCRY works out which agent is worth hiring first,
+           designs exactly what it needs to be able to do, and prices it — on this page, in about a minute.</p>
 
         <div class="composer" id="composer">
           <label class="sr" for="biz">Describe your business</label>
-          <textarea id="biz" spellcheck="false" placeholder="I own a landscaping company. Four crews, mostly residential, some commercial contracts. We quote by site visit and schedule by text message."></textarea>
+          <textarea id="biz" spellcheck="false" placeholder="I own a landscaping company. Four crews, mostly residential, some commercial contracts. We quote by site visit and schedule by text. Quotes go out and I chase them when I remember, which is not often."></textarea>
           <div class="composer-bar">
             <span class="status" id="counter">0</span>
             <div class="spacer"></div>
-            <button class="btn primary lg" id="scryBtn"><svg class="ic ic-16"><use href="#i-eye"/></svg> Scry my business</button>
+            <button class="btn primary lg" id="scryBtn"><svg class="ic ic-16"><use href="#i-eye"/></svg> Design my agent</button>
           </div>
         </div>
 
@@ -411,8 +411,8 @@
         <div class="os-sub" id="osSub"></div>
       </div>
       <div class="spacer"></div>
-      <span class="badge-sim" title="Modelled from public industry benchmarks">
-        <svg class="ic ic-14"><use href="#i-info"/></svg> Projected model — not your real data
+      <span class="badge-sim" title="Every price here is computed from the published catalog">
+        <svg class="ic ic-14"><use href="#i-info"/></svg> Real prices, from the published catalog
       </span>
     </div>
 
@@ -420,17 +420,20 @@
       <div class="os-main">
         <div class="metrics" id="metrics"></div>
 
-        <div class="sec-head"><h3>AI Operations</h3><div class="rule"></div></div>
+        <div class="sec-head"><h3>What we found</h3><div class="rule"></div></div>
         <div class="finds" id="finds"></div>
 
-        <div class="sec-head"><h3>Proposed systems</h3><div class="rule"></div></div>
+        <div class="sec-head"><h3>What this agent will own</h3><div class="rule"></div></div>
         <div class="systems" id="systems"></div>
+
+        <div class="sec-head"><h3>Other jobs worth filling</h3><div class="rule"></div></div>
+        <div class="systems" id="alts"></div>
 
         <div style="height:28px"></div>
       </div>
 
       <div class="os-side">
-        <div class="side-title">Do something with it</div>
+        <div class="side-title">Adjust it</div>
         <div class="acts" id="acts"></div>
 
 
@@ -441,22 +444,23 @@
                    spellcheck="false" placeholder="you@company.com" aria-label="Your email">
             <button class="act keep-go" type="submit" id="keepBtn">
               <svg class="ic ic-16" style="color:var(--on-accent)"><use href="#i-mail"/></svg>
-              Email me this map
+              Email me this design
             </button>
           </form>
           <p class="keep-note" id="keepNote">
-            The whole map, plus the systems worth building. No account, no list &mdash; one email, from a person.
+            The full design, the price, and what it would own. No account, no list &mdash; one email, from a person.
           </p>
         </div>
-        <div class="side-title" style="margin-top:22px">Build it</div>
+        <div class="side-title" style="margin-top:22px">Hire it</div>
         <div class="acts">
           <button class="act" id="forgeBtn" style="color:var(--on-accent);background:var(--accent);box-shadow:none;font-weight:680">
             <svg class="ic ic-16" style="color:var(--on-accent)"><use href="#i-hammer"/></svg>
-            Forge a working prototype
+            Take this design to checkout
           </button>
         </div>
         <p style="font-size:11.5px;color:var(--ink-3);margin:10px 2px 0;line-height:1.5">
-          Hands the architecture to SIGIL and builds a live, clickable prototype.
+          Opens the configurator with this design already loaded. Change anything,
+          then order. The price moves with you.
         </p>
 
       </div>
@@ -466,11 +470,23 @@
 
 <div class="toasts" id="toasts"></div>
 
+<!-- The catalog, the pricing engine and the design engine are compiled in at
+     build time from dev/catalog.py, dev/engine.js and dev/design.js — the same
+     sources the site and the runtime use. SCRY may interpret a business, but it
+     may not invent what BlvkWare sells or what it costs. -->
+<script id="blvk-catalog" type="application/json">/*CATALOG_JSON*/</script>
+<script>
+try { window.BLVK_CATALOG = JSON.parse(document.getElementById("blvk-catalog").textContent); }
+catch (e) { window.BLVK_CATALOG = null; }
+</script>
+<script>/*ENGINE_JS*/</script>
+<script>/*DESIGN_JS*/</script>
 <script>
 (function () {
   'use strict';
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var AI = (typeof root !== 'undefined' && root && typeof root.generateText === 'function') ? root : null;
+  var C = window.BLVK_CATALOG, E = window.BlvkEngine, D = window.BlvkDesign;
 
   var el = {
     biz: $('#biz'), composer: $('#composer'), scryBtn: $('#scryBtn'), counter: $('#counter'),
@@ -478,12 +494,14 @@
     stageAsk: $('#stageAsk'), stagePipe: $('#stagePipe'), stageOs: $('#stageOs'),
     steps: $('#steps'), pipeTitle: $('#pipeTitle'), pipeSub: $('#pipeSub'),
     osTitle: $('#osTitle'), osSub: $('#osSub'),
-    metrics: $('#metrics'), finds: $('#finds'), systems: $('#systems'), acts: $('#acts'),
+    metrics: $('#metrics'), finds: $('#finds'), systems: $('#systems'),
+    alts: $('#alts'), acts: $('#acts'),
     forgeBtn: $('#forgeBtn'), toasts: $('#toasts'),
     keepForm: $('#keepForm'), keepEmail: $('#keepEmail'), keepBtn: $('#keepBtn'), keepNote: $('#keepNote')
   };
 
-  var S = { model: null, brief: '', busy: false };
+  var S = { model: null, brief: '', busy: false, adopted: null,
+            ranked: [], design: null, roleId: null };
 
   var esc = function (s) {
     return String(s == null ? '' : s)
@@ -569,9 +587,10 @@
   // The shared runtime defaults to a "single-file HTML only" persona for the
   // HTML generator. Every call from SCRY must override it or the model answers
   // with a web page instead of an analysis.
-  var SYS_JSON = 'You are a senior business systems architect. You analyse how a business operates ' +
-    'and identify the software systems it should have but does not. You reply with STRICT JSON only ' +
-    '- no markdown, no code fences, no commentary.';
+  var SYS_JSON = 'You read how a small business operates and report which jobs inside it are ' +
+    'going undone. You never invent products, prices or timelines: you report observations from a ' +
+    'fixed vocabulary and nothing else. You reply with STRICT JSON only - no markdown, no code ' +
+    'fences, no commentary.';
 
   var SYS_MD = 'You are a senior business systems architect advising an owner-operator. ' +
     'You write tight, concrete Markdown prose. You never output HTML documents, code fences ' +
@@ -589,23 +608,30 @@
   }
 
   function scryPrompt(desc) {
-    return 'Analyse this business and design the software systems hiding inside it.\n\n' +
+    // The model reports observations from a fixed vocabulary. It cannot name a
+    // price, a timeline or a capability - those are computed from the catalog by
+    // BlvkDesign and BlvkEngine. A hallucinated quote is a number a buyer will
+    // hold us to, so the model is never given the chance to produce one.
+    return 'Read this business and report which jobs inside it are going undone.\n\n' +
       'BUSINESS:\n' + desc + '\n\n' +
+      D.vocabulary() + '\n\n' +
       'Return STRICT JSON matching exactly this shape:\n' +
       '{\n' +
-      '  "osName": "SHORT ALL-CAPS NAME, e.g. LANDSCAPE OPERATING SYSTEM",\n' +
-      '  "summary": "one sentence on what this operation really is, operationally",\n' +
-      '  "metrics": [ {"label":"Revenue","value":"$184,200","note":"annual, modelled","pct":72} ],\n' +
-      '  "findings": [ {"type":"bottleneck","title":"short title","detail":"one or two sentences","impact":"high"} ],\n' +
-      '  "systems": [ {"name":"Crew Dispatch","purpose":"what it does and why it matters","modules":["Routing","Timesheets"]} ],\n' +
-      '  "actions": [ {"label":"Optimize my routes","ask":"a specific instruction for you to answer in depth later"} ]\n' +
+      '  "business": "what this operation actually is, in six words",\n' +
+      '  "summary": "one sentence on where the time and money is leaking, operationally",\n' +
+      '  "signals": ["signal_id", "signal_id"],\n' +
+      '  "roles": ["role_id"],\n' +
+      '  "systems": ["system_id"],\n' +
+      '  "channels": ["email"],\n' +
+      '  "notes": ["one short sentence of evidence per signal you reported"]\n' +
       '}\n\n' +
       'RULES:\n' +
-      '- metrics: exactly 4. Realistic figures modelled from public industry benchmarks for a business of this type and size. pct is 0-100 for the bar, omit if meaningless.\n' +
-      '- findings: 5 to 7. type must be one of bottleneck, automation, revenue, gap, redundancy. impact is high, medium or low. Be specific to THIS business, never generic.\n' +
-      '- systems: 3 to 4 proposed software systems, each with 2 to 4 modules.\n' +
-      '- actions: exactly 5, phrased as things the owner would say, e.g. "Optimize my routes", "Find revenue opportunities", "Build the CRM".\n' +
-      '- Every figure is a projection from industry benchmarks. Never claim access to their real data.\n' +
+      '- signals: 3 to 6, only ones you can point to evidence for in what they wrote. Use the ids exactly.\n' +
+      '- roles: 1 to 3, most valuable first. Use the ids exactly.\n' +
+      '- systems: only software they actually mention or clearly imply.\n' +
+      '- notes: one per signal, in their own vocabulary, naming the evidence.\n' +
+      '- Never state a price, a fee, a timeline or a percentage. Those are computed elsewhere.\n' +
+      '- Anything not in the vocabulary above is discarded, so do not invent ids.\n' +
       '- Output raw JSON only. First character must be {';
   }
 
@@ -638,84 +664,49 @@
      vs "name"), and a missing key must never render a blank button. Everything
      downstream reads the canonical shape this produces, never the raw JSON. */
   function pick(o, keys, dflt) {
-    if (typeof o === 'string') return o;
     for (var i = 0; i < keys.length; i++) {
       var v = o && o[keys[i]];
-      if (typeof v === 'number') return String(v);
-      if (typeof v === 'string' && v.trim()) return v.trim();
+      if (v !== undefined && v !== null && v !== '') return v;
     }
-    return dflt || '';
+    return dflt;
   }
-  function arr(v) { return Array.isArray(v) ? v : []; }
 
-  var TYPES = ['bottleneck', 'automation', 'revenue', 'gap', 'redundancy'];
+  /* ---------------- design ----------------
+   * The model's JSON is filtered through BlvkDesign.adopt(), which discards
+   * anything that is not a real catalog id. Everything after that point is
+   * deterministic: the ranking, the capability set, the tier and the price. */
 
-  function normalize(raw) {
-    var m = raw || {};
+  function buildDesign(raw, roleId) {
+    var adopted = D.adopt(raw);
+    S.adopted = adopted;
 
-    var metrics = arr(m.metrics || m.kpis || m.stats).map(function (x) {
-      var pct = x && (x.pct != null ? x.pct : x.percent);
-      return {
-        label: pick(x, ['label', 'name', 'title', 'metric']),
-        value: pick(x, ['value', 'figure', 'amount', 'number']),
-        note: pick(x, ['note', 'detail', 'basis', 'description']),
-        pct: typeof pct === 'number' ? pct : (typeof pct === 'string' && pct !== '' && !isNaN(+pct) ? +pct : null)
-      };
-    }).filter(function (x) { return x.label && x.value; });
+    // Roles the model named are scored alongside the signals rather than being
+    // appended as an afterthought — it read the whole description, and that is
+    // worth more than a signal mentioned in passing.
+    var ranked = D.rank(adopted.signals, { limit: 6, nominated: adopted.roles });
+    if (!ranked.length) return null;
+    S.ranked = ranked;
 
-    var findings = arr(m.findings || m.issues || m.opportunities).map(function (f) {
-      var t = String(pick(f, ['type', 'category', 'kind'])).toLowerCase();
-      // First match wins: "automation gap" is an automation finding, not a gap.
-      var match = '', at = Infinity;
-      for (var i = 0; i < TYPES.length; i++) {
-        var pos = t.indexOf(TYPES[i]);
-        if (pos !== -1 && pos < at) { at = pos; match = TYPES[i]; }
+    var chosen = roleId || ranked[0].roleId;
+    S.roleId = chosen;
+    var entry = ranked.filter(function (r) { return r.roleId === chosen; })[0] || ranked[0];
+
+    var design = D.design(chosen, {
+      signals: adopted.signals,
+      systems: adopted.systems.length ? adopted.systems : null,
+      channels: adopted.channels.length ? adopted.channels : null,
+      reasons: entry.reasons,
+      answers: {
+        business: adopted.business || '',
+        whatWeDo: adopted.business || '',
+        jobDescription: S.brief
       }
-      var im = String(pick(f, ['impact', 'severity', 'priority'])).toLowerCase();
-      return {
-        type: match || 'gap',
-        title: pick(f, ['title', 'label', 'name', 'issue', 'headline']),
-        detail: pick(f, ['detail', 'description', 'summary', 'why', 'explanation']),
-        impact: /high|critical|severe/.test(im) ? 'high' : (/low|minor/.test(im) ? 'low' : (im ? 'medium' : ''))
-      };
-    }).filter(function (f) { return f.title; });
-
-    var systems = arr(m.systems || m.software || m.proposals).map(function (s) {
-      return {
-        name: pick(s, ['name', 'title', 'label', 'system']),
-        purpose: pick(s, ['purpose', 'description', 'detail', 'what', 'summary']),
-        modules: arr(s && (s.modules || s.features || s.components))
-          .map(function (x) { return pick(x, ['name', 'title', 'label']); })
-          .filter(Boolean)
-      };
-    }).filter(function (s) { return s.name; });
-
-    var actions = arr(m.actions || m.prompts || m.commands).map(function (a) {
-      return {
-        label: pick(a, ['label', 'title', 'name', 'action', 'text', 'command', 'prompt']),
-        ask: pick(a, ['ask', 'instruction', 'question', 'prompt', 'detail', 'description'])
-      };
-    }).filter(function (a) { return a.label; });
-
-    // Never leave the action rail empty — the proposed systems are a fine source.
-    if (!actions.length) {
-      actions = systems.slice(0, 4).map(function (s) {
-        return { label: 'Build the ' + s.name, ask: 'Design and justify the ' + s.name + ' system in detail.' };
-      });
-      if (findings.length) {
-        actions.unshift({
-          label: 'Where is the biggest win?',
-          ask: 'Of everything you found, which single fix returns the most, and why?'
-        });
-      }
-    }
-    actions.forEach(function (a) { if (!a.ask) a.ask = a.label; });
-
-    return {
-      osName: pick(m, ['osName', 'name', 'title', 'os'], 'Operating System'),
-      summary: pick(m, ['summary', 'description', 'overview', 'subtitle']),
-      metrics: metrics, findings: findings, systems: systems, actions: actions
-    };
+    });
+    if (!design) return null;
+    design.summary = adopted.summary;
+    design.notes = adopted.notes;
+    design.entry = entry;
+    return design;
   }
 
   /* ---------------- run ---------------- */
@@ -723,36 +714,36 @@
     var desc = el.biz.value.trim();
     if (!desc) { el.biz.focus(); toast('Describe your business first.', 'err'); return; }
     if (!AI) { toast('AI runtime not available here.', 'err'); return; }
+    if (!D || !E) { toast('The design engine failed to load.', 'err'); return; }
     if (S.busy) return;
 
     S.busy = true; S.brief = desc;
     el.scryBtn.disabled = true;
     show('pipe');
     renderSteps(0);
-    setStatus('Scrying…');
+    setStatus('Reading your operation…');
 
-    // Advance the visible steps while the single request is in flight. The
-    // labels describe real phases of the analysis, not a fake progress bar —
-    // the last one only completes when the model actually returns.
     var step = 0;
     var ticker = setInterval(function () {
       if (step < 3) { step++; renderSteps(step); }
-    }, 2600);
+    }, 2400);
 
     try {
       var res = await ask(SYS_JSON, { instruction: scryPrompt(desc) });
       clearInterval(ticker);
       renderSteps(4);
-      var model = normalize(parseModel(res && res.text));
-      if (!model.findings.length && !model.systems.length) {
-        throw new Error('The model returned an analysis we could not read. Try again.');
+      var raw = parseModel(res && res.text);
+      var design = buildDesign(raw, null);
+      if (!design) {
+        throw new Error('Nothing in that description pointed at a job an agent could take. ' +
+                        'Try saying what actually eats your week.');
       }
-      S.model = model;
-      await new Promise(function (r) { setTimeout(r, 450); });
-      renderOs(model);
+      S.design = design;
+      await new Promise(function (r) { setTimeout(r, 380); });
+      renderDesign(design);
       show('os');
       setStatus('');
-      toast('Model built — every figure is a projection', 'ok');
+      toast('Designed and priced from the live catalog', 'ok');
     } catch (err) {
       clearInterval(ticker);
       show('ask');
@@ -764,44 +755,118 @@
     }
   }
 
-  /* ---------------- render the OS ---------------- */
-  function renderOs(m) {
-    el.osTitle.textContent = m.osName || 'Operating System';
-    el.osSub.textContent = m.summary || '';
+  /* ---------------- render the design ---------------- */
+  function money(n) { return '$' + Number(n).toLocaleString('en-US'); }
 
-    var h = '';
-    (m.metrics || []).forEach(function (x) {
-      h += '<div class="metric"><div class="metric-label">' + esc(x.label) + '</div>' +
-           '<div class="metric-value">' + esc(x.value) + '</div>' +
-           (x.note ? '<div class="metric-note">' + esc(x.note) + '</div>' : '') +
-           (typeof x.pct === 'number' ? '<div class="metric-bar"><i style="width:' + Math.max(0, Math.min(100, x.pct)) + '%"></i></div>' : '') +
-           '</div>';
-    });
-    el.metrics.innerHTML = h;
+  function renderDesign(d) {
+    var q = d.quote;
+    var ready = D.readiness(d.spec);
 
-    h = '';
-    (m.findings || []).forEach(function (f, i) {
-      h += '<button class="find" data-find="' + i + '">' +
-        '<span class="dot ' + esc(f.type) + '"></span>' +
-        '<span class="find-body"><span class="find-title">' + esc(f.title) + '</span>' +
-        '<span class="find-detail">' + esc(f.detail) + '</span></span>' +
-        '<span class="tag ' + (f.impact === 'high' ? 'high' : '') + '">' + esc(f.impact || f.type) + '</span></button>';
-    });
-    el.finds.innerHTML = h;
+    el.osTitle.textContent = 'The ' + d.role.name;
+    el.osSub.textContent = d.summary || d.role.problem;
 
-    h = '';
-    (m.systems || []).forEach(function (s) {
-      h += '<div class="system"><h4>' + esc(s.name) + '</h4><p>' + esc(s.purpose) + '</p><div class="mods">' +
-        (s.modules || []).map(function (mo) { return '<span class="mod">' + esc(mo) + '</span>'; }).join('') +
+    // Price tiles. Every one of these is computed, never written by a model.
+    var tiles = [
+      { label: 'To build', value: money(q.build), note: q.def.label },
+      { label: 'Then monthly', value: money(q.monthly),
+        note: q.includedActions.toLocaleString('en-US') + ' actions included' },
+      { label: 'Live in', value: q.days + ' days', note: 'business days, from signing' },
+      { label: 'Standing on day one', value: ready.percent + '%',
+        note: ready.auto.length + ' of ' + ready.total + ' need nothing from you',
+        pct: ready.percent }
+    ];
+    el.metrics.innerHTML = tiles.map(function (x) {
+      return '<div class="metric"><div class="metric-label">' + esc(x.label) + '</div>' +
+        '<div class="metric-value">' + esc(x.value) + '</div>' +
+        '<div class="metric-note">' + esc(x.note) + '</div>' +
+        (typeof x.pct === 'number'
+          ? '<div class="metric-bar"><i style="width:' + Math.max(0, Math.min(100, x.pct)) + '%"></i></div>'
+          : '') + '</div>';
+    }).join('');
+
+    // What we found — the signals, in the buyer's own terms, with the evidence
+    // the model cited. A diagnostic somebody cannot check is just an opinion.
+    var notes = d.notes || [];
+    el.finds.innerHTML = (d.signals || []).map(function (sid, i) {
+      var sig = D.SIGNAL_BY_ID[sid];
+      if (!sig) return '';
+      var strong = Object.keys(sig.roles).indexOf(d.roleId) !== -1;
+      return '<button class="find" data-signal="' + esc(sid) + '">' +
+        '<span class="dot ' + (strong ? 'bottleneck' : 'gap') + '"></span>' +
+        '<span class="find-body"><span class="find-title">' + esc(sig.ask) + '</span>' +
+        '<span class="find-detail">' + esc(notes[i] || sig.evidence) + '</span></span>' +
+        '<span class="tag' + (strong ? ' high' : '') + '">' +
+        (strong ? 'this agent' : 'noted') + '</span></button>';
+    }).join('') || '<p class="keep-note">No specific signals were confirmed — ' +
+                   'the design below is the closest match to what you described.</p>';
+
+    // What it will own. Core capabilities are what the job IS; the rest are
+    // priced individually and can be dropped at checkout.
+    var core = {};
+    d.role.core.forEach(function (c) { core[c] = true; });
+    el.systems.innerHTML = (d.spec.capabilities || []).map(function (c) {
+      var cap = E.capById(c.id);
+      if (!cap) return '';
+      var isCore = !!core[c.id];
+      var needs = (C.setupNeeds && C.setupNeeds[c.id]) || [];
+      return '<div class="system"><h4>' + esc(cap.name) +
+        ' <span class="mod" style="vertical-align:middle">' +
+        (isCore ? 'included' : '+' + money(cap.price)) + '</span></h4>' +
+        '<p>' + esc(cap.blurb) + '</p>' +
+        '<div class="mods">' +
+        '<span class="mod">' + esc(cap.group) + '</span>' +
+        (cap.gate ? '<span class="mod">waits on ' + esc(cap.gate) + '</span>' : '') +
+        (needs.length ? '<span class="mod">needs: ' + esc(needs[0]) + '</span>'
+                      : '<span class="mod">ready to stand up</span>') +
         '</div></div>';
-    });
-    el.systems.innerHTML = h;
+    }).join('');
 
-    h = '';
-    (m.actions || []).forEach(function (a, i) {
-      h += '<button class="act" data-act="' + i + '"><svg class="ic ic-16"><use href="#i-radar"/></svg>' + esc(a.label) + '</button>';
+    // The other jobs standing empty, each priced, each one click away.
+    el.alts.innerHTML = S.ranked.filter(function (r) {
+      return r.roleId !== d.roleId;
+    }).slice(0, 4).map(function (r) {
+      var alt = D.design(r.roleId, { signals: d.signals });
+      if (!alt) return '';
+      return '<div class="system" style="cursor:pointer" data-role="' + esc(r.roleId) + '">' +
+        '<h4>' + esc(r.role.name) + ' <span class="mod" style="vertical-align:middle">' +
+        money(alt.quote.build) + ' + ' + money(alt.quote.monthly) + '/mo</span></h4>' +
+        '<p>' + esc(r.role.oneLine) + '</p>' +
+        '<div class="mods"><span class="mod">' +
+        esc(r.reasons[0] || 'a job worth filling') + '</span>' +
+        '<span class="mod">design this instead &rarr;</span></div></div>';
+    }).join('') || '<p class="keep-note">This was the only job your description pointed at.</p>';
+
+    // Adjustments that change the price, so a buyer can see the shape of the
+    // decision without leaving the page.
+    var acts = [
+      { id: 'trial', label: 'Try it first — ' + money(C.pricing.trial) + ' for 14 days' },
+      { id: 'annual', label: 'Pay annually — two months free' },
+      { id: 'lean', label: 'Strip it to the core job only' }
+    ];
+    el.acts.innerHTML = acts.map(function (a) {
+      return '<button class="act" data-adjust="' + a.id + '">' +
+        '<svg class="ic ic-16"><use href="#i-radar"/></svg>' + esc(a.label) + '</button>';
+    }).join('');
+  }
+
+  /* Re-design for a different role, or apply an adjustment, without another
+   * model call — the observations do not change, only what we do with them. */
+  function redesign(opts) {
+    var d = S.design;
+    if (!d) return;
+    var next = D.design(S.roleId, {
+      signals: d.signals,
+      systems: Object.keys(d.state.systems),
+      channels: Object.keys(d.state.channels),
+      capabilities: opts && opts.lean ? E.roleById(S.roleId).core : null,
+      trial: opts && opts.trial !== undefined ? opts.trial : d.state.trial,
+      billing: opts && opts.billing ? opts.billing : d.state.billing,
+      answers: d.state.answers
     });
-    el.acts.innerHTML = h;
+    if (!next) return;
+    next.summary = d.summary; next.notes = d.notes; next.entry = d.entry;
+    S.design = next;
+    renderDesign(next);
   }
 
   /* ---------------- drill-down drawer ---------------- */
@@ -1001,23 +1066,56 @@
     var text = encodeURIComponent('Send this and I will email the full map back to ' + email +
       '.\n\n----------------------------------------\n\n' + body);
     window.location.href = 'mailto:' + CAPTURE_TO + '?subject=' + sub + '&body=' + text;
-    keepNote('Your mail app should open with the map in it — just hit send.', true);
+    keepNote('Your mail app should open with the design in it — just hit send.', true);
     el.keepBtn.disabled = false;
   });
 
-  /* ---------------- forge ---------------- */
+  /* ---------------- hand off to checkout ---------------- */
+  // The design travels in the URL fragment rather than a query string so it is
+  // never sent to a server or written to a log. /hire/ reads it, applies it, and
+  // the buyer carries on configuring from exactly here.
   el.forgeBtn.addEventListener('click', function () {
-    if (!S.model) return;
-    var m = S.model;
-    var spec = 'A working prototype of "' + m.osName + '" — an operations dashboard for this business: ' +
-      S.brief + '\n\nIt must include:\n' +
-      '- A metrics header showing: ' + (m.metrics || []).map(function (x) { return x.label + ' (' + x.value + ')'; }).join(', ') + '\n' +
-      '- An "AI Operations" panel listing these live alerts: ' + (m.findings || []).map(function (f) { return f.title; }).join('; ') + '\n' +
-      '- Working sections for these systems: ' + (m.systems || []).map(function (s) { return s.name + ' (' + (s.modules || []).join(', ') + ')'; }).join('; ') + '\n' +
-      '- Seeded demo data so it feels alive, and a clear note that figures are projections, not real business data.\n' +
-      'Dark, premium operations-console aesthetic. Every control must actually work.';
-    try { sessionStorage.setItem('blvkware.forge.prompt', spec); } catch (e) {}
-    window.location.href = '/sigil/?prompt=' + encodeURIComponent(spec).slice(0, 1800);
+    if (!S.design) return;
+    var d = S.design;
+    var payload = {
+      role: S.roleId,
+      caps: Object.keys(d.state.caps),
+      systems: Object.keys(d.state.systems),
+      channels: Object.keys(d.state.channels),
+      volume: d.state.volumeId,
+      billing: d.state.billing,
+      trial: !!d.state.trial,
+      answers: d.state.answers
+    };
+    var hash;
+    try {
+      hash = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+    } catch (e) { hash = ''; }
+    window.location.href = hash ? '/hire/#d=' + hash : '/hire/';
+  });
+
+  // Switching to an alternative role, and the price adjustments.
+  document.addEventListener('click', function (ev) {
+    var alt = ev.target.closest && ev.target.closest('[data-role]');
+    if (alt && S.adopted) {
+      var d = buildDesign({
+        business: S.adopted.business, summary: S.adopted.summary,
+        signals: S.adopted.signals, roles: S.adopted.roles,
+        systems: S.adopted.systems, channels: S.adopted.channels,
+        notes: S.adopted.notes
+      }, alt.getAttribute('data-role'));
+      if (d) { S.design = d; renderDesign(d); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+      return;
+    }
+    var adj = ev.target.closest && ev.target.closest('[data-adjust]');
+    if (adj && S.design) {
+      var what = adj.getAttribute('data-adjust');
+      if (what === 'trial') redesign({ trial: !S.design.state.trial });
+      if (what === 'annual') {
+        redesign({ billing: S.design.state.billing === 'annual' ? 'monthly' : 'annual' });
+      }
+      if (what === 'lean') redesign({ lean: true });
+    }
   });
 
   el.scryBtn.addEventListener('click', run);

@@ -680,24 +680,32 @@ def check_js(src, name):
     import subprocess
     import tempfile
 
-    m = re.search(r"<script>\n([\s\S]*)\n<" + r"/script>\s*$", src)
-    if not m:
+    # EVERY inline block is checked, not just the last one. The tools now carry
+    # the catalog and several shared engines ahead of their own script, and a
+    # gate that inspected only the final block would quietly stop covering the
+    # code most likely to be edited by hand.
+    blocks = [b for b in re.findall(
+        r"<script>\n((?:(?!<" + r"/script>)[\s\S])*)\n<" + r"/script>", src)
+        if b.strip()]
+    if not blocks:
         return True
     path = os.path.join(tempfile.gettempdir(), "_blvk_check.js")
-    with io.open(path, "w", encoding="utf-8") as fh:
-        fh.write(m.group(1))
-    try:
-        res = subprocess.run(["node", "--check", path],
-                             capture_output=True, text=True)
-    except (OSError, ValueError):
-        print("  note: node not found - JS syntax not verified for %s" % name)
-        return True
-    if res.returncode != 0:
-        first = (res.stderr.strip().splitlines() or ["unknown error"])
-        print("ABORTED: %s contains invalid JavaScript" % name)
-        for line in first[:6]:
-            print("         " + line)
-        return False
+    for i, block in enumerate(blocks, 1):
+        with io.open(path, "w", encoding="utf-8") as fh:
+            fh.write(block)
+        try:
+            res = subprocess.run(["node", "--check", path],
+                                 capture_output=True, text=True)
+        except (OSError, ValueError):
+            print("  note: node not found - JS syntax not verified for %s" % name)
+            return True
+        if res.returncode != 0:
+            first = (res.stderr.strip().splitlines() or ["unknown error"])
+            print("ABORTED: %s has invalid JavaScript in script block %d of %d"
+                  % (name, i, len(blocks)))
+            for line in first[:6]:
+                print("         " + line)
+            return False
     return True
 
 
@@ -897,14 +905,18 @@ def compile_catalog(html, name=""):
         blob = blob.replace("</", "<\\/")
         html = html.replace("/*CATALOG_JSON*/", blob)
 
-    if "/*ENGINE_JS*/" in html:
-        path = os.path.join(ROOT, "dev", "engine.js")
+    for marker, src in (("/*ENGINE_JS*/", "engine.js"),
+                        ("/*DESIGN_JS*/", "design.js"),
+                        ("/*FORGE_JS*/", "forge.js")):
+        if marker not in html:
+            continue
+        path = os.path.join(ROOT, "dev", src)
         with io.open(path, encoding="utf-8") as fh:
-            engine = fh.read()
-        if "</script" in engine:
-            print("ABORTED: dev/engine.js contains a closing script tag")
+            code = fh.read()
+        if "</script" in code:
+            print("ABORTED: dev/%s contains a closing script tag" % src)
             raise SystemExit(1)
-        html = html.replace("/*ENGINE_JS*/", engine)
+        html = html.replace(marker, code)
 
     if "<!--CATALOG_STRIP-->" in html:
         chips = []
@@ -964,6 +976,10 @@ def main():
         page = build_tool(tool)
         if page is None:
             return 1
+        # The Lab tools design and price real agents now, so they are compiled
+        # against the same catalog as the site. A tool quoting from its own copy
+        # of the price list is the drift this whole arrangement exists to stop.
+        page = compile_catalog(page, tool["src"])
         out_dir = os.path.join(OUT_DIR, tool["slug"])
         if not os.path.isdir(out_dir):
             os.makedirs(out_dir)

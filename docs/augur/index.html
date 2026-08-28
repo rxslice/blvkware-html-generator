@@ -866,7 +866,7 @@
       <p class="sec-note">Interpretation of the evidence above. Click any finding to go deeper.</p>
       <div class="domains" id="domains"></div>
 
-      <div class="sec-title"><svg class="ic ic-16"><use href="#i-bolt"/></svg> What I'd build if this were my company</div>
+      <div class="sec-title"><svg class="ic ic-16"><use href="#i-bolt"/></svg> The jobs standing empty here</div>
       <p class="sec-note" id="oppNote"></p>
       <div class="opps" id="opps"></div>
 
@@ -890,6 +890,689 @@
   <div class="sr" id="live" aria-live="polite"></div>
 </div>
 
+<!-- Compiled at build time from dev/catalog.py, dev/engine.js and
+     dev/design.js. AUGUR reads a company; it does not decide what BlvkWare
+     sells or what it costs. -->
+<script id="blvk-catalog" type="application/json">{"tiers": {"1": {"key": 1, "name": "Operator", "label": "Operator · Tier I", "build": 3500, "ops": 349, "opsAnnual": 3490, "days": "10 business days", "buildDays": 10, "actions": 2000, "systems": 3, "channels": 2, "maxSystems": 5, "maxChannels": 4, "blurb": "Owns one job, start to finish."}, "2": {"key": 2, "name": "Deputy", "label": "Deputy · Tier II", "build": 9500, "ops": 899, "opsAnnual": 8990, "days": "25 business days", "buildDays": 25, "actions": 10000, "systems": 8, "channels": 6, "maxSystems": 14, "maxChannels": 8, "blurb": "Owns an entire function, with judgment and escalation."}}, "pricing": {"trial": 750, "extraSystem": 750, "extraChannel": 950, "rushPct": 0.4, "secondAgentPct": 0.3, "overagePer1000": 75, "prebuyPer1000": 30, "annualMonths": 10, "buyoutMultiple": 12, "tier2Weight": 20, "tier2Groups": 6, "splitWeight": 30}, "volume": [{"id": "light", "label": "Under 50 a week", "actions": 2000, "hint": "a small team, or a job that happens a few times a day"}, {"id": "standard", "label": "50 to 200 a week", "actions": 6000, "hint": "the usual answer for an established small business"}, {"id": "heavy", "label": "200 to 600 a week", "actions": 15000, "hint": "high volume, or several locations"}, {"id": "intense", "label": "More than 600 a week", "actions": 40000, "hint": "this is a Deputy's workload"}], "integrations": [{"id": "email", "name": "Email", "eg": "Google Workspace, Microsoft 365, Zoho"}, {"id": "calendar", "name": "Calendar / scheduling", "eg": "Google Calendar, Outlook, Calendly, Cal.com"}, {"id": "crm", "name": "CRM", "eg": "HubSpot, Pipedrive, Salesforce, Zoho, Go High Level"}, {"id": "fsm", "name": "Field service / jobs", "eg": "Jobber, ServiceTitan, Housecall Pro"}, {"id": "accounting", "name": "Accounting", "eg": "QuickBooks, Xero, FreshBooks"}, {"id": "payments", "name": "Payments", "eg": "Stripe, Square, PayPal"}, {"id": "helpdesk", "name": "Help desk / tickets", "eg": "Zendesk, Freshdesk, Intercom"}, {"id": "pm", "name": "Project / task", "eg": "Asana, Monday, ClickUp, Trello, Jira"}, {"id": "chatops", "name": "Team chat", "eg": "Slack, Microsoft Teams"}, {"id": "storage", "name": "Files / storage", "eg": "Google Drive, Dropbox, SharePoint"}, {"id": "sheets", "name": "Spreadsheets", "eg": "Google Sheets, Excel"}, {"id": "db", "name": "Database / warehouse", "eg": "Postgres, MySQL, BigQuery, Airtable"}, {"id": "ecom", "name": "E-commerce", "eg": "Shopify, WooCommerce"}, {"id": "telephony", "name": "Phone system", "eg": "RingCentral, Dialpad, Twilio, a plain mobile number"}, {"id": "portal", "name": "A web portal with no API", "eg": "a supplier, insurer, council or bank site you log into by hand"}, {"id": "custom", "name": "Something in-house", "eg": "your own software, or an API you own"}], "channels": [{"id": "email", "name": "Email", "gate": null}, {"id": "webchat", "name": "Web chat", "gate": null}, {"id": "inbox", "name": "A shared inbox", "gate": null}, {"id": "chatops", "name": "Slack or Teams", "gate": null}, {"id": "voicein", "name": "Inbound phone", "gate": null, "cap": "voice.inbound"}, {"id": "sms", "name": "SMS", "gate": "10dlc", "cap": "chan.sms"}, {"id": "whatsapp", "name": "WhatsApp", "gate": "meta"}, {"id": "voiceout", "name": "Outbound phone", "gate": null, "cap": "voice.outbound"}], "gates": {"10dlc": {"short": "US carrier registration required — weeks, not days", "long": "Texting your customers from a US business number requires A2P 10DLC registration with the carriers. Part of it is a manual review that no supplier can hurry, so budget weeks rather than days. Everything else in your agent goes live on schedule; SMS switches on when the registration clears, at no extra cost."}, "meta": {"short": "Meta business verification required — usually days", "long": "WhatsApp Business messaging needs Meta to verify the business. It is normally days rather than weeks, but it is outside our control and so is not promised inside the delivery window."}}, "capabilities": [{"id": "email.triage", "group": "Email", "name": "Email triage", "blurb": "Reads every incoming message, works out what it is and how urgent it is, and sorts it.", "price": 850, "ops": 0, "weight": 2, "needs": [], "integ": ["email"], "tpl": "tpl-email-triage", "accept": "Given 50 real messages from the last month, classification matches the owner's own sorting on at least 45.", "gate": null, "judgment": false}, {"id": "email.draft", "group": "Email", "name": "Reply drafting", "blurb": "Writes the reply, in your voice, using your prices and policies rather than generic filler.", "price": 950, "ops": 0, "weight": 2, "needs": ["email.triage"], "integ": ["email"], "tpl": "tpl-email-draft", "accept": "Ten drafts across the five most common message types are sendable with no edit or a trivial one.", "gate": null, "judgment": false}, {"id": "email.route", "group": "Email", "name": "Routing and assignment", "blurb": "Sends each message to the right person or queue with the context already attached.", "price": 650, "ops": 0, "weight": 1, "needs": ["email.triage"], "integ": ["email"], "tpl": "tpl-email-route", "accept": "Every routing rule in the job description fires correctly against a replayed week.", "gate": null, "judgment": false}, {"id": "email.sla", "group": "Email", "name": "Response deadlines", "blurb": "Tracks how long anything has been waiting and escalates before a customer has to chase.", "price": 550, "ops": 0, "weight": 1, "needs": ["email.triage"], "integ": ["email"], "tpl": "tpl-email-sla", "accept": "A message left unanswered past the agreed threshold produces an escalation, every time.", "gate": null, "judgment": false}, {"id": "email.thread", "group": "Email", "name": "Conversation memory", "blurb": "Holds a multi-message conversation without losing the thread or repeating itself.", "price": 750, "ops": 0, "weight": 2, "needs": ["email.triage"], "integ": ["email"], "tpl": "tpl-email-thread", "accept": "A five-turn exchange stays coherent and never re-asks something already answered.", "gate": null, "judgment": false}, {"id": "email.cleanup", "group": "Email", "name": "Backlog clearance", "blurb": "Works through the existing pile once, so you start from zero instead of from four hundred.", "price": 650, "ops": 0, "weight": 1, "needs": ["email.triage"], "integ": ["email"], "tpl": "tpl-email-cleanup", "accept": "The historic backlog is classified and dispositioned, with a written summary of what was found.", "gate": null, "judgment": false}, {"id": "chan.webchat", "group": "Channels", "name": "Web chat", "blurb": "A chat widget on your site that the agent actually staffs.", "price": 950, "ops": 0, "weight": 2, "needs": [], "integ": [], "tpl": "tpl-chan-webchat", "accept": "A visitor conversation completes end to end on a staging page without a human.", "gate": null, "judgment": false}, {"id": "chan.chatops", "group": "Channels", "name": "Slack or Teams", "blurb": "It works where your team already talks, and can be asked things directly.", "price": 950, "ops": 0, "weight": 1, "needs": [], "integ": ["chatops"], "tpl": "tpl-chan-chatops", "accept": "The agent responds in-channel and its actions appear in the audit log.", "gate": null, "judgment": false}, {"id": "chan.sms", "group": "Channels", "name": "SMS", "blurb": "Texts your customers from a business number and acts on what they text back.", "price": 950, "ops": 39, "weight": 2, "needs": [], "integ": ["telephony"], "tpl": "tpl-chan-sms", "accept": "A round-trip text conversation completes, and opt-outs are honoured immediately and permanently.", "gate": "10dlc", "judgment": false}, {"id": "chan.whatsapp", "group": "Channels", "name": "WhatsApp", "blurb": "The same conversation on WhatsApp, for the customers who live there.", "price": 950, "ops": 39, "weight": 2, "needs": [], "integ": [], "tpl": "tpl-chan-whatsapp", "accept": "A round-trip WhatsApp conversation completes and opt-outs are honoured.", "gate": "meta", "judgment": false}, {"id": "voice.inbound", "group": "Channels", "name": "Answers the phone", "blurb": "Picks up in a real voice, understands the call, and takes the actions that come out of it.", "price": 2500, "ops": 99, "weight": 4, "needs": [], "integ": ["telephony"], "tpl": "tpl-voice-inbound", "accept": "Ten test calls covering the agreed scenarios are handled without a human, including one it must escalate.", "gate": null, "judgment": false}, {"id": "voice.outbound", "group": "Channels", "name": "Places calls", "blurb": "Rings customers to confirm, remind, chase or follow up, and records the outcome.", "price": 2900, "ops": 99, "weight": 5, "needs": ["voice.inbound"], "integ": ["telephony"], "tpl": "tpl-voice-outbound", "accept": "Outbound calls place, record an outcome against the right record, and respect calling-hour rules.", "gate": null, "judgment": true}, {"id": "lead.capture", "group": "Leads", "name": "Lead capture", "blurb": "Catches every enquiry from every source and puts it in one place, with nothing lost.", "price": 650, "ops": 0, "weight": 1, "needs": [], "integ": ["crm"], "tpl": "tpl-lead-capture", "accept": "Enquiries from each configured source appear as records within a minute, with no duplicates.", "gate": null, "judgment": false}, {"id": "lead.enrich", "group": "Leads", "name": "Lead enrichment", "blurb": "Fills in what the enquiry didn't tell you, from public sources, before anyone reads it.", "price": 850, "ops": 0, "weight": 2, "needs": ["lead.capture"], "integ": [], "tpl": "tpl-lead-enrich", "accept": "Enrichment runs on every new lead and is marked clearly as inferred rather than stated.", "gate": null, "judgment": false}, {"id": "lead.qualify", "group": "Leads", "name": "Lead qualification", "blurb": "Asks the qualifying questions and scores the lead against what a good customer looks like for you.", "price": 950, "ops": 0, "weight": 3, "needs": ["lead.capture"], "integ": [], "tpl": "tpl-lead-qualify", "accept": "Scoring against 30 historic leads matches the owner's own judgment on at least 25.", "gate": null, "judgment": true}, {"id": "lead.route", "group": "Leads", "name": "Lead routing", "blurb": "Hot ones to you immediately, the rest handled without you.", "price": 450, "ops": 0, "weight": 1, "needs": ["lead.qualify"], "integ": [], "tpl": "tpl-lead-route", "accept": "Every routing branch fires correctly on a replayed set of historic leads.", "gate": null, "judgment": false}, {"id": "lead.nurture", "group": "Leads", "name": "Long-game nurture", "blurb": "Keeps in touch with the ones who said not yet, so they come back to you and not a competitor.", "price": 1100, "ops": 0, "weight": 3, "needs": ["lead.capture"], "integ": [], "tpl": "tpl-lead-nurture", "accept": "A not-now lead receives the agreed sequence, and it stops the moment they respond.", "gate": null, "judgment": true}, {"id": "quote.followup", "group": "Leads", "name": "Quote follow-up", "blurb": "Chases every quote until the customer answers one way or the other, then stops.", "price": 950, "ops": 0, "weight": 2, "needs": [], "integ": [], "tpl": "tpl-quote-followup", "accept": "A quote is chased on the agreed schedule, stops instantly on any reply, and records the reason it was lost.", "gate": null, "judgment": true}, {"id": "outreach.sequence", "group": "Leads", "name": "Outbound sequences", "blurb": "Runs a multi-step outreach sequence to a list you supply, and stops on any reply.", "price": 1100, "ops": 0, "weight": 3, "needs": [], "integ": [], "tpl": "tpl-outreach-sequence", "accept": "Sequences send on schedule, halt on reply, honour suppression, and every send is attributable.", "gate": null, "judgment": true}, {"id": "appt.book", "group": "Appointments", "name": "Booking", "blurb": "Offers real slots that respect travel time and job length, then books them.", "price": 950, "ops": 0, "weight": 2, "needs": [], "integ": ["calendar"], "tpl": "tpl-appt-book", "accept": "Offered slots never conflict, never breach buffer rules, and land on the right calendar.", "gate": null, "judgment": false}, {"id": "appt.remind", "group": "Appointments", "name": "Reminders and confirmations", "blurb": "Confirms, then reminds at the intervals that actually reduce no-shows.", "price": 450, "ops": 0, "weight": 1, "needs": ["appt.book"], "integ": ["calendar"], "tpl": "tpl-appt-remind", "accept": "Every booking produces the agreed confirmation and reminder sequence.", "gate": null, "judgment": false}, {"id": "appt.reschedule", "group": "Appointments", "name": "Rescheduling and no-shows", "blurb": "Handles the reschedule conversation without you, and fills a cancellation from the waiting list.", "price": 850, "ops": 0, "weight": 2, "needs": ["appt.book"], "integ": ["calendar"], "tpl": "tpl-appt-reschedule", "accept": "A reschedule request completes without a human, and a cancelled slot is offered onward.", "gate": null, "judgment": true}, {"id": "appt.setting", "group": "Appointments", "name": "Outbound appointment setting", "blurb": "Works a list and books meetings into the calendar, rather than waiting to be contacted.", "price": 1200, "ops": 0, "weight": 3, "needs": ["appt.book"], "integ": ["calendar"], "tpl": "tpl-appt-setting", "accept": "A worked list produces booked meetings with correct records and honoured opt-outs.", "gate": null, "judgment": true}, {"id": "crm.sync", "group": "Systems", "name": "CRM read and write", "blurb": "Reads and updates your CRM itself, so records are right without anyone typing.", "price": 1200, "ops": 0, "weight": 3, "needs": [], "integ": ["crm"], "tpl": "tpl-crm-sync", "accept": "Records created and updated by the agent match the field mapping exactly, with no orphan records.", "gate": null, "judgment": false}, {"id": "crm.logging", "group": "Systems", "name": "Interaction logging", "blurb": "Every call, message and outcome logged against the right record, automatically.", "price": 500, "ops": 0, "weight": 1, "needs": ["crm.sync"], "integ": ["crm"], "tpl": "tpl-crm-logging", "accept": "Every agent interaction appears on the correct record within a minute.", "gate": null, "judgment": false}, {"id": "crm.hygiene", "group": "Systems", "name": "CRM hygiene", "blurb": "Deduplicates, normalises and fills the gaps, continuously, instead of never.", "price": 900, "ops": 0, "weight": 2, "needs": ["crm.sync"], "integ": ["crm"], "tpl": "tpl-crm-hygiene", "accept": "A dry run over the live database reports duplicates and fixes, and no merge happens without approval.", "gate": null, "judgment": false}, {"id": "crm.pipeline", "group": "Systems", "name": "Pipeline discipline", "blurb": "Nothing sits in a stage forever. It moves work along or tells you why it can't.", "price": 850, "ops": 0, "weight": 2, "needs": ["crm.sync"], "integ": ["crm"], "tpl": "tpl-crm-pipeline", "accept": "Stale records are surfaced on the agreed threshold and progressed or escalated.", "gate": null, "judgment": true}, {"id": "workflow.multistep", "group": "Systems", "name": "Multi-step process", "blurb": "Runs a whole process across several systems, in order, without a person shepherding it.", "price": 1800, "ops": 0, "weight": 4, "needs": [], "integ": [], "tpl": "tpl-workflow-multistep", "accept": "The documented process completes end to end on real data, in the right order, at least three times.", "gate": null, "judgment": true}, {"id": "workflow.exception", "group": "Systems", "name": "Exception handling", "blurb": "When something doesn't fit the process, it works it out or escalates — it doesn't just stall.", "price": 850, "ops": 0, "weight": 3, "needs": ["workflow.multistep"], "integ": [], "tpl": "tpl-workflow-exception", "accept": "Each exception listed in the job description is either resolved or escalated with the reason attached.", "gate": null, "judgment": true}, {"id": "browser.operate", "group": "Systems", "name": "Operates web apps with no API", "blurb": "Logs into the portal and does the work by hand, the way a person would, when there is no other way in.", "price": 2400, "ops": 120, "weight": 5, "needs": [], "integ": ["portal"], "tpl": "tpl-browser-operate", "accept": "The task completes on the live portal on three consecutive days, and a UI change produces an alert rather than silent failure.", "gate": null, "judgment": false}, {"id": "browser.extract", "group": "Systems", "name": "Portal data extraction", "blurb": "Pulls what you need out of a system that won't export it.", "price": 1400, "ops": 60, "weight": 3, "needs": [], "integ": ["portal"], "tpl": "tpl-browser-extract", "accept": "Extracted data matches a hand-checked sample exactly, and a format change raises an alert.", "gate": null, "judgment": false}, {"id": "files.watch", "group": "Systems", "name": "Watches files and folders", "blurb": "Notices when something lands in a folder or a drive, and acts on it.", "price": 550, "ops": 0, "weight": 1, "needs": [], "integ": ["storage"], "tpl": "tpl-files-watch", "accept": "A file arriving in the watched location triggers the agreed action within the agreed window.", "gate": null, "judgment": false}, {"id": "api.custom", "group": "Systems", "name": "Your own software", "blurb": "Connects to the in-house system nobody else integrates with.", "price": 1400, "ops": 0, "weight": 3, "needs": [], "integ": ["custom"], "tpl": "tpl-api-custom", "accept": "Read and write against the customer's API succeed, with error handling and retries proven.", "gate": null, "judgment": false}, {"id": "doc.generate", "group": "Documents", "name": "Document generation", "blurb": "Produces the quote, contract, invoice or report itself, as a finished PDF.", "price": 850, "ops": 0, "weight": 2, "needs": [], "integ": [], "tpl": "tpl-doc-generate", "accept": "Generated documents match the approved template exactly, with correct figures on ten samples.", "gate": null, "judgment": false}, {"id": "doc.parse", "group": "Documents", "name": "Reads incoming documents", "blurb": "Opens the PDF, the invoice, the form, and pulls out what matters.", "price": 950, "ops": 0, "weight": 3, "needs": [], "integ": [], "tpl": "tpl-doc-parse", "accept": "Extraction from twenty real documents matches a hand-checked result on the agreed fields.", "gate": null, "judgment": false}, {"id": "pay.collect", "group": "Money", "name": "Payment collection", "blurb": "Sends payment links, takes deposits and issues invoices.", "price": 1200, "ops": 0, "weight": 3, "needs": [], "integ": ["payments"], "tpl": "tpl-pay-collect", "accept": "A test transaction completes end to end and reconciles against the right record.", "gate": null, "judgment": false}, {"id": "pay.chase", "group": "Money", "name": "Chases what's unpaid", "blurb": "Reminds before due, on due, and after — escalating tone gradually, stopping the moment it's paid.", "price": 850, "ops": 0, "weight": 2, "needs": ["pay.collect"], "integ": ["payments"], "tpl": "tpl-pay-chase", "accept": "The dunning sequence runs on schedule and halts within minutes of payment.", "gate": null, "judgment": true}, {"id": "recon.match", "group": "Money", "name": "Reconciliation", "blurb": "Matches what came in against what was owed, and flags what doesn't line up.", "price": 1600, "ops": 0, "weight": 4, "needs": ["pay.collect"], "integ": ["accounting"], "tpl": "tpl-recon-match", "accept": "A month of real transactions reconciles, with every discrepancy listed and explained.", "gate": null, "judgment": false}, {"id": "data.collect", "group": "Data", "name": "Data collection", "blurb": "Pulls the numbers out of the systems they're trapped in, on a schedule.", "price": 850, "ops": 0, "weight": 2, "needs": [], "integ": ["sheets"], "tpl": "tpl-data-collect", "accept": "Scheduled collection runs produce complete datasets, and a failed source raises an alert.", "gate": null, "judgment": false}, {"id": "data.analyze", "group": "Data", "name": "Analysis and answers", "blurb": "Answers questions about your own numbers, in plain language, with the working shown.", "price": 1200, "ops": 0, "weight": 3, "needs": ["data.collect"], "integ": [], "tpl": "tpl-data-analyze", "accept": "Ten questions answered against known data are correct and cite the rows they came from.", "gate": null, "judgment": true}, {"id": "data.viz", "group": "Data", "name": "Charts and visualisation", "blurb": "Turns the answer into something you can actually look at.", "price": 1250, "ops": 49, "weight": 3, "needs": ["data.collect"], "integ": [], "tpl": "tpl-data-viz", "accept": "Charts render correctly on desktop and mobile and match the underlying figures.", "gate": null, "judgment": false}, {"id": "data.report", "group": "Data", "name": "Scheduled reports", "blurb": "The Monday morning report writes and sends itself.", "price": 650, "ops": 0, "weight": 1, "needs": ["data.collect"], "integ": [], "tpl": "tpl-data-report", "accept": "The report generates and delivers on schedule for two consecutive cycles.", "gate": null, "judgment": false}, {"id": "data.alert", "group": "Data", "name": "Threshold alerts", "blurb": "Tells you the moment a number goes somewhere it shouldn't.", "price": 450, "ops": 0, "weight": 1, "needs": ["data.collect"], "integ": [], "tpl": "tpl-data-alert", "accept": "Each configured threshold fires correctly, and does not fire when it shouldn't.", "gate": null, "judgment": false}, {"id": "research.web", "group": "Data", "name": "Research", "blurb": "Goes and finds out — about a prospect, a competitor, a supplier, a market.", "price": 850, "ops": 0, "weight": 2, "needs": [], "integ": [], "tpl": "tpl-research-web", "accept": "Five research briefs are accurate, sourced, and clearly separate fact from inference.", "gate": null, "judgment": true}, {"id": "support.answer", "group": "Support", "name": "Answers support questions", "blurb": "Answers from your documentation rather than from the internet, and says so when it doesn't know.", "price": 950, "ops": 0, "weight": 2, "needs": ["knowledge.pack"], "integ": ["helpdesk"], "tpl": "tpl-support-answer", "accept": "Twenty real questions are answered correctly, and an unknown produces an escalation rather than a guess.", "gate": null, "judgment": true}, {"id": "support.status", "group": "Support", "name": "Proactive status updates", "blurb": "Tells the customer where things are before they have to ask.", "price": 650, "ops": 0, "weight": 1, "needs": [], "integ": [], "tpl": "tpl-support-status", "accept": "Status updates send at each agreed milestone against a replayed job.", "gate": null, "judgment": false}, {"id": "support.ticket", "group": "Support", "name": "Ticket handling", "blurb": "Opens, updates, escalates and closes tickets in the system you already use.", "price": 850, "ops": 0, "weight": 2, "needs": [], "integ": ["helpdesk"], "tpl": "tpl-support-ticket", "accept": "Full ticket lifecycle completes in the live help desk, with correct priority and ownership.", "gate": null, "judgment": false}, {"id": "onboard.run", "group": "Onboarding", "name": "Runs the checklist", "blurb": "Takes a new client or new hire through onboarding in order, the same way every time.", "price": 950, "ops": 0, "weight": 2, "needs": [], "integ": ["pm"], "tpl": "tpl-onboard-run", "accept": "A full onboarding run completes with every step recorded and nothing skipped.", "gate": null, "judgment": false}, {"id": "onboard.chase", "group": "Onboarding", "name": "Chases what's missing", "blurb": "Collects the documents and details, and keeps asking the humans who owe them.", "price": 650, "ops": 0, "weight": 1, "needs": ["onboard.run"], "integ": [], "tpl": "tpl-onboard-chase", "accept": "A missing item produces the agreed chase sequence and stops on receipt.", "gate": null, "judgment": false}, {"id": "knowledge.pack", "group": "Control", "name": "Knowledge pack", "blurb": "Your prices, policies, documents and SOPs loaded in, so it answers from your business.", "price": 900, "ops": 0, "weight": 2, "needs": [], "integ": [], "tpl": "tpl-knowledge-pack", "accept": "Twenty questions drawn from the source material are answered from it, with the source cited.", "gate": null, "judgment": false}, {"id": "approval.console", "group": "Control", "name": "Approval console", "blurb": "A queue where anything it wants to do waits for a human yes. This is what the Approve level runs on.", "price": 1100, "ops": 0, "weight": 2, "needs": [], "integ": [], "tpl": "tpl-approval-console", "accept": "Actions above the configured threshold queue rather than execute, and approval releases them correctly.", "gate": null, "judgment": false}, {"id": "dashboard", "group": "Control", "name": "Reporting dashboard", "blurb": "A live view of what it did, what it recovered, and where it escalated.", "price": 1400, "ops": 0, "weight": 3, "needs": [], "integ": [], "tpl": "tpl-dashboard", "accept": "Dashboard figures reconcile against the audit log for a full week.", "gate": null, "judgment": false}, {"id": "whitelabel", "group": "Control", "name": "White-label surfaces", "blurb": "Every page and message it touches carries your domain and your branding.", "price": 1500, "ops": 0, "weight": 2, "needs": [], "integ": [], "tpl": "tpl-whitelabel", "accept": "No BlvkWare branding appears on any customer-facing surface, and links resolve on the customer's domain.", "gate": null, "judgment": false}, {"id": "lang.extra", "group": "Control", "name": "Additional language", "blurb": "The same judgment and the same tone, in another language.", "price": 600, "ops": 0, "weight": 2, "needs": [], "integ": [], "tpl": "tpl-lang-extra", "accept": "Ten exchanges in the additional language are accurate and hold the agreed tone.", "gate": null, "judgment": false}, {"id": "export.api", "group": "Control", "name": "Data export and API", "blurb": "Everything it knows, available to your other systems, on demand or on a schedule.", "price": 700, "ops": 0, "weight": 2, "needs": [], "integ": [], "tpl": "tpl-export-api", "accept": "Export returns complete, well-formed data and the endpoint is authenticated.", "gate": null, "judgment": false}, {"id": "staging", "group": "Control", "name": "Staging environment", "blurb": "A safe copy to try changes against before they reach live customers.", "price": 500, "ops": 0, "weight": 1, "needs": [], "integ": [], "tpl": "tpl-staging", "accept": "A change deploys to staging, is exercised, and promotes to live without touching live data first.", "gate": null, "judgment": false}, {"id": "training", "group": "Control", "name": "Team training", "blurb": "Ninety minutes, remote, recorded, so your team knows how to work with it and when to overrule it.", "price": 450, "ops": 0, "weight": 0, "needs": [], "integ": [], "tpl": "tpl-training", "accept": "Session delivered and the recording handed over.", "gate": null, "judgment": false}], "capGroups": ["Email", "Channels", "Leads", "Appointments", "Systems", "Documents", "Money", "Data", "Support", "Onboarding", "Control"], "roles": [{"id": "email-manager", "family": "Communication", "name": "Email Manager", "oneLine": "The inbox stops being a swamp", "problem": "Four hundred unread, three people half-responsible, and the important one from Tuesday still buried. It reads everything, sorts it, routes it, and drafts the replies that write themselves.", "core": ["email.triage", "email.route", "email.draft"], "suggested": ["email.thread", "email.sla", "knowledge.pack", "email.cleanup"], "minTier": 1}, {"id": "front-desk", "family": "Communication", "name": "Front Desk", "oneLine": "All inbound, every channel, one memory", "problem": "The phone, the texts, the web form, the inbox — one worker owning all of it. A customer who called this morning and texts this afternoon isn't starting over.", "core": ["email.triage", "email.draft", "email.thread", "lead.capture", "appt.book", "knowledge.pack"], "suggested": ["voice.inbound", "chan.webchat", "lead.qualify", "appt.remind", "crm.logging"], "minTier": 2}, {"id": "support-agent", "family": "Communication", "name": "Support Agent", "oneLine": "Everything after the sale", "problem": "The part of the business that generates repeat work and referrals, and the part that always loses the fight for attention against new work. It doesn't lose that fight.", "core": ["support.answer", "knowledge.pack", "support.status"], "suggested": ["support.ticket", "email.triage", "chan.webchat", "email.sla"], "minTier": 1}, {"id": "lead-qualifier", "family": "Revenue", "name": "Lead Qualifier", "oneLine": "Only the real ones reach you", "problem": "Most enquiries aren't worth your time and a few are worth dropping everything for. Telling them apart is a job, and right now it's your job.", "core": ["lead.capture", "lead.qualify", "lead.route"], "suggested": ["lead.enrich", "crm.sync", "appt.book", "lead.nurture"], "minTier": 1}, {"id": "appointment-setter", "family": "Revenue", "name": "Appointment Setter", "oneLine": "The calendar fills itself", "problem": "Booking, confirming, reminding, rescheduling. The admin around appointments is nearly all of the work, and none of it needs a person.", "core": ["appt.book", "appt.remind", "appt.reschedule"], "suggested": ["lead.qualify", "crm.logging", "chan.sms", "appt.setting"], "minTier": 1}, {"id": "follow-up", "family": "Revenue", "name": "Follow-Up Agent", "oneLine": "Nothing you quoted goes quiet", "problem": "You sent the quote on Tuesday. Nobody rejected it — it just got buried. This chases every estimate until the customer actually answers.", "core": ["quote.followup"], "suggested": ["crm.logging", "lead.nurture", "doc.generate", "appt.book"], "minTier": 1}, {"id": "outreach", "family": "Revenue", "name": "Outreach Agent", "oneLine": "The list gets worked, every day", "problem": "Prospecting is the first thing to fall off the list when work gets busy, which means it fails hardest exactly when there is most to lose.", "core": ["outreach.sequence", "lead.capture"], "suggested": ["research.web", "lead.enrich", "appt.setting", "crm.sync"], "minTier": 1}, {"id": "revenue-deputy", "family": "Revenue", "name": "Revenue Deputy", "oneLine": "Owns the pipeline end to end", "problem": "From first enquiry to signed job. It moves work through the pipeline, chases what's stalled, and on Friday tells you what it won, what it lost, and why.", "core": ["lead.capture", "lead.qualify", "quote.followup", "crm.sync", "crm.pipeline", "data.report"], "suggested": ["doc.generate", "appt.book", "lead.nurture", "dashboard", "crm.logging"], "minTier": 2}, {"id": "crm-operator", "family": "Operations", "name": "CRM Operator", "oneLine": "The CRM stops lying to you", "problem": "A CRM is only worth what someone puts into it, which is why yours is half empty. This one keeps it true without anybody typing.", "core": ["crm.sync", "crm.logging", "crm.hygiene"], "suggested": ["lead.enrich", "crm.pipeline", "data.report", "api.custom"], "minTier": 1}, {"id": "workflow-operator", "family": "Operations", "name": "Workflow Operator", "oneLine": "The process runs without a shepherd", "problem": "The multi-step thing that crosses four systems and only works because one person remembers all of it. That person is the bottleneck, and they'd like a holiday.", "core": ["workflow.multistep", "workflow.exception"], "suggested": ["crm.sync", "files.watch", "doc.generate", "api.custom", "approval.console"], "minTier": 1}, {"id": "browser-operator", "family": "Operations", "name": "Browser Operator", "oneLine": "Works the systems that have no way in", "problem": "The supplier portal, the insurer's site, the council system — the ones with no API and no export, where somebody logs in and copies things by hand. It does that instead.", "core": ["browser.operate"], "suggested": ["browser.extract", "data.collect", "files.watch", "doc.parse", "data.alert"], "minTier": 1}, {"id": "onboarding", "family": "Operations", "name": "Onboarding Agent", "oneLine": "The first two weeks, identical every time", "problem": "New client or new hire, same problem: a checklist that exists in one person's head and gets done differently every time.", "core": ["onboard.run", "onboard.chase"], "suggested": ["doc.generate", "email.draft", "appt.book", "files.watch"], "minTier": 1}, {"id": "collections", "family": "Money", "name": "Collections Agent", "oneLine": "Invoices that chase themselves", "problem": "Chasing money is the job everyone hates and therefore the job nobody does. This one has no feelings about it and stays polite through every reminder.", "core": ["pay.chase", "pay.collect"], "suggested": ["doc.generate", "recon.match", "crm.logging", "data.alert"], "minTier": 1}, {"id": "back-office", "family": "Money", "name": "Back Office Deputy", "oneLine": "Quote to invoice to paid to reconciled", "problem": "The whole money pipeline across whatever tools you already run. It doesn't replace your accounting package; it operates it, which is the part nobody has time for.", "core": ["doc.generate", "pay.collect", "pay.chase", "recon.match", "crm.sync"], "suggested": ["doc.parse", "data.report", "data.alert", "approval.console", "dashboard"], "minTier": 2}, {"id": "data-analyst", "family": "Intelligence", "name": "Data Analyst", "oneLine": "Answers about your own numbers", "problem": "The figures exist, spread across five systems, and getting a straight answer out of them takes a day you don't have. Ask it instead.", "core": ["data.collect", "data.analyze"], "suggested": ["data.viz", "data.report", "data.alert", "dashboard", "api.custom"], "minTier": 1}, {"id": "reporting", "family": "Intelligence", "name": "Reporting Agent", "oneLine": "The Monday report writes itself", "problem": "Somebody spends half a day a week assembling a report that three people skim. That half-day is recoverable.", "core": ["data.collect", "data.report"], "suggested": ["data.viz", "data.alert", "dashboard", "browser.extract"], "minTier": 1}, {"id": "research", "family": "Intelligence", "name": "Research Agent", "oneLine": "Finds out, before the meeting", "problem": "Prospect research, competitor moves, supplier checks — all valuable, all skipped, because it's an hour nobody has.", "core": ["research.web"], "suggested": ["lead.enrich", "data.report", "crm.sync", "email.draft"], "minTier": 1}], "roleFamilies": ["Communication", "Revenue", "Operations", "Money", "Intelligence"], "modifiers": [{"id": "rush", "name": "Rush delivery", "kind": "pct", "pct": 0.4, "blurb": "Half the timeline. Priced against the build because it displaces other work."}], "autonomy": [{"id": "L0", "name": "Watch", "blurb": "Observes and reports. Takes no action.", "needs": []}, {"id": "L1", "name": "Draft", "blurb": "Prepares the action; a human sends it.", "needs": []}, {"id": "L2", "name": "Approve", "blurb": "Acts on its own, but stops for you above a line you set.", "needs": ["approval.console"]}, {"id": "L3", "name": "Operate", "blurb": "Acts within scope, escalates exceptions. Enabled in writing after supervision.", "needs": ["approval.console"]}], "setupNeeds": {"knowledge.pack": ["their documents, prices and policies"], "email.triage": ["a sample of real inbox traffic to calibrate against"], "email.draft": ["examples of how they already write to customers"], "email.cleanup": ["access to the existing backlog"], "lead.qualify": ["what a good customer looks like to them"], "lead.enrich": ["which sources they consider acceptable"], "appt.book": ["job durations, travel buffers and working hours"], "appt.setting": ["the list to work, and calling-hours rules"], "doc.generate": ["their document template and branding"], "doc.parse": ["ten real documents to check extraction against"], "pay.collect": ["a payment provider account"], "pay.chase": ["their escalation tone and terms"], "recon.match": ["a month of real transactions to reconcile against"], "browser.operate": ["portal credentials and a recorded walkthrough"], "browser.extract": ["portal credentials and the page layout"], "api.custom": ["API documentation and a credential"], "files.watch": ["the folder to watch and what should happen"], "crm.sync": ["field mapping to their CRM"], "crm.hygiene": ["a decision on what may be merged automatically"], "crm.pipeline": ["their stages and what counts as stale"], "chan.sms": ["A2P 10DLC registration — weeks, outside our control"], "chan.whatsapp": ["Meta business verification"], "voice.inbound": ["a phone number and a call-flow walkthrough"], "voice.outbound": ["a phone number and calling-hours rules"], "whitelabel": ["their domain and brand assets"], "lang.extra": ["which languages, and a native reviewer"], "workflow.multistep": ["the process written down, step by step"], "workflow.exception": ["the exceptions they already know about"], "support.answer": ["their documentation or help centre"], "support.ticket": ["their help desk and priority rules"], "onboard.run": ["their onboarding checklist"], "data.collect": ["credentials for each source"], "data.analyze": ["the questions they actually want answered"], "data.report": ["who receives it, and when"], "data.alert": ["the thresholds that matter to them"], "research.web": ["what a useful brief looks like to them"], "training": ["a date and the attendee list"]}}</script>
+<script>
+try { window.BLVK_CATALOG = JSON.parse(document.getElementById("blvk-catalog").textContent); }
+catch (e) { window.BLVK_CATALOG = null; }
+</script>
+<script>/* The agent pricing and specification engine.
+ *
+ * Injected verbatim into BOTH the buyer's configurator at /hire/ and the
+ * internal fulfilment console. That is deliberate: the console recomputes the
+ * price from the submitted specification and compares it against what the buyer
+ * was actually charged. If those ever disagree, the order is held rather than
+ * built — which is the only reliable defence against a configurator bug quietly
+ * selling a Deputy's workload at Operator money.
+ *
+ * Reads window.BLVK_CATALOG (compiled from dev/catalog.py at build time).
+ * Exposes window.BlvkEngine.
+ */
+(function (global) {
+    "use strict";
+
+    var C = global.BLVK_CATALOG;
+
+    function capById(id) { return C.capabilities.filter(function (c) { return c.id === id; })[0]; }
+    function roleById(id) { return C.roles.filter(function (r) { return r.id === id; })[0]; }
+    function bandById(id) { return C.volume.filter(function (v) { return v.id === id; })[0] || C.volume[0]; }
+    function chanById(id) { return C.channels.filter(function (c) { return c.id === id; })[0]; }
+
+    function keysOf(obj) {
+        return Object.keys(obj || {}).filter(function (k) { return obj[k]; });
+    }
+
+    /* Expand a selection to include everything it depends on. A capability
+     * whose dependency is missing does not half-work, it does not work — so the
+     * engine adds the dependency and the buyer is told, rather than the build
+     * failing inspection on day nine. */
+    function resolve(ids) {
+        var out = {}, added = [];
+        var queue = ids.slice();
+        while (queue.length) {
+            var id = queue.shift();
+            if (out[id]) continue;
+            var cap = capById(id);
+            if (!cap) continue;
+            out[id] = true;
+            cap.needs.forEach(function (n) {
+                if (!out[n]) {
+                    if (ids.indexOf(n) === -1 && added.indexOf(n) === -1) added.push(n);
+                    queue.push(n);
+                }
+            });
+        }
+        return { ids: Object.keys(out), added: added };
+    }
+
+    /* Channels are priced through their capability, never as a separate line,
+     * so that turning on the phone costs the voice capability and not the voice
+     * capability plus a channel surcharge. */
+    function channelCaps(channelIds) {
+        var out = [];
+        channelIds.forEach(function (cid) {
+            var ch = chanById(cid);
+            if (ch && ch.cap) out.push(ch.cap);
+        });
+        return out;
+    }
+
+    function autonomyNeeds(level) {
+        var a = C.autonomy.filter(function (x) { return x.id === level; })[0];
+        return a ? a.needs.slice() : [];
+    }
+
+    /* ---- tier derivation -------------------------------------------------
+     * The buyer never picks the tier. A scope that is really a Deputy cannot be
+     * bought at Operator money, and a buyer who genuinely needs less is not
+     * upsold into a tier they will not use. */
+    /* No single signal separates the tiers. Measured across the catalog, a
+     * Tier I role loaded with everything it suggests reaches 18 weight and 5
+     * capability groups, while a Tier II role's core alone sits at 11-14 weight
+     * and 3-4 groups — the ranges overlap. So the thresholds sit above what a
+     * fully-suggested Tier I configuration reaches, and the role's own declared
+     * minimum carries the cases that breadth cannot see.
+     *
+     * Systems and channels escalate only past the tier's *maximum*, not past
+     * what the base includes. The span between the two is sold at the published
+     * per-connection price, so a fourth system costs $750 rather than $6,000. */
+    function deriveTier(state, resolved) {
+        var role = roleById(state.roleId);
+        var systems = keysOf(state.systems).length;
+        var channels = keysOf(state.channels).length;
+
+        var weight = 0, groups = {};
+        resolved.ids.forEach(function (id) {
+            var cap = capById(id);
+            if (!cap) return;
+            weight += cap.weight;
+            groups[cap.group] = true;
+        });
+        var groupCount = Object.keys(groups).length;
+        var t1 = C.tiers[1];
+
+        var reasons = [];
+        if (role && role.minTier === 2) {
+            reasons.push("the " + role.name + " owns a whole function rather than one job");
+        }
+        if (weight > C.pricing.tier2Weight) {
+            reasons.push("you have scoped more work than one job's worth");
+        }
+        if (groupCount >= C.pricing.tier2Groups) {
+            reasons.push("it now spans " + groupCount + " different areas of your business rather than one");
+        }
+        if (systems > t1.maxSystems) {
+            reasons.push("it has to operate " + systems + " systems, which is past what a Tier I agent stretches to");
+        }
+        if (channels > t1.maxChannels) {
+            reasons.push("it works across " + channels + " channels, which is past what a Tier I agent stretches to");
+        }
+
+        var tier = reasons.length ? 2 : 1;
+
+        /* Crossing into Tier II costs the difference between the two base
+         * prices in a single click. That difference is real — it is 10 delivery
+         * days against 25 — but a buyer who meets it without warning reads it as
+         * a trap rather than a tier. So the engine reports when a configuration
+         * is one step away, and the page says so before the click rather than
+         * after it. */
+        var near = tier === 1 && (
+            weight > C.pricing.tier2Weight - 4 ||
+            groupCount >= C.pricing.tier2Groups - 1 ||
+            systems >= t1.maxSystems ||
+            channels >= t1.maxChannels
+        );
+
+        return {
+            tier: tier, key: tier, def: C.tiers[tier],
+            weight: weight, groups: groupCount, reasons: reasons,
+            systems: systems, channels: channels,
+            nearTier2: near,
+            tier2Delta: C.tiers[2].build - C.tiers[1].build,
+            oversized: weight > C.pricing.splitWeight
+        };
+    }
+
+    /* ---- pricing --------------------------------------------------------- */
+    function price(state) {
+        var role = roleById(state.roleId);
+        if (!role) return null;
+
+        var picked = keysOf(state.caps)
+            .concat(role.core)
+            .concat(channelCaps(keysOf(state.channels)))
+            .concat(autonomyNeeds(state.autonomy || "L1"));
+
+        // de-duplicate before resolving so `added` reports honestly
+        var seen = {}, unique = [];
+        picked.forEach(function (id) { if (!seen[id]) { seen[id] = 1; unique.push(id); } });
+
+        var resolved = resolve(unique);
+        var t = deriveTier(state, resolved);
+        var def = t.def;
+
+        var coreSet = {};
+        role.core.forEach(function (id) { coreSet[id] = true; });
+
+        var lines = [];
+        var addedBuild = 0, capOps = 0;
+        var gates = {};
+
+        resolved.ids.forEach(function (id) {
+            var cap = capById(id);
+            if (!cap) return;
+            if (cap.gate) gates[cap.gate] = true;
+            capOps += cap.ops || 0;
+            if (!coreSet[id]) {
+                addedBuild += cap.price;
+                lines.push({ kind: "cap", id: id, name: cap.name, amount: cap.price, group: cap.group });
+            }
+        });
+        lines.sort(function (a, b) { return a.group === b.group ? b.amount - a.amount : a.group < b.group ? -1 : 1; });
+
+        var extraSystems = Math.max(0, t.systems - def.systems);
+        var systemsCost = extraSystems * C.pricing.extraSystem;
+
+        var subtotal = def.build + addedBuild + systemsCost;
+
+        var rush = state.modifiers && state.modifiers.rush;
+        var rushCost = rush ? Math.round(subtotal * C.pricing.rushPct) : 0;
+        var build = subtotal + rushCost;
+
+        var band = bandById(state.volumeId);
+        var extraActions = Math.max(0, band.actions - def.actions);
+        var volumeOps = Math.ceil(extraActions / 1000) * C.pricing.prebuyPer1000;
+
+        var monthly = def.ops + capOps + volumeOps;
+        var annual = monthly * C.pricing.annualMonths;
+        var recurring = state.billing === "annual" ? annual : monthly;
+
+        var trial = !!state.trial;
+        var credit = trial ? C.pricing.trial : 0;
+        var dueNow = trial ? C.pricing.trial : build + recurring;
+
+        var days = def.buildDays;
+        if (rush) days = Math.ceil(days / 2);
+
+        return {
+            role: role, tier: t, def: def,
+            resolved: resolved, autoAdded: resolved.added,
+            lines: lines,
+            base: def.build, addedBuild: addedBuild,
+            extraSystems: extraSystems, systemsCost: systemsCost,
+            rush: !!rush, rushCost: rushCost,
+            subtotal: subtotal, build: build,
+            capOps: capOps, volumeOps: volumeOps, band: band,
+            includedActions: band.actions > def.actions ? band.actions : def.actions,
+            monthly: monthly, annual: annual, recurring: recurring,
+            trial: trial, credit: credit, dueNow: dueNow,
+            buildAfterCredit: build - credit,
+            gates: Object.keys(gates),
+            days: days,
+            billing: state.billing === "annual" ? "annual" : "monthly"
+        };
+    }
+
+    /* ---- the specification the operator actually builds from ------------- */
+    function spec(state, q) {
+        q = q || price(state);
+        if (!q) return null;
+
+        var caps = q.resolved.ids.map(function (id) {
+            var c = capById(id);
+            return { id: c.id, name: c.name, group: c.group, tpl: c.tpl, accept: c.accept, gate: c.gate };
+        }).sort(function (a, b) { return a.group < b.group ? -1 : a.group > b.group ? 1 : 0; });
+
+        /* Two different things end up on this list and the operator must be able
+         * to tell them apart. A "declared" system is one the buyer ticked and
+         * paid a connection fee for beyond the tier's allowance. An "implied"
+         * one comes with a capability they bought — the voice capability already
+         * covers wiring the phone system — so it is in scope and already paid
+         * for, but it is not what the connection count was charged on. Merging
+         * them silently is how a build ends up wiring more than was sold. */
+        var integ = {};
+        keysOf(state.systems).forEach(function (i) { integ[i] = "declared"; });
+        q.resolved.ids.forEach(function (id) {
+            var c = capById(id);
+            if (!c) return;
+            c.integ.forEach(function (i) { if (!integ[i]) integ[i] = "implied"; });
+        });
+
+        var integrations = Object.keys(integ).map(function (id) {
+            var d = C.integrations.filter(function (x) { return x.id === id; })[0];
+            var by = [];
+            if (integ[id] === "implied") {
+                q.resolved.ids.forEach(function (cid) {
+                    var c = capById(cid);
+                    if (c && c.integ.indexOf(id) !== -1) by.push(c.name);
+                });
+            }
+            return {
+                id: id, name: d ? d.name : id,
+                source: integ[id],
+                requiredBy: by,
+                detail: (state.systemDetail && state.systemDetail[id]) || ""
+            };
+        });
+
+        return {
+            schema: "blvkware.agent-order/1",
+            ref: state.ref || null,
+            role: { id: q.role.id, name: q.role.name, family: q.role.family },
+            tier: { key: q.tier.key, name: q.def.name, derivedBecause: q.tier.reasons, weight: q.tier.weight },
+            autonomy: state.autonomy || "L1",
+            channels: keysOf(state.channels).map(function (id) {
+                var c = chanById(id);
+                return { id: id, name: c ? c.name : id, gate: c ? c.gate : null };
+            }),
+            integrations: integrations,
+            volume: { id: q.band.id, label: q.band.label, includedActions: q.includedActions },
+            capabilities: caps,
+            templates: caps.map(function (c) { return c.tpl; }),
+            acceptance: caps.filter(function (c) { return c.accept; })
+                            .map(function (c) { return { cap: c.id, name: c.name, test: c.accept }; }),
+            gates: q.gates,
+            delivery: { businessDays: q.days, rush: q.rush },
+            commercial: {
+                build: q.build, subtotal: q.subtotal, rushCost: q.rushCost,
+                monthly: q.monthly, annual: q.annual, billing: q.billing,
+                trial: q.trial, credit: q.credit, dueNow: q.dueNow
+            },
+            business: state.answers || {}
+        };
+    }
+
+    /* Recompute a submitted spec from scratch and compare. Used by the
+     * fulfilment console before any build work starts. */
+    function verify(submitted) {
+        if (!submitted || submitted.schema !== "blvkware.agent-order/1") {
+            return { ok: false, fatal: "Not a BlvkWare agent order." };
+        }
+        var state = {
+            roleId: submitted.role && submitted.role.id,
+            caps: {}, systems: {}, channels: {},
+            volumeId: submitted.volume && submitted.volume.id,
+            autonomy: submitted.autonomy,
+            billing: submitted.commercial && submitted.commercial.billing,
+            trial: !!(submitted.commercial && submitted.commercial.trial),
+            modifiers: { rush: !!(submitted.delivery && submitted.delivery.rush) }
+        };
+        (submitted.capabilities || []).forEach(function (c) { state.caps[c.id] = true; });
+        (submitted.integrations || []).forEach(function (i) { state.systems[i.id] = true; });
+        (submitted.channels || []).forEach(function (c) { state.channels[c.id] = true; });
+
+        var q = price(state);
+        if (!q) return { ok: false, fatal: "Unknown role: " + state.roleId };
+
+        var was = submitted.commercial || {};
+        var diffs = [];
+        function cmp(label, got, expect) {
+            if (Number(got) !== Number(expect)) {
+                diffs.push({ label: label, charged: Number(got), recomputed: Number(expect) });
+            }
+        }
+        cmp("Build", was.build, q.build);
+        cmp("Monthly", was.monthly, q.monthly);
+        cmp("Due at order", was.dueNow, q.dueNow);
+        if (submitted.tier && Number(submitted.tier.key) !== q.tier.key) {
+            diffs.push({ label: "Tier", charged: "Tier " + submitted.tier.key, recomputed: "Tier " + q.tier.key });
+        }
+        return { ok: diffs.length === 0, diffs: diffs, quote: q, spec: spec(state, q) };
+    }
+
+    function money(n) {
+        return "$" + Number(n).toLocaleString("en-US");
+    }
+
+    global.BlvkEngine = {
+        price: price, spec: spec, verify: verify, resolve: resolve,
+        deriveTier: deriveTier, capById: capById, roleById: roleById,
+        bandById: bandById, chanById: chanById, keysOf: keysOf, money: money,
+        catalog: C
+    };
+})(window);
+</script>
+<script>/* The design engine: business signals in, a costed agent design out.
+ *
+ * Shared by AUGUR (find the need), SCRY (design the agent) and SIGIL (forge it),
+ * so all three propose the same thing for the same business.
+ *
+ * The rule that governs this whole file: **the model interprets, the catalog
+ * decides.** A language model is good at reading a business and saying "these
+ * people are drowning in quotes nobody chases". It is not allowed to say what
+ * that costs, or to invent a capability. So every model output is filtered
+ * through `adopt()`, which discards anything that is not a real catalog id, and
+ * pricing only ever happens in BlvkEngine.
+ *
+ * The failure this prevents is specific and expensive: a hallucinated quote is
+ * a number a buyer will hold us to.
+ *
+ * Reads window.BLVK_CATALOG and window.BlvkEngine. Exposes window.BlvkDesign.
+ */
+(function (global) {
+    "use strict";
+
+    var C = global.BLVK_CATALOG;
+    var E = global.BlvkEngine;
+
+    /* ---------------------------------------------------------------
+     * Signals — the observable facts that imply an agent is worth having.
+     *
+     * Each is something a person can confirm about their own business in one
+     * sentence, because a diagnostic the buyer cannot check is just an opinion.
+     * `roles` maps the signal onto catalog roles with a weight: how strongly
+     * this signal argues for that role.
+     * ------------------------------------------------------------- */
+    var SIGNALS = [
+        { id: "quotes_unchased", ask: "You send quotes or estimates and nobody reliably chases them",
+          evidence: "quotes, estimates, proposals sent by email",
+          roles: { "follow-up": 5, "revenue-deputy": 3, "crm-operator": 1 } },
+
+        { id: "slow_reply", ask: "New enquiries can wait hours — or overnight — for a first reply",
+          evidence: "contact form, no live chat, no stated response time",
+          roles: { "lead-qualifier": 4, "front-desk": 4, "email-manager": 2 } },
+
+        { id: "missed_calls", ask: "Calls go unanswered when you're on a job",
+          evidence: "a phone number as the primary call to action",
+          roles: { "front-desk": 5, "appointment-setter": 2 } },
+
+        { id: "inbox_swamp", ask: "A shared inbox is where things go to die",
+          evidence: "info@ or admin@ as the published address",
+          roles: { "email-manager": 5, "support-agent": 2 } },
+
+        { id: "manual_booking", ask: "Booking and rescheduling is done by hand, by a person",
+          evidence: "no online booking; 'call us to arrange'",
+          roles: { "appointment-setter": 5, "front-desk": 3 } },
+
+        { id: "unpaid_invoices", ask: "You are owed money you haven't chased",
+          evidence: "invoicing mentioned; payment terms published",
+          roles: { "collections": 5, "back-office": 3 } },
+
+        { id: "crm_rot", ask: "Your CRM is only as good as whoever last remembered to update it",
+          evidence: "a CRM in the stack with no automation around it",
+          roles: { "crm-operator": 5, "revenue-deputy": 2 } },
+
+        { id: "portal_by_hand", ask: "Somebody logs into a supplier or insurer portal and copies things out",
+          evidence: "supplier, insurer, council or trade portal referenced",
+          roles: { "browser-operator": 6 } },
+
+        { id: "no_reporting", ask: "Getting a straight answer out of your own numbers takes a day",
+          evidence: "several systems, no dashboard, spreadsheet reporting",
+          roles: { "data-analyst": 5, "reporting": 4 } },
+
+        { id: "repeat_questions", ask: "The same customer questions get answered over and over",
+          evidence: "an FAQ page, published policies, a help centre",
+          roles: { "support-agent": 5, "email-manager": 2 } },
+
+        { id: "onboarding_adhoc", ask: "Onboarding a new client or hire is different every time",
+          evidence: "a documented process, a welcome pack, a checklist",
+          roles: { "onboarding": 5 } },
+
+        { id: "no_outreach", ask: "Prospecting is the first thing to fall off when work gets busy",
+          evidence: "a sales motion with no visible sequencing",
+          roles: { "outreach": 4, "research": 2 } },
+
+        { id: "no_reviews", ask: "You do good work and have far fewer reviews than you deserve",
+          evidence: "few or no public reviews against visible volume",
+          roles: { "follow-up": 2, "support-agent": 2 } },
+
+        { id: "multi_system", ask: "A job crosses four systems and only one person knows the whole path",
+          evidence: "several disconnected tools in the stack",
+          roles: { "workflow-operator": 6, "back-office": 3 } },
+
+        { id: "post_sale_drop", ask: "After the sale, customers hear nothing until they chase",
+          evidence: "no status updates, no service portal",
+          roles: { "support-agent": 4, "front-desk": 2 } }
+    ];
+
+    var SIGNAL_BY_ID = {};
+    SIGNALS.forEach(function (s) { SIGNAL_BY_ID[s.id] = s; });
+
+    /* Integration categories a role usually implies, so a design arrives with a
+     * sensible stack rather than an empty one the buyer has to guess at. */
+    var ROLE_SYSTEMS = {
+        "email-manager": ["email"],
+        "front-desk": ["email", "calendar", "crm", "telephony"],
+        "support-agent": ["email", "helpdesk"],
+        "lead-qualifier": ["email", "crm"],
+        "appointment-setter": ["calendar", "crm"],
+        "follow-up": ["email", "crm"],
+        "outreach": ["email", "crm"],
+        "revenue-deputy": ["email", "crm", "calendar"],
+        "crm-operator": ["crm"],
+        "workflow-operator": ["crm", "pm", "storage"],
+        "browser-operator": ["portal", "sheets"],
+        "onboarding": ["email", "pm", "storage"],
+        "collections": ["accounting", "payments", "email"],
+        "back-office": ["accounting", "payments", "crm"],
+        "data-analyst": ["sheets", "db"],
+        "reporting": ["sheets", "db"],
+        "research": ["crm"]
+    };
+
+    function roleById(id) { return E.roleById(id); }
+    function capById(id) { return E.capById(id); }
+
+    /* ---------------------------------------------------------------
+     * Ranking: which agent should this business hire first?
+     * ------------------------------------------------------------- */
+    function rank(signalIds, opts) {
+        opts = opts || {};
+        var scores = {}, why = {};
+
+        /* Signals decay by the order they were reported. What a business leads
+         * with is what actually hurts; without this, three mild secondary
+         * mentions outrank the one thing they opened with — which is how a firm
+         * complaining that nobody chases its quotes gets recommended a CRM
+         * tidier instead of a Follow-Up Agent. */
+        (signalIds || []).forEach(function (sid, i) {
+            var sig = SIGNAL_BY_ID[sid];
+            if (!sig) return;
+            var decay = Math.pow(0.82, i);
+            Object.keys(sig.roles).forEach(function (roleId) {
+                if (!roleById(roleId)) return;
+                scores[roleId] = (scores[roleId] || 0) + sig.roles[roleId] * decay;
+                (why[roleId] = why[roleId] || []).push(sig.ask);
+            });
+        });
+
+        /* A role named after reading the whole description is evidence, not a
+         * footnote. Weighted below a lead signal but well above a passing one. */
+        (opts.nominated || []).forEach(function (rid, i) {
+            if (!roleById(rid)) return;
+            scores[rid] = (scores[rid] || 0) + Math.max(4 - i * 1.5, 1);
+            (why[rid] = why[rid] || []).unshift("named directly from how you described the business");
+        });
+
+        var out = Object.keys(scores).map(function (roleId) {
+            var role = roleById(roleId);
+            return {
+                roleId: roleId, role: role, score: scores[roleId],
+                reasons: why[roleId].slice(0, 3),
+                tier: role.minTier
+            };
+        });
+
+        // Strongest signal first; on a tie prefer the cheaper tier, because a
+        // first hire that costs less is a first hire that actually happens.
+        out.sort(function (a, b) {
+            return b.score - a.score || a.tier - b.tier ||
+                   (a.role.name < b.role.name ? -1 : 1);
+        });
+        return opts.limit ? out.slice(0, opts.limit) : out;
+    }
+
+    /* ---------------------------------------------------------------
+     * Designing one agent.
+     * ------------------------------------------------------------- */
+
+    /* Which of a role's suggested capabilities this business actually needs.
+     * Everything a buyer does not need is money they should not spend, and a
+     * design that ticks every box is a design nobody trusts. */
+    function relevantSuggestions(role, signalIds, systems) {
+        var sigs = {}; (signalIds || []).forEach(function (s) { sigs[s] = true; });
+        var sys = {}; (systems || []).forEach(function (s) { sys[s] = true; });
+
+        return role.suggested.filter(function (cid) {
+            var cap = capById(cid);
+            if (!cap) return false;
+            // A capability whose integration the business does not have is
+            // noise; do not sell a CRM writer to somebody with no CRM.
+            if (cap.integ.length && !cap.integ.some(function (i) { return sys[i]; })) {
+                // telephony and portal are opt-in, never assumed
+                if (cap.integ.indexOf("telephony") !== -1 ||
+                    cap.integ.indexOf("portal") !== -1) return false;
+            }
+            // Anything with a registration gate stays out of a default design.
+            if (cap.gate) return false;
+            return true;
+        });
+    }
+
+    function design(roleId, opts) {
+        opts = opts || {};
+        var role = roleById(roleId);
+        if (!role) return null;
+
+        var systems = (opts.systems && opts.systems.length)
+            ? opts.systems.slice() : (ROLE_SYSTEMS[roleId] || ["email"]).slice();
+        var channels = (opts.channels && opts.channels.length)
+            ? opts.channels.slice() : ["email"];
+
+        var chosen = {};
+        role.core.forEach(function (c) { chosen[c] = true; });
+        var suggested = opts.capabilities
+            ? opts.capabilities.filter(function (c) { return capById(c); })
+            : relevantSuggestions(role, opts.signals, systems);
+        suggested.forEach(function (c) { chosen[c] = true; });
+
+        var state = {
+            roleId: roleId,
+            caps: chosen,
+            systems: systems.reduce(function (a, s) { a[s] = true; return a; }, {}),
+            systemDetail: opts.systemDetail || {},
+            channels: channels.reduce(function (a, c) { a[c] = true; return a; }, {}),
+            volumeId: opts.volumeId || "standard",
+            autonomy: opts.autonomy || "L1",
+            modifiers: {},
+            billing: opts.billing || "monthly",
+            trial: !!opts.trial,
+            answers: opts.answers || {},
+            ref: opts.ref || null
+        };
+
+        var quote = E.price(state);
+        return {
+            roleId: roleId, role: role, state: state, quote: quote,
+            spec: E.spec(state, quote),
+            signals: (opts.signals || []).slice(),
+            reasons: (opts.reasons || []).slice()
+        };
+    }
+
+    /* ---------------------------------------------------------------
+     * Adopting model output. Nothing the model says is trusted directly.
+     * ------------------------------------------------------------- */
+    function adopt(raw) {
+        raw = raw || {};
+        var out = { signals: [], roles: [], capabilities: [], systems: [],
+                    channels: [], notes: [], dropped: [] };
+
+        (raw.signals || []).forEach(function (s) {
+            var id = typeof s === "string" ? s : (s && s.id);
+            if (SIGNAL_BY_ID[id]) out.signals.push(id);
+            else if (id) out.dropped.push("signal:" + id);
+        });
+        (raw.roles || []).forEach(function (r) {
+            var id = typeof r === "string" ? r : (r && r.id);
+            if (roleById(id)) out.roles.push(id);
+            else if (id) out.dropped.push("role:" + id);
+        });
+        (raw.capabilities || []).forEach(function (c) {
+            var id = typeof c === "string" ? c : (c && c.id);
+            if (capById(id)) out.capabilities.push(id);
+            else if (id) out.dropped.push("capability:" + id);
+        });
+        (raw.systems || []).forEach(function (s) {
+            var id = typeof s === "string" ? s : (s && s.id);
+            if (C.integrations.some(function (i) { return i.id === id; })) out.systems.push(id);
+            else if (id) out.dropped.push("system:" + id);
+        });
+        (raw.channels || []).forEach(function (c) {
+            var id = typeof c === "string" ? c : (c && c.id);
+            if (C.channels.some(function (x) { return x.id === id; })) out.channels.push(id);
+            else if (id) out.dropped.push("channel:" + id);
+        });
+        (raw.notes || []).forEach(function (n) {
+            if (typeof n === "string" && n.trim()) out.notes.push(n.trim());
+        });
+        out.business = typeof raw.business === "string" ? raw.business : "";
+        out.summary = typeof raw.summary === "string" ? raw.summary : "";
+        return out;
+    }
+
+    /* The instruction fragment every tool appends, so the model is constrained
+     * to the catalog rather than asked to be creative about the product. */
+    function vocabulary() {
+        var lines = [];
+        lines.push("SIGNALS you may report (use the id exactly):");
+        SIGNALS.forEach(function (s) {
+            lines.push("  " + s.id + " — " + s.ask);
+        });
+        lines.push("");
+        lines.push("ROLES you may recommend (use the id exactly):");
+        C.roles.forEach(function (r) {
+            lines.push("  " + r.id + " — " + r.name + ": " + r.oneLine);
+        });
+        lines.push("");
+        lines.push("SYSTEMS you may name (use the id exactly):");
+        lines.push("  " + C.integrations.map(function (i) { return i.id; }).join(", "));
+        lines.push("");
+        lines.push("RULES:");
+        lines.push("  - Never state a price, a fee, or a timeline. Those are computed, not written.");
+        lines.push("  - Never invent a role, capability or system id. Anything not on these lists is discarded.");
+        lines.push("  - Only report a signal you can point to actual evidence for.");
+        return lines.join("\n");
+    }
+
+    /* ---------------------------------------------------------------
+     * Readiness — how much of this can be built without the operator.
+     * ------------------------------------------------------------- */
+
+    /* What each capability needs before it can run for real comes from the
+     * catalog (SETUP_NEEDS), so the buyer-facing readiness estimate and the
+     * operator's handoff sheet are generated from one list. */
+    var NEEDS = (C && C.setupNeeds) || {};
+
+    function readiness(spec) {
+        var auto = [], manual = [], gated = [];
+        (spec.capabilities || []).forEach(function (c) {
+            var cap = capById(c.id);
+            if (!cap) return;
+            var entry = { id: c.id, name: cap.name, group: cap.group,
+                          needs: NEEDS[c.id] || [] };
+            if (cap.gate) { entry.gate = cap.gate; gated.push(entry); }
+            else if (entry.needs.length) manual.push(entry);
+            else auto.push(entry);
+        });
+        var total = auto.length + manual.length + gated.length;
+        return {
+            auto: auto, manual: manual, gated: gated, total: total,
+            // What can be stood up from the design alone, with no human input.
+            percent: total ? Math.round((auto.length / total) * 100) : 0
+        };
+    }
+
+    global.BlvkDesign = {
+        SIGNALS: SIGNALS, SIGNAL_BY_ID: SIGNAL_BY_ID, ROLE_SYSTEMS: ROLE_SYSTEMS,
+        NEEDS: NEEDS,
+        rank: rank, design: design, adopt: adopt, vocabulary: vocabulary,
+        readiness: readiness, relevantSuggestions: relevantSuggestions
+    };
+})(window);
+</script>
 <script>
 (function () {
   'use strict';
@@ -897,6 +1580,7 @@
   var AI = (typeof root !== 'undefined' && root && typeof root.generateText === 'function') ? root : null;
 
   var $ = function (s) { return document.querySelector(s); };
+  var CAT = window.BLVK_CATALOG, ENG = window.BlvkEngine, DES = window.BlvkDesign;
   var el = {
     stageAim: $('#stageAim'), stageRecon: $('#stageRecon'), stageRep: $('#stageRep'),
     fUrl: $('#fUrl'), fInd: $('#fInd'), fCmp: $('#fCmp'),
@@ -1335,25 +2019,24 @@
       '  "operations": [ {"title":"", "detail":"", "evidence":"", "tag":"manual process | repetitive work | automation | bottleneck"} ],\n' +
       '  "competitive": [ {"title":"", "detail":"", "evidence":"", "tag":"their advantage | their weakness | differentiation | market gap"} ],\n' +
       '  "infrastructure": [ {"title":"", "detail":"", "evidence":"", "tag":"ux | conversion | performance | integration | acquisition"} ],\n' +
-      '  "opportunities": [ {\n' +
-      '     "name":"Automated Quote Recovery System",\n' +
-      '     "problem":"what is happening now that costs them money",\n' +
-      '     "monthlyLow": 4200, "monthlyHigh": 11800,\n' +
-      '     "basis":"one sentence on how the range was derived",\n' +
-      '     "pipeline":["Website","Lead Capture","Qualification AI","CRM","SMS","Follow-up Agent","Quote","Recovery"],\n' +
-      '     "complexity":"Low | Medium | High", "weeksLow":2, "weeksHigh":4\n' +
-      '  } ]\n' +
+      '  "signals": ["signal_id", "signal_id"],\n' +
+      '  "roles": ["role_id"],\n' +
+      '  "systems": ["system_id"],\n' +
+      '  "signalNotes": ["one short sentence of evidence per signal, in order"]\n' +
       '}\n\n' +
+      DES.vocabulary() + '\n\n' +
       'RULES\n' +
-      '- 3 to 5 findings in each of the four categories. 3 opportunities, ordered by value.\n' +
+      '- 3 to 5 findings in each of the four categories.\n' +
+      '- signals: 3 to 6 from the vocabulary below, most costly first, only where the page gives you evidence.\n' +
+      '- roles: 1 to 3 from the vocabulary, best first.\n' +
+      '- signalNotes: one per signal, naming the observed fact it rests on.\n' +
       '- Anchor findings to the observed evidence wherever you can, and put the exact fact in "evidence". ' +
       'If a finding is an industry inference rather than something observed, leave "evidence" empty. Never invent an observation.\n' +
       '- Do not report the absence of a tracking script as a privacy virtue or a security finding; read it commercially.\n' +
       '- Money ranges are monthly recurring revenue or cost recovered, modelled from public industry benchmarks for a ' +
       'business of this apparent size. Be specific and defensible in "basis". Never imply you have their real numbers.\n' +
-      '- Opportunity names are systems a software engineer would build and ship, not marketing advice. ' +
-      '"Automated Quote Recovery System", not "improve your follow-up".\n' +
-      '- pipeline is 5 to 9 short technical stages naming real components.\n' +
+      '- Never state a price, a fee, a timeline or a monthly figure anywhere. Those are computed from a\n' +
+      '  published catalog, and a number you invent is one a business would be held to.\n' +
       '- Be specific to THIS company. A finding that would apply to any business on earth is a failed finding.\n' +
       'Output raw JSON only, starting with { and ending with }.';
   }
@@ -1424,6 +2107,7 @@
   function normalize(raw) {
     var m = raw || {};
     var c = m.company || {};
+    var adopted = DES ? DES.adopt(m) : { signals: [], roles: [], systems: [] };
     var opps = arr(m.opportunities || m.builds || m.systems).map(function (o) {
       var lo = num(o && (o.monthlyLow != null ? o.monthlyLow : o.low), 0);
       var hi = num(o && (o.monthlyHigh != null ? o.monthlyHigh : o.high), 0);
@@ -1458,6 +2142,15 @@
       operations: normFindings(m.operations || m.operational || m.operationalWeaknesses),
       competitive: normFindings(m.competitive || m.competitivePositioning || m.competition),
       infrastructure: normFindings(m.infrastructure || m.digital || m.digitalInfrastructure),
+      // Everything the model says about which agents apply is filtered through
+      // BlvkDesign.adopt(), which drops any id that is not in the catalog. A
+      // fabricated role or signal never reaches the report.
+      signals: adopted.signals,
+      roles: adopted.roles,
+      systems: adopted.systems,
+      signalNotes: arr(m.signalNotes || m.notes).filter(function (x) {
+        return typeof x === 'string' && x.trim();
+      }),
       opportunities: opps
     };
   }
@@ -1585,34 +2278,86 @@
     el.domains.innerHTML = h;
   }
 
+  /* The agents this company could hire, ranked from the signals AUGUR observed
+   * and priced from the live catalog. Nothing here is invented: the read is
+   * AUGUR's, the product and the number are the catalog's. */
   function renderOpps(rep) {
+    if (!DES || !ENG || !rep.signals || !rep.signals.length) {
+      el.opps.innerHTML = '<div class="opp"><h3>No agent recommended</h3>' +
+        '<div class="opp-block"><div class="opp-v">Nothing on this page pointed clearly at a job ' +
+        'an agent should take over. That is a real answer, not a failure — ' +
+        '<a href="/scry/">describe the business to SCRY</a> and it will design against what you say ' +
+        'rather than what the website shows.</div></div></div>';
+      return;
+    }
+
+    var ranked = DES.rank(rep.signals, { limit: 3, nominated: rep.roles || [] });
     var h = '';
-    rep.opportunities.forEach(function (o, i) {
-      var range = (o.monthlyLow && o.monthlyHigh)
-        ? money(o.monthlyLow) + '–' + money(o.monthlyHigh)
-        : (o.monthlyHigh ? money(o.monthlyHigh) : 'Not sized');
-      var weeks = o.weeksHigh && o.weeksHigh !== o.weeksLow
-        ? o.weeksLow + '–' + o.weeksHigh + ' weeks' : o.weeksLow + ' weeks';
+    ranked.forEach(function (r, i) {
+      var d = DES.design(r.roleId, {
+        signals: rep.signals,
+        systems: (rep.systems && rep.systems.length) ? rep.systems : null,
+        answers: { business: (rep.company && rep.company.name) || '' }
+      });
+      if (!d) return;
+      var q = d.quote;
+      var ready = DES.readiness(d.spec);
+      var groups = [];
+      d.spec.capabilities.forEach(function (c) {
+        var cap = ENG.capById(c.id);
+        if (cap && groups.indexOf(cap.group) === -1) groups.push(cap.group);
+      });
+
       h += '<div class="opp">' +
-        '<div class="opp-n">Opportunity #' + (i + 1) + '</div>' +
-        '<h3>' + esc(o.name) + '</h3>' +
-        '<div class="opp-money"><b>' + esc(range) + '</b><span>estimated monthly opportunity · modelled from industry benchmarks</span></div>' +
-        (o.problem ? '<div class="opp-block"><div class="opp-k">Problem detected</div><div class="opp-v">' + esc(o.problem) + '</div></div>' : '') +
-        '<div class="opp-block"><div class="opp-k">Proposed system</div><div class="pipe">' +
-          o.pipeline.map(function (n, j) {
+        '<div class="opp-n">' + (i === 0 ? 'Hire this first' : 'Then this') + '</div>' +
+        '<h3>The ' + esc(r.role.name) + '</h3>' +
+        '<div class="opp-money"><b>' + money(q.build) + ' + ' + money(q.monthly) + '/mo</b>' +
+        '<span>' + esc(q.def.label) + ' · live in ' + q.days + ' business days · ' +
+        'a real catalog price, not an estimate</span></div>' +
+        '<div class="opp-block"><div class="opp-k">Why this one</div><div class="opp-v">' +
+          esc(r.reasons[0] || r.role.problem) + '</div></div>' +
+        '<div class="opp-block"><div class="opp-k">What it would own</div><div class="pipe">' +
+          d.spec.capabilities.slice(0, 8).map(function (c, j) {
+            var cap = ENG.capById(c.id);
             return (j ? '<svg class="ic ic-14 pipe-arrow"><use href="#i-arrow"/></svg>' : '') +
-                   '<span class="pipe-node">' + esc(n) + '</span>';
+                   '<span class="pipe-node">' + esc(cap ? cap.name : c.id) + '</span>';
           }).join('') +
         '</div></div>' +
-        (o.basis ? '<div class="opp-block"><div class="opp-k">How the range was derived</div><div class="opp-v">' + esc(o.basis) + '</div></div>' : '') +
         '<div class="opp-meta">' +
-          '<div><div class="meta-k">Build complexity</div><div class="meta-v ' + o.complexity.toLowerCase() + '">' + esc(o.complexity) + '</div></div>' +
-          '<div><div class="meta-k">Estimated implementation</div><div class="meta-v">' + esc(weeks) + '</div></div>' +
+          '<div><div class="meta-k">Standing on day one</div><div class="meta-v">' +
+            ready.percent + '%</div></div>' +
+          '<div><div class="meta-k">Spans</div><div class="meta-v">' +
+            groups.length + ' area' + (groups.length === 1 ? '' : 's') + ' of the business</div></div>' +
         '</div>' +
-        '<button class="btn primary lg" data-build="' + i + '"><svg class="ic ic-16"><use href="#i-blueprint"/></svg> BUILD THIS</button>' +
+        '<button class="btn primary lg" data-hire="' + esc(r.roleId) + '">' +
+          '<svg class="ic ic-16"><use href="#i-blueprint"/></svg> CONFIGURE AND PRICE THIS</button>' +
       '</div>';
     });
-    el.opps.innerHTML = h;
+    el.opps.innerHTML = h || '';
+  }
+
+  /* Carry a design to checkout the same way SCRY does — in the fragment, so it
+   * never reaches a server or a log. */
+  function hireHandover(roleId, rep) {
+    var d = DES.design(roleId, {
+      signals: rep.signals || [],
+      systems: (rep.systems && rep.systems.length) ? rep.systems : null,
+      answers: {
+        business: (rep.company && rep.company.name) || '',
+        whatWeDo: (rep.company && rep.company.what) || '',
+        jobDescription: (rep.signalNotes || []).join(' ')
+      }
+    });
+    if (!d) return '/hire/';
+    var payload = {
+      role: roleId, caps: Object.keys(d.state.caps),
+      systems: Object.keys(d.state.systems), channels: Object.keys(d.state.channels),
+      volume: d.state.volumeId, billing: d.state.billing, trial: false,
+      answers: d.state.answers
+    };
+    try {
+      return '/hire/#d=' + btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+    } catch (e) { return '/hire/'; }
   }
 
   function renderReport(rep, ctx) {
@@ -1640,8 +2385,8 @@
     renderCompare(ctx.sig, ctx.compSig, (ctx.sig && ctx.sig.host) || name,
                   (ctx.compSig && ctx.compSig.host) || 'competitor');
     renderDomains(rep);
-    el.oppNote.textContent = 'Systems worth building, largest opportunity first. Every figure is a projection from ' +
-      'public benchmarks for a business of this apparent size — not a claim about their actual revenue.';
+    el.oppNote.textContent = 'Agents this company could hire, best first. Every price here is real and published — ' +
+      'computed from the catalog, not estimated. The read of the business is a projection; the price is not.';
     renderOpps(rep);
     el.shareBtn.classList.remove('hidden');
     el.printBtn.classList.remove('hidden');
@@ -2104,7 +2849,7 @@
 
   async function build(i) {
     if (!AI || S.busy) return;
-    var opp = S.report.opportunities[i];
+    var opp = (S.report.opportunities || [])[i];
     if (!opp) return;
     S.busy = true;
     setStatus('Designing the architecture…');
@@ -2297,8 +3042,16 @@
   });
 
   el.opps.addEventListener('click', function (e) {
+    // The agent cards hand a configured design to checkout. The old
+    // architecture drawer stays for any legacy shared report that still
+    // carries model-authored opportunities.
+    var hire = e.target.closest('[data-hire]');
+    if (hire && S.report) {
+      window.location.href = hireHandover(hire.getAttribute('data-hire'), S.report);
+      return;
+    }
     var b = e.target.closest('[data-build]');
-    if (b) build(+b.dataset.build);
+    if (b && S.report && S.report.opportunities) build(+b.dataset.build);
   });
 
   el.shareBtn.addEventListener('click', copyShareLink);
