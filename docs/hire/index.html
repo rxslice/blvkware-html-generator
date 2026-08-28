@@ -427,10 +427,12 @@
         <p class="step-sub">This is the scope of record. Send it and you'll get it back as a signed one-page job description within a business day, with these acceptance tests written into it. Nothing is charged until you've signed that.</p>
         <div class="speccard" id="speccard"></div>
         <div class="actions">
+            <button type="button" class="btn" id="pay" hidden>Pay and start the build</button>
             <a class="btn" id="order" href="#">Send this order</a>
             <button type="button" class="btn-2" id="copy">Copy it</button>
             <button type="button" class="btn-2" id="download">Download the manifest</button>
         </div>
+        <p class="panel-meta" id="pay-note" hidden></p>
         <p class="panel-meta" style="margin-top:1rem">Goes to russ@blvkware.dev. One person reads it — the same one who builds it.</p>
     </section>
 
@@ -859,7 +861,10 @@ try {
         bandById: bandById, chanById: chanById, keysOf: keysOf, money: money,
         catalog: C
     };
-})(window);
+    // Also usable outside a browser. The checkout function re-prices every
+    // order server-side from this exact file, because a price the client sends
+    // is a price anyone can edit.
+})(typeof window !== "undefined" ? window : globalThis);
 </script>
 <script>
 (function () {
@@ -872,10 +877,17 @@ try {
         return;
     }
 
-    /* Set to a Checkout endpoint to take payment on the page. While it is empty
-     * the order is completed by email, exactly as the tools' capture endpoint
-     * degrades — a broken checkout is far worse than an honest mailto. */
+    /* The Checkout function (api/checkout.js, deployed separately — GitHub
+     * Pages cannot run it). While this is empty the order completes by email,
+     * exactly as the Lab tools' capture endpoint degrades. A broken checkout is
+     * far worse than an honest mailto, so the page never shows a Pay button it
+     * cannot honour. */
     var CHECKOUT_ENDPOINT = "";
+
+    /* The specification is kept in this browser across the redirect to Stripe
+     * and back. It is far too large for Stripe metadata, and it is nobody
+     * else's business — only the reference travels. */
+    var STASH = "blvkware.order.pending";
 
     var money = E.money;
     var state = {
@@ -1348,6 +1360,7 @@ try {
             "mailto:russ@blvkware.dev?subject=" +
             encodeURIComponent("Agent order " + currentSpec.ref + " — " + currentSpec.role.name) +
             "&body=" + encodeURIComponent(txt);
+        showPay();
         sec.scrollIntoView({ behavior: "smooth", block: "start" });
     });
 
@@ -1370,6 +1383,128 @@ try {
         ta.value = txt; ta.focus(); ta.select();
         try { document.execCommand("copy"); done(); } catch (e) { /* copy by hand */ }
         ta.value = keep;
+    }
+
+    /* ---- payment ----
+     * Nothing here decides a price. The specification goes to the Checkout
+     * function, which re-derives the whole quote from the same catalog and
+     * charges that. A price the browser sends is a price anyone can edit, so
+     * the server treats it as a claim to be checked rather than an instruction.
+     */
+    function payable() {
+        return !!CHECKOUT_ENDPOINT && !!currentSpec;
+    }
+
+    function showPay() {
+        var btn = document.getElementById("pay");
+        var note = document.getElementById("pay-note");
+        if (!payable()) { btn.hidden = true; note.hidden = true; return; }
+        btn.hidden = false;
+        btn.textContent = "Pay " + money(currentQuote.dueNow) + " and start the build";
+        note.hidden = false;
+        note.textContent = currentQuote.trial
+            ? "The 14-day Trial. Card handled by Stripe — this site never sees it."
+            : "Build plus your first " +
+              (currentQuote.billing === "annual" ? "year" : "month") +
+              " of Agent Operations. Card handled by Stripe — this site never sees it.";
+    }
+
+    document.getElementById("pay").addEventListener("click", async function () {
+        if (!payable()) return;
+        var btn = this, note = document.getElementById("pay-note");
+        btn.disabled = true;
+        btn.textContent = "Starting checkout…";
+        try {
+            // Keep the specification on this device across the redirect.
+            try {
+                sessionStorage.setItem(STASH, JSON.stringify(currentSpec));
+            } catch (e) { /* private window; the emailed copy still works */ }
+
+            var res = await fetch(CHECKOUT_ENDPOINT, {
+                method: "POST",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify(currentSpec)
+            });
+            var data = await res.json();
+            if (!res.ok || !data.url) {
+                throw new Error((data && (data.detail || data.error)) ||
+                                "Checkout could not be started.");
+            }
+            window.location.href = data.url;
+        } catch (err) {
+            note.hidden = false;
+            note.style.color = "var(--warm)";
+            note.textContent = (err && err.message ? err.message : String(err)) +
+                " Nothing has been charged — send the order by email instead and " +
+                "it will be invoiced by hand.";
+            btn.disabled = false;
+            btn.textContent = "Try payment again";
+        }
+    });
+
+    /* Coming back from Stripe. The specification is read out of this browser,
+     * not out of the URL, so a paid order carries its full scope into the forge
+     * without any of it having travelled through a query string. */
+    function handleReturn() {
+        var q = new URLSearchParams(location.search);
+        if (q.get("cancelled")) {
+            var c = el("div", "notice brass");
+            c.innerHTML = "<b>Payment cancelled — nothing was charged.</b> Your " +
+                "configuration is still here whenever you want it.";
+            var host = document.getElementById("role-detail");
+            if (host) host.appendChild(c);
+            return;
+        }
+        if (!q.get("paid")) return;
+
+        var ref = q.get("ref") || "";
+        var spec = null;
+        try { spec = JSON.parse(sessionStorage.getItem(STASH) || "null"); }
+        catch (e) { spec = null; }
+
+        var sec = document.getElementById("spec");
+        sec.classList.add("on");
+        var card = document.getElementById("speccard");
+        card.textContent = "";
+        var h = el("div", "spech", "Paid — order " + (ref || "received"));
+        card.appendChild(h);
+        card.appendChild(el("p", null,
+            "Thank you. Your agent goes into the forge now, and you will have a " +
+            "signed job description — what it owns, what it may touch, what it " +
+            "must escalate, and the tests it has to pass — within one business day."));
+
+        if (spec) {
+            spec.ref = ref || spec.ref;
+            card.appendChild(el("div", "spech", "Your specification"));
+            card.appendChild(el("p", null,
+                "Keep a copy. This is the exact scope you have paid for."));
+            var ta = el("textarea", "manifest");
+            ta.spellcheck = false;
+            ta.value = JSON.stringify(spec, null, 2);
+            ta.id = "manifest";
+            card.appendChild(ta);
+
+            var acts = el("div", "actions");
+            var forge = el("a", "btn", "Open it in the Forge");
+            try {
+                forge.href = "/sigil/#order=" +
+                    btoa(unescape(encodeURIComponent(JSON.stringify(spec))));
+            } catch (e) { forge.href = "/sigil/#forge"; }
+            acts.appendChild(forge);
+            var mail = el("a", "btn-2", "Email the specification to BlvkWare");
+            mail.href = "mailto:russ@blvkware.dev?subject=" +
+                encodeURIComponent("Paid order " + (ref || "")) +
+                "&body=" + encodeURIComponent(JSON.stringify(spec, null, 2).slice(0, 6000));
+            acts.appendChild(mail);
+            card.appendChild(acts);
+            try { sessionStorage.removeItem(STASH); } catch (e) { /* fine */ }
+        } else {
+            card.appendChild(el("p", null,
+                "Your specification was held in the browser you ordered from, so " +
+                "it is not on this screen. It is safe — quote " + (ref || "your reference") +
+                " to russ@blvkware.dev and the build starts from the paid order."));
+        }
+        sec.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
     document.getElementById("download").addEventListener("click", function () {
@@ -1449,6 +1584,7 @@ try {
     }
 
     if (!applyHandover()) render();
+    handleReturn();
 })();
 </script>
 </body>

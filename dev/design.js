@@ -335,4 +335,4 @@
         rank: rank, design: design, adopt: adopt, vocabulary: vocabulary,
         readiness: readiness, relevantSuggestions: relevantSuggestions
     };
-})(window);
+})(typeof window !== "undefined" ? window : globalThis);

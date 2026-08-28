@@ -1,3 +1,5 @@
+/* GENERATED from dev/engine.js by dev/build-static.py.
+   Do not edit: rebuild instead. */
 /* The agent pricing and specification engine.
  *
  * Injected verbatim into BOTH the buyer's configurator at /hire/ and the

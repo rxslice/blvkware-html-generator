@@ -1041,6 +1041,23 @@ def main():
         print("Built ops/console.built.html (%.1f KB)  internal - not published"
               % (len(ops_html.encode("utf-8")) / 1024.0))
 
+    # The checkout function prices server-side from the same catalog and the
+    # same engine as the page. Emitting them here rather than letting api/ keep
+    # its own copies is what stops the amount a buyer is charged from drifting
+    # away from the amount they were shown.
+    api_dir = os.path.join(ROOT, "api")
+    if os.path.isdir(api_dir):
+        with io.open(os.path.join(api_dir, "_catalog.json"), "w",
+                     encoding="utf-8") as fh:
+            fh.write(catalog.as_json())
+        with io.open(os.path.join(ROOT, "dev", "engine.js"), encoding="utf-8") as fh:
+            engine = fh.read()
+        with io.open(os.path.join(api_dir, "_engine.js"), "w",
+                     encoding="utf-8") as fh:
+            fh.write("/* GENERATED from dev/engine.js by dev/build-static.py.\n"
+                     "   Do not edit: rebuild instead. */\n" + engine)
+        print("Built api/_catalog.json and api/_engine.js  for the checkout function")
+
     write_seo_files()
 
     # Pages would otherwise run the output through Jekyll.

@@ -1232,7 +1232,10 @@ catch (e) { window.BLVK_CATALOG = null; }
         bandById: bandById, chanById: chanById, keysOf: keysOf, money: money,
         catalog: C
     };
-})(window);
+    // Also usable outside a browser. The checkout function re-prices every
+    // order server-side from this exact file, because a price the client sends
+    // is a price anyone can edit.
+})(typeof window !== "undefined" ? window : globalThis);
 </script>
 <script>/* The design engine: business signals in, a costed agent design out.
  *
@@ -1571,7 +1574,7 @@ catch (e) { window.BLVK_CATALOG = null; }
         rank: rank, design: design, adopt: adopt, vocabulary: vocabulary,
         readiness: readiness, relevantSuggestions: relevantSuggestions
     };
-})(window);
+})(typeof window !== "undefined" ? window : globalThis);
 </script>
 <script>
 (function () {
