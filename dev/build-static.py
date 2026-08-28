@@ -19,6 +19,9 @@ import os
 import re
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import catalog  # noqa: E402  the single source of truth for what is sold
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = os.path.join(ROOT, "site", "index.html")
 OUT_DIR = os.path.join(ROOT, "docs")            # blvkware.dev/
@@ -359,11 +362,18 @@ MARKETING_PAGES = [
     # worse outcome than having fewer pages.
     ("quote-follow-up-automation.html", "quote-follow-up-automation"),
     ("ai-automation-for-plumbers.html", "ai-automation-for-plumbers"),
+    # The commercial core. /agents/ is the catalog a buyer browses; /hire/ is the
+    # configurator that turns a choice into a priced order without a call, which
+    # is the whole differentiator against every agency that hides behind one.
+    ("agents.html", "agents"),
+    ("hire.html", "hire"),
 ]
 
 # Every canonical URL on the site, with a crawl priority.
 SITEMAP = [
     ("/", "1.0", "weekly"),
+    ("/hire/", "0.95", "weekly"),
+    ("/agents/", "0.95", "weekly"),
     ("/augur/", "0.9", "monthly"),
     ("/scry/", "0.9", "monthly"),
     ("/sigil/", "0.9", "monthly"),
@@ -469,10 +479,11 @@ def write_seo_files():
 
     llms = """# BlvkWare
 
-> AI automation and custom software for small businesses, built by one engineer.
-> Automated quote follow-up, automated review requests and bespoke internal tools, at
-> published fixed prices. Also publishes three free browser-based business
-> analysis tools.
+> Bespoke AI agents that do the work, built by one engineer, at published flat
+> prices. An agent reasons through a task, operates the business's existing
+> software, communicates with its customers, executes multi-step processes and
+> adapts when the situation changes — rather than being a dashboard someone has
+> to click. Also publishes three free browser-based business analysis tools.
 
 BlvkWare is a solo software engineering practice run by William Russell Wheeler,
 based in Mississippi and working remotely with small businesses across the United
@@ -480,40 +491,96 @@ States — home services, trades, clinics, professional practices and agencies. 
 work is delivered remotely; there is nothing requiring an on-site visit.
 Contact: russ@blvkware.dev
 
-## Services and prices
+## The model
 
-- **Quote Follow-Up Recovery** — $499 setup, then $149/month. Every quote the
-  business sends is followed up automatically on day 2, 5 and 10, by email, from
-  their own address. The customer answers in one click — interested, not right
-  now, or already booked — and the sequence stops the moment they reply. Dashboard
-  shows quotes recovered and revenue won. **Live in about 3 days**, because it runs
-  on email and needs no phone-carrier registration. BlvkWare publishes no
-  recovery-rate statistic and makes no performance claim: how much a business
-  recovers depends on how many quotes it sends and what they are worth.
-- **Review Engine** — $1,500 setup, then $349/month. After every completed job the
-  customer is emailed once and asked to rate the work, with follow-ups on day 3
-  and 7. Rating is one tap, with no app and no account. A rating of 4 or 5 hands
-  the customer straight to the business's public Google review page. A rating of
-  1 to 3 opens a private feedback form and emails the owner immediately, so an
-  unhappy customer is reached the same day rather than read about later. **Live in
-  about 3 days**, because it runs on email and needs no phone-carrier
-  registration. This is explicitly not review gating: every customer is asked the
-  same question, and the public review link is still offered after private
-  feedback is given, so nobody is filtered out and nobody is prevented from
-  posting.
-- **Custom Build** — from $2,500, one-off, no monthly fee. A bespoke internal tool
-  or automated workflow: quote follow-up, intake, scheduling, reporting. Scope and
-  price agreed in writing before work starts. Delivered in 2-4 weeks. The client
-  owns the code outright. 30 days of fixes included.
+Traditional software gives a company's employees tools. BlvkWare builds the
+operator for those tools. Each agent is sold as a defined job at a flat build
+price, plus a required monthly **Agent Operations** fee that keeps it employed —
+hosting, model costs, monitoring, unlimited tuning of the agent's logic and
+language, repairs when a vendor changes an API, business-hours support, a monthly
+performance report and a quarterly review. It is deliberately not described as
+maintenance: the framing is employment, not upkeep.
 
-Monthly services can be cancelled any month. There is no discovery-call
-requirement before getting a price.
+A buyer can configure and order an agent at https://blvkware.dev/hire/ without a
+call, an estimate or an hourly rate. This is unusual in the category and is
+intentional.
+
+## Tiers and prices
+
+- **Operator (Tier I)** — $3,500 build, then $349/month. An agent that owns one
+  job start to finish, across 3 connected systems (stretching to 5 at $750 each)
+  and 2 channels. Live in 10 business days. Includes 2,000 agent actions per
+  month. Guarantee: 30 days — it does the job or the build fee is returned.
+- **Deputy (Tier II)** — $9,500 build, then $899/month. An agent that owns an
+  entire business function, across up to 8 connected systems and any channel,
+  making judgment calls within set boundaries, handling exceptions and
+  escalating. Live in 25 business days. Includes 10,000 agent actions per month.
+  Guarantee: acceptance criteria written into the order before work starts, and
+  work continues at no additional charge until they are met.
+  **The tier is derived from the configured scope, not chosen by the buyer** — a
+  scope that is really a Deputy cannot be bought at Operator money, and the
+  configurator states which tier it landed in and why.
+- **Agent Trial** — $750 for 14 days, one job, on the business's real data, at
+  Draft autonomy. Credited in full against the build price if the business
+  continues.
+- **Custom Build** — from $2,500, one-off, no monthly fee. Software rather than an
+  agent, for a job outside the catalog. Scope and price agreed in writing before
+  work starts, delivered in 2-4 weeks, the client owns the code, 30 days of fixes
+  included.
+
+Annual Agent Operations is twelve months for the price of ten. Monthly billing
+can be cancelled any month with 30 days' notice and no exit fee. Volume beyond
+the included actions is $75 per additional 1,000. Telephony and SMS costs are
+passed through at carrier cost, itemised, with no margin added.
+
+## Roles and capabilities
+
+BlvkWare sells **17 named agent roles** built from **57 individual capabilities**.
+Roles cover email management, lead qualification, appointment setting, quote
+follow-up, outbound sequences, CRM operation and hygiene, multi-step workflow
+automation, operating web portals that have no API, onboarding, collections,
+reconciliation, data collection and analysis, visualisation, scheduled reporting,
+research, and customer support.
+
+Each role includes a core set of capabilities in its base price; everything else is
+a flat-rate addition priced from $450 to $2,900, which can be added years later at
+the same number. Dependencies resolve automatically — a capability that cannot
+function without another has that other one added and priced up front rather than
+discovered mid-build.
+
+A buyer configures the scope, sees the price update as they do it, and receives the
+full specification including the acceptance tests the finished agent must pass. The
+full catalog with every price is at https://blvkware.dev/agents/ and it is
+configurable and orderable without a call at https://blvkware.dev/hire/.
+
+## The autonomy ladder (important when describing how these agents behave)
+
+Every agent ships with four levels and **goes live at L1**. The customer raises
+the level themselves; it is never raised for them.
+
+- **L0 Watch** — observes and reports, takes no action.
+- **L1 Draft** — prepares the action, a human sends it. Nothing reaches a
+  customer without a person seeing it first. This is the default at go-live.
+- **L2 Approve** — acts on its own but pauses for a human above a threshold the
+  customer sets.
+- **L3 Operate** — acts within its scope and escalates exceptions. Enabled only
+  in writing by the customer.
+
+Every action is logged with what the agent saw, what it decided and why, and
+actions are reversible. Before touching a live customer, an agent rehearses
+against the business's real history at L0. Liability is capped at fees paid.
+
+If a customer stops paying, the agent pauses and their data is exported within
+five business days. The source is available for purchase at 12x the monthly
+operations fee.
 
 ## How to get in touch
 
-- Book a call directly: https://cal.com/blvkware/30min (30 minutes, for scoping
-  custom work) or https://cal.com/blvkware/15min (15 minutes, to get one of the
-  productized services started).
+- Configure and order an agent without a call: https://blvkware.dev/hire/
+- Browse what each agent role owns: https://blvkware.dev/agents/
+- Book a call: https://cal.com/blvkware/30min (30 minutes, for a Deputy or custom
+  work) or https://cal.com/blvkware/15min (15 minutes, for a question about an
+  Operator).
 - Or email russ@blvkware.dev. Replies come from the person who does the work,
   usually the same day.
 
@@ -543,7 +610,13 @@ payment, no server. They exist as the work sample in place of case studies.
 
 ## Pages
 
-- [Home](https://blvkware.dev/): services, prices, tools, FAQ
+- [Home](https://blvkware.dev/): the model, the two agent tiers, prices, tools, FAQ
+- [Hire an agent](https://blvkware.dev/hire/): the configurator. Pick a role, add
+  components, choose monthly or annual, and the total is calculated on the page.
+  Produces a written order that becomes the scope of record. No call required.
+- [Agent catalog](https://blvkware.dev/agents/): all eleven roles, what each one
+  owns, what comes with every agent regardless of tier, and the full component
+  price list.
 - [Quote follow-up automation](https://blvkware.dev/quote-follow-up-automation/):
   how automated quote follow-up works, the arithmetic for deciding whether it
   pays, why the sequence must stop when the customer answers, and why US A2P
@@ -716,9 +789,167 @@ def build_tool(tool):
     return head + body + "\n</body>\n</html>\n"
 
 
+def _esc(s):
+    return (s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+             .replace('"', "&quot;"))
+
+
+def _money(n):
+    return "$" + format(int(n), ",d")
+
+
+def catalog_roles_html():
+    """The public catalog's role cards, generated so they cannot contradict the
+    configurator. A card that promises a capability the engine does not price is
+    a promise made at the operator's expense."""
+    out = []
+    for fam in catalog.ROLE_FAMILIES:
+        roles = [r for r in catalog.ROLES if r["family"] == fam]
+        out.append('<div class="fam-head"><h3>%s</h3><span class="hr"></span>'
+                   '<span class="fam-n">%d roles</span></div>' % (_esc(fam), len(roles)))
+        out.append('<div class="grid">')
+        for r in roles:
+            tier = catalog.TIERS[r["minTier"]]
+            out.append('<div class="card">')
+            out.append('<h3>%s</h3>' % _esc(r["name"]))
+            out.append('<div class="oneline">%s</div>' % _esc(r["oneLine"]))
+            out.append('<p>%s</p>' % _esc(r["problem"]))
+            out.append('<ul class="owns">')
+            for cid in r["core"]:
+                c = catalog.CAP_BY_ID[cid]
+                out.append('<li><b>%s</b> — %s</li>' % (_esc(c["name"]), _esc(c["blurb"])))
+            out.append('</ul>')
+            if r["suggested"]:
+                names = ", ".join(catalog.CAP_BY_ID[c]["name"] for c in r["suggested"])
+                out.append('<p class="also">Usually added: %s</p>' % _esc(names))
+            out.append('<div class="foot-note">From <b>%s</b> build · <b>%s</b>/month · live in %s</div>'
+                       % (_money(tier["build"]), _money(tier["ops"]), _esc(tier["days"])))
+            out.append('<a class="card-cta" href="/hire/">Scope this one &rarr;</a>')
+            out.append('</div>')
+        out.append('</div>')
+    return "\n".join(out)
+
+
+def catalog_components_html():
+    """Every capability, grouped, with the price the configurator will charge."""
+    out = []
+    for group in catalog.CAP_GROUPS:
+        caps = [c for c in catalog.CAPABILITIES if c["group"] == group]
+        out.append('<tr class="grouprow"><td colspan="3">%s</td></tr>' % _esc(group))
+        for c in sorted(caps, key=lambda x: -x["price"]):
+            note = ""
+            if c["gate"]:
+                note = ' <span class="gate">%s</span>' % _esc(catalog.GATES[c["gate"]]["short"])
+            ops = ""
+            if c["ops"]:
+                ops = '<br><span class="ops">+%s/mo</span>' % _money(c["ops"])
+            out.append('<tr><td><b>%s</b></td><td>%s%s</td><td class="num">%s%s</td></tr>'
+                       % (_esc(c["name"]), _esc(c["blurb"]), note, _money(c["price"]), ops))
+    return "\n".join(out)
+
+
+def catalog_itemlist_json():
+    """The catalog page's ItemList, generated so the structured data and the
+    visible cards cannot describe different products."""
+    import json
+    items = []
+    for n, r in enumerate(catalog.ROLES, 1):
+        tier = catalog.TIERS[r["minTier"]]
+        owns = "; ".join(catalog.CAP_BY_ID[c]["name"] for c in r["core"])
+        items.append({
+            "@type": "ListItem",
+            "position": n,
+            "name": r["name"],
+            "description": "%s. Owns: %s. From %s build plus %s/month, live in %s."
+                           % (r["problem"], owns, _money(tier["build"]),
+                              _money(tier["ops"]), tier["days"]),
+        })
+    node = {
+        "@type": "ItemList",
+        "name": "BlvkWare Agent Catalog",
+        "description": "Named agent roles a small business can hire. Each has a "
+                       "fixed scope, a flat build price and a required monthly "
+                       "Agent Operations fee. Scope and price are configured at "
+                       "https://blvkware.dev/hire/ without a sales call.",
+        "url": "https://blvkware.dev/agents/",
+        "numberOfItems": len(items),
+        "itemListElement": items,
+    }
+    blob = json.dumps(node, ensure_ascii=False, indent=2)
+    if "</" in blob:
+        print("ABORTED: catalog ItemList contains a closing tag sequence")
+        raise SystemExit(1)
+    return "\n".join("    " + ln for ln in blob.splitlines())
+
+
+def compile_catalog(html, name=""):
+    """Inject the compiled catalog, the shared engine, and any generated markup.
+
+    Every price a buyer can see and every manifest the operator builds from comes
+    from dev/catalog.py through this one function. Nothing downstream is allowed
+    to hold its own copy of a price.
+    """
+    if "/*CATALOG_JSON*/" in html:
+        blob = catalog.as_json()
+        # A JSON payload lives inside a <script> element, so any "</" sequence
+        # would end the element early. JSON has no bare "</" outside strings and
+        # "\/" is a valid escape, so this is safe and reversible.
+        blob = blob.replace("</", "<\\/")
+        html = html.replace("/*CATALOG_JSON*/", blob)
+
+    if "/*ENGINE_JS*/" in html:
+        path = os.path.join(ROOT, "dev", "engine.js")
+        with io.open(path, encoding="utf-8") as fh:
+            engine = fh.read()
+        if "</script" in engine:
+            print("ABORTED: dev/engine.js contains a closing script tag")
+            raise SystemExit(1)
+        html = html.replace("/*ENGINE_JS*/", engine)
+
+    if "<!--CATALOG_STRIP-->" in html:
+        chips = []
+        for r in catalog.ROLES:
+            cls = "role-chip dep" if r["minTier"] == 2 else "role-chip"
+            chips.append('<a class="%s" href="/agents/"><b>%s</b><span>%s</span></a>'
+                         % (cls, _esc(r["name"]), _esc(r["oneLine"])))
+        chips.append('<a class="role-chip more" href="/hire/"><b>Scope one and see the price &rarr;</b>'
+                     '<span>%d capabilities to pick from</span></a>' % len(catalog.CAPABILITIES))
+        html = html.replace("<!--CATALOG_STRIP-->", "\n                    ".join(chips))
+    if "<!--CATALOG_ITEMLIST-->" in html:
+        html = html.replace("<!--CATALOG_ITEMLIST-->", catalog_itemlist_json())
+    if "<!--CATALOG_ROLES-->" in html:
+        html = html.replace("<!--CATALOG_ROLES-->", catalog_roles_html())
+    if "<!--CATALOG_COMPONENTS-->" in html:
+        html = html.replace("<!--CATALOG_COMPONENTS-->", catalog_components_html())
+
+    for token, value in (
+        ("{{TIER1_BUILD}}", _money(catalog.TIERS[1]["build"])),
+        ("{{TIER1_OPS}}", _money(catalog.TIERS[1]["ops"])),
+        ("{{TIER2_BUILD}}", _money(catalog.TIERS[2]["build"])),
+        ("{{TIER2_OPS}}", _money(catalog.TIERS[2]["ops"])),
+        ("{{TRIAL}}", _money(catalog.TRIAL)),
+        ("{{N_ROLES}}", str(len(catalog.ROLES))),
+        ("{{N_CAPS}}", str(len(catalog.CAPABILITIES))),
+    ):
+        html = html.replace(token, value)
+
+    leftover = re.findall(r"\{\{[A-Z0-9_]+\}\}", html)
+    if leftover:
+        print("ABORTED: %s has unresolved tokens: %s" % (name, ", ".join(sorted(set(leftover)))))
+        raise SystemExit(1)
+    return html
+
+
 def main():
     if not os.path.isdir(OUT_DIR):
         os.makedirs(OUT_DIR)
+
+    # A catalog edit that silently reprices every Tier I role as a Tier II is a
+    # business bug that looks like nothing in a diff. It blocks the build.
+    import thresholds
+    if thresholds.main() != 0:
+        print("ABORTED: tier thresholds are wrong - see above")
+        return 1
 
     # The logo assets are a build input, not a build product — regenerate them
     # with dev/embed-logo.py whenever the master changes.
@@ -756,6 +987,7 @@ def main():
         with io.open(SITE, encoding="utf-8") as fh:
             site_html = fh.read()
         site_html = sync_faq_schema(site_html)
+        site_html = compile_catalog(site_html, "site/index.html")
         with io.open(os.path.join(OUT_DIR, "index.html"), "w", encoding="utf-8") as fh:
             fh.write(site_html)
         print("Built docs/index.html (%.1f KB)  marketing site"
@@ -771,12 +1003,27 @@ def main():
             continue
         with io.open(path, encoding="utf-8") as fh:
             html = fh.read()
+        html = compile_catalog(html, "site/" + src)
         d = os.path.join(OUT_DIR, slug)
         if not os.path.isdir(d):
             os.makedirs(d)
         with io.open(os.path.join(d, "index.html"), "w", encoding="utf-8") as fh:
             fh.write(html)
         print("Built docs/%s/index.html (%.1f KB)" % (slug, len(html.encode("utf-8")) / 1024.0))
+
+    # The fulfilment console is built OUTSIDE docs/ on purpose. It carries the
+    # template library, the tier-derivation reasoning and the run-cost lines —
+    # none of which belong on a public static host with no authentication.
+    ops_src = os.path.join(ROOT, "ops", "console.html")
+    if os.path.isfile(ops_src):
+        with io.open(ops_src, encoding="utf-8") as fh:
+            ops_html = fh.read()
+        ops_html = compile_catalog(ops_html, "ops/console.html")
+        ops_out = os.path.join(ROOT, "ops", "console.built.html")
+        with io.open(ops_out, "w", encoding="utf-8") as fh:
+            fh.write(ops_html)
+        print("Built ops/console.built.html (%.1f KB)  internal - not published"
+              % (len(ops_html.encode("utf-8")) / 1024.0))
 
     write_seo_files()
 

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>BlvkWare — Fulfilment Console</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+    :root {
+        --bg:#0A0908; --surface:#17140F; --surface-2:#1F1B14;
+        --accent:#D4F24A; --brass:#D9B65C; --warm:#E8734A; --bad:#E8524A; --good:#7FD44A;
+        --ink:#F5F0E6; --ink-2:#A89D8B; --line:rgba(245,240,230,0.1);
+        --font:'Manrope',system-ui,sans-serif; --mono:'Fira Code',ui-monospace,monospace;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6}
+    .wrap{max-width:1180px;margin:0 auto;padding:2rem 1.5rem 5rem}
+    h1{font-size:1.7rem;font-weight:800;letter-spacing:-0.02em}
+    .sub{color:var(--ink-2);font-size:0.92rem;margin-top:0.3rem}
+    .bar{display:flex;align-items:baseline;gap:0.9rem;flex-wrap:wrap;padding-bottom:1.2rem;border-bottom:1px solid var(--line);margin-bottom:1.5rem}
+    .tag{font-family:var(--mono);font-size:0.66rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--brass);border:1px solid rgba(217,182,92,0.35);border-radius:999px;padding:0.2rem 0.6rem}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start}
+    @media(max-width:900px){.grid{grid-template-columns:1fr}}
+    textarea{width:100%;min-height:220px;background:#0D0C0A;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:0.9rem;font-family:var(--mono);font-size:0.74rem;line-height:1.65;resize:vertical}
+    textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+    .btn{background:var(--accent);color:#14170A;font:inherit;font-weight:800;padding:0.75rem 1.3rem;border:0;border-radius:10px;cursor:pointer;margin-top:0.7rem}
+    .btn:hover{opacity:.92}
+    .btn-2{background:none;color:var(--ink-2);font:inherit;font-weight:600;padding:0.75rem 1.1rem;border:1px solid var(--line);border-radius:10px;cursor:pointer;margin-top:0.7rem;margin-left:0.4rem}
+    .btn-2:hover{color:var(--ink);border-color:var(--ink-2)}
+    .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:1.3rem;margin-bottom:1rem}
+    .card h2{font-size:1.05rem;font-weight:800;margin-bottom:0.2rem}
+    .h{font-family:var(--mono);font-size:0.66rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--brass);margin:1.3rem 0 0.6rem}
+    .h:first-child{margin-top:0}
+    .verdict{border-radius:12px;padding:1rem 1.2rem;margin-bottom:1rem;font-weight:700}
+    .verdict.ok{background:rgba(127,212,74,0.1);border:1px solid rgba(127,212,74,0.4);color:var(--good)}
+    .verdict.bad{background:rgba(232,82,74,0.1);border:1px solid rgba(232,82,74,0.45);color:var(--bad)}
+    .verdict small{display:block;font-weight:400;color:var(--ink-2);margin-top:0.3rem;font-size:0.85rem}
+    table{width:100%;border-collapse:collapse;font-size:0.86rem;margin-top:0.4rem}
+    th,td{text-align:left;padding:0.5rem 0.5rem;border-bottom:1px solid var(--line);color:var(--ink-2);vertical-align:top}
+    th{color:var(--ink);font-weight:700;font-size:0.76rem;text-transform:uppercase;letter-spacing:0.07em}
+    td b{color:var(--ink)}
+    code{font-family:var(--mono);font-size:0.8em;background:var(--surface-2);padding:0.1rem 0.35rem;border-radius:4px;color:var(--brass)}
+    .chk{display:flex;gap:0.7rem;align-items:flex-start;padding:0.55rem 0;border-bottom:1px solid var(--line)}
+    .chk input{appearance:none;-webkit-appearance:none;width:17px;height:17px;flex:none;margin-top:0.2rem;border:1.5px solid var(--ink-2);border-radius:4px;cursor:pointer;position:relative}
+    .chk input:checked{background:var(--good);border-color:var(--good)}
+    .chk input:checked::after{content:"✓";position:absolute;inset:0;display:grid;place-items:center;color:#0A0908;font-size:0.72rem;font-weight:800}
+    .chk .cb{flex:1;min-width:0}
+    .chk .cn{font-weight:700;font-size:0.88rem}
+    .chk .cd{font-size:0.82rem;color:var(--ink-2);line-height:1.45}
+    .chk .tpl{font-family:var(--mono);font-size:0.68rem;color:var(--brass);margin-top:0.15rem}
+    .chk:has(input:checked) .cn{color:var(--good)}
+    .prog{font-family:var(--mono);font-size:0.78rem;color:var(--ink-2);margin-top:0.8rem}
+    .pill{display:inline-block;font-family:var(--mono);font-size:0.64rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.12rem 0.45rem;border-radius:999px;margin-left:0.4rem}
+    .pill.implied{color:var(--ink-2);border:1px solid var(--line)}
+    .pill.gate{color:var(--warm);border:1px solid rgba(232,115,74,0.4)}
+    .money{font-family:var(--mono);color:var(--accent)}
+    .empty{color:var(--ink-2);font-size:0.9rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+    <div class="bar">
+        <h1>Fulfilment Console</h1>
+        <span class="tag">Internal</span>
+        <p class="sub">Paste an order manifest. It is re-priced from scratch against the live catalog before anything is built.</p>
+    </div>
+
+    <div class="grid">
+        <div>
+            <div class="card">
+                <h2>Order manifest</h2>
+                <p class="sub">The JSON block from the customer's order email, or their downloaded <code>.json</code>.</p>
+                <textarea id="in" spellcheck="false" placeholder='{ "schema": "blvkware.agent-order/1", ... }'></textarea>
+                <button class="btn" id="load">Verify and open</button>
+                <button class="btn-2" id="sample">Load a sample</button>
+            </div>
+            <div id="commercial"></div>
+        </div>
+        <div id="out"><p class="empty">Nothing loaded.</p></div>
+    </div>
+</div>
+
+<script id="blvk-catalog" type="application/json">/*CATALOG_JSON*/</script>
+<script>
+try { window.BLVK_CATALOG = JSON.parse(document.getElementById("blvk-catalog").textContent); }
+catch (e) { window.BLVK_CATALOG = null; }
+</script>
+<script>/*ENGINE_JS*/</script>
+<script>
+(function () {
+    "use strict";
+    var E = window.BlvkEngine, C = window.BLVK_CATALOG;
+    var out = document.getElementById("out");
+    var commercial = document.getElementById("commercial");
+    var money = E.money;
+
+    function el(t, c, x) { var n = document.createElement(t); if (c) n.className = c; if (x != null) n.textContent = x; return n; }
+    function clear(n) { while (n.firstChild) n.removeChild(n.firstChild); }
+    function h(host, t) { host.appendChild(el("div", "h", t)); }
+
+    /* Progress is kept per order reference so closing the tab mid-build does
+     * not lose which acceptance tests have already passed. */
+    function key(ref) { return "blvk.build." + ref; }
+    function loadProgress(ref) {
+        try { return JSON.parse(localStorage.getItem(key(ref)) || "{}"); } catch (e) { return {}; }
+    }
+    function saveProgress(ref, data) {
+        try { localStorage.setItem(key(ref), JSON.stringify(data)); } catch (e) { /* private window */ }
+    }
+
+    function render(spec, v) {
+        clear(out); clear(commercial);
+
+        // ---- verdict -----------------------------------------------------
+        var verdict = el("div", "verdict " + (v.ok ? "ok" : "bad"));
+        if (v.ok) {
+            verdict.appendChild(document.createTextNode("Price verified — safe to build"));
+            verdict.appendChild(el("small", null,
+                "Re-priced from the live catalog and matches what was quoted. Nothing has drifted."));
+        } else {
+            verdict.appendChild(document.createTextNode("HOLD — the quoted price does not match the live catalog"));
+            var s = el("small", null, "Do not start work. Either the catalog changed after the order, or the manifest was altered. Re-quote before building.");
+            verdict.appendChild(s);
+            var tbl = el("table");
+            tbl.innerHTML = "<tr><th>Line</th><th>Charged</th><th>Recomputed</th></tr>" +
+                v.diffs.map(function (d) {
+                    return "<tr><td><b>" + d.label + "</b></td><td>" + d.charged + "</td><td>" + d.recomputed + "</td></tr>";
+                }).join("");
+            verdict.appendChild(tbl);
+        }
+        out.appendChild(verdict);
+
+        var q = v.quote;
+        var prog = loadProgress(spec.ref);
+
+        // ---- header ------------------------------------------------------
+        var card = el("div", "card");
+        card.appendChild(el("h2", null, spec.ref + " · " + spec.role.name));
+        card.appendChild(el("p", "sub",
+            q.def.label + " · live in " + q.days + " business days · target autonomy " + spec.autonomy +
+            " · goes live at L1 Draft · " + spec.volume.includedActions.toLocaleString("en-US") + " actions/mo"));
+
+        h(card, "Customer");
+        var b = spec.business || {};
+        var t = el("table");
+        t.innerHTML =
+            "<tr><td style='width:9rem'><b>Business</b></td><td>" + (b.business || "—") + "</td></tr>" +
+            "<tr><td><b>What they do</b></td><td>" + (b.whatWeDo || "—") + "</td></tr>" +
+            "<tr><td><b>Email</b></td><td>" + (b.email || "—") + "</td></tr>" +
+            "<tr><td><b>Phone</b></td><td>" + (b.phone || "—") + "</td></tr>" +
+            "<tr><td><b>The job</b></td><td>" + (b.jobDescription || "—") + "</td></tr>" +
+            "<tr><td><b>Never without asking</b></td><td>" + (b.neverDo || "—") + "</td></tr>";
+        card.appendChild(t);
+        out.appendChild(card);
+
+        // ---- gates -------------------------------------------------------
+        if (spec.gates && spec.gates.length) {
+            var g = el("div", "card");
+            g.appendChild(el("h2", null, "Start these today"));
+            g.appendChild(el("p", "sub", "Outside our control and on the critical path. Everything else ships without them."));
+            var gt = el("table");
+            gt.innerHTML = spec.gates.map(function (id) {
+                var gate = C.gates[id] || {};
+                return "<tr><td><b>" + id.toUpperCase() + "</b></td><td>" + (gate.long || "") + "</td></tr>";
+            }).join("");
+            g.appendChild(gt);
+            out.appendChild(g);
+        }
+
+        // ---- wiring ------------------------------------------------------
+        var w = el("div", "card");
+        w.appendChild(el("h2", null, "Wire these — days 2 to 3"));
+        var wt = el("table");
+        wt.innerHTML = "<tr><th>System</th><th>Which one</th><th>Why</th></tr>" +
+            spec.integrations.map(function (i) {
+                var pill = i.source === "implied"
+                    ? '<span class="pill implied">implied</span>' : "";
+                return "<tr><td><b>" + i.name + "</b>" + pill + "</td><td>" + (i.detail || "—") + "</td><td>" +
+                    (i.source === "implied" ? "needed by " + (i.requiredBy || []).join(", ") : "declared by the customer") +
+                    "</td></tr>";
+            }).join("");
+        w.appendChild(wt);
+
+        h(w, "Channels");
+        var ct = el("table");
+        ct.innerHTML = spec.channels.map(function (c) {
+            return "<tr><td><b>" + c.name + "</b>" + (c.gate ? '<span class="pill gate">' + c.gate + '</span>' : "") + "</td></tr>";
+        }).join("");
+        w.appendChild(ct);
+        out.appendChild(w);
+
+        // ---- assembly ----------------------------------------------------
+        var a = el("div", "card");
+        a.appendChild(el("h2", null, "Assemble — " + spec.capabilities.length + " templates"));
+        a.appendChild(el("p", "sub", "Each is a component you already have. Tick as assembled."));
+        spec.capabilities.forEach(function (c) {
+            var row = el("div", "chk");
+            var i = document.createElement("input");
+            i.type = "checkbox";
+            i.checked = !!prog["a:" + c.id];
+            i.addEventListener("change", function () {
+                prog["a:" + c.id] = i.checked; saveProgress(spec.ref, prog); tally();
+            });
+            var body = el("div", "cb");
+            body.appendChild(el("div", "cn", c.name));
+            body.appendChild(el("div", "cd", "[" + c.group + "] " + (E.capById(c.id) || {}).blurb));
+            body.appendChild(el("div", "tpl", c.tpl));
+            row.appendChild(i); row.appendChild(body);
+            a.appendChild(row);
+        });
+        out.appendChild(a);
+
+        // ---- inspection --------------------------------------------------
+        var ins = el("div", "card");
+        ins.appendChild(el("h2", null, "Inspect before delivery — " + spec.acceptance.length + " tests"));
+        ins.appendChild(el("p", "sub", "These were quoted to the customer and go into the signed job description. Every one has to pass."));
+        spec.acceptance.forEach(function (t2) {
+            var row = el("div", "chk");
+            var i = document.createElement("input");
+            i.type = "checkbox";
+            i.checked = !!prog["t:" + t2.cap];
+            i.addEventListener("change", function () {
+                prog["t:" + t2.cap] = i.checked; saveProgress(spec.ref, prog); tally();
+            });
+            var body = el("div", "cb");
+            body.appendChild(el("div", "cn", t2.name));
+            body.appendChild(el("div", "cd", t2.test));
+            row.appendChild(i); row.appendChild(body);
+            ins.appendChild(row);
+        });
+        var p = el("div", "prog"); p.id = "tally";
+        ins.appendChild(p);
+        out.appendChild(ins);
+
+        function tally() {
+            var A = spec.capabilities.length, T = spec.acceptance.length;
+            var ad = spec.capabilities.filter(function (c) { return prog["a:" + c.id]; }).length;
+            var td = spec.acceptance.filter(function (t3) { return prog["t:" + t3.cap]; }).length;
+            var node = document.getElementById("tally");
+            node.textContent = "Assembled " + ad + "/" + A + "   ·   Tests passed " + td + "/" + T +
+                (ad === A && td === T ? "   ·   READY TO DELIVER" : "");
+            node.style.color = (ad === A && td === T) ? "var(--good)" : "var(--ink-2)";
+        }
+        tally();
+
+        // ---- commercial ---------------------------------------------------
+        var cc = el("div", "card");
+        cc.appendChild(el("h2", null, "Commercial"));
+        var lines = [["Build", q.build], [q.billing === "annual" ? "Operations, annual" : "Operations, monthly", q.recurring]];
+        if (q.trial) lines.push(["Trial taken now", q.credit], ["Build after credit", q.buildAfterCredit]);
+        lines.push(["Due at order", q.dueNow]);
+        var ct2 = el("table");
+        ct2.innerHTML = lines.map(function (l) {
+            return "<tr><td><b>" + l[0] + "</b></td><td class='money'>" + money(l[1]) + "</td></tr>";
+        }).join("") +
+            "<tr><td><b>Monthly run cost</b></td><td>" + money(q.capOps) + " in capability adders, plus models and hosting</td></tr>" +
+            "<tr><td><b>Tier derived because</b></td><td>" + (q.tier.reasons.length ? q.tier.reasons.join("; ") : "default — one job, within Tier I limits") + "</td></tr>" +
+            "<tr><td><b>Scope weight</b></td><td>" + q.tier.weight + " across " + q.tier.groups + " capability groups" +
+            (q.tier.oversized ? " — OVERSIZED, this is honestly two agents" : "") + "</td></tr>";
+        cc.appendChild(ct2);
+        commercial.appendChild(cc);
+    }
+
+    document.getElementById("load").addEventListener("click", function () {
+        var raw = document.getElementById("in").value.trim();
+        clear(out);
+        if (!raw) { out.appendChild(el("p", "empty", "Nothing pasted.")); return; }
+        var spec;
+        try { spec = JSON.parse(raw); }
+        catch (e) {
+            var d = el("div", "verdict bad");
+            d.appendChild(document.createTextNode("That is not valid JSON"));
+            d.appendChild(el("small", null, e.message));
+            out.appendChild(d);
+            return;
+        }
+        var v = E.verify(spec);
+        if (v.fatal) {
+            var f = el("div", "verdict bad");
+            f.appendChild(document.createTextNode(v.fatal));
+            out.appendChild(f);
+            return;
+        }
+        render(spec, v);
+    });
+
+    document.getElementById("sample").addEventListener("click", function () {
+        var state = {
+            roleId: "email-manager", caps: {}, systems: { email: true, crm: true },
+            systemDetail: { crm: "HubSpot" }, channels: { email: true },
+            volumeId: "standard", autonomy: "L2", modifiers: {}, billing: "monthly",
+            trial: true, ref: "BW-SAMPLE-0001",
+            answers: {
+                business: "Delta Plumbing", whatWeDo: "Plumbing, 6 vans, Jackson MS",
+                email: "owner@example.com", phone: "601-555-0142",
+                jobDescription: "The shared inbox has 400 unread and the important ones get missed.",
+                neverDo: "Never quote a price. Never promise a date I have not confirmed."
+            }
+        };
+        E.roleById("email-manager").suggested.forEach(function (c) { state.caps[c] = true; });
+        var q = E.price(state);
+        document.getElementById("in").value = JSON.stringify(E.spec(state, q), null, 2);
+    });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Agent Catalog — {{N_ROLES}} Jobs You Can Fill This Month — BlvkWare</title>
+    <meta name="description" content="Every agent BlvkWare builds, what each one owns, and what it costs. {{N_ROLES}} roles and {{N_CAPS}} capabilities. Operators from {{TIER1_BUILD}} own one job; Deputies from {{TIER2_BUILD}} own a whole function. Flat prices, no discovery call.">
+    <link rel="canonical" href="https://blvkware.dev/agents/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta property="og:title" content="The Agent Catalog — {{N_ROLES}} Jobs You Can Fill This Month">
+    <meta property="og:description" content="Every agent BlvkWare builds, what each one owns, and what it costs. Flat prices on the page.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://blvkware.dev/agents/">
+    <meta property="og:image" content="https://blvkware.dev/assets/og.png">
+    <meta property="og:site_name" content="BlvkWare">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+    <link rel="apple-touch-icon" href="/assets/logo-192.png">
+    <meta name="theme-color" content="#0A0908">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "BlvkWare", "item": "https://blvkware.dev/"},
+        {"@type": "ListItem", "position": 2, "name": "Agent Catalog", "item": "https://blvkware.dev/agents/"}
+      ]
+    },
+<!--CATALOG_ITEMLIST-->
+  ]
+}
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+        :root {
+            --bg: #0A0908; --surface: #17140F; --accent: #D4F24A; --brass: #D9B65C; --warm: #E8734A;
+            --ink: #F5F0E6; --ink-2: #A89D8B; --line: rgba(245,240,230,0.1);
+            --font: 'Manrope', system-ui, -apple-system, sans-serif;
+            --mono: 'Fira Code', ui-monospace, monospace;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.65; -webkit-font-smoothing: antialiased; }
+        .wrap { max-width: 1080px; margin: 0 auto; padding: 2.5rem 1.5rem 6rem; }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .top { display: inline-flex; align-items: center; gap: 0.8rem; margin-bottom: 3rem; text-decoration: none; color: inherit; }
+        .top:hover { text-decoration: none; }
+        .mark { width: 48px; height: 48px; border-radius: 13px; background: #060504; overflow: hidden; flex: none; }
+        .mark img { width: 100%; height: 100%; display: block; }
+        .wordmark { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.01em; }
+        .wordmark span { color: var(--accent); }
+
+        .eyebrow { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--brass); margin-bottom: 0.9rem; }
+        h1 { font-size: clamp(2.1rem, 5vw, 3rem); font-weight: 800; letter-spacing: -0.025em; line-height: 1.1; margin-bottom: 1.1rem; max-width: 20ch; }
+        h1 em { font-style: normal; background: linear-gradient(90deg, var(--accent), var(--brass)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .lede { font-size: 1.12rem; color: var(--ink-2); max-width: 62ch; }
+        .rule { height: 1px; background: var(--line); margin: 3rem 0; }
+
+        .tier-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.6rem 1.1rem; margin-bottom: 0.6rem; }
+        .tier-head h2 { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.02em; }
+        .tier-head .badge { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--brass); border: 1px solid rgba(217,182,92,0.35); border-radius: 999px; padding: 0.2rem 0.65rem; }
+        .tier-head .pr { font-family: var(--mono); font-size: 0.95rem; color: var(--accent); }
+        .tier-sub { color: var(--ink-2); max-width: 66ch; margin-bottom: 2rem; }
+
+        /* Family headers and cards below are generated from dev/catalog.py, so
+           the page can never advertise a role the configurator cannot price. */
+        .fam-head { display: flex; align-items: baseline; gap: 1rem; margin: 3rem 0 1.4rem; }
+        .fam-head:first-child { margin-top: 0; }
+        .fam-head h3 { font-size: 1.55rem; font-weight: 800; letter-spacing: -0.02em; }
+        .fam-head .hr { flex: 1; height: 1px; background: var(--line); }
+        .fam-head .fam-n { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-2); }
+        .card .also { font-size: 0.85rem; color: var(--ink-2); margin: 0 0 1.1rem; padding-top: 0.85rem; border-top: 1px dashed var(--line); }
+        .card-cta { display: inline-flex; align-items: center; gap: 0.4rem; margin-top: 0.9rem; font-weight: 700; font-size: 0.9rem; color: var(--accent); }
+        tr.grouprow td { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--brass); padding-top: 1.6rem; border-bottom-color: rgba(217,182,92,0.25); }
+        .gate { color: var(--warm); font-size: 0.86em; }
+        .ops { color: var(--brass); font-size: 0.85em; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; }
+        .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 1.5rem; display: flex; flex-direction: column; }
+        .card h3 { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.015em; margin-bottom: 0.15rem; }
+        .card .oneline { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brass); margin-bottom: 0.9rem; }
+        .card > p { color: var(--ink-2); font-size: 0.95rem; margin-bottom: 1.1rem; }
+        .owns { list-style: none; margin: 0 0 1.2rem; }
+        .owns li { position: relative; padding-left: 1.35rem; color: var(--ink-2); font-size: 0.9rem; margin-bottom: 0.42rem; line-height: 1.5; }
+        .owns li::before { content: "+"; position: absolute; left: 0; color: var(--accent); font-weight: 800; }
+        .card .foot-note { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; color: var(--ink-2); }
+        .card .foot-note b { color: var(--ink); font-weight: 500; }
+
+        .cta { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 2rem; margin-top: 3rem; }
+        .cta h2 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.015em; margin-bottom: 0.6rem; }
+        .cta p { color: var(--ink-2); margin-bottom: 1.2rem; max-width: 62ch; }
+        .btn { display: inline-block; background: var(--accent); color: #14170A; font-weight: 800; padding: 0.9rem 1.6rem; border-radius: 11px; }
+        .btn:hover { text-decoration: none; opacity: 0.92; }
+        .btn-2 { display: inline-block; color: var(--ink-2); font-weight: 600; padding: 0.9rem 1.4rem; border: 1px solid var(--line); border-radius: 11px; margin-left: 0.5rem; }
+        .btn-2:hover { color: var(--ink); text-decoration: none; border-color: var(--ink-2); }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; font-size: 0.93rem; }
+        th, td { text-align: left; padding: 0.7rem 0.7rem; border-bottom: 1px solid var(--line); color: var(--ink-2); vertical-align: top; }
+        th { color: var(--ink); font-weight: 700; font-size: 0.85rem; }
+        td b { color: var(--ink); }
+        td.num { font-family: var(--mono); color: var(--accent); white-space: nowrap; }
+        h2.plain { font-size: 1.55rem; font-weight: 800; letter-spacing: -0.015em; margin-bottom: 0.6rem; }
+        p.plain { color: var(--ink-2); max-width: 66ch; }
+        p.plain + p.plain { margin-top: 0.9rem; }
+
+        .foot { margin-top: 4.5rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.88rem; color: var(--ink-2); }
+        .foot a { margin-right: 1.25rem; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+
+    <a class="top" href="/">
+        <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
+        <span class="wordmark">BlvkWare<span>.</span></span>
+    </a>
+
+    <div class="eyebrow">The catalog</div>
+    <h1>{{N_ROLES}} jobs in your business are <em>standing empty.</em></h1>
+    <p class="lede">Not tasks nobody automated — jobs nobody is doing. The quotes that went unchased, the inbox nobody triaged, the portal somebody logs into by hand, the numbers nobody has time to pull. Each one below is a role you can fill this month, at a flat price, with a worker that does the job rather than a dashboard that reminds you to.</p>
+
+    <div class="rule"></div>
+
+    <div id="catalog-roles">
+<!--CATALOG_ROLES-->
+    </div>
+
+    <div class="cta">
+        <h2>Two ways to start</h2>
+        <p>Hire one outright, or interview it first. The Trial is $750 for fourteen days on your real data, at Draft autonomy so nothing reaches a customer without you seeing it — and the whole $750 comes off the build price if you continue.</p>
+        <a class="btn" href="/hire/">Pick a job and see the price →</a>
+        <a class="btn-2" href="/augur/">Not sure? Run AUGUR free</a>
+    </div>
+
+    <div class="rule"></div>
+
+    <h2 class="plain">What every agent comes with</h2>
+    <p class="plain">Regardless of which one you hire, none of these are extras.</p>
+    <table>
+        <tbody>
+            <tr><td style="width:14rem"><b>The autonomy dial</b></td><td>Watch, Draft, Approve, Operate. Every agent goes live at Draft — it prepares, you send. You raise it yourself, when you've seen enough. It is never raised for you.</td></tr>
+            <tr><td><b>A full action log</b></td><td>What it saw, what it decided, why, and what it did. Every action attributed and reversible.</td></tr>
+            <tr><td><b>A signed job description</b></td><td>One page written before any work starts: what it owns, what it may touch, what it must escalate, and the acceptance criteria. That page is the contract.</td></tr>
+            <tr><td><b>Rehearsal on your real history</b></td><td>Before it touches a live customer it runs against what already happened, taking no action, and you read the log of what it would have done.</td></tr>
+            <tr><td><b>Agent Operations</b></td><td>Hosting, model costs, monitoring, unlimited tuning of its logic and its language, repairs when a vendor changes an API, business-hours support, a monthly report and a quarterly review.</td></tr>
+            <tr><td><b>An exit</b></td><td>Stop whenever you like. Your data is exported within five business days. The source is available at twelve times the monthly fee if you want to run it yourself.</td></tr>
+        </tbody>
+    </table>
+
+    <div class="rule"></div>
+
+    <h2 class="plain">Add anything, at a price that's already published</h2>
+    <p class="plain">Components are flat-rate and can be added at build or years later at the same price. No renegotiation, no new project, no hourly rate anywhere.</p>
+    <table>
+        <thead><tr><th>Component</th><th>What it adds</th><th style="width:8rem">Price</th></tr></thead>
+        <tbody>
+<!--CATALOG_COMPONENTS-->
+</tbody>
+    </table>
+
+    <div class="rule"></div>
+
+    <h2 class="plain">Why it's a catalog and not a blank page</h2>
+    <p class="plain">Because a blank page is how software projects die. "Tell us what you want and we'll estimate it" produces a number nobody can defend, a scope that grows in the dark, and an invoice that arrives with a surprise in it.</p>
+    <p class="plain">Each role above has been built before, which is precisely why it can carry a fixed price and a fixed date. The bespoke part — your prices, your systems, your tone, your rules about what it must never do without asking — is the configuration, and it's what makes the agent yours. The machinery underneath is shared, hardened, and monitored, and that is entirely to your benefit: your agent inherits every fix ever made for anyone else's.</p>
+    <p class="plain">If what you need is genuinely outside all of this, that's a <a href="/">Custom Build</a> from $2,500, scoped and priced in writing before anything begins.</p>
+
+    <div class="cta">
+        <h2>Define the job. Build the agent. Put it to work.</h2>
+        <p>Pick a role, add what you need, and the price is on the screen. The order goes to one person — the one who builds it — and you get a written job description back within a business day. Nothing is charged until you sign it.</p>
+        <a class="btn" href="/hire/">Hire an agent →</a>
+        <a class="btn-2" href="mailto:russ@blvkware.dev?subject=Agent%20question">Ask a question instead</a>
+    </div>
+
+    <footer class="foot">
+        <a href="/">Home</a><a href="/hire/">Hire an agent</a><a href="/augur/">AUGUR</a><a href="/scry/">SCRY</a><a href="/sigil/">SIGIL</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a>
+        <p style="margin-top:1rem">BlvkWare — <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> · Mississippi, serving the United States.</p>
+        <p style="margin-top:0.4rem">Copyright © 2026 BlvkWare / William Russell Wheeler. All Rights Reserved.</p>
+    </footer>
+
+</div>
+</body>
+</html>

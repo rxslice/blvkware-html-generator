@@ -16,3 +16,8 @@ Thumbs.db
 .vscode/
 .idea/
 dev/.indexnow-key
+
+# Built from ops/console.html by dev/build-static.py. Internal tooling —
+# never published, and regenerated on every build.
+ops/console.built.html
+ops/*.json

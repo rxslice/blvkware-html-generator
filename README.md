@@ -2,7 +2,7 @@
 
 Three browser-only tools that read a business, find the software it should have, and build it.
 
-**Live: [blvkware.dev](https://blvkware.dev)** · Built by [BlvkWare](https://blvkware.dev) — AI automation and custom software for small businesses.
+**Live: [blvkware.dev](https://blvkware.dev)** · Built by [BlvkWare](https://blvkware.dev) — bespoke AI agents that do the work, at flat prices. Browse the [agent catalog](https://blvkware.dev/agents/) or [configure and order one](https://blvkware.dev/hire/) without a call.
 
 | | Tool | What it does | Live |
 |---|---|---|---|

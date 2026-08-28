@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Build Your Agent — Scope It, Price It, Order It — BlvkWare</title>
+    <meta name="description" content="Describe the job, pick what the agent must handle, and see the exact price as you go. Seventeen agent roles, fifty-seven capabilities, flat pricing. No estimate, no discovery call.">
+    <link rel="canonical" href="https://blvkware.dev/hire/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta property="og:title" content="Build Your Agent — Scope It, Price It, Order It">
+    <meta property="og:description" content="Describe the job, pick what the agent must handle, and watch the price update. Then order it, without a call.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://blvkware.dev/hire/">
+    <meta property="og:image" content="https://blvkware.dev/assets/og.png">
+    <meta property="og:site_name" content="BlvkWare">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+    <link rel="apple-touch-icon" href="/assets/logo-192.png">
+    <meta name="theme-color" content="#0A0908">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "BlvkWare", "item": "https://blvkware.dev/"},
+        {"@type": "ListItem", "position": 2, "name": "Build Your Agent", "item": "https://blvkware.dev/hire/"}
+      ]
+    },
+    {
+      "@type": "OfferCatalog",
+      "name": "BlvkWare Agent Tiers",
+      "url": "https://blvkware.dev/hire/",
+      "provider": {"@id": "https://blvkware.dev/#org"},
+      "itemListElement": [
+        {
+          "@type": "Offer",
+          "name": "Operator — Tier I Agent",
+          "description": "An agent that owns one job start to finish, across up to three connected systems and two channels. Live in ten business days, 2,000 agent actions a month included. Ships at Draft autonomy, where a human sends every action.",
+          "price": "3500", "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock", "url": "https://blvkware.dev/hire/",
+          "priceSpecification": {"@type": "UnitPriceSpecification", "price": "349", "priceCurrency": "USD",
+            "billingIncrement": 1, "unitCode": "MON",
+            "description": "Agent Operations — hosting, model costs, monitoring, unlimited tuning, integration repairs, business-hours support"}
+        },
+        {
+          "@type": "Offer",
+          "name": "Deputy — Tier II Agent",
+          "description": "An agent that owns an entire business function across up to eight connected systems and any channel, making judgment calls, handling exceptions and escalating. Live in twenty-five business days, 10,000 agent actions a month included.",
+          "price": "9500", "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock", "url": "https://blvkware.dev/hire/",
+          "priceSpecification": {"@type": "UnitPriceSpecification", "price": "899", "priceCurrency": "USD",
+            "billingIncrement": 1, "unitCode": "MON",
+            "description": "Agent Operations — hosting, model costs, monitoring, unlimited tuning, integration repairs, business-hours support"}
+        },
+        {
+          "@type": "Offer",
+          "name": "Agent Trial",
+          "description": "Fourteen days, one job, your real data, at Draft autonomy. Credited in full against the build price if you continue.",
+          "price": "750", "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock", "url": "https://blvkware.dev/hire/"
+        }
+      ]
+    }
+  ]
+}
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+        :root {
+            --bg: #0A0908; --surface: #17140F; --surface-2: #1F1B14;
+            --accent: #D4F24A; --brass: #D9B65C; --warm: #E8734A;
+            --ink: #F5F0E6; --ink-2: #A89D8B; --line: rgba(245,240,230,0.1);
+            --font: 'Manrope', system-ui, -apple-system, sans-serif;
+            --mono: 'Fira Code', ui-monospace, monospace;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+        .wrap { max-width: 1200px; margin: 0 auto; padding: 2.5rem 1.5rem 6rem; }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+        .top { display: inline-flex; align-items: center; gap: 0.8rem; margin-bottom: 2.5rem; text-decoration: none; color: inherit; }
+        .top:hover { text-decoration: none; }
+        .mark { width: 46px; height: 46px; border-radius: 13px; background: #060504; overflow: hidden; flex: none; }
+        .mark img { width: 100%; height: 100%; display: block; }
+        .wordmark { font-size: 1.22rem; font-weight: 800; letter-spacing: -0.01em; }
+        .wordmark span { color: var(--accent); }
+
+        .eyebrow { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--brass); margin-bottom: 0.9rem; }
+        h1 { font-size: clamp(2rem, 4.6vw, 2.95rem); font-weight: 800; letter-spacing: -0.025em; line-height: 1.08; margin-bottom: 1rem; max-width: 19ch; }
+        h1 em { font-style: normal; background: linear-gradient(90deg, var(--accent), var(--brass)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .lede { font-size: 1.1rem; color: var(--ink-2); max-width: 62ch; }
+        .hero-foot { font-family: var(--mono); font-size: 0.74rem; color: var(--ink-2); opacity: 0.82; margin-top: 1.3rem; }
+        .rule { height: 1px; background: var(--line); margin: 2.75rem 0; }
+
+        .layout { display: grid; grid-template-columns: 1fr 348px; gap: 2.5rem; align-items: start; }
+
+        section.step { scroll-margin-top: 1.5rem; }
+        .step-head { display: flex; align-items: baseline; gap: 0.85rem; margin-bottom: 0.4rem; }
+        .step-n { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.18em; color: var(--brass); border: 1px solid rgba(217,182,92,0.35); border-radius: 999px; padding: 0.18rem 0.6rem; flex: none; }
+        h2 { font-size: 1.42rem; font-weight: 800; letter-spacing: -0.018em; }
+        .step-sub { color: var(--ink-2); margin-bottom: 1.4rem; max-width: 70ch; font-size: 0.96rem; }
+        .locked { opacity: 0.34; pointer-events: none; filter: saturate(0.4); }
+
+        /* ---- role picker ---- */
+        .fam { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-2); margin: 1.5rem 0 0.7rem; display: flex; align-items: center; gap: 0.8rem; }
+        .fam:first-child { margin-top: 0; }
+        .fam .hr { flex: 1; height: 1px; background: var(--line); }
+        .roles { display: grid; grid-template-columns: repeat(auto-fill, minmax(244px, 1fr)); gap: 0.7rem; }
+        .role { position: relative; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1rem 1.05rem; cursor: pointer; color: inherit; font: inherit; transition: border-color .16s, background .16s, transform .16s; display: flex; flex-direction: column; gap: 0.28rem; }
+        .role:hover { border-color: rgba(212,242,74,0.35); transform: translateY(-2px); }
+        .role .rn { font-weight: 700; font-size: 0.98rem; padding-right: 1.2rem; }
+        .role .rd { font-size: 0.84rem; color: var(--ink-2); line-height: 1.45; }
+        .role[aria-pressed="true"] { border-color: var(--accent); background: linear-gradient(180deg, rgba(212,242,74,0.1), rgba(212,242,74,0.02)); }
+        .role[aria-pressed="true"]::after { content: "✓"; position: absolute; top: 0.7rem; right: 0.85rem; color: var(--accent); font-weight: 800; font-size: 0.9rem; }
+        .role:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .role .t2 { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--brass); margin-top: 0.15rem; }
+
+        .role-detail { background: var(--surface-2); border: 1px solid rgba(217,182,92,0.28); border-radius: 12px; padding: 1.1rem 1.25rem; margin-top: 1rem; }
+        .role-detail p { color: var(--ink-2); font-size: 0.93rem; }
+        .role-detail b { color: var(--ink); }
+
+        /* ---- generic option chips ---- */
+        .opts { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 0.6rem; }
+        .opt { display: flex; gap: 0.75rem; align-items: flex-start; background: var(--surface); border: 1px solid var(--line); border-radius: 11px; padding: 0.8rem 0.9rem; cursor: pointer; transition: border-color .15s, background .15s; }
+        .opt:hover { border-color: rgba(217,182,92,0.4); }
+        .opt input { appearance: none; -webkit-appearance: none; width: 18px; height: 18px; flex: none; margin-top: 0.15rem; border: 1.5px solid var(--ink-2); border-radius: 5px; cursor: pointer; position: relative; transition: all .14s; }
+        .opt input[type="radio"] { border-radius: 50%; }
+        .opt input:checked { background: var(--accent); border-color: var(--accent); }
+        .opt input:checked::after { content: "✓"; position: absolute; inset: 0; display: grid; place-items: center; color: #14170A; font-size: 0.76rem; font-weight: 800; }
+        .opt input[type="radio"]:checked::after { content: ""; inset: 4px; border-radius: 50%; background: #14170A; }
+        .opt input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .opt:has(input:checked) { border-color: rgba(212,242,74,0.45); background: rgba(212,242,74,0.05); }
+        .opt .ob { flex: 1; min-width: 0; }
+        .opt .on { font-weight: 700; font-size: 0.92rem; display: flex; justify-content: space-between; gap: 0.6rem; align-items: baseline; }
+        .opt .op { font-family: var(--mono); font-size: 0.8rem; color: var(--accent); flex: none; }
+        .opt .op.free { color: var(--ink-2); }
+        .opt .od { font-size: 0.81rem; color: var(--ink-2); line-height: 1.45; margin-top: 0.1rem; }
+        .opt .og { font-family: var(--mono); font-size: 0.68rem; color: var(--warm); margin-top: 0.25rem; line-height: 1.4; }
+        .opt .oo { font-family: var(--mono); font-size: 0.68rem; color: var(--brass); margin-top: 0.2rem; }
+        .opt.core { cursor: default; border-color: rgba(217,182,92,0.3); background: rgba(217,182,92,0.05); }
+        .opt.core input { background: var(--brass); border-color: var(--brass); }
+        .opt.core input::after { content: "✓"; color: #14170A; }
+        .opt.core .op { color: var(--brass); }
+
+        .sysline { margin-top: 0.45rem; }
+        .sysline input[type="text"] { width: 100%; background: #0D0C0A; border: 1px solid var(--line); border-radius: 7px; color: var(--ink); font: inherit; font-size: 0.82rem; padding: 0.4rem 0.55rem; }
+        .sysline input[type="text"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+        /* ---- capability groups ---- */
+        .capgroup { border: 1px solid var(--line); border-radius: 12px; margin-bottom: 0.6rem; overflow: hidden; }
+        .capgroup > summary { cursor: pointer; list-style: none; padding: 0.85rem 1.1rem; background: var(--surface); font-weight: 700; font-size: 0.94rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+        .capgroup > summary::-webkit-details-marker { display: none; }
+        .capgroup > summary::after { content: "+"; color: var(--accent); font-weight: 800; }
+        .capgroup[open] > summary::after { content: "−"; }
+        .capgroup > summary .cnt { font-family: var(--mono); font-size: 0.72rem; color: var(--ink-2); font-weight: 400; }
+        .capgroup .inner { padding: 0.8rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 0.55rem; }
+
+        .notice { background: rgba(232,115,74,0.08); border: 1px solid rgba(232,115,74,0.3); border-radius: 11px; padding: 0.9rem 1.1rem; margin-top: 1rem; font-size: 0.89rem; color: var(--ink-2); }
+        .notice b { color: var(--warm); }
+        .notice.brass { background: rgba(217,182,92,0.07); border-color: rgba(217,182,92,0.3); }
+        .notice.brass b { color: var(--brass); }
+
+        /* ---- text inputs ---- */
+        .field { margin-bottom: 1rem; }
+        .field label { display: block; font-size: 0.86rem; font-weight: 700; margin-bottom: 0.35rem; }
+        .field .hint { font-weight: 400; color: var(--ink-2); font-size: 0.82rem; }
+        .field input[type="text"], .field textarea {
+            width: 100%; background: #0D0C0A; border: 1px solid var(--line); border-radius: 9px;
+            color: var(--ink); font: inherit; font-size: 0.92rem; padding: 0.65rem 0.8rem; resize: vertical;
+        }
+        .field textarea { min-height: 78px; line-height: 1.6; }
+        .field input:focus-visible, .field textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+        .two { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+        .seg { display: inline-flex; background: var(--surface); border: 1px solid var(--line); border-radius: 11px; padding: 0.26rem; gap: 0.26rem; flex-wrap: wrap; }
+        .seg button { font: inherit; font-size: 0.88rem; font-weight: 700; color: var(--ink-2); background: none; border: 0; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; transition: all .14s; }
+        .seg button[aria-pressed="true"] { background: var(--accent); color: #14170A; }
+        .seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .seg-note { font-family: var(--mono); font-size: 0.74rem; color: var(--brass); margin-top: 0.65rem; }
+
+        /* ---- price rail ---- */
+        .panel { position: sticky; top: 1.5rem; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 1.4rem; }
+        .panel h3 { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--brass); font-weight: 500; margin-bottom: 0.9rem; }
+        .tierbadge { display: inline-flex; align-items: center; gap: 0.45rem; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); border: 1px solid rgba(212,242,74,0.35); border-radius: 999px; padding: 0.2rem 0.6rem; margin-bottom: 0.85rem; }
+        .tierbadge.t2 { color: var(--brass); border-color: rgba(217,182,92,0.4); }
+        .whytier { font-size: 0.79rem; color: var(--ink-2); line-height: 1.5; margin-bottom: 0.9rem; padding-bottom: 0.9rem; border-bottom: 1px solid var(--line); }
+        .lines { font-size: 0.86rem; max-height: 34vh; overflow-y: auto; }
+        .line { display: flex; justify-content: space-between; gap: 0.9rem; padding: 0.33rem 0; color: var(--ink-2); }
+        .line b { color: var(--ink); font-weight: 700; text-align: left; }
+        .line .v { font-family: var(--mono); color: var(--ink); flex: none; }
+        .line.muted b { color: var(--ink-2); font-weight: 400; }
+        .line.muted .v { color: var(--ink-2); }
+        .line.credit b, .line.credit .v { color: var(--warm); }
+        .panel-rule { height: 1px; background: var(--line); margin: 0.8rem 0; }
+        .total { display: flex; justify-content: space-between; align-items: baseline; gap: 0.9rem; }
+        .total .lab { font-size: 0.68rem; color: var(--ink-2); text-transform: uppercase; letter-spacing: 0.1em; font-family: var(--mono); }
+        .total .amt { font-family: var(--mono); font-size: 1.55rem; font-weight: 500; color: var(--accent); letter-spacing: -0.02em; }
+        .total.sec { margin-top: 0.5rem; }
+        .total.sec .amt { font-size: 1.05rem; color: var(--brass); }
+        .panel-meta { font-family: var(--mono); font-size: 0.7rem; color: var(--ink-2); margin-top: 0.9rem; line-height: 1.65; }
+        .btn { display: block; width: 100%; text-align: center; background: var(--accent); color: #14170A; font: inherit; font-weight: 800; font-size: 0.98rem; padding: 0.9rem 1.1rem; border: 0; border-radius: 11px; margin-top: 1.1rem; cursor: pointer; transition: opacity .15s; }
+        .btn:hover { opacity: 0.92; text-decoration: none; }
+        .btn-2 { display: block; width: 100%; text-align: center; background: none; color: var(--ink-2); font: inherit; font-size: 0.84rem; font-weight: 600; padding: 0.65rem; border: 1px solid var(--line); border-radius: 11px; margin-top: 0.55rem; cursor: pointer; }
+        .btn-2:hover { color: var(--ink); border-color: var(--ink-2); text-decoration: none; }
+        .empty { color: var(--ink-2); font-size: 0.88rem; }
+
+        .trial-box { background: rgba(232,115,74,0.07); border: 1px solid rgba(232,115,74,0.3); border-radius: 12px; padding: 0.95rem 1.05rem; margin-top: 1.1rem; display: flex; gap: 0.8rem; align-items: flex-start; cursor: pointer; }
+        .trial-box input { appearance: none; -webkit-appearance: none; width: 18px; height: 18px; flex: none; margin-top: 0.15rem; border: 1.5px solid var(--warm); border-radius: 5px; cursor: pointer; position: relative; }
+        .trial-box input:checked { background: var(--warm); }
+        .trial-box input:checked::after { content: "✓"; position: absolute; inset: 0; display: grid; place-items: center; color: #14170A; font-size: 0.76rem; font-weight: 800; }
+        .trial-box b { display: block; font-size: 0.91rem; }
+        .trial-box span { display: block; font-size: 0.82rem; color: var(--ink-2); line-height: 1.45; margin-top: 0.12rem; }
+
+        /* ---- the spec ---- */
+        #spec { display: none; }
+        #spec.on { display: block; }
+        .speccard { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 1.6rem; }
+        .spech { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--brass); margin: 1.5rem 0 0.6rem; }
+        .spech:first-child { margin-top: 0; }
+        .speccard p { color: var(--ink-2); font-size: 0.94rem; }
+        .speclist { list-style: none; }
+        .speclist li { position: relative; padding-left: 1.35rem; color: var(--ink-2); font-size: 0.9rem; margin-bottom: 0.38rem; line-height: 1.5; }
+        .speclist li::before { content: "+"; position: absolute; left: 0; color: var(--accent); font-weight: 800; }
+        .speclist.tests li::before { content: "✓"; color: var(--brass); font-weight: 700; font-size: 0.8rem; top: 0.1rem; }
+        .speclist li b { color: var(--ink); }
+        textarea.manifest { width: 100%; min-height: 260px; background: #0D0C0A; color: var(--ink-2); border: 1px solid var(--line); border-radius: 10px; padding: 1rem; font-family: var(--mono); font-size: 0.72rem; line-height: 1.7; resize: vertical; margin-top: 0.6rem; }
+        .actions { display: flex; flex-wrap: wrap; gap: 0.65rem; margin-top: 1.3rem; }
+        .actions .btn, .actions .btn-2 { width: auto; margin: 0; padding: 0.85rem 1.35rem; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 1.2rem; font-size: 0.9rem; }
+        th, td { text-align: left; padding: 0.65rem 0.6rem; border-bottom: 1px solid var(--line); color: var(--ink-2); vertical-align: top; }
+        th { color: var(--ink); font-weight: 700; font-size: 0.82rem; }
+        td b { color: var(--ink); }
+        td.num { font-family: var(--mono); color: var(--accent); white-space: nowrap; }
+
+        details.faq { border-bottom: 1px solid var(--line); padding: 1rem 0; }
+        details.faq summary { cursor: pointer; font-weight: 700; font-size: 0.98rem; list-style: none; display: flex; justify-content: space-between; gap: 1rem; }
+        details.faq summary::-webkit-details-marker { display: none; }
+        details.faq summary::after { content: "+"; color: var(--accent); font-weight: 800; flex: none; }
+        details.faq[open] summary::after { content: "−"; }
+        details.faq p { color: var(--ink-2); font-size: 0.93rem; margin-top: 0.7rem; }
+        details.faq p + p { margin-top: 0.65rem; }
+
+        .ladder { display: grid; grid-template-columns: repeat(auto-fit, minmax(198px, 1fr)); gap: 0.7rem; }
+        .rung { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1rem; cursor: pointer; }
+        .rung .lv { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.16em; color: var(--brass); }
+        .rung .nm { font-weight: 800; font-size: 1rem; margin: 0.25rem 0 0.35rem; }
+        .rung p { font-size: 0.84rem; color: var(--ink-2); line-height: 1.5; }
+        .rung[aria-pressed="true"] { border-color: var(--accent); background: linear-gradient(180deg, rgba(212,242,74,0.08), transparent); }
+        .rung[aria-pressed="true"] .lv { color: var(--accent); }
+        .rung .flag { font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-top: 0.5rem; display: block; }
+
+        .foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.86rem; color: var(--ink-2); }
+        .foot a { margin-right: 1.2rem; }
+
+        @media (max-width: 980px) {
+            .layout { grid-template-columns: 1fr; }
+            .two { grid-template-columns: 1fr; }
+            .panel {
+                position: fixed; left: 0; right: 0; bottom: 0; top: auto;
+                border-radius: 14px 14px 0 0; border-bottom: 0;
+                padding: 0.8rem 1.05rem calc(0.8rem + env(safe-area-inset-bottom, 0px));
+                z-index: 40; display: flex; align-items: center; gap: 0.85rem;
+                box-shadow: 0 -12px 28px rgba(0,0,0,0.55);
+                transform: translateY(115%); transition: transform 0.25s ease;
+            }
+            body.picked .panel { transform: none; }
+            body.picked { padding-bottom: 6rem; }
+            .panel > h3, .panel .lines, .panel .btn-2, .panel .panel-rule,
+            .panel .panel-meta, .panel .tierbadge, .panel .whytier, .panel .trial-box { display: none; }
+            #totals { flex: 1; min-width: 0; }
+            #totals .total { justify-content: flex-start; gap: 0.55rem; }
+            #totals .total .lab { font-size: 0.58rem; }
+            #totals .total .amt { font-size: 1.25rem; }
+            #totals .total.sec { margin-top: 0.08rem; }
+            #totals .total.sec .amt { font-size: 0.88rem; }
+            .panel .btn { width: auto; flex: none; margin-top: 0; padding: 0.8rem 1.05rem; font-size: 0.9rem; }
+        }
+        @media (prefers-reduced-motion: reduce) { .panel { transition: none; } }
+    </style>
+</head>
+<body>
+<div class="wrap">
+
+    <a class="top" href="/">
+        <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
+        <span class="wordmark">BlvkWare<span>.</span></span>
+    </a>
+
+    <div class="eyebrow">Define the job · Build the agent · Put it to work</div>
+    <h1>Scope it, price it, <em>order it.</em></h1>
+    <p class="lede">Tell it what the job is and what you already run. It works out what the agent has to be able to do, prices it as you go, and hands you the actual specification — what it will own, what it may touch, and the tests it has to pass before it's delivered. Add and remove until the price and what you get for it both look right.</p>
+    <p class="hero-foot">No estimate. No discovery call. No hourly billing anywhere in this.</p>
+
+    <div class="rule"></div>
+
+    <div class="layout">
+        <div>
+            <!-- 01 ROLE -->
+            <section class="step" id="s-role">
+                <div class="step-head"><span class="step-n">01</span><h2>What job needs doing?</h2></div>
+                <p class="step-sub">Pick the closest one. You'll tune exactly what it handles in a moment, so it doesn't have to be perfect — and most jobs people describe turn out to be one of these wearing different words.</p>
+                <div id="roles"></div>
+                <div id="role-detail"></div>
+            </section>
+
+            <div class="rule"></div>
+
+            <!-- 02 BUSINESS -->
+            <section class="step locked" id="s-biz" aria-disabled="true">
+                <div class="step-head"><span class="step-n">02</span><h2>What does it have to work with?</h2></div>
+                <p class="step-sub">The agent operates the software you already run — it doesn't replace it. Tick what you use. If something has no way in, it's better to find that out now than on day nine.</p>
+                <div class="opts" id="systems"></div>
+
+                <p class="step-sub" style="margin-top:1.75rem">And where should it work?</p>
+                <div class="opts" id="channels"></div>
+                <div id="chan-notice"></div>
+            </section>
+
+            <div class="rule"></div>
+
+            <!-- 03 VOLUME -->
+            <section class="step locked" id="s-vol" aria-disabled="true">
+                <div class="step-head"><span class="step-n">03</span><h2>How often does this happen?</h2></div>
+                <p class="step-sub">Roughly. This sets how much work the agent's monthly fee covers — you're not billed by the message, and going over doesn't break anything, it just costs a published rate.</p>
+                <div class="opts" id="volume"></div>
+            </section>
+
+            <div class="rule"></div>
+
+            <!-- 04 CAPABILITIES -->
+            <section class="step locked" id="s-caps" aria-disabled="true">
+                <div class="step-head"><span class="step-n">04</span><h2>What exactly should it handle?</h2></div>
+                <p class="step-sub">The brass ones are what this job <em>is</em> — they're in the base price and can't be removed. The rest are yours to add or drop, and the price moves as you do. Anything you skip can be added later at exactly the price shown here.</p>
+                <div id="core"></div>
+                <div class="spech">Recommended for this job</div>
+                <div class="opts" id="suggested"></div>
+                <div class="spech">Everything else it could do</div>
+                <div id="more"></div>
+                <div id="dep-notice"></div>
+            </section>
+
+            <div class="rule"></div>
+
+            <!-- 05 AUTONOMY -->
+            <section class="step locked" id="s-auto" aria-disabled="true">
+                <div class="step-head"><span class="step-n">05</span><h2>How much should it be allowed to do?</h2></div>
+                <p class="step-sub">Every agent goes live at <b style="color:var(--ink)">Draft</b> whatever you pick here — this is the level you're working towards, not the one it starts at. You raise it yourself once you've watched it work, and you can lower it again at any time. Every action is logged and reversible.</p>
+                <div class="ladder" id="autonomy"></div>
+                <div id="auto-notice"></div>
+            </section>
+
+            <div class="rule"></div>
+
+            <!-- 06 DETAILS -->
+            <section class="step locked" id="s-you" aria-disabled="true">
+                <div class="step-head"><span class="step-n">06</span><h2>Tell it about your business</h2></div>
+                <p class="step-sub">This becomes the job description — the one-page document that gets signed before any work starts and that the finished agent is tested against. The more exact you are here, the less back-and-forth there is later.</p>
+                <div class="two">
+                    <div class="field"><label for="f-biz">Business name</label><input type="text" id="f-biz" data-a="business" autocomplete="organization"></div>
+                    <div class="field"><label for="f-what">What you do</label><input type="text" id="f-what" data-a="whatWeDo" placeholder="Plumbing, 6 vans, Jackson MS"></div>
+                </div>
+                <div class="field">
+                    <label for="f-job">The job, in your own words <span class="hint">— what happens now, and what should happen instead</span></label>
+                    <textarea id="f-job" data-a="jobDescription" placeholder="Right now quotes go out and nobody chases them unless I remember. I want every quote followed up until the customer answers, and I want to know why we lost the ones we lost."></textarea>
+                </div>
+                <div class="field">
+                    <label for="f-never">What it must never do without asking you <span class="hint">— this becomes a hard rule, not a preference</span></label>
+                    <textarea id="f-never" data-a="neverDo" placeholder="Never quote a price. Never promise a date I haven't confirmed. Never contact anyone at Henderson Construction."></textarea>
+                </div>
+                <div class="two">
+                    <div class="field"><label for="f-email">Your email</label><input type="text" id="f-email" data-a="email" autocomplete="email" inputmode="email"></div>
+                    <div class="field"><label for="f-phone">Best number <span class="hint">— optional</span></label><input type="text" id="f-phone" data-a="phone" autocomplete="tel" inputmode="tel"></div>
+                </div>
+
+                <p class="step-sub" style="margin-top:1.25rem">How would you like to pay for the monthly?</p>
+                <div class="seg" role="group" aria-label="Billing period">
+                    <button type="button" data-bill="monthly" aria-pressed="true">Monthly</button>
+                    <button type="button" data-bill="annual" aria-pressed="false">Annual — 2 months free</button>
+                </div>
+                <p class="seg-note" id="bill-note">Cancel any month. Thirty days' notice, no exit fee.</p>
+
+                <label class="opt" style="margin-top:1.1rem;max-width:520px">
+                    <input type="checkbox" id="rush">
+                    <span class="ob"><span class="on"><span>Rush delivery</span><span class="op" id="rush-price">+40%</span></span>
+                    <span class="od">Half the timeline. It's priced against the build because it displaces other work.</span></span>
+                </label>
+
+                <label class="trial-box">
+                    <input type="checkbox" id="trial">
+                    <span>
+                        <b>Interview it first — $750 for 14 days</b>
+                        <span>One job, your real data, at Draft autonomy so nothing goes out without you seeing it. If you continue, the whole $750 comes off the build. If you don't, it stops and you owe nothing further.</span>
+                    </span>
+                </label>
+            </section>
+        </div>
+
+        <!-- PRICE RAIL -->
+        <aside>
+            <div class="panel">
+                <h3>Your agent</h3>
+                <div id="tier-badge"></div>
+                <div id="why-tier"></div>
+                <div id="lines" class="lines"><p class="empty">Pick a job and the price appears here, updating as you scope it.</p></div>
+                <div id="totals" hidden>
+                    <div class="panel-rule"></div>
+                    <div class="total"><span class="lab">Due to start</span><span class="amt" id="t-now">$0</span></div>
+                    <div class="total sec"><span class="lab" id="t-rec-lab">Then monthly</span><span class="amt" id="t-rec">$0</span></div>
+                    <p class="panel-meta" id="t-meta"></p>
+                </div>
+                <button type="button" class="btn" id="go">See the specification</button>
+                <a class="btn-2" href="https://cal.com/blvkware/15min" target="_blank" rel="noopener noreferrer">Rather ask a question first?</a>
+            </div>
+        </aside>
+    </div>
+
+    <!-- SPEC -->
+    <section id="spec">
+        <div class="rule"></div>
+        <div class="step-head"><span class="step-n">07</span><h2>Your agent, specified</h2></div>
+        <p class="step-sub">This is the scope of record. Send it and you'll get it back as a signed one-page job description within a business day, with these acceptance tests written into it. Nothing is charged until you've signed that.</p>
+        <div class="speccard" id="speccard"></div>
+        <div class="actions">
+            <a class="btn" id="order" href="#">Send this order</a>
+            <button type="button" class="btn-2" id="copy">Copy it</button>
+            <button type="button" class="btn-2" id="download">Download the manifest</button>
+        </div>
+        <p class="panel-meta" style="margin-top:1rem">Goes to russ@blvkware.dev. One person reads it — the same one who builds it.</p>
+    </section>
+
+    <div class="rule"></div>
+
+    <section>
+        <div class="step-head"><span class="step-n">—</span><h2>The questions people actually ask</h2></div>
+        <p class="step-sub">If yours isn't here, email it. You'll get a straight answer, not a sales call.</p>
+
+        <details class="faq">
+            <summary>Why does the tier change on its own instead of me picking it?</summary>
+            <p>Because letting a buyer pick the tier means either overselling a small job or underselling a large one, and both end badly. The tier is worked out from what you've actually configured — how many systems it has to operate, how many channels it works across, and how much judgment the job needs. The panel tells you which one you're in and exactly why.</p>
+            <p>If it says Deputy and you wanted Operator money, take something out and watch it flip back. That's not a trick — a smaller scope genuinely costs less, and you can add the rest later at the same published prices.</p>
+        </details>
+
+        <details class="faq">
+            <summary>What is an "action", and what happens if we go over?</summary>
+            <p>One action is one completed task step the agent takes on your behalf — sending a follow-up, booking a slot, drafting a reply, updating a record, making a call. You picked a rough volume above and the monthly covers that.</p>
+            <p>Going over doesn't break anything and nothing gets switched off. It's $75 per additional thousand, and you're told before it happens rather than after. Buying the volume up front is cheaper than overage, which is why the bands exist.</p>
+        </details>
+
+        <details class="faq">
+            <summary>Can all of this start today, or is something waiting on approval?</summary>
+            <p>Everything on email, web chat, a shared inbox, Slack or Teams starts immediately. Inbound phone also starts immediately — answering calls needs a number, not a registration.</p>
+            <p>The one genuine exception is <b>SMS</b>. Texting your customers from a US business number requires A2P 10DLC carrier registration, and part of it is a manual review nobody can hurry. Budget weeks rather than days. It's flagged on the channel itself above rather than buried down here, because finding that out after ordering is exactly how a fixed timeline becomes a lie.</p>
+            <p>The practical answer is to start without it and add SMS when the registration clears — same published price, no new project.</p>
+        </details>
+
+        <details class="faq">
+            <summary>Why is there a monthly fee — didn't I just buy the thing?</summary>
+            <p>You didn't buy a thing, you hired a worker. An agent runs on models that cost money every time it thinks, it operates systems whose vendors change them without warning, and it makes decisions that need watching and correcting as your business changes.</p>
+            <p>Agent Operations covers hosting, model costs, monitoring, unlimited tuning of its logic and its language, repairs when an integration breaks, business-hours support, a monthly performance report and a quarterly review. Software you have to operate has a maintenance fee. This has a payroll.</p>
+        </details>
+
+        <details class="faq">
+            <summary>What if the agent does something wrong?</summary>
+            <p>It ships at Draft, where it can't act on its own at all — it prepares the work and a person sends it. It only acts unsupervised at a level you turn on in writing, after you've watched it work, and you can turn it back down instantly. Before it touches a live customer it rehearses against your real history taking no action, and you read that log first.</p>
+            <p>Every action is logged with what it saw, what it decided, why, and what it did — and actions are reversible. The commercial answer is in the <a href="/terms/">terms</a> and isn't hidden: liability is capped at fees paid. Any provider telling you their agent can't make a mistake is either lying or hasn't shipped one.</p>
+        </details>
+
+        <details class="faq">
+            <summary>What if I stop paying?</summary>
+            <p>The agent pauses and your data is exported to you within five business days, all of it, in a format you can use. If you'd rather keep running it yourself, the source is available at twelve times the monthly fee.</p>
+            <p>That's published on purpose, because "you'll never get your business back out" is the fair objection to every managed service and it deserves an answer in writing rather than a reassurance on a call.</p>
+        </details>
+
+        <details class="faq">
+            <summary>What if it doesn't work?</summary>
+            <p>For an Operator: thirty days. If it doesn't do the job it was hired for, the build fee comes back.</p>
+            <p>For a Deputy the guarantee is stronger in the way that matters more — the acceptance tests you can see in your specification are written into the job description before work starts, and work continues at no extra charge until they pass. That's deliberately not a refund, because a refund lets a supplier walk away from a hard build. This one doesn't let me.</p>
+        </details>
+
+        <details class="faq">
+            <summary>Who actually builds it?</summary>
+            <p>One person — William Russell Wheeler, from Mississippi, working with businesses across the United States. The same person who reads your order, writes your job description, builds the agent and picks up when something breaks. No account manager, no handoff, no offshore team.</p>
+            <p>That's why the scope and the timeline are fixed rather than open-ended, and why there's a catalog rather than an infinite menu. It's also a real risk to you, which is why the export and the source buyout above exist.</p>
+        </details>
+    </section>
+
+    <div class="rule"></div>
+
+    <section>
+        <div class="step-head"><span class="step-n">—</span><h2>What happens after you order</h2></div>
+        <p class="step-sub">The same sequence every time. That repeatability is the reason the price can be flat.</p>
+        <table>
+            <thead><tr><th style="width:5.5rem">Day</th><th style="width:11rem">Step</th><th>What you get</th></tr></thead>
+            <tbody>
+                <tr><td class="num">1</td><td><b>Job description</b></td><td>Your specification comes back as one signed page — what it owns, what it may touch, what it escalates, and the acceptance tests. That page is the contract.</td></tr>
+                <tr><td class="num">2–3</td><td><b>Wiring</b></td><td>Your systems connected, your prices and documents loaded, its capabilities configured. Nothing running yet.</td></tr>
+                <tr><td class="num">4</td><td><b>Rehearsal</b></td><td>It runs against your real history at Watch — taking no action — and you read the log of what it would have done.</td></tr>
+                <tr><td class="num">5</td><td><b>First day</b></td><td>Live at Draft. It does the work, you approve what goes out.</td></tr>
+                <tr><td class="num">6–10</td><td><b>Supervision</b></td><td>Daily tuning against what actually happens. You raise it when you're ready, not before.</td></tr>
+                <tr><td class="num">30</td><td><b>Review</b></td><td>What it did, what it recovered, what it got wrong. Then a promotion, or something added, or neither.</td></tr>
+            </tbody>
+        </table>
+        <p class="step-sub" style="margin-top:1.25rem">A Deputy runs the same sequence over twenty-five business days, because there are more systems to wire and more judgment to check. <a href="/agents/">The full catalog</a> lists every role and what each one owns.</p>
+    </section>
+
+    <footer class="foot">
+        <a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/augur/">AUGUR</a><a href="/scry/">SCRY</a><a href="/sigil/">SIGIL</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a>
+        <p style="margin-top:1rem">BlvkWare — <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> · Mississippi, serving the United States.</p>
+        <p style="margin-top:0.4rem">Copyright © 2026 BlvkWare / William Russell Wheeler. All Rights Reserved.</p>
+    </footer>
+</div>
+
+<script id="blvk-catalog" type="application/json">/*CATALOG_JSON*/</script>
+<script>
+/* Compiled from dev/catalog.py at build time. */
+try {
+    window.BLVK_CATALOG = JSON.parse(document.getElementById("blvk-catalog").textContent);
+} catch (e) {
+    window.BLVK_CATALOG = null;
+}
+</script>
+<script>/*ENGINE_JS*/</script>
+<script>
+(function () {
+    "use strict";
+
+    var C = window.BLVK_CATALOG, E = window.BlvkEngine;
+    if (!C || !E) {
+        document.getElementById("lines").innerHTML =
+            '<p class="empty">The configurator failed to load. Email russ@blvkware.dev and you will get a price by reply.</p>';
+        return;
+    }
+
+    /* Set to a Checkout endpoint to take payment on the page. While it is empty
+     * the order is completed by email, exactly as the tools' capture endpoint
+     * degrades — a broken checkout is far worse than an honest mailto. */
+    var CHECKOUT_ENDPOINT = "";
+
+    var money = E.money;
+    var state = {
+        roleId: null, caps: {}, systems: {}, systemDetail: {}, channels: { email: true },
+        volumeId: "standard", autonomy: "L1", modifiers: {}, billing: "monthly",
+        trial: false, answers: {}, ref: null
+    };
+
+    function el(tag, cls, text) {
+        var n = document.createElement(tag);
+        if (cls) n.className = cls;
+        if (text != null) n.textContent = text;
+        return n;
+    }
+    function clear(n) { while (n.firstChild) n.removeChild(n.firstChild); }
+
+    /* option row: checkbox or radio with name, price, description, notes */
+    function option(o) {
+        var lab = el("label", "opt" + (o.core ? " core" : ""));
+        var input = document.createElement("input");
+        input.type = o.radio ? "radio" : "checkbox";
+        if (o.radio) input.name = o.radio;
+        input.checked = !!o.checked;
+        if (o.core) input.disabled = true;
+        var body = el("div", "ob");
+        var head = el("div", "on");
+        head.appendChild(el("span", null, o.name));
+        if (o.price != null) {
+            head.appendChild(el("span", "op" + (o.price === 0 ? " free" : ""),
+                o.core ? "included" : (o.price === 0 ? "included" : "+" + money(o.price))));
+        }
+        body.appendChild(head);
+        if (o.desc) body.appendChild(el("div", "od", o.desc));
+        if (o.ops) body.appendChild(el("div", "oo", "+" + money(o.ops) + "/mo"));
+        if (o.gate) body.appendChild(el("div", "og", C.gates[o.gate] ? C.gates[o.gate].short : o.gate));
+        lab.appendChild(input);
+        lab.appendChild(body);
+        if (o.extra) body.appendChild(o.extra);
+        if (!o.core) input.addEventListener("change", function () { o.onChange(input.checked, lab); });
+        return lab;
+    }
+
+    /* ---- 01 roles ---- */
+    var roleHost = document.getElementById("roles");
+    C.roleFamilies.forEach(function (fam) {
+        var head = el("div", "fam");
+        head.appendChild(el("b", null, fam));
+        head.appendChild(el("span", "hr"));
+        roleHost.appendChild(head);
+        var grid = el("div", "roles");
+        C.roles.filter(function (r) { return r.family === fam; }).forEach(function (r) {
+            var b = el("button", "role");
+            b.type = "button";
+            b.setAttribute("aria-pressed", "false");
+            b.dataset.role = r.id;
+            b.appendChild(el("span", "rn", r.name));
+            b.appendChild(el("span", "rd", r.oneLine));
+            if (r.minTier === 2) b.appendChild(el("span", "t2", "Deputy · owns a whole function"));
+            b.addEventListener("click", function () { pickRole(r.id); });
+            grid.appendChild(b);
+        });
+        roleHost.appendChild(grid);
+    });
+
+    function pickRole(id) {
+        var same = state.roleId === id;
+        state.roleId = same ? null : id;
+        state.caps = {};
+        document.querySelectorAll(".role").forEach(function (n) {
+            n.setAttribute("aria-pressed", String(n.dataset.role === state.roleId));
+        });
+        var detail = document.getElementById("role-detail");
+        clear(detail);
+        if (state.roleId) {
+            var r = E.roleById(state.roleId);
+            r.suggested.forEach(function (c) { state.caps[c] = true; });
+            var d = el("div", "role-detail");
+            d.appendChild(el("p", null, r.problem));
+            detail.appendChild(d);
+        }
+        ["s-biz", "s-vol", "s-caps", "s-auto", "s-you"].forEach(function (sid) {
+            var s = document.getElementById(sid);
+            s.classList.toggle("locked", !state.roleId);
+            s.setAttribute("aria-disabled", String(!state.roleId));
+        });
+        renderCaps();
+        render();
+        if (state.roleId) {
+            document.getElementById("s-biz").scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    }
+
+    /* ---- 02 systems and channels ---- */
+    var sysHost = document.getElementById("systems");
+    C.integrations.forEach(function (i) {
+        var detail = el("div", "sysline");
+        var t = document.createElement("input");
+        t.type = "text";
+        t.placeholder = "Which one? e.g. " + i.eg.split(",")[0].trim();
+        t.hidden = true;
+        t.addEventListener("input", function () { state.systemDetail[i.id] = t.value; });
+        t.addEventListener("click", function (e) { e.preventDefault(); });
+        detail.appendChild(t);
+        sysHost.appendChild(option({
+            name: i.name, desc: i.eg, extra: detail,
+            onChange: function (on) {
+                state.systems[i.id] = on;
+                t.hidden = !on;
+                render();
+            }
+        }));
+    });
+
+    var chanHost = document.getElementById("channels");
+    C.channels.forEach(function (ch) {
+        var cap = ch.cap ? E.capById(ch.cap) : null;
+        chanHost.appendChild(option({
+            name: ch.name,
+            price: cap ? cap.price : 0,
+            ops: cap ? cap.ops : 0,
+            gate: ch.gate,
+            checked: ch.id === "email",
+            desc: cap ? cap.blurb : null,
+            onChange: function (on) { state.channels[ch.id] = on; render(); }
+        }));
+    });
+
+    /* ---- 03 volume ---- */
+    var volHost = document.getElementById("volume");
+    C.volume.forEach(function (v) {
+        volHost.appendChild(option({
+            name: v.label, desc: v.hint, radio: "vol", checked: v.id === state.volumeId,
+            onChange: function (on) { if (on) { state.volumeId = v.id; render(); } }
+        }));
+    });
+
+    /* ---- 04 capabilities ---- */
+    function capOption(cap, core) {
+        return option({
+            name: cap.name, desc: cap.blurb, price: cap.price, ops: cap.ops,
+            gate: cap.gate, core: core, checked: core || !!state.caps[cap.id],
+            onChange: function (on) { state.caps[cap.id] = on; render(); }
+        });
+    }
+
+    function renderCaps() {
+        var coreHost = document.getElementById("core");
+        var sugHost = document.getElementById("suggested");
+        var moreHost = document.getElementById("more");
+        clear(coreHost); clear(sugHost); clear(moreHost);
+        if (!state.roleId) return;
+
+        var r = E.roleById(state.roleId);
+        var head = el("div", "spech", "What this job is — included in the base price");
+        coreHost.appendChild(head);
+        var coreGrid = el("div", "opts");
+        r.core.forEach(function (id) { coreGrid.appendChild(capOption(E.capById(id), true)); });
+        coreHost.appendChild(coreGrid);
+
+        r.suggested.forEach(function (id) { sugHost.appendChild(capOption(E.capById(id))); });
+
+        var shown = {};
+        r.core.concat(r.suggested).forEach(function (id) { shown[id] = true; });
+        C.capGroups.forEach(function (g) {
+            var caps = C.capabilities.filter(function (c) { return c.group === g && !shown[c.id]; });
+            if (!caps.length) return;
+            var d = el("details", "capgroup");
+            var s = el("summary");
+            s.appendChild(el("span", null, g));
+            s.appendChild(el("span", "cnt", caps.length + " available"));
+            d.appendChild(s);
+            var inner = el("div", "inner");
+            caps.forEach(function (c) { inner.appendChild(capOption(c)); });
+            d.appendChild(inner);
+            moreHost.appendChild(d);
+        });
+    }
+
+    /* ---- 05 autonomy ---- */
+    var autoHost = document.getElementById("autonomy");
+    C.autonomy.forEach(function (a) {
+        var b = el("button", "rung");
+        b.type = "button";
+        b.setAttribute("aria-pressed", String(a.id === state.autonomy));
+        b.dataset.level = a.id;
+        b.appendChild(el("span", "lv", a.id));
+        b.appendChild(el("div", "nm", a.name));
+        b.appendChild(el("p", null, a.blurb));
+        if (a.id === "L1") b.appendChild(el("span", "flag", "Every agent starts here"));
+        b.addEventListener("click", function () {
+            state.autonomy = a.id;
+            document.querySelectorAll(".rung").forEach(function (n) {
+                n.setAttribute("aria-pressed", String(n.dataset.level === state.autonomy));
+            });
+            render();
+        });
+        autoHost.appendChild(b);
+    });
+
+    /* ---- 06 details ---- */
+    document.querySelectorAll("[data-a]").forEach(function (n) {
+        n.addEventListener("input", function () { state.answers[n.dataset.a] = n.value.trim(); });
+    });
+    document.querySelectorAll("[data-bill]").forEach(function (b) {
+        b.addEventListener("click", function () {
+            state.billing = b.dataset.bill;
+            document.querySelectorAll("[data-bill]").forEach(function (n) {
+                n.setAttribute("aria-pressed", String(n.dataset.bill === state.billing));
+            });
+            document.getElementById("bill-note").textContent = state.billing === "annual"
+                ? "Twelve months for the price of ten, paid up front. Same cancellation rights — the unused balance is refunded pro rata."
+                : "Cancel any month. Thirty days' notice, no exit fee.";
+            render();
+        });
+    });
+    document.getElementById("rush").addEventListener("change", function (e) {
+        state.modifiers.rush = e.target.checked; render();
+    });
+    document.getElementById("trial").addEventListener("change", function (e) {
+        state.trial = e.target.checked; render();
+    });
+
+    /* ---- render ---- */
+    function line(host, label, value, cls) {
+        var d = el("div", "line" + (cls ? " " + cls : ""));
+        d.appendChild(el("b", null, label));
+        d.appendChild(el("span", "v", value));
+        host.appendChild(d);
+    }
+
+    function notice(hostId, html, brass) {
+        var host = document.getElementById(hostId);
+        clear(host);
+        if (!html) return;
+        var d = el("div", "notice" + (brass ? " brass" : ""));
+        d.innerHTML = html;
+        host.appendChild(d);
+    }
+
+    function render() {
+        var host = document.getElementById("lines");
+        var totals = document.getElementById("totals");
+        var badge = document.getElementById("tier-badge");
+        var why = document.getElementById("why-tier");
+        clear(host); clear(badge); clear(why);
+
+        var q = state.roleId ? E.price(state) : null;
+        document.body.classList.toggle("picked", !!q);
+
+        if (!q) {
+            host.appendChild(el("p", "empty", "Pick a job and the price appears here, updating as you scope it."));
+            totals.hidden = true;
+            return;
+        }
+        totals.hidden = false;
+
+        var b = el("div", "tierbadge" + (q.tier.key === 2 ? " t2" : ""));
+        b.textContent = q.def.label;
+        badge.appendChild(b);
+        if (q.tier.reasons.length) {
+            why.appendChild(el("div", "whytier",
+                "This is a " + q.def.name + " because " + q.tier.reasons[0] + "."));
+        } else {
+            why.appendChild(el("div", "whytier", q.def.blurb + " Up to " + q.def.systems +
+                " systems and " + q.def.channels + " channels."));
+        }
+
+        line(host, q.role.name + " — base", money(q.base));
+        q.lines.forEach(function (l) { line(host, l.name, "+" + money(l.amount), "muted"); });
+        if (q.extraSystems) {
+            line(host, q.extraSystems + " extra system connection" + (q.extraSystems > 1 ? "s" : ""),
+                 "+" + money(q.systemsCost), "muted");
+        }
+        if (q.rush) line(host, "Rush delivery", "+" + money(q.rushCost), "muted");
+
+        host.appendChild(el("div", "panel-rule"));
+        line(host, state.billing === "annual" ? "Agent Operations — 12 months" : "Agent Operations — monthly",
+             money(state.billing === "annual" ? q.annual : q.monthly));
+        if (q.volumeOps) line(host, "— your volume band", "+" + money(q.volumeOps) + "/mo", "muted");
+        if (q.capOps) line(host, "— running costs", "+" + money(q.capOps) + "/mo", "muted");
+
+        if (q.trial) {
+            host.appendChild(el("div", "panel-rule"));
+            line(host, "14-day Trial", money(q.credit));
+            line(host, "Credited against the build", "−" + money(q.credit), "credit");
+        }
+
+        document.getElementById("t-now").textContent = money(q.dueNow);
+        document.getElementById("t-rec-lab").textContent = q.trial
+            ? "Then, if you continue"
+            : (state.billing === "annual" ? "Then each year" : "Then monthly");
+        document.getElementById("t-rec").textContent = q.trial
+            ? money(q.buildAfterCredit) + " + " + money(q.recurring)
+            : money(q.recurring);
+        document.getElementById("t-meta").textContent =
+            "Live in " + q.days + " business days · " + q.includedActions.toLocaleString("en-US") +
+            " actions/month · " + (state.billing === "annual" ? "annual billing" : "cancel any month");
+        document.getElementById("rush-price").textContent = "+" + money(Math.round(q.subtotal * C.pricing.rushPct));
+
+        /* dependencies the engine had to add on the buyer's behalf, and the
+         * warning that the next tick may cross a tier boundary */
+        var msgs = [];
+        if (q.autoAdded.length) {
+            var names = q.autoAdded.map(function (id) { return E.capById(id).name; });
+            msgs.push("<b>Added automatically:</b> " + names.join(", ") +
+                ". These are needed for what you picked to actually function, so they are in the price rather than a surprise on day nine.");
+        }
+        if (q.tier.nearTier2) {
+            msgs.push("<b>You are one step from a Deputy.</b> A little more scope and this becomes a " +
+                "Tier II agent, which adds " + money(q.tier.tier2Delta) + " to the base and takes 25 " +
+                "business days instead of 10. That is a real difference in the work, not a penalty — " +
+                "but you should meet it before you click, not after.");
+        }
+        if (q.tier.oversized) {
+            msgs.push("<b>This is genuinely two agents' worth of work.</b> It can be built as one, but it " +
+                "will be better and cheaper as two that hand work between them — the second is 30% off its " +
+                "build price. Say so in the order and you will get both options priced back.");
+        }
+        notice("dep-notice", msgs.join("<br><br>"), true);
+
+        /* channel gates */
+        if (q.gates.length) {
+            notice("chan-notice", q.gates.map(function (g) {
+                return "<b>" + (C.gates[g] ? C.gates[g].short : g) + "</b><br>" + (C.gates[g] ? C.gates[g].long : "");
+            }).join("<br><br>"));
+        } else {
+            notice("chan-notice", "");
+        }
+
+        /* autonomy dependency */
+        var needsConsole = (state.autonomy === "L2" || state.autonomy === "L3");
+        notice("auto-notice", needsConsole
+            ? "<b>The approval console is included at this level.</b> Acting without a human in the loop is only safe if there is somewhere for the agent to stop and ask, so it is added to the build automatically rather than sold to you later."
+            : "", true);
+    }
+
+    /* ---- the specification ---- */
+    function ref() {
+        var d = new Date();
+        var s = d.getFullYear().toString().slice(2) +
+                ("0" + (d.getMonth() + 1)).slice(-2) +
+                ("0" + d.getDate()).slice(-2);
+        return "BW-" + s + "-" + Math.random().toString(36).slice(2, 6).toUpperCase();
+    }
+
+    function renderSpec() {
+        var q = E.price(state);
+        if (!q) return null;
+        if (!state.ref) state.ref = ref();
+        var sp = E.spec(state, q);
+        var card = document.getElementById("speccard");
+        clear(card);
+
+        function h(t) { card.appendChild(el("div", "spech", t)); }
+        function p(t) { card.appendChild(el("p", null, t)); }
+        function list(items, cls) {
+            var ul = el("ul", "speclist" + (cls ? " " + cls : ""));
+            items.forEach(function (i) {
+                var li = document.createElement("li");
+                if (i.bold) { li.appendChild(el("b", null, i.bold)); li.appendChild(document.createTextNode(" — " + i.text)); }
+                else li.textContent = i.text || i;
+                ul.appendChild(li);
+            });
+            card.appendChild(ul);
+        }
+
+        h("Order " + sp.ref);
+        p(sp.role.name + " · " + q.def.label + " · live in " + q.days + " business days · working towards " +
+          sp.autonomy + ", live at L1 Draft.");
+
+        h("What it will own");
+        list(sp.capabilities.map(function (c) { return { bold: c.name, text: E.capById(c.id).blurb }; }));
+
+        h("What it will operate");
+        list(sp.integrations.length
+            ? sp.integrations.map(function (i) {
+                var t = i.detail ? i.detail : "";
+                if (i.source === "implied") {
+                    t = (t ? t + " · " : "") + "comes with " + i.requiredBy.slice(0, 2).join(" and ");
+                }
+                return { bold: i.name, text: t || "as you use it today" };
+              })
+            : [{ text: "Nothing yet — tell me what you run and it goes in the job description." }]);
+
+        h("Where it works");
+        list(sp.channels.map(function (c) { return { text: c.name + (c.gate ? " (waiting on registration)" : "") }; }));
+
+        h("The tests it must pass before delivery");
+        list(sp.acceptance.map(function (a) { return { bold: a.name, text: a.test }; }), "tests");
+
+        h("What it must never do without asking");
+        p(state.answers.neverDo || "Not yet stated — this becomes a hard rule in the job description, so it is worth filling in above.");
+
+        h("The manifest");
+        p("This is what gets built from. Keep a copy — it is the exact scope you are paying for.");
+        var ta = el("textarea", "manifest");
+        ta.spellcheck = false;
+        ta.value = JSON.stringify(sp, null, 2);
+        ta.id = "manifest";
+        card.appendChild(ta);
+
+        return sp;
+    }
+
+    function orderText(sp, q) {
+        var L = [];
+        L.push("AGENT ORDER " + sp.ref);
+        L.push("========================================");
+        L.push("");
+        L.push(sp.role.name + "  ·  " + q.def.label);
+        L.push("Live in " + q.days + " business days. Working towards " + sp.autonomy + ", live at L1 Draft.");
+        L.push("");
+        L.push("BUSINESS");
+        L.push("  Name        " + (sp.business.business || "—"));
+        L.push("  What we do  " + (sp.business.whatWeDo || "—"));
+        L.push("  Email       " + (sp.business.email || "—"));
+        L.push("  Phone       " + (sp.business.phone || "—"));
+        L.push("");
+        L.push("THE JOB, IN THEIR WORDS");
+        L.push("  " + (sp.business.jobDescription || "—"));
+        L.push("");
+        L.push("MUST NEVER DO WITHOUT ASKING");
+        L.push("  " + (sp.business.neverDo || "—"));
+        L.push("");
+        L.push("CAPABILITIES (" + sp.capabilities.length + ")");
+        sp.capabilities.forEach(function (c) { L.push("  [" + c.group + "] " + c.name); });
+        L.push("");
+        L.push("SYSTEMS TO OPERATE");
+        sp.integrations.forEach(function (i) {
+            L.push("  " + (i.source === "implied" ? "(+) " : "    ") + i.name +
+                   (i.detail ? " — " + i.detail : "") +
+                   (i.source === "implied" ? "   [comes with " + i.requiredBy.slice(0, 2).join(", ") + "]" : ""));
+        });
+        L.push("");
+        L.push("CHANNELS");
+        sp.channels.forEach(function (c) { L.push("  " + c.name + (c.gate ? "  (gated: " + c.gate + ")" : "")); });
+        L.push("");
+        L.push("VOLUME       " + sp.volume.label + " (" + sp.volume.includedActions.toLocaleString("en-US") + " actions/mo)");
+        L.push("");
+        L.push("PRICE");
+        L.push("  Build                " + money(q.build));
+        L.push("  " + (q.billing === "annual" ? "Operations, annual  " : "Operations, monthly ") + money(q.recurring));
+        if (q.trial) {
+            L.push("  14-day Trial now     " + money(q.credit));
+            L.push("  Build after credit   " + money(q.buildAfterCredit));
+        }
+        L.push("  DUE TO START         " + money(q.dueNow));
+        L.push("");
+        L.push("The full manifest is attached below. Paste it back to me unchanged.");
+        L.push("");
+        L.push(JSON.stringify(sp));
+        return L.join("\n");
+    }
+
+    var currentSpec = null, currentQuote = null;
+
+    document.getElementById("go").addEventListener("click", function () {
+        if (!state.roleId) {
+            document.getElementById("s-role").scrollIntoView({ behavior: "smooth", block: "start" });
+            var first = document.querySelector(".role");
+            if (first) first.focus();
+            return;
+        }
+        currentQuote = E.price(state);
+        currentSpec = renderSpec();
+        var sec = document.getElementById("spec");
+        sec.classList.add("on");
+        var txt = orderText(currentSpec, currentQuote);
+        document.getElementById("order").href =
+            "mailto:russ@blvkware.dev?subject=" +
+            encodeURIComponent("Agent order " + currentSpec.ref + " — " + currentSpec.role.name) +
+            "&body=" + encodeURIComponent(txt);
+        sec.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    document.getElementById("copy").addEventListener("click", function () {
+        if (!currentSpec) return;
+        var btn = this, txt = orderText(currentSpec, currentQuote);
+        var done = function () {
+            btn.textContent = "Copied";
+            setTimeout(function () { btn.textContent = "Copy it"; }, 1800);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(txt).then(done, function () { legacy(txt, done); });
+        } else { legacy(txt, done); }
+    });
+
+    function legacy(txt, done) {
+        var ta = document.getElementById("manifest");
+        if (!ta) return;
+        var keep = ta.value;
+        ta.value = txt; ta.focus(); ta.select();
+        try { document.execCommand("copy"); done(); } catch (e) { /* copy by hand */ }
+        ta.value = keep;
+    }
+
+    document.getElementById("download").addEventListener("click", function () {
+        if (!currentSpec) return;
+        var blob = new Blob([JSON.stringify(currentSpec, null, 2)], { type: "application/json" });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = currentSpec.ref + ".json";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    });
+
+    render();
+})();
+</script>
+</body>
+</html>
