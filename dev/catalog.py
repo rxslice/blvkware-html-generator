@@ -709,7 +709,7 @@ MODIFIERS = [
 
 AUTONOMY = [
     {"id": "L0", "name": "Watch",   "blurb": "Observes and reports. Takes no action.", "needs": []},
-    {"id": "L1", "name": "Draft",   "blurb": "Prepares the action; a human sends it.", "needs": []},
+    {"id": "L1", "name": "Draft",   "blurb": "Prepares anything a customer would see; a human sends it. Keeps your records up to date as it goes.", "needs": []},
     {"id": "L2", "name": "Approve", "blurb": "Acts on its own, but stops for you above a line you set.", "needs": ["approval.console"]},
     {"id": "L3", "name": "Operate", "blurb": "Acts within scope, escalates exceptions. Enabled in writing after supervision.", "needs": ["approval.console"]},
 ]
