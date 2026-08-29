@@ -37,6 +37,24 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://blvkware.dev/what-is-an-ai-agent/</loc>
+    <lastmod>2026-08-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://blvkware.dev/ai-agent-pricing/</loc>
+    <lastmod>2026-08-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://blvkware.dev/ai-agent-permissions/</loc>
+    <lastmod>2026-08-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
     <loc>https://blvkware.dev/quote-follow-up-automation/</loc>
     <lastmod>2026-08-28</lastmod>
     <changefreq>monthly</changefreq>

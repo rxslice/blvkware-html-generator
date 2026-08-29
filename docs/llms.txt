@@ -138,6 +138,21 @@ payment, no server. They exist as the work sample in place of case studies.
 - [Agent catalog](https://blvkware.dev/agents/): all eleven roles, what each one
   owns, what comes with every agent regardless of tier, and the full component
   price list.
+- [What is an AI agent](https://blvkware.dev/what-is-an-ai-agent/): the
+  difference between an agent, an automation and a chatbot; the four capabilities
+  an agent actually needs; the four questions to put to a vendor; and the three
+  cases where a business should NOT buy one (the job is rare, the job is
+  genuinely deterministic, or the process is not written down anywhere).
+- [What an AI agent should cost](https://blvkware.dev/ai-agent-pricing/): the
+  three pricing models in the market, defensible build and monthly ranges by
+  shape of agent, what actually drives the price, why an agent should be compared
+  to a part-time hire rather than to a SaaS subscription, the arithmetic for
+  deciding, and five warning signs in a quote. BlvkWare's own prices are stated.
+- [AI agent permissions and safety](https://blvkware.dev/ai-agent-permissions/):
+  what realistically goes wrong with business agents, the four-level autonomy
+  ladder (Watch, Draft, Approve, Operate), least privilege for agents, the three
+  things every agent must have before it touches a customer (a reasoning log, a
+  reverse, a stop), what must never be unsupervised, and where liability sits.
 - [Quote follow-up automation](https://blvkware.dev/quote-follow-up-automation/):
   how automated quote follow-up works, the arithmetic for deciding whether it
   pays, why the sequence must stop when the customer answers, and why US A2P

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Let an AI Agent Loose on Your Business Safely — BlvkWare</title>
+    <meta name="description" content="What actually goes wrong with AI agents, the four-level autonomy ladder that prevents most of it, and the three things every agent must have before it touches a customer: a log, a reverse, and a stop.">
+    <link rel="canonical" href="https://blvkware.dev/ai-agent-permissions/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta property="og:title" content="How to Let an AI Agent Loose on Your Business Safely">
+    <meta property="og:description" content="The autonomy ladder, least privilege for agents, and the three things every agent needs before it touches a customer.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://blvkware.dev/ai-agent-permissions/">
+    <meta property="og:image" content="https://blvkware.dev/assets/og.png">
+    <meta property="og:site_name" content="BlvkWare">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+    <link rel="apple-touch-icon" href="/assets/logo-192.png">
+    <meta name="theme-color" content="#0A0908">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "BlvkWare", "item": "https://blvkware.dev/"},
+        {"@type": "ListItem", "position": 2, "name": "AI agent permissions", "item": "https://blvkware.dev/ai-agent-permissions/"}
+      ]
+    },
+    {
+      "@type": "Article",
+      "headline": "How to Let an AI Agent Loose on Your Business Safely",
+      "description": "What actually goes wrong with AI agents, the four-level autonomy ladder, least privilege for agents, and the three things every agent must have.",
+      "author": {"@type": "Person", "name": "William Russell Wheeler"},
+      "publisher": {"@id": "https://blvkware.dev/#org"},
+      "mainEntityOfPage": "https://blvkware.dev/ai-agent-permissions/",
+      "about": ["AI agent safety", "AI governance", "Agent permissions", "AI for small business"]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What actually goes wrong with AI agents in a business?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Rarely anything dramatic. The realistic failures are mundane and expensive: it says something confidently wrong to a customer, it acts on a case nobody anticipated instead of stopping, it does the right thing to the wrong record, or it keeps doing something after it should have stopped — the classic being a sequence that carries on chasing a customer who already replied. Every one of these is preventable by structure rather than by hoping the model is good enough."}
+        },
+        {
+          "@type": "Question",
+          "name": "What is an agent autonomy ladder?",
+          "acceptedAnswer": {"@type": "Answer", "text": "A dial rather than a switch, with four positions. Watch: it observes and reports, taking no action. Draft: it prepares the action and a human sends it. Approve: it acts alone but stops for a human above a threshold you set, such as a value or an unfamiliar customer. Operate: it acts within its scope and escalates only the exceptions. Start every agent at Draft and raise it once you have watched it work. If a vendor only offers on and off, you are being asked to go from no trust to complete trust in a single step."}
+        },
+        {
+          "@type": "Question",
+          "name": "What access should I give an AI agent?",
+          "acceptedAnswer": {"@type": "Answer", "text": "The narrowest access that lets it do its job, scoped by what it may do rather than by which credential it holds. In practice: its own account rather than a shared one, so its actions are attributable; read access broadly but write access only to the specific records and fields it needs; and no access at all to anything outside the job it was hired for. An agent given a director's login because that was easier has no meaningful permission boundary."}
+        },
+        {
+          "@type": "Question",
+          "name": "What should an AI agent never do without a human?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Anything that cannot be undone. Moving money, issuing refunds, deleting records, signing or agreeing to anything, and quoting a price that becomes a commitment. Also anything involving a customer who is already unhappy, because a complaint handled by an agent that misjudges the tone becomes a much larger problem. A message a customer has already read cannot be recalled, so treat sending as less reversible than it feels."}
+        },
+        {
+          "@type": "Question",
+          "name": "Who is liable if an AI agent makes a mistake?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Commercially, your business is: to your customer, the agent is you. That is why the contract with whoever built it matters. Look for a stated liability position rather than silence, an action log detailed enough to reconstruct what happened, and the ability to reverse actions. Any supplier claiming their agent cannot make a mistake is either inexperienced or not being straight with you."}
+        }
+      ]
+    }
+  ]
+}
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Fira+Code:wght@500&display=swap');
+        :root {
+            --bg: #0A0908; --surface: #17140F; --accent: #D4F24A; --brass: #D9B65C; --warm: #E8734A; --bad: #E8524A;
+            --ink: #F5F0E6; --ink-2: #A89D8B; --line: rgba(245,240,230,0.1);
+            --font: 'Manrope', system-ui, -apple-system, sans-serif;
+            --mono: 'Fira Code', ui-monospace, monospace;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+        .wrap { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+        .top { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 3.5rem; text-decoration: none; color: inherit; }
+        .mark { width: 52px; height: 52px; border-radius: 14px; background: #060504; overflow: hidden; flex: none; }
+        .mark img { width: 100%; height: 100%; display: block; }
+        .wordmark { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; }
+        .wordmark span { color: var(--accent); }
+        .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--brass); margin-bottom: 1rem; }
+        h1 { font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 1rem; line-height: 1.12; }
+        .lede { font-size: 1.15rem; color: var(--ink-2); margin-bottom: 2.5rem; padding-bottom: 2.5rem; border-bottom: 1px solid var(--line); }
+        h2 { font-size: 1.5rem; font-weight: 700; margin: 3rem 0 1rem; letter-spacing: -0.01em; }
+        h3 { font-size: 1.05rem; font-weight: 700; margin: 1.75rem 0 0.6rem; color: var(--brass); }
+        p { color: var(--ink-2); margin-bottom: 1.1rem; }
+        ul, ol { margin: 0 0 1.1rem 1.2rem; color: var(--ink-2); }
+        li { margin-bottom: 0.6rem; }
+        strong { color: var(--ink); font-weight: 700; }
+        em { color: var(--ink); font-style: italic; }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem; margin: 1.75rem 0; }
+        .box p:last-child { margin-bottom: 0; }
+        .box.warn { border-color: rgba(232,115,74,.3); background: rgba(232,115,74,.06); }
+        .box.never { border-color: rgba(232,82,74,.35); background: rgba(232,82,74,.06); }
+        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
+        th, td { text-align: left; padding: 0.7rem 0.6rem; border-bottom: 1px solid var(--line); color: var(--ink-2); vertical-align: top; }
+        th { color: var(--ink); font-weight: 700; }
+        td strong { color: var(--ink); }
+        .cta { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 2rem; margin: 3rem 0 0; }
+        .btn { display: inline-block; background: var(--accent); color: #14170A; font-weight: 700; padding: 0.85rem 1.5rem; border-radius: 10px; margin-top: 0.5rem; }
+        .btn:hover { text-decoration: none; opacity: 0.92; }
+        .btn-2 { display: inline-block; color: var(--ink-2); font-weight: 600; padding: 0.85rem 1.2rem; border: 1px solid var(--line); border-radius: 10px; margin: 0.5rem 0 0 0.4rem; }
+        .btn-2:hover { color: var(--ink); text-decoration: none; }
+        .foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--ink-2); }
+        .foot a { margin-right: 1.25rem; }
+
+        /* The ladder, drawn as four rungs with the blast radius rising. The
+           whole argument of the page is in this one figure. */
+        .fig { margin: 2.2rem 0; }
+        .fig svg { width: 100%; height: auto; display: block; }
+        .fig-cap { font-family: var(--mono); font-size: 0.74rem; color: var(--ink-2); text-align: center; margin-top: 0.7rem; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <a class="top" href="/">
+        <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
+        <span class="wordmark">BlvkWare<span>.</span></span>
+    </a>
+
+    <div class="eyebrow">Agentic systems</div>
+    <h1>Letting an agent loose,<br>without it going wrong</h1>
+
+    <p class="lede">The honest objection to buying an AI agent is not "will it work" — it is "what happens when it gets something wrong." That is a good question and it has a structural answer. This page covers what realistically goes wrong, the four-level ladder that prevents most of it, how to scope access properly, and the three things an agent must have before it is allowed near a customer.</p>
+
+    <h2>What actually goes wrong</h2>
+
+    <p>Not the dramatic things. In practice the failures are mundane, and all four are preventable by structure rather than by hoping the model is good enough.</p>
+
+    <table>
+        <thead><tr><th style="width:11rem">The failure</th><th>What it looks like</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Confidently wrong</strong></td><td>It answers a customer question with something that sounds right and is not — usually a price, a policy or a date it was never told.</td></tr>
+            <tr><td><strong>Acting outside scope</strong></td><td>It meets a case nobody anticipated and does something rather than stopping. A guess made at scale is much worse than a guess made once.</td></tr>
+            <tr><td><strong>Right thing, wrong record</strong></td><td>It updates, books or charges against the wrong customer. Quiet, common, and only found later.</td></tr>
+            <tr><td><strong>Not stopping</strong></td><td>It keeps chasing somebody who already replied, or who asked not to be contacted. The fastest way to lose the client who bought it.</td></tr>
+        </tbody>
+    </table>
+
+    <p>Notice what is not on the list: the agent going rogue, or inventing goals of its own. That is not the risk profile of a business agent doing a defined job. The realistic risks are ordinary operational mistakes, made faster and more consistently than a person would make them.</p>
+
+    <h2>The autonomy ladder</h2>
+
+    <p>Nearly all of it is prevented by one idea: <strong>autonomy is a dial, not a switch.</strong></p>
+
+    <div class="fig">
+        <svg viewBox="0 0 700 260" role="img" aria-label="Four autonomy levels. Watch: observes only, no blast radius. Draft: prepares actions for a human to send, no blast radius. Approve: acts alone but stops above a threshold, bounded blast radius. Operate: acts within scope and escalates exceptions, full scope blast radius.">
+            <defs>
+                <linearGradient id="climb" x1="0" y1="1" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#D9B65C" stop-opacity=".3"/>
+                    <stop offset="100%" stop-color="#D4F24A" stop-opacity=".95"/>
+                </linearGradient>
+            </defs>
+            <rect x="0" y="0" width="700" height="260" fill="#17140F" rx="12"/>
+            <text x="30" y="28" font-family="Fira Code, monospace" font-size="10.5" fill="#D9B65C" letter-spacing="1.6">HOW MUCH IT CAN DO ALONE</text>
+
+            <path d="M60 200 L640 62" stroke="url(#climb)" stroke-width="2.5" fill="none"/>
+            <path d="M60 210h580" stroke="rgba(245,240,230,.12)"/>
+
+            <g font-family="Manrope, sans-serif">
+                <g>
+                    <rect x="42" y="176" width="106" height="26" rx="6" fill="#0A0908" stroke="#A89D8B" stroke-width="1.4"/>
+                    <text x="95" y="194" text-anchor="middle" fill="#F5F0E6" font-size="13" font-weight="700">L0 Watch</text>
+                    <text x="95" y="232" text-anchor="middle" fill="#A89D8B" font-size="11">takes no action</text>
+                </g>
+                <g>
+                    <rect x="230" y="130" width="106" height="26" rx="6" fill="#0A0908" stroke="#D9B65C" stroke-width="1.8"/>
+                    <text x="283" y="148" text-anchor="middle" fill="#F5F0E6" font-size="13" font-weight="700">L1 Draft</text>
+                    <text x="283" y="232" text-anchor="middle" fill="#A89D8B" font-size="11">a human sends</text>
+                    <text x="283" y="112" text-anchor="middle" fill="#D9B65C" font-family="Fira Code, monospace" font-size="10">START HERE</text>
+                </g>
+                <g>
+                    <rect x="418" y="92" width="112" height="26" rx="6" fill="#0A0908" stroke="#D4F24A" stroke-width="1.6"/>
+                    <text x="474" y="110" text-anchor="middle" fill="#F5F0E6" font-size="13" font-weight="700">L2 Approve</text>
+                    <text x="474" y="232" text-anchor="middle" fill="#A89D8B" font-size="11">stops above a line you set</text>
+                </g>
+                <g>
+                    <rect x="586" y="48" width="106" height="26" rx="6" fill="#0A0908" stroke="#D4F24A" stroke-width="2"/>
+                    <text x="639" y="66" text-anchor="middle" fill="#F5F0E6" font-size="13" font-weight="700">L3 Operate</text>
+                    <text x="639" y="232" text-anchor="middle" fill="#A89D8B" font-size="11">escalates exceptions</text>
+                </g>
+            </g>
+        </svg>
+        <p class="fig-cap">Start at Draft. Raise it when you have watched it work — never on day one.</p>
+    </div>
+
+    <p>The reason this works is that it separates two things people conflate: <em>is the agent any good</em>, and <em>how much are we letting it do</em>. You find out the first while the second is still near zero.</p>
+
+    <p>A week of an agent drafting work that a person reviews before sending tells you more about whether it is right for your business than any demo, and costs you nothing if the answer is no.</p>
+
+    <h2>Least privilege, for agents</h2>
+
+    <p>The security principle is old and it transfers directly: give it the narrowest access that lets it do the job. Three practical rules.</p>
+
+    <h3>Give it its own account</h3>
+    <p>Never a shared login, and never a director's. Its own account means every action is attributable to the agent rather than to whoever's credentials it borrowed — which is the difference between an audit and a guess. It also means revoking access is one click.</p>
+
+    <h3>Read broadly, write narrowly</h3>
+    <p>Reading widely is usually fine and often necessary — context is what makes an agent better than a script. Writing is where the risk is. Scope write access to the specific records, fields and stages the job needs, and nothing beyond.</p>
+
+    <h3>Scope by action, not just by credential</h3>
+    <p>Most systems' permissions are too coarse for this. "Can edit deals" does not distinguish between updating a note and marking one closed-won. The agent itself should carry the finer rule, and you should be able to state it in a sentence: <em>it may update the stage and the notes, it may not change the value, and it may never mark anything won.</em></p>
+
+    <h2>The three things every agent must have</h2>
+
+    <p>Before it touches a customer. If a supplier cannot show you all three, that is your answer.</p>
+
+    <h3>1. A log — with the reasoning in it</h3>
+    <p>Not just what it did, but what it saw and why it decided. A log that says "sent email 14:03" is useless when you are trying to work out how it reached that conclusion. A log that records the inputs, the decision and the reason lets you find the flaw and fix it in an afternoon.</p>
+
+    <h3>2. A reverse</h3>
+    <p>For anything reversible, a way to undo it, recorded as its own entry rather than by editing the history. Some things genuinely cannot be undone — a message somebody has read, money that has moved — and those should be treated differently by the system rather than by hoping.</p>
+
+    <h3>3. A stop</h3>
+    <p>One control that halts everything immediately, that you can reach without contacting the supplier. If pausing the agent requires an email to somebody who might be asleep, you do not have a stop.</p>
+
+    <div class="box never">
+        <p><strong>Never unsupervised, whatever the level:</strong> moving money, issuing refunds, deleting records, signing or agreeing to anything, and quoting a price that becomes a commitment. Add to that any customer who is already unhappy — a complaint mishandled by an agent that misjudges the tone becomes a much larger problem than the complaint was.</p>
+        <p>And treat <em>sending</em> as less reversible than it feels. A message a customer has read cannot be recalled, whatever the software says.</p>
+    </div>
+
+    <h2>A sensible first month</h2>
+
+    <ol>
+        <li><strong>Write down what it must never do.</strong> Before anything is built. This is the most valuable half hour in the whole process, and it is usually the first time anyone has written the rules down at all.</li>
+        <li><strong>Rehearse against history.</strong> Run it at Watch over what already happened, and read the log of what it <em>would</em> have done. Real cases, no risk, and you learn more than a demo can tell you.</li>
+        <li><strong>Go live at Draft.</strong> It does the work, a person sends it. Expect to correct it daily in week one; that is the process working, not a fault.</li>
+        <li><strong>Raise it to Approve when the corrections stop.</strong> Not on a date — on the evidence. Set the threshold low at first and move it up.</li>
+        <li><strong>Review at thirty days.</strong> What it did, what it got wrong, what it escalated. Then decide about Operate, and only for the parts that have earned it.</li>
+    </ol>
+
+    <h2>Who is liable</h2>
+
+    <p>Commercially, your business is. To your customer, the agent is you — they neither know nor care who built it. That is exactly why the contract with whoever built it matters.</p>
+
+    <p>Ask for three things in writing: a stated liability position rather than silence, an action log detailed enough to reconstruct what happened, and the ability to reverse what can be reversed. Any supplier claiming their agent cannot make a mistake is either inexperienced or not being straight with you, and both are reasons to go elsewhere.</p>
+
+    <div class="box">
+        <p><strong>How we do it, for comparison.</strong> Every BlvkWare agent ships at L1 Draft regardless of what was ordered; raising it is a separate, explicit, logged act by the customer. Every action is written to an append-only ledger with what it saw, what it decided and why, recorded <em>before</em> the action is attempted so a crash shows an attempt rather than nothing. Opt-outs are checked before the approval queue, because queuing a suppressed recipient for a human to approve would still be a violation. Liability is capped at fees paid, and it says so in the <a href="/terms/">terms</a> rather than in a conversation.</p>
+    </div>
+
+    <div class="cta">
+        <h2 style="margin-top:0">See the dial before you buy anything</h2>
+        <p>Scope an agent, set the autonomy you are working towards, and see what it would own and what it must escalate — with the price on the screen. No call, no estimate.</p>
+        <a class="btn" href="/hire/">Scope an agent</a>
+        <a class="btn-2" href="/ai-agent-pricing/">What should it cost?</a>
+    </div>
+
+    <footer class="foot">
+        <a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/hire/">Hire an agent</a><a href="/what-is-an-ai-agent/">What is an agent</a><a href="/ai-agent-pricing/">Pricing</a><a href="/terms/">Terms</a>
+        <p style="margin-top:1rem">BlvkWare — <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> · Mississippi, serving the United States.</p>
+    </footer>
+</div>
+</body>
+</html>

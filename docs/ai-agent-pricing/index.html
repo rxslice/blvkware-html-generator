@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What Should an AI Agent Cost? Real Numbers, and How to Judge a Quote — BlvkWare</title>
+    <meta name="description" content="The three ways AI agents get priced, why build plus operations is the honest shape, the arithmetic for deciding, and the five warning signs in a quote. Includes BlvkWare's published prices.">
+    <link rel="canonical" href="https://blvkware.dev/ai-agent-pricing/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta property="og:title" content="What Should an AI Agent Cost? Real Numbers, and How to Judge a Quote">
+    <meta property="og:description" content="Three pricing models, the arithmetic for deciding, and the five warning signs in an agent quote.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://blvkware.dev/ai-agent-pricing/">
+    <meta property="og:image" content="https://blvkware.dev/assets/og.png">
+    <meta property="og:site_name" content="BlvkWare">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+    <link rel="apple-touch-icon" href="/assets/logo-192.png">
+    <meta name="theme-color" content="#0A0908">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "BlvkWare", "item": "https://blvkware.dev/"},
+        {"@type": "ListItem", "position": 2, "name": "AI agent pricing", "item": "https://blvkware.dev/ai-agent-pricing/"}
+      ]
+    },
+    {
+      "@type": "Article",
+      "headline": "What Should an AI Agent Cost?",
+      "description": "The three ways AI agents get priced, why build plus operations is the honest shape, the arithmetic for deciding, and the warning signs in a quote.",
+      "author": {"@type": "Person", "name": "William Russell Wheeler"},
+      "publisher": {"@id": "https://blvkware.dev/#org"},
+      "mainEntityOfPage": "https://blvkware.dev/ai-agent-pricing/",
+      "about": ["AI agent pricing", "AI agents", "Cost of AI automation", "AI for small business"]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How much does an AI agent cost for a small business?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Expect two numbers, not one: a build price and an ongoing fee. For a single-job agent a defensible range is roughly $2,500 to $6,000 to build, plus $200 to $600 a month to run. An agent that owns a whole function across many systems is $8,000 to $20,000 plus $700 to $1,500 a month. BlvkWare publishes $3,500 plus $349 a month for a single-job Operator and $9,500 plus $899 a month for a Deputy. Anything quoted as one number with no ongoing fee is either front-loading the running costs or has not thought about them."}
+        },
+        {
+          "@type": "Question",
+          "name": "Why is there a monthly fee for an AI agent?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Because an agent is not a file that sits still. It runs on models that cost money every time it reasons, it operates systems whose vendors change them without warning, and its judgment needs correcting as the business changes. The monthly fee covers hosting, model usage, monitoring, tuning, integration repairs and support. Software you operate yourself has a maintenance fee; something that does the work has closer to a payroll."}
+        },
+        {
+          "@type": "Question",
+          "name": "Should I compare an AI agent to software or to hiring someone?",
+          "acceptedAnswer": {"@type": "Answer", "text": "To hiring someone, because that is what it replaces. Comparing an agent to a $50-a-month SaaS subscription makes every agent look expensive; comparing it to the $2,500 to $4,000 a month a part-time person actually costs once loaded makes the same agent look obvious. The honest comparison is against the cost of the job not being done at all, which for most small businesses is the largest of the three numbers."}
+        },
+        {
+          "@type": "Question",
+          "name": "What makes one AI agent more expensive than another?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Four things, in order of impact. How many of your systems it has to operate, because each connection is real integration work. How many channels it works across, since phone is far harder than email. How much judgment the job needs, as reasoning through exceptions costs more than following rules. And volume, because model usage scales with how often it thinks. A job crossing eight systems with voice and genuine judgment is not the same product as chasing quotes by email, and a quote that prices them the same has not been thought about."}
+        },
+        {
+          "@type": "Question",
+          "name": "What are the warning signs in an AI agent quote?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Five. An hourly rate with no cap, which makes the final number unknowable. No ongoing fee at all, which means running costs are hidden or unconsidered. A price that cannot be given without a discovery call, which usually means it depends on what you seem able to pay. A promised percentage improvement, since nobody can know your recovery rate before building it. And no stated exit — if they cannot tell you what happens to your data when you stop, ask before you start."}
+        }
+      ]
+    }
+  ]
+}
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Fira+Code:wght@500&display=swap');
+        :root {
+            --bg: #0A0908; --surface: #17140F; --accent: #D4F24A; --brass: #D9B65C; --warm: #E8734A;
+            --ink: #F5F0E6; --ink-2: #A89D8B; --line: rgba(245,240,230,0.1);
+            --font: 'Manrope', system-ui, -apple-system, sans-serif;
+            --mono: 'Fira Code', ui-monospace, monospace;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+        .wrap { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+        .top { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 3.5rem; text-decoration: none; color: inherit; }
+        .mark { width: 52px; height: 52px; border-radius: 14px; background: #060504; overflow: hidden; flex: none; }
+        .mark img { width: 100%; height: 100%; display: block; }
+        .wordmark { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; }
+        .wordmark span { color: var(--accent); }
+        .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--brass); margin-bottom: 1rem; }
+        h1 { font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 1rem; line-height: 1.12; }
+        .lede { font-size: 1.15rem; color: var(--ink-2); margin-bottom: 2.5rem; padding-bottom: 2.5rem; border-bottom: 1px solid var(--line); }
+        h2 { font-size: 1.5rem; font-weight: 700; margin: 3rem 0 1rem; letter-spacing: -0.01em; }
+        h3 { font-size: 1.05rem; font-weight: 700; margin: 1.75rem 0 0.6rem; color: var(--brass); }
+        p { color: var(--ink-2); margin-bottom: 1.1rem; }
+        ul, ol { margin: 0 0 1.1rem 1.2rem; color: var(--ink-2); }
+        li { margin-bottom: 0.6rem; }
+        strong { color: var(--ink); font-weight: 700; }
+        em { color: var(--ink); font-style: italic; }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem; margin: 1.75rem 0; }
+        .box p:last-child { margin-bottom: 0; }
+        .box.warn { border-color: rgba(232,115,74,.3); background: rgba(232,115,74,.06); }
+        .calc { font-family: var(--mono); font-size: 0.92rem; color: var(--ink); line-height: 2; }
+        .calc span { color: var(--brass); }
+        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
+        th, td { text-align: left; padding: 0.7rem 0.6rem; border-bottom: 1px solid var(--line); color: var(--ink-2); vertical-align: top; }
+        th { color: var(--ink); font-weight: 700; }
+        td strong { color: var(--ink); }
+        td.n { font-family: var(--mono); color: var(--accent); white-space: nowrap; }
+        .cta { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 2rem; margin: 3rem 0 0; }
+        .btn { display: inline-block; background: var(--accent); color: #14170A; font-weight: 700; padding: 0.85rem 1.5rem; border-radius: 10px; margin-top: 0.5rem; }
+        .btn:hover { text-decoration: none; opacity: 0.92; }
+        .btn-2 { display: inline-block; color: var(--ink-2); font-weight: 600; padding: 0.85rem 1.2rem; border: 1px solid var(--line); border-radius: 10px; margin: 0.5rem 0 0 0.4rem; }
+        .btn-2:hover { color: var(--ink); text-decoration: none; }
+        .foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--ink-2); }
+        .foot a { margin-right: 1.25rem; }
+
+        /* The comparison figure: the same agent set against the three things
+           people instinctively compare it to. Drawn, because the gap between
+           the bars is the argument. */
+        .fig { margin: 2rem 0; }
+        .fig svg { width: 100%; height: auto; display: block; }
+        .fig-cap { font-family: var(--mono); font-size: 0.74rem; color: var(--ink-2); text-align: center; margin-top: 0.7rem; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <a class="top" href="/">
+        <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
+        <span class="wordmark">BlvkWare<span>.</span></span>
+    </a>
+
+    <div class="eyebrow">Agentic systems</div>
+    <h1>What should an AI agent cost?</h1>
+
+    <p class="lede">Almost nobody in this market publishes a price, which makes it hard to tell a fair quote from an opportunistic one. This page gives the three pricing models you will meet, defensible ranges for each, the arithmetic for deciding, and the five things in a quote that should make you walk. Our own numbers are at the bottom, stated plainly.</p>
+
+    <h2>You should be quoted two numbers, not one</h2>
+
+    <p>An agent has a <strong>build</strong> cost and a <strong>running</strong> cost, and a quote that hides one inside the other is hiding something.</p>
+
+    <p>The build is real engineering: connecting your systems, loading your prices and policies, configuring the judgment, testing it against your actual history. The running cost is genuinely ongoing — models charge every time the agent reasons, vendors change their APIs without asking, and the agent's judgment needs correcting as your business changes.</p>
+
+    <p>A single figure with no ongoing fee means one of two things. Either the running costs are buried in an inflated build price, or nobody has thought about them and you will meet them later as a surprise.</p>
+
+    <h2>The three pricing models you will meet</h2>
+
+    <table>
+        <thead><tr><th style="width:9rem">Model</th><th>What happens</th><th>Whose risk</th></tr></thead>
+        <tbody>
+            <tr>
+                <td><strong>Hourly development</strong></td>
+                <td>An agency bills for time. Common from software shops moving into agents.</td>
+                <td><strong>Yours.</strong> Scope grows in the dark and the final number is unknowable at the start.</td>
+            </tr>
+            <tr>
+                <td><strong>Per-seat SaaS</strong></td>
+                <td>A platform charges per user per month and you configure it yourself.</td>
+                <td><strong>Yours</strong>, differently. Cheap to start, but you are the one operating it — which is the problem you were trying to solve.</td>
+            </tr>
+            <tr>
+                <td><strong>Flat build + operations</strong></td>
+                <td>A fixed price for a defined job, plus a fixed monthly to keep it running.</td>
+                <td><strong>Theirs.</strong> If it takes longer than expected, that is the builder's problem.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>We use the third, so treat that as a disclosed interest rather than a neutral judgment. The argument for it is simple: it is the only one of the three where the person who controls the scope also carries the risk of getting it wrong.</p>
+
+    <h2>Defensible ranges</h2>
+
+    <p>Ranges rather than a number, because the honest answer depends on what the agent has to touch. These reflect what the work actually costs to do properly, not a survey.</p>
+
+    <table>
+        <thead><tr><th>Shape of agent</th><th class="n">Build</th><th class="n">Monthly</th></tr></thead>
+        <tbody>
+            <tr><td><strong>One job, email only, one or two systems</strong><br>Chasing quotes, requesting reviews, triaging an inbox</td><td class="n">$2,500&ndash;$6,000</td><td class="n">$200&ndash;$600</td></tr>
+            <tr><td><strong>One job, several systems or a phone line</strong><br>Booking and rescheduling, qualifying and routing leads</td><td class="n">$5,000&ndash;$10,000</td><td class="n">$400&ndash;$900</td></tr>
+            <tr><td><strong>A whole function, many systems, real judgment</strong><br>All inbound across every channel; quote to invoice to reconciled</td><td class="n">$8,000&ndash;$20,000</td><td class="n">$700&ndash;$1,500</td></tr>
+        </tbody>
+    </table>
+
+    <p>Below the bottom of these ranges, be careful. It is possible to produce something that demos well for $800, and it is very hard to produce something that survives contact with real customers and keeps running.</p>
+
+    <h2>What actually drives the price</h2>
+
+    <p>Four things, in order of how much they matter. If a quote does not vary with these, it has not been thought about.</p>
+
+    <ol>
+        <li><strong>How many of your systems it must operate.</strong> Each connection is real work — authentication, field mapping, error handling, and the repairs when the vendor changes something. This is usually the single biggest driver.</li>
+        <li><strong>Which channels it works on.</strong> Email is straightforward. Web chat is easy. A phone line is a different discipline, and in the United States business texting needs carrier registration that takes weeks and is outside anybody's control.</li>
+        <li><strong>How much judgment the job needs.</strong> Following a rule is cheap. Deciding what to do about a case nobody anticipated, and knowing when not to decide, is what you are actually paying for.</li>
+        <li><strong>Volume.</strong> Models charge per use, so an agent thinking ten thousand times a month costs more to run than one thinking two thousand times. Ask how volume is priced <em>before</em> you sign, not after.</li>
+    </ol>
+
+    <h2>Compare it to a person, not to software</h2>
+
+    <p>This is where most buyers go wrong, in both directions.</p>
+
+    <div class="fig">
+        <svg viewBox="0 0 700 230" role="img" aria-label="Monthly cost comparison: a SaaS subscription around fifty dollars, an agent around three hundred and forty-nine dollars, a loaded part-time hire around three thousand dollars, and the cost of the job not being done at all, which is unbounded.">
+            <rect x="0" y="0" width="700" height="230" fill="#17140F" rx="12"/>
+            <g font-family="Fira Code, monospace" font-size="11">
+                <text x="28" y="26" fill="#D9B65C" font-size="10.5" letter-spacing="1.6">MONTHLY, ROUGHLY</text>
+
+                <rect x="28" y="48" width="26" height="18" rx="3" fill="#A89D8B" opacity=".5"/>
+                <text x="66" y="62" fill="#A89D8B">a SaaS subscription — $50</text>
+
+                <rect x="28" y="82" width="150" height="18" rx="3" fill="#D4F24A"/>
+                <text x="190" y="96" fill="#F5F0E6">an Operator agent — $349</text>
+
+                <rect x="28" y="116" width="480" height="18" rx="3" fill="#D9B65C" opacity=".75"/>
+                <text x="520" y="130" fill="#A89D8B">a part-time hire — ~$3,000 loaded</text>
+
+                <rect x="28" y="150" width="620" height="18" rx="3" fill="#E8734A" opacity=".35"/>
+                <path d="M648 150h16" stroke="#E8734A" stroke-width="2" stroke-dasharray="3 3"/>
+                <text x="28" y="186" fill="#E8734A">the job not being done at all — unbounded, and usually the biggest</text>
+
+                <text x="28" y="212" fill="#A89D8B" font-size="10">Illustrative. Put your own numbers in — the shape is the point, not the bars.</text>
+            </g>
+        </svg>
+        <p class="fig-cap">Compare an agent to the seat it fills, not to the software licence beside it.</p>
+    </div>
+
+    <p>Set against a $50-a-month subscription, every agent looks expensive. Set against the $2,500&ndash;$4,000 a month a part-time person actually costs once you load it, the same agent looks obvious. Neither framing is dishonest; they are just answering different questions.</p>
+
+    <p>The comparison that matters most is the third one: what the job costs you by not being done. For most small businesses that is the largest number on the page, and it is the one nobody puts in a spreadsheet because it never appears on an invoice.</p>
+
+    <h2>The arithmetic, before anybody quotes you</h2>
+
+    <div class="box">
+        <p class="calc">
+            <span>A</span> &nbsp;times the job happens per month<br>
+            <span>B</span> &nbsp;minutes it really takes, including remembering to do it<br>
+            <span>C</span> &nbsp;value of an hour of whoever does it now<br>
+            <br>
+            <span>(A &times; B &divide; 60) &times; C &times; 12</span> &nbsp;= what the job costs you a year
+        </p>
+        <p style="margin-top:1rem">If that is not several times the agent's annual cost, do not buy one. And if a vendor argues with this arithmetic rather than helping you fill it in, that tells you something worth knowing.</p>
+        <p><strong>B is the number people get wrong.</strong> A five-minute task done eleven times a day is not fifty-five minutes; it is most of a morning, because each interruption costs more than the task itself.</p>
+    </div>
+
+    <p>For a job that never gets done at all &mdash; quotes nobody chases, invoices nobody follows &mdash; run it the other way. Count what is being lost, multiply by a realistic recovery rate, and be conservative. Anybody quoting you a recovery percentage before they have built anything is guessing, including us.</p>
+
+    <h2>Five warning signs in a quote</h2>
+
+    <div class="box warn">
+        <p><strong>1. An hourly rate with no cap.</strong> The final number is unknowable at the point you have to decide.</p>
+        <p><strong>2. No ongoing fee at all.</strong> Running costs are real. If they are not on the quote, they are either inside the build price or waiting for you later.</p>
+        <p><strong>3. No price without a call.</strong> Sometimes genuine. Often it means the price depends on what you appear able to pay.</p>
+        <p><strong>4. A promised percentage.</strong> "Recover 40% of lost quotes" cannot be known before building it for <em>your</em> business. Arithmetic you can check beats a statistic you cannot.</p>
+        <p><strong>5. No stated exit.</strong> Ask what happens to your data and your configuration when you stop paying. If there is no clear answer, get one in writing before you start.</p>
+    </div>
+
+    <h2>Our numbers</h2>
+
+    <p>Published so you can hold them against anything else you are quoted. These are the real prices, not a starting point.</p>
+
+    <table>
+        <thead><tr><th>&nbsp;</th><th class="n">Build</th><th class="n">Monthly</th><th>Live in</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Operator</strong><br>One job, start to finish. 3 systems, 2 channels.</td><td class="n">$3,500</td><td class="n">$349</td><td>10 business days</td></tr>
+            <tr><td><strong>Deputy</strong><br>A whole function. 8 systems, any channel, judgment and escalation.</td><td class="n">$9,500</td><td class="n">$899</td><td>25 business days</td></tr>
+            <tr><td><strong>Trial</strong><br>14 days on your real data, credited in full against the build.</td><td class="n">$750</td><td class="n">&mdash;</td><td>immediately</td></tr>
+        </tbody>
+    </table>
+
+    <p>The monthly covers hosting, model usage, monitoring, unlimited tuning, repairs when a vendor changes an API, business-hours support and a monthly report. Annual billing is twelve months for the price of ten. If you stop, the agent pauses, your data is exported within five business days, and the source is available at twelve times the monthly if you would rather run it yourself.</p>
+
+    <p>The tier is worked out from the scope you configure rather than chosen, so a job that is really a Deputy cannot be bought at Operator money &mdash; and a smaller scope genuinely costs less. You can watch that happen on the <a href="/hire/">configurator</a> without talking to anyone.</p>
+
+    <div class="cta">
+        <h2 style="margin-top:0">Price one against your own job</h2>
+        <p>Pick the job, tick what it has to operate, and the total is on the screen. No estimate, no discovery call, no hourly rate anywhere in it.</p>
+        <a class="btn" href="/hire/">Scope and price an agent</a>
+        <a class="btn-2" href="/what-is-an-ai-agent/">First, what is an agent?</a>
+    </div>
+
+    <footer class="foot">
+        <a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/hire/">Hire an agent</a><a href="/what-is-an-ai-agent/">What is an agent</a><a href="/ai-agent-permissions/">Permissions</a><a href="/terms/">Terms</a>
+        <p style="margin-top:1rem">BlvkWare — <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> · Mississippi, serving the United States.</p>
+    </footer>
+</div>
+</body>
+</html>

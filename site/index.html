@@ -584,6 +584,115 @@
         .cta-direct a { color: var(--color-primary-accent); text-decoration: none; }
         .lab-note { text-align: center; max-width: 620px; margin-left: auto; margin-right: auto; color: var(--color-text-secondary); font-size: 0.95rem; margin-top: 2.5rem; }
 
+        /* ==========================================================
+           The Lab: custom instrument marks and the pipeline.
+
+           The marks are drawn rather than picked from an icon set, because
+           these three tools are the portfolio and a generic magnifying glass
+           says nothing about what they do. Each shows the actual mechanic: a
+           page being read, scattered facts resolving into a capability stack,
+           templates converging into an assembled agent.
+
+           Everything moves on hover only, and not at all under
+           prefers-reduced-motion — the movement is a flourish, never the way
+           information is conveyed.
+           ========================================================== */
+
+        .tool-mark { width: 66px; height: 66px; flex: none; border-radius: 15px; position: relative;
+                     background: radial-gradient(120% 120% at 30% 20%, rgba(212,242,74,0.10), rgba(10,9,8,0) 60%), #12100C;
+                     box-shadow: inset 0 0 0 1px rgba(245,240,230,0.09), inset 0 1px 0 rgba(245,240,230,0.06); }
+        /* A faint engraved grid, so the plate reads as an instrument face
+           rather than a flat swatch. */
+        .tool-mark::before { content: ""; position: absolute; inset: 1px; border-radius: 14px; opacity: .5;
+            background-image: linear-gradient(rgba(245,240,230,.045) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(245,240,230,.045) 1px, transparent 1px);
+            background-size: 9px 9px; }
+        .tool-mark svg { position: relative; width: 100%; height: 100%; display: block; }
+
+        .mk-plate  { fill: none; stroke: var(--color-text-secondary); stroke-width: 1.6; opacity: .55; }
+        .mk-line   { fill: none; stroke: var(--color-text-secondary); stroke-width: 1.7; stroke-linecap: round; opacity: .45; }
+        .mk-hit    { fill: none; stroke: var(--color-primary-accent); stroke-width: 2; stroke-linecap: round; opacity: .75; }
+        .mk-hitdot { fill: var(--color-primary-accent); opacity: .75; }
+        .mk-ring   { fill: none; stroke: var(--color-brass); stroke-width: 1.8; }
+        .mk-blade  { fill: var(--color-primary-accent); opacity: .16; }
+        .mk-pupil  { fill: var(--color-primary-accent); }
+        .mk-wire   { fill: none; stroke: var(--color-text-secondary); stroke-width: 1.5; stroke-linecap: round; opacity: .5; }
+        .mk-dot    { fill: var(--color-text-secondary); opacity: .8; }
+        .mk-hub    { fill: var(--color-brass); }
+        .mk-cap    { fill: none; stroke: var(--color-text-secondary); stroke-width: 1.6; opacity: .55; }
+        .mk-cap.on { stroke: var(--color-primary-accent); opacity: 1; }
+        .mk-body   { fill: rgba(212,242,74,.12); stroke: var(--color-primary-accent); stroke-width: 1.7; stroke-linejoin: round; }
+        .mk-core   { fill: var(--color-primary-accent); }
+        .mk-spark  { stroke: var(--color-brass); stroke-width: 1.8; stroke-linecap: round; }
+
+        /* The aperture opens, the stack lights up, the seam brightens. */
+        .mk-eye, .mk-pupil, .mk-cap, .mk-core, .mk-hit, .mk-hitdot,
+        .mk-blade, .mk-spark { transition: all .45s cubic-bezier(.2,.7,.3,1); }
+        .tool-card:hover .mk-eye   { transform-origin: 43px 32px; transform: rotate(-24deg); }
+        .tool-card:hover .mk-pupil { r: 5.6; }
+        .tool-card:hover .mk-blade { opacity: .3; }
+        .tool-card:hover .mk-hit,
+        .tool-card:hover .mk-hitdot { opacity: 1; }
+        .tool-card:hover .mk-cap    { stroke: var(--color-primary-accent); opacity: 1; }
+        .tool-card:hover .mk-core   { r: 6; }
+        .tool-card:hover .mk-spark  { stroke: var(--color-primary-accent); }
+
+        /* Three short claims under each description, for the majority who will
+           not read the paragraph. */
+        .tool-facts { list-style: none; margin: 0 0 1.4rem; padding: 0; }
+        .tool-facts li { position: relative; padding-left: 1.3rem; font-size: 0.88rem; line-height: 1.5;
+                         color: var(--color-text-secondary); margin-bottom: 0.42rem; }
+        .tool-facts li::before { content: ""; position: absolute; left: 0; top: .55em; width: 7px; height: 7px;
+                                 border-radius: 2px; background: var(--color-brass); opacity: .85; }
+
+        /* ---- the pipeline ---- */
+        .pipeline { max-width: 900px; margin: 0 auto 3.5rem; }
+        .pipe-track { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; gap: 0; }
+        .pipe-stage { display: flex; flex-direction: column; align-items: center; text-align: center;
+                      gap: .35rem; flex: none; width: 116px; }
+        .pipe-stage b { font-size: .95rem; font-weight: 800; letter-spacing: -.01em; color: var(--color-text-primary); }
+        .pipe-stage > span:not(.pipe-glyph) { font-size: .76rem; line-height: 1.35; color: var(--color-text-secondary); }
+        .pipe-glyph { width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center;
+                      background: #12100C; box-shadow: inset 0 0 0 1px rgba(245,240,230,.09); margin-bottom: .25rem; }
+        .pipe-glyph svg { width: 30px; height: 30px; }
+        .pipe-glyph .g-ring { fill: none; stroke: var(--color-text-secondary); stroke-width: 2; stroke-linejoin: round; }
+        .pipe-glyph .g-fill { fill: none; stroke: var(--color-primary-accent); stroke-width: 2.2;
+                              stroke-linecap: round; stroke-linejoin: round; }
+        .pipe-glyph .g-tick { stroke: var(--color-brass); stroke-width: 1.8; stroke-linecap: round; }
+        .pipe-glyph .g-wire { stroke: var(--color-text-secondary); stroke-width: 2; stroke-linecap: round; }
+        .pipe-stage:nth-child(3) .g-fill,
+        .pipe-stage:nth-child(5) .g-fill { fill: rgba(212,242,74,.12); }
+
+        /* The rail carries a travelling pulse, so the row reads as a sequence
+           with a direction rather than four unrelated badges. */
+        .pipe-rail { flex: 1; height: 1px; background: var(--glass-border); position: relative; min-width: 18px; }
+        .pipe-rail i { position: absolute; top: -1.5px; left: 0; width: 26px; height: 4px; border-radius: 4px;
+                       background: linear-gradient(90deg, transparent, var(--color-primary-accent), transparent);
+                       opacity: .75; animation: pipeFlow 3.4s linear infinite; }
+        .pipe-rail:nth-child(4) i { animation-delay: 1.1s; }
+        @keyframes pipeFlow { from { transform: translateX(-30px); } to { transform: translateX(100%); } }
+
+        /* The paid stage is deliberately the odd one out. */
+        .pipe-rail.paid { background: repeating-linear-gradient(90deg, var(--glass-border) 0 5px, transparent 5px 10px); }
+        .pipe-rail.paid i { display: none; }
+        .pipe-stage.paid .pipe-glyph { background: linear-gradient(180deg, rgba(217,182,92,.14), rgba(18,16,12,1));
+                                       box-shadow: inset 0 0 0 1px rgba(217,182,92,.4); }
+        .pipe-stage.paid .g-ring { stroke: var(--color-brass); }
+        .pipe-stage.paid b { color: var(--color-brass); }
+        .pipe-note { text-align: center; font-family: var(--font-code); font-size: .76rem; letter-spacing: .04em;
+                     color: var(--color-text-secondary); margin-top: 1.2rem; opacity: .85; }
+
+        @media (max-width: 780px) {
+            .pipe-track { flex-wrap: wrap; justify-content: center; gap: 1.1rem 0; }
+            .pipe-rail { display: none; }
+            .pipe-stage { width: 50%; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .pipe-rail i { animation: none; opacity: .35; }
+            .mk-eye, .mk-pupil, .mk-cap, .mk-core, .mk-hit,
+            .mk-hitdot, .mk-blade, .mk-spark { transition: none; }
+        }
+
         /* --- Manifesto: the old model set against the new one. The two columns
            are deliberately the same shape so the only difference a reader
            notices is the sentence, not the styling. --- */
@@ -884,29 +993,77 @@
         <section id="lab">
             <div class="container">
                 <p class="legend fade-in">The Blvk Lab</p>
-                <h2 class="section-title fade-in">Three tools. One pipeline.</h2>
-                <p class="section-sub fade-in">Analyse the business, architect what's missing, build the thing. Each stage is software we'd normally build for a paying client, released free instead. They run entirely in your browser — no sign-up, no download, no tracking. This is the fastest way to see the standard of work before you spend anything.</p>
-                <div class="lab-sequence fade-in" aria-hidden="true">
-                    <span class="seq-step"><i>01</i><b>Augur</b> Analyse</span>
-                    <span class="seq-rail"></span>
-                    <span class="seq-step"><i>02</i><b>Scry</b> Architect</span>
-                    <span class="seq-rail"></span>
-                    <span class="seq-step"><i>03</i><b>Sigil</b> Build</span>
+                <h2 class="section-title fade-in">Find the job. Design the agent. Forge it.</h2>
+                <p class="section-sub fade-in">Three tools that do the first three-quarters of the work before you have spent anything. They run in your browser &mdash; no sign-up, no download, no tracking &mdash; and every price they quote is the real catalog price, computed rather than estimated.</p>
+
+                <!-- The pipeline. Custom glyphs, and a fourth stage that is
+                     deliberately the odd one out: the first three are yours to
+                     run for nothing, the last one is the thing you hire. -->
+                <div class="pipeline fade-in">
+                    <ol class="pipe-track">
+                        <li class="pipe-stage">
+                            <span class="pipe-glyph">
+                                <svg viewBox="0 0 40 40" aria-hidden="true"><circle class="g-ring" cx="20" cy="20" r="11"/><circle class="g-fill" cx="20" cy="20" r="3.6"/><path class="g-tick" d="M20 5v4M20 31v4M5 20h4M31 20h4"/></svg>
+                            </span>
+                            <b>Find</b><span>the empty job</span>
+                        </li>
+                        <li class="pipe-rail" aria-hidden="true"><i></i></li>
+                        <li class="pipe-stage">
+                            <span class="pipe-glyph">
+                                <svg viewBox="0 0 40 40" aria-hidden="true"><path class="g-wire" d="M8 12h9M8 20h9M8 28h9"/><rect class="g-fill" x="21" y="10" width="11" height="20" rx="3"/></svg>
+                            </span>
+                            <b>Design</b><span>and price it</span>
+                        </li>
+                        <li class="pipe-rail" aria-hidden="true"><i></i></li>
+                        <li class="pipe-stage">
+                            <span class="pipe-glyph">
+                                <svg viewBox="0 0 40 40" aria-hidden="true"><rect class="g-ring" x="7" y="8" width="9" height="7" rx="2"/><rect class="g-ring" x="7" y="25" width="9" height="7" rx="2"/><path class="g-wire" d="M17 12h5M17 29h5"/><path class="g-fill" d="M22 14h8l4 6-4 6h-8l3-6Z"/></svg>
+                            </span>
+                            <b>Forge</b><span>the configuration</span>
+                        </li>
+                        <li class="pipe-rail paid" aria-hidden="true"><i></i></li>
+                        <li class="pipe-stage paid">
+                            <span class="pipe-glyph">
+                                <svg viewBox="0 0 40 40" aria-hidden="true"><path class="g-ring" d="M20 6l12 6v10c0 6-5 10-12 12-7-2-12-6-12-12V12Z"/><path class="g-fill" d="m15 20 4 4 7-8"/></svg>
+                            </span>
+                            <b>Build</b><span>I finish and deliver</span>
+                        </li>
+                    </ol>
+                    <p class="pipe-note">The first three are free and yours to run. The fourth is what you hire.</p>
                 </div>
+
                 <div class="tools-grid">
 
                     <a href="/augur/" class="tool-card instrument fade-in" style="transition-delay: 100ms;">
                         <span class="node-w"></span><span class="node-e"></span>
                         <div class="tool-head">
-                            <div class="tool-icon">
-                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7.4"></circle><circle cx="12" cy="12" r="2.6"></circle><path d="M12 1.6v3M12 19.4v3M1.6 12h3M19.4 12h3"></path></svg>
+                            <div class="tool-mark" aria-hidden="true">
+                                <!-- A page being read, and the aperture reading it. The
+                                     tick on the fourth row is the signal it found. -->
+                                <svg viewBox="0 0 64 64">
+                                    <rect class="mk-plate" x="6" y="11" width="25" height="42" rx="3.5"/>
+                                    <path class="mk-line" d="M11 20h15M11 26.5h15M11 33h9"/>
+                                    <path class="mk-hit" d="M11 39.5h13"/>
+                                    <circle class="mk-hitdot" cx="27.5" cy="39.5" r="1.9"/>
+                                    <g class="mk-eye">
+                                        <circle class="mk-ring" cx="43" cy="32" r="13"/>
+                                        <path class="mk-blade" d="M43 19a13 13 0 0 1 11.26 6.5L43 32Z"/>
+                                        <path class="mk-blade" d="M54.26 38.5A13 13 0 0 1 31.74 38.5L43 32Z"/>
+                                        <circle class="mk-pupil" cx="43" cy="32" r="4.3"/>
+                                    </g>
+                                </svg>
                             </div>
-                            <span class="tool-status live">Live</span>
+                            <span class="tool-status live">Free &middot; no sign-up</span>
                         </div>
-                        <span class="tool-step"><span class="n">01</span>Analyse</span>
-                        <h3 class="tool-title">AUGUR <span class="tool-what">Competitor &amp; business analyser</span></h3>
-                        <p class="tool-desc">Every company leaves its strategy in public view. Point AUGUR at any website — yours or a competitor's — and it reads the live page, extracts the real technical signals, and returns the revenue and automation systems that business should be running but isn't. Then it draws the architecture.</p>
-                        <span class="tool-link">Analyse a company — free
+                        <span class="tool-step"><span class="n">01</span>Find</span>
+                        <h3 class="tool-title">AUGUR <span class="tool-what">Which jobs are standing empty</span></h3>
+                        <p class="tool-desc">Give it your website. AUGUR reads the live page the way a buyer would, works out which jobs in your business nobody is actually doing, and names the agents worth hiring for them &mdash; each at its real catalog price, computed rather than guessed. About a minute.</p>
+                        <ul class="tool-facts">
+                            <li>Reads the live page, not a description of it</li>
+                            <li>Names real agents, at real prices</li>
+                            <li>One click to a configured checkout</li>
+                        </ul>
+                        <span class="tool-link">Read my business &mdash; free
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
                         </span>
                     </a>
@@ -914,15 +1071,31 @@
                     <a href="/scry/" class="tool-card instrument fade-in" style="transition-delay: 200ms;">
                         <span class="node-w"></span><span class="node-e"></span>
                         <div class="tool-head">
-                            <div class="tool-icon">
-                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.6 12S6.2 5.6 12 5.6 21.4 12 21.4 12 17.8 18.4 12 18.4 2.6 12 2.6 12Z"></path><circle cx="12" cy="12" r="2.85"></circle></svg>
+                            <div class="tool-mark" aria-hidden="true">
+                                <!-- Scattered facts about a business resolving into a
+                                     structured stack of capabilities. -->
+                                <svg viewBox="0 0 64 64">
+                                    <path class="mk-wire" d="M11 17q16 5 21 15M16 33q9-1 16-1M10 48q17-6 22-16"/>
+                                    <circle class="mk-dot" cx="10" cy="16" r="2.7"/>
+                                    <circle class="mk-dot" cx="16" cy="33" r="2.7"/>
+                                    <circle class="mk-dot" cx="9" cy="48" r="2.7"/>
+                                    <circle class="mk-hub" cx="33" cy="32" r="3.4"/>
+                                    <rect class="mk-cap" x="38" y="13" width="19" height="9" rx="2.6"/>
+                                    <rect class="mk-cap on" x="38" y="27.5" width="19" height="9" rx="2.6"/>
+                                    <rect class="mk-cap" x="38" y="42" width="19" height="9" rx="2.6"/>
+                                </svg>
                             </div>
-                            <span class="tool-status live">Live</span>
+                            <span class="tool-status live">Free &middot; no sign-up</span>
                         </div>
-                        <span class="tool-step"><span class="n">02</span>Architect</span>
-                        <h3 class="tool-title">SCRY <span class="tool-what">Business systems finder</span></h3>
-                        <p class="tool-desc">Your business is full of software that hasn't been built yet. Describe how you operate and SCRY maps it, finds the bottlenecks and missing systems, and turns them into a live operating console you can click through — then forges a working prototype.</p>
-                        <span class="tool-link">Map my business — free
+                        <span class="tool-step"><span class="n">02</span>Design</span>
+                        <h3 class="tool-title">SCRY <span class="tool-what">Your agent, designed and priced</span></h3>
+                        <p class="tool-desc">Describe how you actually operate. SCRY works out which agent is worth hiring first, exactly what it needs to be able to do, which of your systems it has to operate, and what that costs &mdash; then hands the finished design to checkout with everything already set.</p>
+                        <ul class="tool-facts">
+                            <li>Picks the job, then scopes it capability by capability</li>
+                            <li>Shows what stands on day one and what needs you</li>
+                            <li>Swap to a different agent and the price follows</li>
+                        </ul>
+                        <span class="tool-link">Design my agent &mdash; free
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
                         </span>
                     </a>
@@ -930,22 +1103,37 @@
                     <a href="/sigil/" class="tool-card instrument fade-in" style="transition-delay: 300ms;">
                         <span class="node-w"></span><span class="node-e"></span>
                         <div class="tool-head">
-                            <div class="tool-icon">
-                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.6 21 18.2H3Z"></path><circle cx="12" cy="13.4" r="3.1"></circle></svg>
+                            <div class="tool-mark" aria-hidden="true">
+                                <!-- Build templates converging into one assembled agent,
+                                     with the seam still bright. -->
+                                <svg viewBox="0 0 64 64">
+                                    <rect class="mk-cap" x="6" y="12" width="13" height="9" rx="2.4"/>
+                                    <rect class="mk-cap" x="6" y="27.5" width="13" height="9" rx="2.4"/>
+                                    <rect class="mk-cap" x="6" y="43" width="13" height="9" rx="2.4"/>
+                                    <path class="mk-wire" d="M20 16.5q7 2 10 13M20 32h10M20 47.5q7-2 10-13"/>
+                                    <path class="mk-body" d="M31 21h18l5 11-5 11H31l4-11Z"/>
+                                    <circle class="mk-core" cx="43" cy="32" r="4.6"/>
+                                    <path class="mk-spark" d="M43 23.5v-3.6M43 40.5v3.6"/>
+                                </svg>
                             </div>
-                            <span class="tool-status live">Live</span>
+                            <span class="tool-status live">Free &middot; no sign-up</span>
                         </div>
-                        <span class="tool-step"><span class="n">03</span>Build</span>
-                        <h3 class="tool-title">SIGIL <span class="tool-what">Describe it, it gets built</span></h3>
-                        <p class="tool-desc">Write down what you want and watch it become real software. SIGIL streams a complete, working, single-file application into the page — then runs it, reads its own console, audits its quality, and repairs what it broke.</p>
-                        <span class="tool-link">Build something — free
+                        <span class="tool-step"><span class="n">03</span>Forge</span>
+                        <h3 class="tool-title">SIGIL <span class="tool-what">From paid order to configured agent</span></h3>
+                        <p class="tool-desc">The forge writes what turns a generic build template into <em>your</em> agent &mdash; the triage labels, the routing table, the chase cadence, the words it will use. Then it says plainly how much is standing and what still needs a person, and hands the remainder to me.</p>
+                        <ul class="tool-facts">
+                            <li>Configures every capability it can from your own words</li>
+                            <li>Never invents a credential, a price or a policy</li>
+                            <li>Reports what it finished, honestly</li>
+                        </ul>
+                        <span class="tool-link">See the forge
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
                         </span>
                     </a>
 
                 </div>
-                <p class="lab-note fade-in">No case studies and no logo wall. The tools above are the portfolio — that is the standard of work you get, and you can go use them right now without talking to me. They are also the same three moves used on a paying client, in the same order.</p>
-                <p class="lab-note fade-in" style="margin-top:1rem">Working out whether any of this applies to you? Read <a href="/quote-follow-up-automation/" style="color:var(--color-primary-accent)">how quote follow-up automation works</a>, or <a href="/ai-automation-for-plumbers/" style="color:var(--color-primary-accent)">what a plumbing company should automate first</a> — both include the arithmetic for deciding against it.</p>
+                <p class="lab-note fade-in">No case studies and no logo wall. These three are the portfolio &mdash; they are free, they are live, and they do real work on your real business. Go use one and judge from that.</p>
+                <p class="lab-note fade-in" style="margin-top:1rem">New to this? Start with <a href="/what-is-an-ai-agent/" style="color:var(--color-primary-accent)">what an AI agent actually is</a>, <a href="/ai-agent-pricing/" style="color:var(--color-primary-accent)">what one should cost</a>, or <a href="/ai-agent-permissions/" style="color:var(--color-primary-accent)">how to let one loose safely</a>.</p>
             </div>
         </section>
 
