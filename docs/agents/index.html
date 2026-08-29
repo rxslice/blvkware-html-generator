@@ -3,11 +3,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Agent Catalog — 17 Jobs You Can Fill This Month — BlvkWare</title>
-    <meta name="description" content="Every agent BlvkWare builds, what each one owns, and what it costs. 17 roles and 57 capabilities. Operators from $3,500 own one job; Deputies from $9,500 own a whole function. Flat prices, no discovery call.">
+    <title>The Agent Catalog — 23 Jobs You Can Fill This Month — BlvkWare</title>
+    <meta name="description" content="Every agent BlvkWare builds, what each one owns, and what it costs. 23 roles and 69 capabilities. Operators from $3,500 own one job; Deputies from $9,500 own a whole function. Flat prices, no discovery call.">
     <link rel="canonical" href="https://blvkware.dev/agents/">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
-    <meta property="og:title" content="The Agent Catalog — 17 Jobs You Can Fill This Month">
+    <meta property="og:title" content="The Agent Catalog — 23 Jobs You Can Fill This Month">
     <meta property="og:description" content="Every agent BlvkWare builds, what each one owns, and what it costs. Flat prices on the page.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://blvkware.dev/agents/">
@@ -33,7 +33,7 @@
       "name": "BlvkWare Agent Catalog",
       "description": "Named agent roles a small business can hire. Each has a fixed scope, a flat build price and a required monthly Agent Operations fee. Scope and price are configured at https://blvkware.dev/hire/ without a sales call.",
       "url": "https://blvkware.dev/agents/",
-      "numberOfItems": 17,
+      "numberOfItems": 23,
       "itemListElement": [
         {
           "@type": "ListItem",
@@ -136,6 +136,42 @@
           "position": 17,
           "name": "Research Agent",
           "description": "Prospect research, competitor moves, supplier checks — all valuable, all skipped, because it's an hour nobody has.. Owns: Research. From $3,500 build plus $349/month, live in 10 business days."
+        },
+        {
+          "@type": "ListItem",
+          "position": 18,
+          "name": "Order Desk Agent",
+          "description": "Where is my order is the most common question in ecommerce and the least valuable use of anyone time. This one answers it from the real order and the real tracking, in seconds, every time.. Owns: Answers where my order is; Knowledge pack. From $3,500 build plus $349/month, live in 10 business days."
+        },
+        {
+          "@type": "ListItem",
+          "position": 19,
+          "name": "Returns Agent",
+          "description": "A return is six small steps and a judgment call, repeated all day. It is the most labour-intensive thing in an online shop and the least interesting.. Owns: Runs returns and exchanges; Knowledge pack. From $3,500 build plus $349/month, live in 10 business days."
+        },
+        {
+          "@type": "ListItem",
+          "position": 20,
+          "name": "Ecommerce Deputy",
+          "description": "The whole post-purchase experience - order questions, tracking, exceptions, returns and the review request - owned by one worker with one memory of the customer.. Owns: Answers where my order is; Watches every shipment; Runs returns and exchanges; Knowledge pack; Email triage. From $9,500 build plus $899/month, live in 25 business days."
+        },
+        {
+          "@type": "ListItem",
+          "position": 21,
+          "name": "Stock Agent",
+          "description": "Running out is expensive, and finding out from a customer is worse. This watches what is running down, how fast, and says so while there is still time to order.. Owns: Watches stock before it runs out; Threshold alerts. From $3,500 build plus $349/month, live in 10 business days."
+        },
+        {
+          "@type": "ListItem",
+          "position": 22,
+          "name": "Shipment Agent",
+          "description": "Most delivery problems are known to the carrier long before they are known to you, and to the customer before either. This closes that gap, and claims for what never arrives.. Owns: Tells customers where things are; Watches every shipment; Answers where my order is. From $3,500 build plus $349/month, live in 10 business days."
+        },
+        {
+          "@type": "ListItem",
+          "position": 23,
+          "name": "Renewals Agent",
+          "description": "Contracts, retainers, insurance, tickets and licences all expire on a date somebody was supposed to remember. Revenue and compliance leak through the same gap.. Owns: Never misses a renewal; Tracks certificates and licences. From $3,500 build plus $349/month, live in 10 business days."
         }
       ]
     }
@@ -206,6 +242,12 @@
         .btn:hover { text-decoration: none; opacity: 0.92; }
         .btn-2 { display: inline-block; color: var(--ink-2); font-weight: 600; padding: 0.9rem 1.4rem; border: 1px solid var(--line); border-radius: 11px; margin-left: 0.5rem; }
         .btn-2:hover { color: var(--ink); text-decoration: none; border-color: var(--ink-2); }
+        /* A price range must not wrap mid-figure, so these cells cannot shrink.
+           Wide tables therefore scroll inside their own container rather than
+           pushing the whole page sideways — the body must never scroll
+           horizontally on a phone. */
+        .tw { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1.5rem 0; }
+        .tw table { margin: 0; min-width: 30rem; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; font-size: 0.93rem; }
         th, td { text-align: left; padding: 0.7rem 0.7rem; border-bottom: 1px solid var(--line); color: var(--ink-2); vertical-align: top; }
@@ -217,7 +259,11 @@
         p.plain + p.plain { margin-top: 0.9rem; }
 
         .foot { margin-top: 4.5rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.88rem; color: var(--ink-2); }
-        .foot a { margin-right: 1.25rem; }
+        /* Flex with a gap, not inline margins: a trailing margin-right on the
+           last link of a wrapped line still occupies space and pushed the page
+           16px wider than the viewport on a phone. */
+        .foot-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+        .foot a { margin-right: 0; }
     </style>
 </head>
 <body>
@@ -229,7 +275,7 @@
     </a>
 
     <div class="eyebrow">The catalog</div>
-    <h1>17 jobs in your business are <em>standing empty.</em></h1>
+    <h1>23 jobs in your business are <em>standing empty.</em></h1>
     <p class="lede">Not tasks nobody automated — jobs nobody is doing. The quotes that went unchased, the inbox nobody triaged, the portal somebody logs into by hand, the numbers nobody has time to pull. Each one below is a role you can fill this month, at a flat price, with a worker that does the job rather than a dashboard that reminds you to.</p>
 
     <div class="rule"></div>
@@ -348,7 +394,7 @@
 <a class="card-cta" href="/hire/">Scope this one &rarr;</a>
 </div>
 </div>
-<div class="fam-head"><h3>Operations</h3><span class="hr"></span><span class="fam-n">4 roles</span></div>
+<div class="fam-head"><h3>Operations</h3><span class="hr"></span><span class="fam-n">7 roles</span></div>
 <div class="grid">
 <div class="card">
 <h3>CRM Operator</h3>
@@ -395,6 +441,43 @@
 <li><b>Chases what's missing</b> — Collects the documents and details, and keeps asking the humans who owe them.</li>
 </ul>
 <p class="also">Usually added: Document generation, Reply drafting, Booking, Watches files and folders</p>
+<div class="foot-note">From <b>$3,500</b> build · <b>$349</b>/month · live in 10 business days</div>
+<a class="card-cta" href="/hire/">Scope this one &rarr;</a>
+</div>
+<div class="card">
+<h3>Stock Agent</h3>
+<div class="oneline">You stop finding out too late</div>
+<p>Running out is expensive, and finding out from a customer is worse. This watches what is running down, how fast, and says so while there is still time to order.</p>
+<ul class="owns">
+<li><b>Watches stock before it runs out</b> — Knows what is running down, how fast, and says so while there is still time to order.</li>
+<li><b>Threshold alerts</b> — Tells you the moment a number goes somewhere it shouldn't.</li>
+</ul>
+<p class="also">Usually added: Reconciles stock across channels, Chases suppliers, Scheduled reports</p>
+<div class="foot-note">From <b>$3,500</b> build · <b>$349</b>/month · live in 10 business days</div>
+<a class="card-cta" href="/hire/">Scope this one &rarr;</a>
+</div>
+<div class="card">
+<h3>Shipment Agent</h3>
+<div class="oneline">The stuck parcel finds you first</div>
+<p>Most delivery problems are known to the carrier long before they are known to you, and to the customer before either. This closes that gap, and claims for what never arrives.</p>
+<ul class="owns">
+<li><b>Tells customers where things are</b> — Proactive delivery updates, so the customer hears from you before they have to ask.</li>
+<li><b>Watches every shipment</b> — Follows each parcel and spots the ones that have stopped moving before the customer does.</li>
+<li><b>Answers where my order is</b> — Looks up the real order and the real tracking, and answers the question people ask most.</li>
+</ul>
+<p class="also">Usually added: Claims for lost and damaged, Proactive status updates, Reply drafting</p>
+<div class="foot-note">From <b>$3,500</b> build · <b>$349</b>/month · live in 10 business days</div>
+<a class="card-cta" href="/hire/">Scope this one &rarr;</a>
+</div>
+<div class="card">
+<h3>Renewals Agent</h3>
+<div class="oneline">Nothing lapses quietly</div>
+<p>Contracts, retainers, insurance, tickets and licences all expire on a date somebody was supposed to remember. Revenue and compliance leak through the same gap.</p>
+<ul class="owns">
+<li><b>Never misses a renewal</b> — Contracts, subscriptions and retainers, chased before they lapse rather than after.</li>
+<li><b>Tracks certificates and licences</b> — Insurance, tickets, licences and accreditations, with the chasing done before they expire.</li>
+</ul>
+<p class="also">Usually added: Document generation, Reply drafting, CRM read and write</p>
 <div class="foot-note">From <b>$3,500</b> build · <b>$349</b>/month · live in 10 business days</div>
 <a class="card-cta" href="/hire/">Scope this one &rarr;</a>
 </div>
@@ -467,6 +550,48 @@
 <a class="card-cta" href="/hire/">Scope this one &rarr;</a>
 </div>
 </div>
+<div class="fam-head"><h3>Commerce</h3><span class="hr"></span><span class="fam-n">3 roles</span></div>
+<div class="grid">
+<div class="card">
+<h3>Order Desk Agent</h3>
+<div class="oneline">Nobody has to ask where their order is</div>
+<p>Where is my order is the most common question in ecommerce and the least valuable use of anyone time. This one answers it from the real order and the real tracking, in seconds, every time.</p>
+<ul class="owns">
+<li><b>Answers where my order is</b> — Looks up the real order and the real tracking, and answers the question people ask most.</li>
+<li><b>Knowledge pack</b> — Your prices, policies, documents and SOPs loaded in, so it answers from your business.</li>
+</ul>
+<p class="also">Usually added: Watches every shipment, Email triage, Reply drafting, Web chat</p>
+<div class="foot-note">From <b>$3,500</b> build · <b>$349</b>/month · live in 10 business days</div>
+<a class="card-cta" href="/hire/">Scope this one &rarr;</a>
+</div>
+<div class="card">
+<h3>Returns Agent</h3>
+<div class="oneline">Returns stop eating the week</div>
+<p>A return is six small steps and a judgment call, repeated all day. It is the most labour-intensive thing in an online shop and the least interesting.</p>
+<ul class="owns">
+<li><b>Runs returns and exchanges</b> — Takes the return from request to label to refund, in order, without a person shepherding it.</li>
+<li><b>Knowledge pack</b> — Your prices, policies, documents and SOPs loaded in, so it answers from your business.</li>
+</ul>
+<p class="also">Usually added: Answers where my order is, Document generation, Reply drafting</p>
+<div class="foot-note">From <b>$3,500</b> build · <b>$349</b>/month · live in 10 business days</div>
+<a class="card-cta" href="/hire/">Scope this one &rarr;</a>
+</div>
+<div class="card">
+<h3>Ecommerce Deputy</h3>
+<div class="oneline">Owns everything after the buy button</div>
+<p>The whole post-purchase experience - order questions, tracking, exceptions, returns and the review request - owned by one worker with one memory of the customer.</p>
+<ul class="owns">
+<li><b>Answers where my order is</b> — Looks up the real order and the real tracking, and answers the question people ask most.</li>
+<li><b>Watches every shipment</b> — Follows each parcel and spots the ones that have stopped moving before the customer does.</li>
+<li><b>Runs returns and exchanges</b> — Takes the return from request to label to refund, in order, without a person shepherding it.</li>
+<li><b>Knowledge pack</b> — Your prices, policies, documents and SOPs loaded in, so it answers from your business.</li>
+<li><b>Email triage</b> — Reads every incoming message, works out what it is and how urgent it is, and sorts it.</li>
+</ul>
+<p class="also">Usually added: Tells customers where things are, Asks for the review, Reply drafting, Web chat, CRM read and write</p>
+<div class="foot-note">From <b>$9,500</b> build · <b>$899</b>/month · live in 25 business days</div>
+<a class="card-cta" href="/hire/">Scope this one &rarr;</a>
+</div>
+</div>
     </div>
 
     <div class="cta">
@@ -480,7 +605,7 @@
 
     <h2 class="plain">What every agent comes with</h2>
     <p class="plain">Regardless of which one you hire, none of these are extras.</p>
-    <table>
+    <div class="tw"><table>
         <tbody>
             <tr><td style="width:14rem"><b>The autonomy dial</b></td><td>Watch, Draft, Approve, Operate. Every agent goes live at Draft — it prepares, you send. You raise it yourself, when you've seen enough. It is never raised for you.</td></tr>
             <tr><td><b>A full action log</b></td><td>What it saw, what it decided, why, and what it did. Every action attributed and reversible.</td></tr>
@@ -489,13 +614,13 @@
             <tr><td><b>Agent Operations</b></td><td>Hosting, model costs, monitoring, unlimited tuning of its logic and its language, repairs when a vendor changes an API, business-hours support, a monthly report and a quarterly review.</td></tr>
             <tr><td><b>An exit</b></td><td>Stop whenever you like. Your data is exported within five business days. The source is available at twelve times the monthly fee if you want to run it yourself.</td></tr>
         </tbody>
-    </table>
+    </table></div>
 
     <div class="rule"></div>
 
     <h2 class="plain">Add anything, at a price that's already published</h2>
     <p class="plain">Components are flat-rate and can be added at build or years later at the same price. No renegotiation, no new project, no hourly rate anywhere.</p>
-    <table>
+    <div class="tw"><table>
         <thead><tr><th>Component</th><th>What it adds</th><th style="width:8rem">Price</th></tr></thead>
         <tbody>
 <tr class="grouprow"><td colspan="3">Email</td></tr>
@@ -518,6 +643,7 @@
 <tr><td><b>Lead qualification</b></td><td>Asks the qualifying questions and scores the lead against what a good customer looks like for you.</td><td class="num">$950</td></tr>
 <tr><td><b>Quote follow-up</b></td><td>Chases every quote until the customer answers one way or the other, then stops.</td><td class="num">$950</td></tr>
 <tr><td><b>Lead enrichment</b></td><td>Fills in what the enquiry didn't tell you, from public sources, before anyone reads it.</td><td class="num">$850</td></tr>
+<tr><td><b>Asks for the review</b></td><td>Asks after every finished job. Happy customers reach your review page; unhappy ones reach you first.</td><td class="num">$850</td></tr>
 <tr><td><b>Lead capture</b></td><td>Catches every enquiry from every source and puts it in one place, with nothing lost.</td><td class="num">$650</td></tr>
 <tr><td><b>Lead routing</b></td><td>Hot ones to you immediately, the rest handled without you.</td><td class="num">$450</td></tr>
 <tr class="grouprow"><td colspan="3">Appointments</td></tr>
@@ -566,8 +692,23 @@
 <tr><td><b>Additional language</b></td><td>The same judgment and the same tone, in another language.</td><td class="num">$600</td></tr>
 <tr><td><b>Staging environment</b></td><td>A safe copy to try changes against before they reach live customers.</td><td class="num">$500</td></tr>
 <tr><td><b>Team training</b></td><td>Ninety minutes, remote, recorded, so your team knows how to work with it and when to overrule it.</td><td class="num">$450</td></tr>
+<tr class="grouprow"><td colspan="3">Orders</td></tr>
+<tr><td><b>Runs returns and exchanges</b></td><td>Takes the return from request to label to refund, in order, without a person shepherding it.</td><td class="num">$1,400</td></tr>
+<tr><td><b>Watches every shipment</b></td><td>Follows each parcel and spots the ones that have stopped moving before the customer does.</td><td class="num">$1,100<br><span class="ops">+$49/mo</span></td></tr>
+<tr><td><b>Answers where my order is</b></td><td>Looks up the real order and the real tracking, and answers the question people ask most.</td><td class="num">$950</td></tr>
+<tr><td><b>Recovers abandoned checkouts</b></td><td>Follows up the carts that were nearly orders, then stops the moment they buy or ask you to.</td><td class="num">$950</td></tr>
+<tr class="grouprow"><td colspan="3">Inventory</td></tr>
+<tr><td><b>Reconciles stock across channels</b></td><td>Compares what each system thinks you have and surfaces every difference rather than picking a winner.</td><td class="num">$1,600</td></tr>
+<tr><td><b>Watches stock before it runs out</b></td><td>Knows what is running down, how fast, and says so while there is still time to order.</td><td class="num">$1,200<br><span class="ops">+$49/mo</span></td></tr>
+<tr><td><b>Chases suppliers</b></td><td>Purchase orders nobody confirmed and deliveries that are late, chased on a schedule.</td><td class="num">$850</td></tr>
+<tr class="grouprow"><td colspan="3">Logistics</td></tr>
+<tr><td><b>Claims for lost and damaged</b></td><td>Assembles the evidence and files the carrier claim, which is money most businesses quietly write off.</td><td class="num">$1,400</td></tr>
+<tr><td><b>Tells customers where things are</b></td><td>Proactive delivery updates, so the customer hears from you before they have to ask.</td><td class="num">$950</td></tr>
+<tr class="grouprow"><td colspan="3">Compliance</td></tr>
+<tr><td><b>Never misses a renewal</b></td><td>Contracts, subscriptions and retainers, chased before they lapse rather than after.</td><td class="num">$850</td></tr>
+<tr><td><b>Tracks certificates and licences</b></td><td>Insurance, tickets, licences and accreditations, with the chasing done before they expire.</td><td class="num">$750</td></tr>
 </tbody>
-    </table>
+    </table></div>
 
     <div class="rule"></div>
 
@@ -584,7 +725,7 @@
     </div>
 
     <footer class="foot">
-        <a href="/">Home</a><a href="/hire/">Hire an agent</a><a href="/augur/">AUGUR</a><a href="/scry/">SCRY</a><a href="/sigil/">SIGIL</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a>
+        <div class="foot-links"><a href="/">Home</a><a href="/hire/">Hire an agent</a><a href="/augur/">AUGUR</a><a href="/scry/">SCRY</a><a href="/sigil/">SIGIL</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></div>
         <p style="margin-top:1rem">BlvkWare — <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> · Mississippi, serving the United States.</p>
         <p style="margin-top:0.4rem">Copyright © 2026 BlvkWare / William Russell Wheeler. All Rights Reserved.</p>
     </footer>

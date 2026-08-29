@@ -103,6 +103,12 @@
         .box.warn { border-color: rgba(232,115,74,.3); background: rgba(232,115,74,.06); }
         .calc { font-family: var(--mono); font-size: 0.92rem; color: var(--ink); line-height: 2; }
         .calc span { color: var(--brass); }
+        /* A price range must not wrap mid-figure, so these cells cannot shrink.
+           Wide tables therefore scroll inside their own container rather than
+           pushing the whole page sideways — the body must never scroll
+           horizontally on a phone. */
+        .tw { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1.5rem 0; }
+        .tw table { margin: 0; min-width: 30rem; }
         table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
         th, td { text-align: left; padding: 0.7rem 0.6rem; border-bottom: 1px solid var(--line); color: var(--ink-2); vertical-align: top; }
         th { color: var(--ink); font-weight: 700; }
@@ -114,7 +120,11 @@
         .btn-2 { display: inline-block; color: var(--ink-2); font-weight: 600; padding: 0.85rem 1.2rem; border: 1px solid var(--line); border-radius: 10px; margin: 0.5rem 0 0 0.4rem; }
         .btn-2:hover { color: var(--ink); text-decoration: none; }
         .foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--ink-2); }
-        .foot a { margin-right: 1.25rem; }
+        /* Flex with a gap, not inline margins: a trailing margin-right on the
+           last link of a wrapped line still occupies space and pushed the page
+           16px wider than the viewport on a phone. */
+        .foot-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+        .foot a { margin-right: 0; }
 
         /* The comparison figure: the same agent set against the three things
            people instinctively compare it to. Drawn, because the gap between
@@ -146,7 +156,7 @@
 
     <h2>The three pricing models you will meet</h2>
 
-    <table>
+    <div class="tw"><table>
         <thead><tr><th style="width:9rem">Model</th><th>What happens</th><th>Whose risk</th></tr></thead>
         <tbody>
             <tr>
@@ -165,7 +175,7 @@
                 <td><strong>Theirs.</strong> If it takes longer than expected, that is the builder's problem.</td>
             </tr>
         </tbody>
-    </table>
+    </table></div>
 
     <p>We use the third, so treat that as a disclosed interest rather than a neutral judgment. The argument for it is simple: it is the only one of the three where the person who controls the scope also carries the risk of getting it wrong.</p>
 
@@ -173,14 +183,14 @@
 
     <p>Ranges rather than a number, because the honest answer depends on what the agent has to touch. These reflect what the work actually costs to do properly, not a survey.</p>
 
-    <table>
+    <div class="tw"><table>
         <thead><tr><th>Shape of agent</th><th class="n">Build</th><th class="n">Monthly</th></tr></thead>
         <tbody>
             <tr><td><strong>One job, email only, one or two systems</strong><br>Chasing quotes, requesting reviews, triaging an inbox</td><td class="n">$2,500&ndash;$6,000</td><td class="n">$200&ndash;$600</td></tr>
             <tr><td><strong>One job, several systems or a phone line</strong><br>Booking and rescheduling, qualifying and routing leads</td><td class="n">$5,000&ndash;$10,000</td><td class="n">$400&ndash;$900</td></tr>
             <tr><td><strong>A whole function, many systems, real judgment</strong><br>All inbound across every channel; quote to invoice to reconciled</td><td class="n">$8,000&ndash;$20,000</td><td class="n">$700&ndash;$1,500</td></tr>
         </tbody>
-    </table>
+    </table></div>
 
     <p>Below the bottom of these ranges, be careful. It is possible to produce something that demos well for $800, and it is very hard to produce something that survives contact with real customers and keeps running.</p>
 
@@ -258,14 +268,14 @@
 
     <p>Published so you can hold them against anything else you are quoted. These are the real prices, not a starting point.</p>
 
-    <table>
+    <div class="tw"><table>
         <thead><tr><th>&nbsp;</th><th class="n">Build</th><th class="n">Monthly</th><th>Live in</th></tr></thead>
         <tbody>
             <tr><td><strong>Operator</strong><br>One job, start to finish. 3 systems, 2 channels.</td><td class="n">$3,500</td><td class="n">$349</td><td>10 business days</td></tr>
             <tr><td><strong>Deputy</strong><br>A whole function. 8 systems, any channel, judgment and escalation.</td><td class="n">$9,500</td><td class="n">$899</td><td>25 business days</td></tr>
             <tr><td><strong>Trial</strong><br>14 days on your real data, credited in full against the build.</td><td class="n">$750</td><td class="n">&mdash;</td><td>immediately</td></tr>
         </tbody>
-    </table>
+    </table></div>
 
     <p>The monthly covers hosting, model usage, monitoring, unlimited tuning, repairs when a vendor changes an API, business-hours support and a monthly report. Annual billing is twelve months for the price of ten. If you stop, the agent pauses, your data is exported within five business days, and the source is available at twelve times the monthly if you would rather run it yourself.</p>
 
@@ -279,7 +289,7 @@
     </div>
 
     <footer class="foot">
-        <a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/hire/">Hire an agent</a><a href="/what-is-an-ai-agent/">What is an agent</a><a href="/ai-agent-permissions/">Permissions</a><a href="/terms/">Terms</a>
+        <div class="foot-links"><a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/hire/">Hire an agent</a><a href="/what-is-an-ai-agent/">What is an agent</a><a href="/ai-agent-permissions/">Permissions</a><a href="/terms/">Terms</a></div>
         <p style="margin-top:1rem">BlvkWare — <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> · Mississippi, serving the United States.</p>
     </footer>
 </div>

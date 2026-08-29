@@ -88,7 +88,43 @@
 
         { id: "post_sale_drop", ask: "After the sale, customers hear nothing until they chase",
           evidence: "no status updates, no service portal",
-          roles: { "support-agent": 4, "front-desk": 2 } }
+          roles: { "support-agent": 4, "front-desk": 2 } },
+
+        { id: "wismo", ask: "Customers keep asking where their order is",
+          evidence: "an online store with order tracking, or a support inbox full of order queries",
+          roles: { "order-desk": 6, "ecommerce-deputy": 4, "shipments": 2 } },
+
+        { id: "returns_manual", ask: "Every return is handled by hand, one at a time",
+          evidence: "a published returns policy, an online store",
+          roles: { "returns": 6, "ecommerce-deputy": 3 } },
+
+        { id: "stockouts", ask: "You find out something has run out too late to reorder",
+          evidence: "physical products, stock held, a supplier lead time",
+          roles: { "stock": 6, "ecommerce-deputy": 1 } },
+
+        { id: "stock_disagrees", ask: "Two systems disagree about how much stock you have",
+          evidence: "selling on more than one channel; an inventory system alongside a store",
+          roles: { "stock": 5 } },
+
+        { id: "late_suppliers", ask: "Purchase orders go unconfirmed and deliveries turn up late",
+          evidence: "suppliers, purchase orders, lead times",
+          roles: { "stock": 4, "shipments": 2 } },
+
+        { id: "delivery_blind", ask: "You hear about a delivery problem from the customer, not the carrier",
+          evidence: "shipping, tracking numbers, a carrier account",
+          roles: { "shipments": 6, "order-desk": 3, "ecommerce-deputy": 3 } },
+
+        { id: "unclaimed_losses", ask: "Parcels go missing or arrive damaged and nobody claims for them",
+          evidence: "shipping at volume; a carrier account",
+          roles: { "shipments": 5 } },
+
+        { id: "renewals_slip", ask: "Contracts and retainers lapse because nobody was watching the date",
+          evidence: "recurring contracts, retainers, subscriptions",
+          roles: { "renewals": 6 } },
+
+        { id: "certs_expire", ask: "Insurance, licences or certificates expire before anyone notices",
+          evidence: "a regulated trade, accreditations, insured work",
+          roles: { "renewals": 5 } },
     ];
 
     var SIGNAL_BY_ID = {};
@@ -113,7 +149,13 @@
         "back-office": ["accounting", "payments", "crm"],
         "data-analyst": ["sheets", "db"],
         "reporting": ["sheets", "db"],
-        "research": ["crm"]
+        "research": ["crm"],
+        "order-desk": ["ecom", "email"],
+        "returns": ["ecom", "email"],
+        "ecommerce-deputy": ["ecom", "carrier", "email", "crm"],
+        "stock": ["inventory", "ecom"],
+        "shipments": ["carrier", "ecom", "email"],
+        "renewals": ["crm", "email", "storage"],
     };
 
     function roleById(id) { return E.roleById(id); }

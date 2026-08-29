@@ -85,7 +85,7 @@
             ask: 'required: fields a record must have. key: the field that identifies a duplicate.' },
         "crm.pipeline": { keys: { stale_days: "number" },
             ask: 'stale_days: how long a deal may sit in a stage before it is flagged.' },
-        "workflow.multistep": { keys: { steps: "array" },
+        "workflow.multistep": { stepShape: "process", keys: { steps: "array" },
             ask: 'steps: the process as [{name, category, action:"create|send", collection}].' },
         "workflow.exception": { keys: { known: "object" },
             ask: 'known: {exception_name: "how to handle it"} for exceptions this business already knows about.' },
@@ -100,7 +100,27 @@
         "email.thread": { keys: { needed: "array", purpose: "string" }, ask: 'needed: facts to collect. purpose: the job.' },
         "files.watch": { keys: { collection: "string" }, ask: 'collection: the folder to watch.' },
         "lead.capture": { keys: { collection: "string", key: "string" }, ask: 'collection and key for their CRM.' },
-        "crm.sync": { keys: { collection: "string", key: "string" }, ask: 'collection and key for their CRM.' }
+        "crm.sync": { keys: { collection: "string", key: "string" }, ask: 'collection and key for their CRM.' },
+        "order.returns": { stepShape: "process", keys: { steps: "array" },
+            ask: 'steps: their returns process as [{name, category, action:"create|send", collection}], in the order it actually happens here.' },
+        "order.recover": { keys: { steps: "array", subject: "string" },
+            ask: "steps: the checkout recovery cadence as [days_after, purpose]. Keep it short and offer help rather than a discount unless they said otherwise." },
+        "order.track": { keys: { stall_days: "number" },
+            ask: "stall_days: how many days without a carrier scan should count as stuck for this business." },
+        "stock.watch": { keys: { lead_days: "number" },
+            ask: "lead_days: their supplier lead time, so a warning arrives while there is still time to order." },
+        "supplier.chase": { keys: { steps: "array", subject: "string" },
+            ask: "steps: the supplier chase cadence as [days_after, purpose]. Firm but not rude; these are relationships." },
+        "ship.eta": { keys: { steps: "array", subject: "string" },
+            ask: "steps: the delivery update cadence as [days_after, purpose], covering only milestones a customer cares about." },
+        "ship.claims": { stepShape: "process", keys: { steps: "array" },
+            ask: 'steps: the claim process as [{name, category, action:"create|send", collection}].' },
+        "review.request": { keys: { threshold: "number" },
+            ask: "threshold: the star rating at or above which a customer is offered the public review page. Never propose blocking anyone from posting." },
+        "renewal.watch": { keys: { warn_days: "number", noun: "string" },
+            ask: "warn_days: how far ahead to raise a renewal. noun: what they call these (contract, retainer, subscription)." },
+        "cert.expiry": { keys: { warn_days: "number", noun: "string" },
+            ask: "warn_days: how far ahead to warn. noun: what they call these (certificate, licence, ticket, insurance)." }
     };
 
     function forgeable(capId) { return !!SCHEMA[capId]; }
@@ -168,16 +188,27 @@
             if (ok) out[k] = v; else dropped.push(capId + "." + k + " (wrong type)");
         });
 
-        // Cadence steps arrive as [days, purpose] pairs; the runtime wants
-        // tuples in that exact order, so anything malformed is dropped whole
-        // rather than half-applied into a broken schedule.
+        // Two different kinds of capability carry a `steps` key and they are not
+        // the same shape: a cadence is [days, purpose] pairs, a process is
+        // [{name, category, action}] objects. Validating both against the
+        // cadence shape silently threw away every process the forge wrote —
+        // which looked like the model failing rather than the validator.
         if (out.steps) {
+            var wantProcess = schema.stepShape === "process";
             var steps = out.steps.filter(function (s) {
+                if (wantProcess) {
+                    return s && typeof s === "object" && !Array.isArray(s) &&
+                           typeof s.name === "string" && typeof s.category === "string";
+                }
                 return Array.isArray(s) && s.length >= 2 &&
                        typeof s[0] === "number" && typeof s[1] === "string";
             });
             if (steps.length) out.steps = steps;
-            else { delete out.steps; dropped.push(capId + ".steps (unusable)"); }
+            else {
+                delete out.steps;
+                dropped.push(capId + ".steps (not a valid " +
+                             (wantProcess ? "process" : "cadence") + ")");
+            }
         }
         if (out.labels) {
             var labels = out.labels.filter(function (l) {

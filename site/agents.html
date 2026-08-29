@@ -96,6 +96,12 @@
         .btn:hover { text-decoration: none; opacity: 0.92; }
         .btn-2 { display: inline-block; color: var(--ink-2); font-weight: 600; padding: 0.9rem 1.4rem; border: 1px solid var(--line); border-radius: 11px; margin-left: 0.5rem; }
         .btn-2:hover { color: var(--ink); text-decoration: none; border-color: var(--ink-2); }
+        /* A price range must not wrap mid-figure, so these cells cannot shrink.
+           Wide tables therefore scroll inside their own container rather than
+           pushing the whole page sideways — the body must never scroll
+           horizontally on a phone. */
+        .tw { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1.5rem 0; }
+        .tw table { margin: 0; min-width: 30rem; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; font-size: 0.93rem; }
         th, td { text-align: left; padding: 0.7rem 0.7rem; border-bottom: 1px solid var(--line); color: var(--ink-2); vertical-align: top; }
@@ -107,7 +113,11 @@
         p.plain + p.plain { margin-top: 0.9rem; }
 
         .foot { margin-top: 4.5rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.88rem; color: var(--ink-2); }
-        .foot a { margin-right: 1.25rem; }
+        /* Flex with a gap, not inline margins: a trailing margin-right on the
+           last link of a wrapped line still occupies space and pushed the page
+           16px wider than the viewport on a phone. */
+        .foot-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+        .foot a { margin-right: 0; }
     </style>
 </head>
 <body>
@@ -139,7 +149,7 @@
 
     <h2 class="plain">What every agent comes with</h2>
     <p class="plain">Regardless of which one you hire, none of these are extras.</p>
-    <table>
+    <div class="tw"><table>
         <tbody>
             <tr><td style="width:14rem"><b>The autonomy dial</b></td><td>Watch, Draft, Approve, Operate. Every agent goes live at Draft — it prepares, you send. You raise it yourself, when you've seen enough. It is never raised for you.</td></tr>
             <tr><td><b>A full action log</b></td><td>What it saw, what it decided, why, and what it did. Every action attributed and reversible.</td></tr>
@@ -148,18 +158,18 @@
             <tr><td><b>Agent Operations</b></td><td>Hosting, model costs, monitoring, unlimited tuning of its logic and its language, repairs when a vendor changes an API, business-hours support, a monthly report and a quarterly review.</td></tr>
             <tr><td><b>An exit</b></td><td>Stop whenever you like. Your data is exported within five business days. The source is available at twelve times the monthly fee if you want to run it yourself.</td></tr>
         </tbody>
-    </table>
+    </table></div>
 
     <div class="rule"></div>
 
     <h2 class="plain">Add anything, at a price that's already published</h2>
     <p class="plain">Components are flat-rate and can be added at build or years later at the same price. No renegotiation, no new project, no hourly rate anywhere.</p>
-    <table>
+    <div class="tw"><table>
         <thead><tr><th>Component</th><th>What it adds</th><th style="width:8rem">Price</th></tr></thead>
         <tbody>
 <!--CATALOG_COMPONENTS-->
 </tbody>
-    </table>
+    </table></div>
 
     <div class="rule"></div>
 
@@ -176,7 +186,7 @@
     </div>
 
     <footer class="foot">
-        <a href="/">Home</a><a href="/hire/">Hire an agent</a><a href="/augur/">AUGUR</a><a href="/scry/">SCRY</a><a href="/sigil/">SIGIL</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a>
+        <div class="foot-links"><a href="/">Home</a><a href="/hire/">Hire an agent</a><a href="/augur/">AUGUR</a><a href="/scry/">SCRY</a><a href="/sigil/">SIGIL</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></div>
         <p style="margin-top:1rem">BlvkWare — <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> · Mississippi, serving the United States.</p>
         <p style="margin-top:0.4rem">Copyright © 2026 BlvkWare / William Russell Wheeler. All Rights Reserved.</p>
     </footer>

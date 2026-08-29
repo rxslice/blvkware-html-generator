@@ -102,6 +102,12 @@
         .box p:last-child { margin-bottom: 0; }
         .box.warn { border-color: rgba(232,115,74,.3); background: rgba(232,115,74,.06); }
         .box.never { border-color: rgba(232,82,74,.35); background: rgba(232,82,74,.06); }
+        /* A price range must not wrap mid-figure, so these cells cannot shrink.
+           Wide tables therefore scroll inside their own container rather than
+           pushing the whole page sideways — the body must never scroll
+           horizontally on a phone. */
+        .tw { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1.5rem 0; }
+        .tw table { margin: 0; min-width: 30rem; }
         table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
         th, td { text-align: left; padding: 0.7rem 0.6rem; border-bottom: 1px solid var(--line); color: var(--ink-2); vertical-align: top; }
         th { color: var(--ink); font-weight: 700; }
@@ -112,7 +118,11 @@
         .btn-2 { display: inline-block; color: var(--ink-2); font-weight: 600; padding: 0.85rem 1.2rem; border: 1px solid var(--line); border-radius: 10px; margin: 0.5rem 0 0 0.4rem; }
         .btn-2:hover { color: var(--ink); text-decoration: none; }
         .foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--ink-2); }
-        .foot a { margin-right: 1.25rem; }
+        /* Flex with a gap, not inline margins: a trailing margin-right on the
+           last link of a wrapped line still occupies space and pushed the page
+           16px wider than the viewport on a phone. */
+        .foot-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+        .foot a { margin-right: 0; }
 
         /* The ladder, drawn as four rungs with the blast radius rising. The
            whole argument of the page is in this one figure. */
@@ -137,7 +147,7 @@
 
     <p>Not the dramatic things. In practice the failures are mundane, and all four are preventable by structure rather than by hoping the model is good enough.</p>
 
-    <table>
+    <div class="tw"><table>
         <thead><tr><th style="width:11rem">The failure</th><th>What it looks like</th></tr></thead>
         <tbody>
             <tr><td><strong>Confidently wrong</strong></td><td>It answers a customer question with something that sounds right and is not — usually a price, a policy or a date it was never told.</td></tr>
@@ -145,7 +155,7 @@
             <tr><td><strong>Right thing, wrong record</strong></td><td>It updates, books or charges against the wrong customer. Quiet, common, and only found later.</td></tr>
             <tr><td><strong>Not stopping</strong></td><td>It keeps chasing somebody who already replied, or who asked not to be contacted. The fastest way to lose the client who bought it.</td></tr>
         </tbody>
-    </table>
+    </table></div>
 
     <p>Notice what is not on the list: the agent going rogue, or inventing goals of its own. That is not the risk profile of a business agent doing a defined job. The realistic risks are ordinary operational mistakes, made faster and more consistently than a person would make them.</p>
 
@@ -257,7 +267,7 @@
     </div>
 
     <footer class="foot">
-        <a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/hire/">Hire an agent</a><a href="/what-is-an-ai-agent/">What is an agent</a><a href="/ai-agent-pricing/">Pricing</a><a href="/terms/">Terms</a>
+        <div class="foot-links"><a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/hire/">Hire an agent</a><a href="/what-is-an-ai-agent/">What is an agent</a><a href="/ai-agent-pricing/">Pricing</a><a href="/terms/">Terms</a></div>
         <p style="margin-top:1rem">BlvkWare — <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> · Mississippi, serving the United States.</p>
     </footer>
 </div>

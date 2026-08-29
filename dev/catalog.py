@@ -137,6 +137,8 @@ INTEGRATIONS = [
     {"id": "ecom",       "name": "E-commerce",           "eg": "Shopify, WooCommerce"},
     {"id": "telephony",  "name": "Phone system",         "eg": "RingCentral, Dialpad, Twilio, a plain mobile number"},
     {"id": "portal",     "name": "A web portal with no API", "eg": "a supplier, insurer, council or bank site you log into by hand"},
+    {"id": "inventory",  "name": "Inventory / stock",    "eg": "Cin7, Katana, Zoho Inventory, a spreadsheet"},
+    {"id": "carrier",    "name": "Shipping / carriers",  "eg": "ShipStation, Shippo, UPS, FedEx"},
     {"id": "custom",     "name": "Something in-house",   "eg": "your own software, or an API you own"},
 ]
 
@@ -438,7 +440,71 @@ CAPABILITIES = [
        "Ninety minutes, remote, recorded, so your team knows how to work with it and when to overrule it.",
        450, 0,
        accept="Session delivered and the recording handed over."),
+    # ---- Orders ---------------------------------------------------------
+    # "Where is my order" is the highest-volume support ticket in ecommerce by
+    # a wide margin, and returns are the most labour-intensive thing in one.
+    # Both are worth an agent. Checkout recovery is here because merchants ask
+    # for it and it costs nothing to compose from the sequencer -- but it is a
+    # crowded market served well by cheap dedicated tools, so no role is built
+    # around it and nobody should be sold it as a differentiator.
+    _c("order.status", "Orders", "Answers where my order is",
+       "Looks up the real order and the real tracking, and answers the question people ask most.",
+       950, 2, integ=["ecom"],
+       accept="Twenty real order enquiries are answered from the actual order record, and an order it cannot find escalates instead of guessing."),
+    _c("order.track", "Orders", "Watches every shipment",
+       "Follows each parcel and spots the ones that have stopped moving before the customer does.",
+       1100, 2, ops=49, needs=["order.status"], integ=["carrier"],
+       accept="A shipment with no movement past the agreed window is flagged, and a delivered one is not."),
+    _c("order.returns", "Orders", "Runs returns and exchanges",
+       "Takes the return from request to label to refund, in order, without a person shepherding it.",
+       1400, 3, integ=["ecom"], judgment=True,
+       accept="A return completes end to end on real data, and anything outside the returns policy is escalated rather than approved."),
+    _c("order.recover", "Orders", "Recovers abandoned checkouts",
+       "Follows up the carts that were nearly orders, then stops the moment they buy or ask you to.",
+       950, 2, integ=["ecom"],
+       accept="A recovery sequence sends on schedule, stops instantly on purchase or opt-out, and never messages the same cart twice."),
+
+    # ---- Inventory ------------------------------------------------------
+    # Framed as operating the stock system they already run. Replacing an
+    # inventory system means fighting ERP, which a one-person shop loses.
+    _c("stock.watch", "Inventory", "Watches stock before it runs out",
+       "Knows what is running down, how fast, and says so while there is still time to order.",
+       1200, 3, ops=49, integ=["inventory"],
+       accept="An item projected to run out inside the agreed lead time raises exactly one alert, and a healthy item raises none."),
+    _c("stock.reconcile", "Inventory", "Reconciles stock across channels",
+       "Compares what each system thinks you have and surfaces every difference rather than picking a winner.",
+       1600, 3, needs=["stock.watch"], integ=["inventory", "ecom"],
+       accept="A full comparison lists every discrepancy with both figures, and no count is silently overwritten."),
+    _c("supplier.chase", "Inventory", "Chases suppliers",
+       "Purchase orders nobody confirmed and deliveries that are late, chased on a schedule.",
+       850, 2, judgment=True,
+       accept="An unconfirmed order is chased on the agreed cadence and stops the moment the supplier replies."),
+
+    # ---- Logistics ------------------------------------------------------
+    _c("ship.eta", "Logistics", "Tells customers where things are",
+       "Proactive delivery updates, so the customer hears from you before they have to ask.",
+       950, 2, needs=["order.track"],
+       accept="Each agreed milestone produces one update, and a delivered order stops producing them."),
+    _c("ship.claims", "Logistics", "Claims for lost and damaged",
+       "Assembles the evidence and files the carrier claim, which is money most businesses quietly write off.",
+       1400, 3, integ=["carrier"], judgment=True,
+       accept="A claim is assembled with every required document, and one missing a document is held rather than filed."),
+
+    # ---- Retention and compliance ---------------------------------------
+    _c("review.request", "Leads", "Asks for the review",
+       "Asks after every finished job. Happy customers reach your review page; unhappy ones reach you first.",
+       850, 2, judgment=True,
+       accept="Every customer is asked the same question, a high rating is offered the public review page, a low one alerts the owner within the minute, and nobody is prevented from posting."),
+    _c("renewal.watch", "Compliance", "Never misses a renewal",
+       "Contracts, subscriptions and retainers, chased before they lapse rather than after.",
+       850, 2, judgment=True,
+       accept="A renewal inside the agreed window is actioned once, and one already renewed is left alone."),
+    _c("cert.expiry", "Compliance", "Tracks certificates and licences",
+       "Insurance, tickets, licences and accreditations, with the chasing done before they expire.",
+       750, 2,
+       accept="An expiry inside the warning window raises exactly one escalation, and it does not repeat until the record changes."),
 ]
+
 
 CAP_BY_ID = dict((c["id"], c) for c in CAPABILITIES)
 
@@ -579,7 +645,46 @@ ROLES = [
        "Prospect research, competitor moves, supplier checks — all valuable, all skipped, because it's an hour nobody has.",
        core=["research.web"],
        suggested=["lead.enrich", "data.report", "crm.sync", "email.draft"]),
+    # ---- Commerce -------------------------------------------------------
+    _r("order-desk", "Commerce", "Order Desk Agent",
+       "Nobody has to ask where their order is",
+       "Where is my order is the most common question in ecommerce and the least valuable use of anyone time. This one answers it from the real order and the real tracking, in seconds, every time.",
+       core=["order.status", "knowledge.pack"],
+       suggested=["order.track", "email.triage", "email.draft", "chan.webchat"]),
+
+    _r("returns", "Commerce", "Returns Agent",
+       "Returns stop eating the week",
+       "A return is six small steps and a judgment call, repeated all day. It is the most labour-intensive thing in an online shop and the least interesting.",
+       core=["order.returns", "knowledge.pack"],
+       suggested=["order.status", "doc.generate", "email.draft"]),
+
+    _r("ecommerce-deputy", "Commerce", "Ecommerce Deputy",
+       "Owns everything after the buy button",
+       "The whole post-purchase experience - order questions, tracking, exceptions, returns and the review request - owned by one worker with one memory of the customer.",
+       core=["order.status", "order.track", "order.returns", "knowledge.pack", "email.triage"],
+       suggested=["ship.eta", "review.request", "email.draft", "chan.webchat", "crm.sync"],
+       minTier=2),
+
+    # ---- Operations -----------------------------------------------------
+    _r("stock", "Operations", "Stock Agent",
+       "You stop finding out too late",
+       "Running out is expensive, and finding out from a customer is worse. This watches what is running down, how fast, and says so while there is still time to order.",
+       core=["stock.watch", "data.alert"],
+       suggested=["stock.reconcile", "supplier.chase", "data.report"]),
+
+    _r("shipments", "Operations", "Shipment Agent",
+       "The stuck parcel finds you first",
+       "Most delivery problems are known to the carrier long before they are known to you, and to the customer before either. This closes that gap, and claims for what never arrives.",
+       core=["ship.eta", "order.track", "order.status"],
+       suggested=["ship.claims", "support.status", "email.draft"]),
+
+    _r("renewals", "Operations", "Renewals Agent",
+       "Nothing lapses quietly",
+       "Contracts, retainers, insurance, tickets and licences all expire on a date somebody was supposed to remember. Revenue and compliance leak through the same gap.",
+       core=["renewal.watch", "cert.expiry"],
+       suggested=["doc.generate", "email.draft", "crm.sync"]),
 ]
+
 
 ROLE_BY_ID = dict((r["id"], r) for r in ROLES)
 
@@ -658,6 +763,18 @@ SETUP_NEEDS = {
     "data.alert":       ["the thresholds that matter to them"],
     "research.web":     ["what a useful brief looks like to them"],
     "training":         ["a date and the attendee list"],
+    "order.status":     ["a read connection to their store and their order fields"],
+    "order.track":      ["carrier accounts, or the tracking data already in their store"],
+    "order.returns":    ["their returns policy, and who may approve an exception"],
+    "order.recover":    ["their checkout data and what they are willing to offer"],
+    "stock.watch":      ["reorder points and supplier lead times"],
+    "stock.reconcile":  ["which system is authoritative when two disagree"],
+    "supplier.chase":   ["supplier contacts and the agreed cadence"],
+    "ship.eta":         ["which milestones the customer should hear about"],
+    "ship.claims":      ["carrier accounts and the documents each claim needs"],
+    "review.request":   ["their public review link, and when a job counts as finished"],
+    "renewal.watch":    ["the contracts, their dates and their notice periods"],
+    "cert.expiry":      ["the certificates to track and how early to warn"],
 }
 
 for _cid in SETUP_NEEDS:

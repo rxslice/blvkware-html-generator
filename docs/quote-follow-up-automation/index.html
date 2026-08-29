@@ -97,6 +97,12 @@
         .box p:last-child { margin-bottom: 0; }
         .calc { font-family: var(--mono); font-size: 0.92rem; color: var(--ink); line-height: 2; }
         .calc span { color: var(--brass); }
+        /* A price range must not wrap mid-figure, so these cells cannot shrink.
+           Wide tables therefore scroll inside their own container rather than
+           pushing the whole page sideways — the body must never scroll
+           horizontally on a phone. */
+        .tw { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1.5rem 0; }
+        .tw table { margin: 0; min-width: 30rem; }
         table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
         th, td { text-align: left; padding: 0.7rem 0.6rem; border-bottom: 1px solid var(--line); color: var(--ink-2); }
         th { color: var(--ink); font-weight: 700; }
@@ -104,7 +110,11 @@
         .btn { display: inline-block; background: var(--accent); color: #14170A; font-weight: 700; padding: 0.85rem 1.5rem; border-radius: 10px; margin-top: 0.5rem; }
         .btn:hover { text-decoration: none; opacity: 0.92; }
         .foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--ink-2); }
-        .foot a { margin-right: 1.25rem; }
+        /* Flex with a gap, not inline margins: a trailing margin-right on the
+           last link of a wrapped line still occupies space and pushed the page
+           16px wider than the viewport on a phone. */
+        .foot-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+        .foot a { margin-right: 0; }
     </style>
 </head>
 <body>
@@ -148,12 +158,12 @@
 
     <p>The mechanism is simpler than the marketing around it suggests.</p>
 
-    <table>
+    <div class="tw"><table>
         <tr><th>When</th><th>What it says</th><th>Why</th></tr>
         <tr><td>Day 2</td><td>Checking you got the quote, happy to adjust anything</td><td>Catches the one that was genuinely missed or filtered</td></tr>
         <tr><td>Day 5</td><td>Circling back — if the timing is wrong that is fine, just say so</td><td>Catches the one that got deprioritised, and gives permission to decline</td></tr>
         <tr><td>Day 10</td><td>Last note; assuming you have gone another way unless you say otherwise</td><td>Forces a decision so the quote stops occupying your pipeline</td></tr>
-    </table>
+    </table></div>
 
     <p>The important part is not the copy. It is that <strong>the sequence stops the moment the customer answers</strong>. A follow-up that keeps arriving after someone has replied is the difference between a service and spam, and it is the single most common way these systems are implemented badly.</p>
 
@@ -231,7 +241,7 @@
     </div>
 
     <div class="foot">
-        <a href="/">Home</a><a href="/augur/">AUGUR</a><a href="/scry/">SCRY</a><a href="/sigil/">SIGIL</a><a href="/#services">Pricing</a><a href="/privacy/">Privacy</a>
+        <div class="foot-links"><a href="/">Home</a><a href="/augur/">AUGUR</a><a href="/scry/">SCRY</a><a href="/sigil/">SIGIL</a><a href="/#services">Pricing</a><a href="/privacy/">Privacy</a></div>
         <p style="margin-top:1rem">BlvkWare builds AI automation and custom software for small businesses. Mississippi, serving the United States remotely. <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a></p>
     </div>
 </div>

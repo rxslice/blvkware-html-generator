@@ -47,7 +47,11 @@
         .box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem; margin: 1.75rem 0; }
         .box p:last-child { margin-bottom: 0; }
         .foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--ink-2); }
-        .foot a { margin-right: 1.25rem; }
+        /* Flex with a gap, not inline margins: a trailing margin-right on the
+           last link of a wrapped line still occupies space and pushed the page
+           16px wider than the viewport on a phone. */
+        .foot-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+        .foot a { margin-right: 0; }
     </style>
 </head>
 <body>
@@ -111,7 +115,7 @@
     <p>If this policy changes, the date at the top changes with it. Material changes will be described plainly rather than buried.</p>
 
     <div class="foot">
-        <a href="/">Home</a><a href="/terms/">Terms</a><a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a>
+        <div class="foot-links"><a href="/">Home</a><a href="/terms/">Terms</a><a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a></div>
         <p style="margin-top:1rem">Copyright © 2026 BlvkWare / William Russell Wheeler.</p>
     </div>
 </div>

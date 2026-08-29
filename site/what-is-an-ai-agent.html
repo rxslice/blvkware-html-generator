@@ -102,6 +102,12 @@
         .box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem; margin: 1.75rem 0; }
         .box p:last-child { margin-bottom: 0; }
         .box.warn { border-color: rgba(232,115,74,.3); background: rgba(232,115,74,.06); }
+        /* A price range must not wrap mid-figure, so these cells cannot shrink.
+           Wide tables therefore scroll inside their own container rather than
+           pushing the whole page sideways — the body must never scroll
+           horizontally on a phone. */
+        .tw { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1.5rem 0; }
+        .tw table { margin: 0; min-width: 30rem; }
         table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
         th, td { text-align: left; padding: 0.7rem 0.6rem; border-bottom: 1px solid var(--line); color: var(--ink-2); vertical-align: top; }
         th { color: var(--ink); font-weight: 700; }
@@ -112,7 +118,11 @@
         .btn-2 { display: inline-block; color: var(--ink-2); font-weight: 600; padding: 0.85rem 1.2rem; border: 1px solid var(--line); border-radius: 10px; margin: 0.5rem 0 0 0.4rem; }
         .btn-2:hover { color: var(--ink); text-decoration: none; }
         .foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--ink-2); }
-        .foot a { margin-right: 1.25rem; }
+        /* Flex with a gap, not inline margins: a trailing margin-right on the
+           last link of a wrapped line still occupies space and pushed the page
+           16px wider than the viewport on a phone. */
+        .foot-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+        .foot a { margin-right: 0; }
 
         /* The three-way comparison. A drawn figure rather than a table, because
            the point is the shape of the escalation, not the cell contents. */
@@ -145,7 +155,7 @@
 
     <p>These get used interchangeably by people selling them, which is convenient for the seller and expensive for the buyer.</p>
 
-    <table>
+    <div class="tw"><table>
         <thead><tr><th style="width:8.5rem">&nbsp;</th><th>What it does</th><th>Where it fails</th></tr></thead>
         <tbody>
             <tr>
@@ -164,7 +174,7 @@
                 <td>Anything outside the scope it was given — where a good one escalates rather than guesses.</td>
             </tr>
         </tbody>
-    </table>
+    </table></div>
 
     <p>Here is the difference in one concrete case. A customer replies to a quote with <em>"can you do it the week after next instead, and does that change the price?"</em></p>
 
@@ -283,7 +293,7 @@
     </div>
 
     <footer class="foot">
-        <a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/hire/">Hire an agent</a><a href="/ai-agent-pricing/">Pricing</a><a href="/ai-agent-permissions/">Permissions</a><a href="/privacy/">Privacy</a>
+        <div class="foot-links"><a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/hire/">Hire an agent</a><a href="/ai-agent-pricing/">Pricing</a><a href="/ai-agent-permissions/">Permissions</a><a href="/privacy/">Privacy</a></div>
         <p style="margin-top:1rem">BlvkWare — <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> · Mississippi, serving the United States.</p>
     </footer>
 </div>

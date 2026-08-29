@@ -545,7 +545,7 @@ passed through at carrier cost, itemised, with no margin added.
 
 ## Roles and capabilities
 
-BlvkWare sells **17 named agent roles** built from **57 individual capabilities**.
+BlvkWare sells **{n_roles} named agent roles** built from **{n_caps} individual capabilities**.
 Roles cover email management, lead qualification, appointment setting, quote
 follow-up, outbound sequences, CRM operation and hygiene, multi-step workflow
 automation, operating web portals that have no API, onboarding, collections,
@@ -624,9 +624,8 @@ payment, no server. They exist as the work sample in place of case studies.
 - [Hire an agent](https://blvkware.dev/hire/): the configurator. Pick a role, add
   components, choose monthly or annual, and the total is calculated on the page.
   Produces a written order that becomes the scope of record. No call required.
-- [Agent catalog](https://blvkware.dev/agents/): all eleven roles, what each one
-  owns, what comes with every agent regardless of tier, and the full component
-  price list.
+- [Agent catalog](https://blvkware.dev/agents/): every role, what each one owns,
+  what comes with an agent regardless of tier, and the full capability price list.
 - [What is an AI agent](https://blvkware.dev/what-is-an-ai-agent/): the
   difference between an agent, an automation and a chatbot; the four capabilities
   an agent actually needs; the four questions to put to a vendor; and the three
@@ -656,6 +655,10 @@ payment, no server. They exist as the work sample in place of case studies.
   cookies, no tracking; tools keep data only in the visitor's own browser
 - [Terms of service](https://blvkware.dev/terms/)
 """
+    # Counts are rendered here rather than typed into the string, so a catalog
+    # addition cannot leave the published summary quietly wrong.
+    llms = llms.replace("{n_roles}", str(len(catalog.ROLES)))
+    llms = llms.replace("{n_caps}", str(len(catalog.CAPABILITIES)))
     with io.open(os.path.join(OUT_DIR, "llms.txt"), "w", encoding="utf-8") as fh:
         fh.write(llms)
 

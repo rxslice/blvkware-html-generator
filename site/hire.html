@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Build Your Agent — Scope It, Price It, Order It — BlvkWare</title>
-    <meta name="description" content="Describe the job, pick what the agent must handle, and see the exact price as you go. Seventeen agent roles, fifty-seven capabilities, flat pricing. No estimate, no discovery call.">
+    <meta name="description" content="Describe the job, pick what the agent must handle, and see the exact price as you go. {{N_ROLES}} agent roles, {{N_CAPS}} capabilities, flat pricing. No estimate, no discovery call.">
     <link rel="canonical" href="https://blvkware.dev/hire/">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
     <meta property="og:title" content="Build Your Agent — Scope It, Price It, Order It">
@@ -105,6 +105,27 @@
         h2 { font-size: 1.42rem; font-weight: 800; letter-spacing: -0.018em; }
         .step-sub { color: var(--ink-2); margin-bottom: 1.4rem; max-width: 70ch; font-size: 0.96rem; }
         .locked { opacity: 0.34; pointer-events: none; filter: saturate(0.4); }
+
+        /* Search. Present because the catalog grew, not because search is a
+           feature — it never replaces the list, it only narrows it, so a buyer
+           who does not yet know what they want is unaffected. */
+        .finder { display: flex; align-items: center; gap: 0.65rem; background: var(--surface);
+                  border: 1px solid var(--line); border-radius: 11px; padding: 0.55rem 0.8rem;
+                  margin-bottom: 1.1rem; }
+        .finder svg { flex: none; opacity: .55; }
+        .finder input { flex: 1; min-width: 0; background: none; border: 0; color: var(--ink);
+                        font: inherit; font-size: 0.94rem; padding: 0.2rem 0; }
+        .finder input::placeholder { color: var(--ink-2); opacity: .8; }
+        .finder input:focus { outline: none; }
+        .finder:focus-within { border-color: rgba(212,242,74,0.45); }
+        .finder .count { font-family: var(--mono); font-size: 0.72rem; color: var(--ink-2);
+                         flex: none; white-space: nowrap; }
+        .finder .clear { flex: none; background: none; border: 0; color: var(--ink-2);
+                         cursor: pointer; font: inherit; font-size: 0.8rem; padding: 0 0.2rem; }
+        .finder .clear:hover { color: var(--ink); }
+        .finder .clear[hidden] { display: none; }
+        .no-hits { color: var(--ink-2); font-size: 0.92rem; padding: 0.9rem 0 0.2rem; }
+        .fam-block[hidden], .capgroup[hidden], .opt[hidden], .role[hidden] { display: none !important; }
 
         /* ---- role picker ---- */
         .fam { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-2); margin: 1.5rem 0 0.7rem; display: flex; align-items: center; gap: 0.8rem; }
@@ -231,6 +252,12 @@
         textarea.manifest { width: 100%; min-height: 260px; background: #0D0C0A; color: var(--ink-2); border: 1px solid var(--line); border-radius: 10px; padding: 1rem; font-family: var(--mono); font-size: 0.72rem; line-height: 1.7; resize: vertical; margin-top: 0.6rem; }
         .actions { display: flex; flex-wrap: wrap; gap: 0.65rem; margin-top: 1.3rem; }
         .actions .btn, .actions .btn-2 { width: auto; margin: 0; padding: 0.85rem 1.35rem; }
+        /* A price range must not wrap mid-figure, so these cells cannot shrink.
+           Wide tables therefore scroll inside their own container rather than
+           pushing the whole page sideways — the body must never scroll
+           horizontally on a phone. */
+        .tw { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1.5rem 0; }
+        .tw table { margin: 0; min-width: 30rem; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 1.2rem; font-size: 0.9rem; }
         th, td { text-align: left; padding: 0.65rem 0.6rem; border-bottom: 1px solid var(--line); color: var(--ink-2); vertical-align: top; }
@@ -256,7 +283,11 @@
         .rung .flag { font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-top: 0.5rem; display: block; }
 
         .foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.86rem; color: var(--ink-2); }
-        .foot a { margin-right: 1.2rem; }
+        /* Flex with a gap, not inline margins: a trailing margin-right on
+           the last link of a wrapped line still occupies space, which pushed
+           the page 16px wider than the viewport on a phone. */
+        .foot-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+        .foot a { margin-right: 0; }
 
         @media (max-width: 980px) {
             .layout { grid-template-columns: 1fr; }
@@ -305,7 +336,16 @@
             <section class="step" id="s-role">
                 <div class="step-head"><span class="step-n">01</span><h2>What job needs doing?</h2></div>
                 <p class="step-sub">Pick the closest one. You'll tune exactly what it handles in a moment, so it doesn't have to be perfect — and most jobs people describe turn out to be one of these wearing different words.</p>
+                <div class="finder">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+                    <label class="sr" for="role-find">Search the roles</label>
+                    <input type="search" id="role-find" autocomplete="off" spellcheck="false"
+                           placeholder="Search — try quotes, stock, returns, phone, invoices">
+                    <button type="button" class="clear" id="role-clear" hidden>clear</button>
+                    <span class="count" id="role-count"></span>
+                </div>
                 <div id="roles"></div>
+                <p class="no-hits" id="role-none" hidden>No role matches that. Describe the job in the order instead &mdash; most of what people ask for turns out to be one of these wearing different words.</p>
                 <div id="role-detail"></div>
             </section>
 
@@ -341,7 +381,16 @@
                 <div class="spech">Recommended for this job</div>
                 <div class="opts" id="suggested"></div>
                 <div class="spech">Everything else it could do</div>
+                <div class="finder">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+                    <label class="sr" for="cap-find">Search the remaining capabilities</label>
+                    <input type="search" id="cap-find" autocomplete="off" spellcheck="false"
+                           placeholder="Search these — try stock, returns, expiry, claims">
+                    <button type="button" class="clear" id="cap-clear" hidden>clear</button>
+                    <span class="count" id="cap-count"></span>
+                </div>
                 <div id="more"></div>
+                <p class="no-hits" id="cap-none" hidden>Nothing matches that. If the thing you need is not here, say so in the order and it gets priced before you pay anything.</p>
                 <div id="dep-notice"></div>
             </section>
 
@@ -497,7 +546,7 @@
     <section>
         <div class="step-head"><span class="step-n">—</span><h2>What happens after you order</h2></div>
         <p class="step-sub">The same sequence every time. That repeatability is the reason the price can be flat.</p>
-        <table>
+        <div class="tw"><table>
             <thead><tr><th style="width:5.5rem">Day</th><th style="width:11rem">Step</th><th>What you get</th></tr></thead>
             <tbody>
                 <tr><td class="num">1</td><td><b>Job description</b></td><td>Your specification comes back as one signed page — what it owns, what it may touch, what it escalates, and the acceptance tests. That page is the contract.</td></tr>
@@ -507,12 +556,12 @@
                 <tr><td class="num">6–10</td><td><b>Supervision</b></td><td>Daily tuning against what actually happens. You raise it when you're ready, not before.</td></tr>
                 <tr><td class="num">30</td><td><b>Review</b></td><td>What it did, what it recovered, what it got wrong. Then a promotion, or something added, or neither.</td></tr>
             </tbody>
-        </table>
+        </table></div>
         <p class="step-sub" style="margin-top:1.25rem">A Deputy runs the same sequence over twenty-five business days, because there are more systems to wire and more judgment to check. <a href="/agents/">The full catalog</a> lists every role and what each one owns.</p>
     </section>
 
     <footer class="foot">
-        <a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/augur/">AUGUR</a><a href="/scry/">SCRY</a><a href="/sigil/">SIGIL</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a>
+        <div class="foot-links"><a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/augur/">AUGUR</a><a href="/scry/">SCRY</a><a href="/sigil/">SIGIL</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></div>
         <p style="margin-top:1rem">BlvkWare — <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> · Mississippi, serving the United States.</p>
         <p style="margin-top:0.4rem">Copyright © 2026 BlvkWare / William Russell Wheeler. All Rights Reserved.</p>
     </footer>
@@ -595,10 +644,12 @@ try {
     /* ---- 01 roles ---- */
     var roleHost = document.getElementById("roles");
     C.roleFamilies.forEach(function (fam) {
+        var block = el("div", "fam-block");
+        block.dataset.family = fam;
         var head = el("div", "fam");
         head.appendChild(el("b", null, fam));
         head.appendChild(el("span", "hr"));
-        roleHost.appendChild(head);
+        block.appendChild(head);
         var grid = el("div", "roles");
         C.roles.filter(function (r) { return r.family === fam; }).forEach(function (r) {
             var b = el("button", "role");
@@ -611,7 +662,8 @@ try {
             b.addEventListener("click", function () { pickRole(r.id); });
             grid.appendChild(b);
         });
-        roleHost.appendChild(grid);
+        block.appendChild(grid);
+        roleHost.appendChild(block);
     });
 
     function pickRole(id) {
@@ -717,6 +769,7 @@ try {
             var caps = C.capabilities.filter(function (c) { return c.group === g && !shown[c.id]; });
             if (!caps.length) return;
             var d = el("details", "capgroup");
+            d.dataset.group = g;
             var s = el("summary");
             s.appendChild(el("span", null, g));
             s.appendChild(el("span", "cnt", caps.length + " available"));
@@ -1244,6 +1297,90 @@ try {
         if (host) host.appendChild(note);
         return true;
     }
+
+
+    /* ---- search ----
+     * Narrowing only. The full list stays the default, because a buyer who does
+     * not yet know what they want is better served by browsing than by an empty
+     * search box. Matching is on the words a buyer would actually type — the
+     * role or capability name, what it does, and its group. */
+    function matcher(q) {
+        var terms = String(q || "").toLowerCase().split(/\s+/).filter(Boolean);
+        return function (haystack) {
+            if (!terms.length) return true;
+            var h = haystack.toLowerCase();
+            var words = h.split(/[^a-z0-9]+/).filter(Boolean);
+            return terms.every(function (t) {
+                if (h.indexOf(t) !== -1) return true;
+                // People type the noun and the copy uses the verb: "expiry"
+                // against "expire", "tracking" against "track", "returns"
+                // against "return". A shared four-character prefix catches the
+                // word forms that matter without matching everything.
+                if (t.length < 4) return false;
+                var stem = t.slice(0, 4);
+                return words.some(function (w) {
+                    return w.length >= 4 && w.slice(0, 4) === stem;
+                });
+            });
+        };
+    }
+
+    function wireFinder(inputId, clearId, countId, apply) {
+        var input = document.getElementById(inputId);
+        var clear = document.getElementById(clearId);
+        var count = document.getElementById(countId);
+        if (!input) return;
+        function run() {
+            var q = input.value.trim();
+            clear.hidden = !q;
+            var n = apply(matcher(q), q);
+            count.textContent = q ? (n === 0 ? "nothing matches" :
+                                     n + (n === 1 ? " match" : " matches")) : "";
+        }
+        input.addEventListener("input", run);
+        input.addEventListener("keydown", function (e) {
+            if (e.key === "Escape") { input.value = ""; run(); input.blur(); }
+        });
+        clear.addEventListener("click", function () { input.value = ""; run(); input.focus(); });
+    }
+
+    wireFinder("role-find", "role-clear", "role-count", function (hit) {
+        var shown = 0;
+        document.querySelectorAll("#roles .fam-block").forEach(function (block) {
+            var visible = 0;
+            block.querySelectorAll(".role").forEach(function (card) {
+                var text = card.textContent + " " + (block.dataset.family || "");
+                var ok = hit(text);
+                card.hidden = !ok;
+                if (ok) visible++;
+            });
+            block.hidden = visible === 0;
+            shown += visible;
+        });
+        var none = document.getElementById("role-none");
+        if (none) none.hidden = shown !== 0;
+        return shown;
+    });
+
+    wireFinder("cap-find", "cap-clear", "cap-count", function (hit, q) {
+        var shown = 0;
+        document.querySelectorAll("#more .capgroup").forEach(function (group) {
+            var visible = 0;
+            group.querySelectorAll(".opt").forEach(function (opt) {
+                var ok = hit(opt.textContent + " " + (group.dataset.group || ""));
+                opt.hidden = !ok;
+                if (ok) visible++;
+            });
+            group.hidden = visible === 0;
+            // Open a group that has matches, and close it again when the search
+            // is cleared, so the page returns to the state it started in.
+            if (q) group.open = visible > 0; else group.open = false;
+            shown += visible;
+        });
+        var none = document.getElementById("cap-none");
+        if (none) none.hidden = shown !== 0;
+        return shown;
+    });
 
     if (!applyHandover()) render();
     handleReturn();
