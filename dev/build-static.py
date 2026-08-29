@@ -42,46 +42,50 @@ TOOLS = [
         "src": "app.html",
         "slug": "sigil",
         "name": "SIGIL",
-        "role": "Build",
-        "subcategory": "AI code generation",
-        "features": ["Streams a complete single-file web application",
-                     "Runs the result and reads its own console",
-                     "Audits quality and repairs its own errors",
+        "role": "Forge",
+        "subcategory": "AI agent configuration",
+        "features": ["Configures an ordered agent from the buyer's own words",
+                     "Writes the triage labels, routing and chase cadence",
+                     "Reports what is finished and what still needs a person",
                      "Runs entirely in the browser, no account"],
-        "title": "BlvkWare SIGIL — Describe it, watch it get built",
-        "desc": ("Write down what you want and watch it become real software — a complete, "
-                 "working, single-file application streamed into the page, then run, audited "
-                 "and repaired."),
+        "title": "BlvkWare SIGIL — Describe it, and it gets built",
+        "desc": ("Write down what you want and watch it become real software — a complete, working, "
+                 "single-file application streamed into the page, then run, audited and repaired. "
+                 "The same forge configures ordered BlvkWare agents: the triage labels, the "
+                 "routing table, the chase cadence and the words they will use."),
     },
     {
         "src": "augur.html",
         "slug": "augur",
         "name": "AUGUR",
-        "role": "Analyse",
-        "subcategory": "Competitive and business analysis",
+        "role": "Find",
+        "subcategory": "AI agent opportunity analysis",
         "features": ["Reads a company's live public website",
-                     "Extracts pricing, social proof and technical signals",
-                     "Reports missing revenue and automation systems",
-                     "Draws a costed architecture for what to build"],
-        "title": "BlvkWare AUGUR — Read a company from the outside",
-        "desc": ("Point AUGUR at a company's website. It reads the public page, extracts the "
-                 "real technical signals, and returns the revenue, operational and competitive "
-                 "systems that business should be running but isn't."),
+                     "Finds the jobs quietly costing the most",
+                     "Names the agent worth hiring for each one",
+                     "Prices every one from the published catalog"],
+        "title": "BlvkWare AUGUR — Which jobs are costing you most",
+        "desc": ("Give AUGUR a website. It reads the live page the way a buyer would, works out "
+                 "which jobs are quietly costing that business the most — unstaffed, done after "
+                 "hours, or done by somebody who should be doing something else — and names the "
+                 "agent worth hiring for each, at its real catalog price. About a minute, free, "
+                 "no sign-up."),
     },
     {
         "src": "scry.html",
         "slug": "scry",
         "name": "SCRY",
-        "role": "Architect",
-        "subcategory": "Business process mapping",
-        "features": ["Maps how a business actually operates",
-                     "Finds bottlenecks and missing systems",
-                     "Generates a live operating console",
-                     "Forges a working prototype"],
-        "title": "BlvkWare SCRY — Find the software hiding in your business",
-        "desc": ("Describe how your business works. SCRY maps the operation, finds the "
-                 "bottlenecks and missing systems, and turns them into a live operating "
-                 "console you can click through."),
+        "role": "Design",
+        "subcategory": "AI agent design and pricing",
+        "features": ["Works out which agent is worth hiring first",
+                     "Designs exactly what it has to be able to do",
+                     "Shows what is ready on day one and what needs you",
+                     "Prices it from the published catalog, then hands it to checkout"],
+        "title": "BlvkWare SCRY — Your agent, designed and priced",
+        "desc": ("Describe how your business actually operates. SCRY works out which AI agent is "
+                 "worth hiring first, exactly what it needs to be able to do, which of your "
+                 "systems it has to operate, and what that costs — on the page, in about a "
+                 "minute. Free, no sign-up."),
     },
 ]
 
@@ -599,16 +603,23 @@ operations fee.
 All three run entirely in the visitor's browser. No account, no sign-up, no
 payment, no server. They exist as the work sample in place of case studies.
 
-- [AUGUR](https://blvkware.dev/augur/): reads a company's public website and
-  returns an intelligence report covering revenue opportunities, operational
-  weaknesses, competitive positioning and digital infrastructure, then proposes
-  costed systems with a technical architecture diagram.
-- [SCRY](https://blvkware.dev/scry/): turns a plain-language description of how a
-  business operates into a mapped operating model, surfacing bottlenecks,
-  automation opportunities and the software systems the business is missing.
-- [SIGIL](https://blvkware.dev/sigil/): generates a complete, working, single-file
-  web application from a description, streamed live, then runs it, audits its
-  quality and repairs its own errors.
+- [AUGUR](https://blvkware.dev/augur/) finds the work. Give it a company's public
+  website and it reads the live page, works out which jobs are quietly costing
+  that business the most -- unstaffed, done after hours, or done by somebody who
+  should be doing something else -- and names the agent worth hiring for each,
+  priced from the published catalog rather than estimated.
+- [SCRY](https://blvkware.dev/scry/) designs the agent. Describe how a business
+  actually operates and it works out which agent is worth hiring first, exactly
+  what it has to be able to do, which existing systems it must operate, what is
+  ready on day one and what still needs a person -- then prices it and hands the
+  finished design to checkout with every option already set.
+- [SIGIL](https://blvkware.dev/sigil/) is the forge. Given a paid order it writes
+  the configuration that turns shared, tested machinery into one specific agent:
+  the triage labels, the routing table, the chase cadence and the words it will
+  use, followed by an honest account of what it finished and what was handed to a
+  human. Opened without an order it is a free build-anything tool that generates
+  a complete single-file web application from a description, runs it, audits it
+  and repairs its own errors.
 
 ## Important caveats for anyone citing this site
 
@@ -860,7 +871,7 @@ def catalog_roles_html():
                 out.append('<p class="also">Usually added: %s</p>' % _esc(names))
             out.append('<div class="foot-note">From <b>%s</b> build · <b>%s</b>/month · live in %s</div>'
                        % (_money(tier["build"]), _money(tier["ops"]), _esc(tier["days"])))
-            out.append('<a class="card-cta" href="/hire/">Scope this one &rarr;</a>')
+            out.append('<a class="card-cta" href="/hire/">See the price &rarr;</a>')
             out.append('</div>')
         out.append('</div>')
     return "\n".join(out)
@@ -952,7 +963,7 @@ def compile_catalog(html, name=""):
             cls = "role-chip dep" if r["minTier"] == 2 else "role-chip"
             chips.append('<a class="%s" href="/agents/"><b>%s</b><span>%s</span></a>'
                          % (cls, _esc(r["name"]), _esc(r["oneLine"])))
-        chips.append('<a class="role-chip more" href="/hire/"><b>Scope one and see the price &rarr;</b>'
+        chips.append('<a class="role-chip more" href="/hire/"><b>Pick one and see the price &rarr;</b>'
                      '<span>%d capabilities to pick from</span></a>' % len(catalog.CAPABILITIES))
         html = html.replace("<!--CATALOG_STRIP-->", "\n                    ".join(chips))
     if "<!--CATALOG_ITEMLIST-->" in html:

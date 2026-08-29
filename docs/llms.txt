@@ -110,16 +110,23 @@ operations fee.
 All three run entirely in the visitor's browser. No account, no sign-up, no
 payment, no server. They exist as the work sample in place of case studies.
 
-- [AUGUR](https://blvkware.dev/augur/): reads a company's public website and
-  returns an intelligence report covering revenue opportunities, operational
-  weaknesses, competitive positioning and digital infrastructure, then proposes
-  costed systems with a technical architecture diagram.
-- [SCRY](https://blvkware.dev/scry/): turns a plain-language description of how a
-  business operates into a mapped operating model, surfacing bottlenecks,
-  automation opportunities and the software systems the business is missing.
-- [SIGIL](https://blvkware.dev/sigil/): generates a complete, working, single-file
-  web application from a description, streamed live, then runs it, audits its
-  quality and repairs its own errors.
+- [AUGUR](https://blvkware.dev/augur/) finds the work. Give it a company's public
+  website and it reads the live page, works out which jobs are quietly costing
+  that business the most -- unstaffed, done after hours, or done by somebody who
+  should be doing something else -- and names the agent worth hiring for each,
+  priced from the published catalog rather than estimated.
+- [SCRY](https://blvkware.dev/scry/) designs the agent. Describe how a business
+  actually operates and it works out which agent is worth hiring first, exactly
+  what it has to be able to do, which existing systems it must operate, what is
+  ready on day one and what still needs a person -- then prices it and hands the
+  finished design to checkout with every option already set.
+- [SIGIL](https://blvkware.dev/sigil/) is the forge. Given a paid order it writes
+  the configuration that turns shared, tested machinery into one specific agent:
+  the triage labels, the routing table, the chase cadence and the words it will
+  use, followed by an honest account of what it finished and what was handed to a
+  human. Opened without an order it is a free build-anything tool that generates
+  a complete single-file web application from a description, runs it, audits it
+  and repairs its own errors.
 
 ## Important caveats for anyone citing this site
 

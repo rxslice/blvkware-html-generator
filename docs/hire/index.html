@@ -3,11 +3,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Build Your Agent — Scope It, Price It, Order It — BlvkWare</title>
+    <title>Build Your Agent — Pick the Job, See the Price, Order It — BlvkWare</title>
     <meta name="description" content="Describe the job, pick what the agent must handle, and see the exact price as you go. 23 agent roles, 69 capabilities, flat pricing. No estimate, no discovery call.">
     <link rel="canonical" href="https://blvkware.dev/hire/">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
-    <meta property="og:title" content="Build Your Agent — Scope It, Price It, Order It">
+    <meta property="og:title" content="Build Your Agent — Pick the Job, See the Price, Order It">
     <meta property="og:description" content="Describe the job, pick what the agent must handle, and watch the price update. Then order it, without a call.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://blvkware.dev/hire/">
@@ -100,11 +100,20 @@
         .layout { display: grid; grid-template-columns: 1fr 348px; gap: 2.5rem; align-items: start; }
 
         section.step { scroll-margin-top: 1.5rem; }
-        .step-head { display: flex; align-items: baseline; gap: 0.85rem; margin-bottom: 0.4rem; }
+        .step-head { display: flex; align-items: baseline; gap: 0.85rem; margin-bottom: 0.4rem;
+                     flex-wrap: wrap; }
+        .step-head h2 { flex: 1 1 auto; min-width: 0; }
         .step-n { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.18em; color: var(--brass); border: 1px solid rgba(217,182,92,0.35); border-radius: 999px; padding: 0.18rem 0.6rem; flex: none; }
         h2 { font-size: 1.42rem; font-weight: 800; letter-spacing: -0.018em; }
         .step-sub { color: var(--ink-2); margin-bottom: 1.4rem; max-width: 70ch; font-size: 0.96rem; }
-        .locked { opacity: 0.34; pointer-events: none; filter: saturate(0.4); }
+        /* A waiting section must read as waiting, not as broken. The heading
+           and its lock note stay legible; only the controls dim. */
+        .step.locked > *:not(.step-head) { opacity: 0.32; pointer-events: none; filter: saturate(0.4); }
+        .step.locked .step-sub { opacity: 0.5; }
+        .lock-note { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.12em;
+                     text-transform: uppercase; color: var(--brass); border: 1px solid rgba(217,182,92,0.35);
+                     border-radius: 999px; padding: 0.18rem 0.6rem; margin-left: auto; flex: none; }
+        .step:not(.locked) .lock-note { display: none; }
 
         /* Search. Present because the catalog grew, not because search is a
            feature — it never replaces the list, it only narrows it, so a buyer
@@ -125,6 +134,8 @@
         .finder .clear:hover { color: var(--ink); }
         .finder .clear[hidden] { display: none; }
         .no-hits { color: var(--ink-2); font-size: 0.92rem; padding: 0.9rem 0 0.2rem; }
+        .pick-hint { color: var(--ink-2); font-size: 0.9rem; margin-top: 1.1rem; }
+        body.picked .pick-hint { display: none; }
         .fam-block[hidden], .capgroup[hidden], .opt[hidden], .role[hidden] { display: none !important; }
 
         /* ---- role picker ---- */
@@ -223,6 +234,8 @@
         .total .amt { font-family: var(--mono); font-size: 1.55rem; font-weight: 500; color: var(--accent); letter-spacing: -0.02em; }
         .total.sec { margin-top: 0.5rem; }
         .total.sec .amt { font-size: 1.05rem; color: var(--brass); }
+        .panel-foot { font-size: 0.74rem; line-height: 1.5; color: var(--ink-3, var(--ink-2));
+                      margin-top: 0.55rem; opacity: 0.78; }
         .panel-meta { font-family: var(--mono); font-size: 0.7rem; color: var(--ink-2); margin-top: 0.9rem; line-height: 1.65; }
         .btn { display: block; width: 100%; text-align: center; background: var(--accent); color: #14170A; font: inherit; font-weight: 800; font-size: 0.98rem; padding: 0.9rem 1.1rem; border: 0; border-radius: 11px; margin-top: 1.1rem; cursor: pointer; transition: opacity .15s; }
         .btn:hover { opacity: 0.92; text-decoration: none; }
@@ -289,6 +302,9 @@
         .foot-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
         .foot a { margin-right: 0; }
 
+        @media (max-width: 700px) {
+            .lock-note { margin-left: 0; margin-top: 0.3rem; }
+        }
         @media (max-width: 980px) {
             .layout { grid-template-columns: 1fr; }
             .two { grid-template-columns: 1fr; }
@@ -303,7 +319,8 @@
             body.picked .panel { transform: none; }
             body.picked { padding-bottom: 6rem; }
             .panel > h3, .panel .lines, .panel .btn-2, .panel .panel-rule,
-            .panel .panel-meta, .panel .tierbadge, .panel .whytier, .panel .trial-box { display: none; }
+            .panel .panel-meta, .panel .panel-foot, .panel .tierbadge, .panel .whytier,
+            .panel .trial-box { display: none; }
             #totals { flex: 1; min-width: 0; }
             #totals .total { justify-content: flex-start; gap: 0.55rem; }
             #totals .total .lab { font-size: 0.58rem; }
@@ -324,7 +341,7 @@
     </a>
 
     <div class="eyebrow">Define the job · Build the agent · Put it to work</div>
-    <h1>Scope it, price it, <em>order it.</em></h1>
+    <h1>Pick the job, see the price, <em>order it.</em></h1>
     <p class="lede">Tell it what the job is and what you already run. It works out what the agent has to be able to do, prices it as you go, and hands you the actual specification — what it will own, what it may touch, and the tests it has to pass before it's delivered. Add and remove until the price and what you get for it both look right.</p>
     <p class="hero-foot">No estimate. No discovery call. No hourly billing anywhere in this.</p>
 
@@ -345,6 +362,7 @@
                     <span class="count" id="role-count"></span>
                 </div>
                 <div id="roles"></div>
+                <p class="pick-hint">Pick one and the rest of the questions open up, with a price that moves as you answer them.</p>
                 <p class="no-hits" id="role-none" hidden>No role matches that. Describe the job in the order instead &mdash; most of what people ask for turns out to be one of these wearing different words.</p>
                 <div id="role-detail"></div>
             </section>
@@ -353,7 +371,7 @@
 
             <!-- 02 BUSINESS -->
             <section class="step locked" id="s-biz" aria-disabled="true">
-                <div class="step-head"><span class="step-n">02</span><h2>What does it have to work with?</h2></div>
+                <div class="step-head"><span class="step-n">02</span><h2>What does it have to work with?</h2><span class="lock-note">Pick a job first</span></div>
                 <p class="step-sub">The agent operates the software you already run — it doesn't replace it. Tick what you use. If something has no way in, it's better to find that out now than on day nine.</p>
                 <div class="opts" id="systems"></div>
 
@@ -366,8 +384,8 @@
 
             <!-- 03 VOLUME -->
             <section class="step locked" id="s-vol" aria-disabled="true">
-                <div class="step-head"><span class="step-n">03</span><h2>How often does this happen?</h2></div>
-                <p class="step-sub">Roughly. This sets how much work the agent's monthly fee covers — you're not billed by the message, and going over doesn't break anything, it just costs a published rate.</p>
+                <div class="step-head"><span class="step-n">03</span><h2>How often does this happen?</h2><span class="lock-note">Pick a job first</span></div>
+                <p class="step-sub">Roughly. This sets how much work the monthly fee covers — one “action” is one thing the agent finishes for you, like sending a follow-up or booking a slot. You are not billed by the message, and going over doesn't break anything, it just costs a published rate.</p>
                 <div class="opts" id="volume"></div>
             </section>
 
@@ -375,8 +393,8 @@
 
             <!-- 04 CAPABILITIES -->
             <section class="step locked" id="s-caps" aria-disabled="true">
-                <div class="step-head"><span class="step-n">04</span><h2>What exactly should it handle?</h2></div>
-                <p class="step-sub">The brass ones are what this job <em>is</em> — they're in the base price and can't be removed. The rest are yours to add or drop, and the price moves as you do. Anything you skip can be added later at exactly the price shown here.</p>
+                <div class="step-head"><span class="step-n">04</span><h2>What exactly should it handle?</h2><span class="lock-note">Pick a job first</span></div>
+                <p class="step-sub">The first group is what this job <em>is</em> — those are in the base price and cannot be removed. The rest are yours to add or drop, and the price moves as you do. Anything you skip can be added later at exactly the price shown here.</p>
                 <div id="core"></div>
                 <div class="spech">Recommended for this job</div>
                 <div class="opts" id="suggested"></div>
@@ -398,8 +416,8 @@
 
             <!-- 05 AUTONOMY -->
             <section class="step locked" id="s-auto" aria-disabled="true">
-                <div class="step-head"><span class="step-n">05</span><h2>How much should it be allowed to do?</h2></div>
-                <p class="step-sub">Every agent goes live at <b style="color:var(--ink)">Draft</b> whatever you pick here — this is the level you're working towards, not the one it starts at. You raise it yourself once you've watched it work, and you can lower it again at any time. Every action is logged and reversible.</p>
+                <div class="step-head"><span class="step-n">05</span><h2>How much should it be allowed to do?</h2><span class="lock-note">Pick a job first</span></div>
+                <p class="step-sub">Every agent goes live at <b style="color:var(--ink)">Draft</b> whatever you pick here. What you choose is the level you are working <em>towards</em> — it tells me what to build for, and picking Approve or Operate adds the approval queue that makes them safe. You raise it yourself once you've watched it work, and you can lower it again at any time. Every action is logged and reversible.</p>
                 <div class="ladder" id="autonomy"></div>
                 <div id="auto-notice"></div>
             </section>
@@ -408,7 +426,7 @@
 
             <!-- 06 DETAILS -->
             <section class="step locked" id="s-you" aria-disabled="true">
-                <div class="step-head"><span class="step-n">06</span><h2>Tell it about your business</h2></div>
+                <div class="step-head"><span class="step-n">06</span><h2>Tell it about your business</h2><span class="lock-note">Pick a job first</span></div>
                 <p class="step-sub">This becomes the job description — the one-page document that gets signed before any work starts and that the finished agent is tested against. The more exact you are here, the less back-and-forth there is later.</p>
                 <div class="two">
                     <div class="field"><label for="f-biz">Business name</label><input type="text" id="f-biz" data-a="business" autocomplete="organization"></div>
@@ -456,12 +474,13 @@
                 <h3>Your agent</h3>
                 <div id="tier-badge"></div>
                 <div id="why-tier"></div>
-                <div id="lines" class="lines"><p class="empty">Pick a job and the price appears here, updating as you scope it.</p></div>
+                <div id="lines" class="lines"><p class="empty">Pick a job and the price appears here, updating as you answer.</p></div>
                 <div id="totals" hidden>
                     <div class="panel-rule"></div>
                     <div class="total"><span class="lab">Due to start</span><span class="amt" id="t-now">$0</span></div>
                     <div class="total sec"><span class="lab" id="t-rec-lab">Then monthly</span><span class="amt" id="t-rec">$0</span></div>
                     <p class="panel-meta" id="t-meta"></p>
+                    <p class="panel-foot" id="t-foot" hidden>One action is one thing the agent finishes &mdash; a follow-up sent, a slot booked, a record updated. Going over costs a published rate; it never stops working.</p>
                 </div>
                 <button type="button" class="btn" id="go">See the specification</button>
                 <a class="btn-2" href="https://cal.com/blvkware/15min" target="_blank" rel="noopener noreferrer">Rather ask a question first?</a>
@@ -473,13 +492,13 @@
     <section id="spec">
         <div class="rule"></div>
         <div class="step-head"><span class="step-n">07</span><h2>Your agent, specified</h2></div>
-        <p class="step-sub">This is the scope of record. Send it and you'll get it back as a signed one-page job description within a business day, with these acceptance tests written into it. Nothing is charged until you've signed that.</p>
+        <p class="step-sub">This is exactly what you are buying. Send it and you will get it back as a signed one-page job description within a business day, with these acceptance tests written into it. Nothing is charged until you've signed that.</p>
         <div class="speccard" id="speccard"></div>
         <div class="actions">
             <button type="button" class="btn" id="pay" hidden>Pay and start the build</button>
             <a class="btn" id="order" href="#">Send this order</a>
             <button type="button" class="btn-2" id="copy">Copy it</button>
-            <button type="button" class="btn-2" id="download">Download the manifest</button>
+            <button type="button" class="btn-2" id="download">Download a copy</button>
         </div>
         <p class="panel-meta" id="pay-note" hidden></p>
         <p class="panel-meta" style="margin-top:1rem">Goes to russ@blvkware.dev. One person reads it — the same one who builds it.</p>
@@ -1191,7 +1210,7 @@ try {
         document.body.classList.toggle("picked", !!q);
 
         if (!q) {
-            host.appendChild(el("p", "empty", "Pick a job and the price appears here, updating as you scope it."));
+            host.appendChild(el("p", "empty", "Pick a job and the price appears here, updating as you answer."));
             totals.hidden = true;
             return;
         }
@@ -1236,8 +1255,11 @@ try {
             ? money(q.buildAfterCredit) + " + " + money(q.recurring)
             : money(q.recurring);
         document.getElementById("t-meta").textContent =
-            "Live in " + q.days + " business days · " + q.includedActions.toLocaleString("en-US") +
-            " actions/month · " + (state.billing === "annual" ? "annual billing" : "cancel any month");
+            "Live in " + q.days + " business days · " +
+            q.includedActions.toLocaleString("en-US") +
+            " actions included a month · " +
+            (state.billing === "annual" ? "annual billing" : "cancel any month");
+        document.getElementById("t-foot").hidden = false;
         document.getElementById("rush-price").textContent = "+" + money(Math.round(q.subtotal * C.pricing.rushPct));
 
         /* dependencies the engine had to add on the buyer's behalf, and the
@@ -1308,8 +1330,14 @@ try {
         }
 
         h("Order " + sp.ref);
-        p(sp.role.name + " · " + q.def.label + " · live in " + q.days + " business days · working towards " +
-          sp.autonomy + ", live at L1 Draft.");
+        // Saying "working towards L1, live at L1 Draft" is a sentence only its
+        // author enjoys. When the target is Draft, say so once.
+        var aim = sp.autonomy === "L1"
+            ? "starts at Draft and stays there until you raise it"
+            : "starts at Draft, working towards " + (({L0: "Watch", L2: "Approve",
+                                                        L3: "Operate"})[sp.autonomy] || sp.autonomy);
+        p(sp.role.name + " · " + q.def.label + " · live in " + q.days +
+          " business days · " + aim + ".");
 
         h("What it will own");
         list(sp.capabilities.map(function (c) { return { bold: c.name, text: E.capById(c.id).blurb }; }));
@@ -1334,8 +1362,8 @@ try {
         h("What it must never do without asking");
         p(state.answers.neverDo || "Not yet stated — this becomes a hard rule in the job description, so it is worth filling in above.");
 
-        h("The manifest");
-        p("This is what gets built from. Keep a copy — it is the exact scope you are paying for.");
+        h("The full detail");
+        p("The same thing again in the format the build runs from. You do not need to read it — keep a copy, because it is the exact scope you are paying for.");
         var ta = el("textarea", "manifest");
         ta.spellcheck = false;
         ta.value = JSON.stringify(sp, null, 2);
@@ -1351,7 +1379,10 @@ try {
         L.push("========================================");
         L.push("");
         L.push(sp.role.name + "  ·  " + q.def.label);
-        L.push("Live in " + q.days + " business days. Working towards " + sp.autonomy + ", live at L1 Draft.");
+        L.push("Live in " + q.days + " business days. " +
+               (sp.autonomy === "L1"
+                   ? "Goes live at Draft and stays there until you raise it."
+                   : "Goes live at Draft, working towards " + sp.autonomy + "."));
         L.push("");
         L.push("BUSINESS");
         L.push("  Name        " + (sp.business.business || "—"));
@@ -1389,7 +1420,7 @@ try {
         }
         L.push("  DUE TO START         " + money(q.dueNow));
         L.push("");
-        L.push("The full manifest is attached below. Paste it back to me unchanged.");
+        L.push("The full detail is attached below. Paste it back to me unchanged.");
         L.push("");
         L.push(JSON.stringify(sp));
         return L.join("\n");
