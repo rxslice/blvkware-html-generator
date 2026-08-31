@@ -56,7 +56,7 @@ passed through at carrier cost, itemised, with no margin added.
 
 ## Roles and capabilities
 
-BlvkWare sells **23 named agent roles** built from **69 individual capabilities**.
+BlvkWare sells **23 named agent roles** built from **68 individual capabilities**.
 Roles cover email management, lead qualification, appointment setting, quote
 follow-up, outbound sequences, CRM operation and hygiene, multi-step workflow
 automation, operating web portals that have no API, onboarding, collections,

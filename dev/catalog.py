@@ -412,16 +412,12 @@ CAPABILITIES = [
        "Your prices, policies, documents and SOPs loaded in, so it answers from your business.",
        900, 2,
        accept="Twenty questions drawn from the source material are answered from it, with the source cited."),
-    _c("approval.console", "Control", "Approval console",
-       "Set the line it stops at — by value, by kind of action, by rule. Every agent already comes with the queue itself; this is the control over what has to land in it and what may go straight out.",
-       1100, 2,
-       accept="Actions above the configured threshold queue rather than execute, and approval releases them correctly."),
     _c("dashboard", "Control", "Reporting dashboard",
        "Figures rather than a log: what it handled, what it recovered, where it escalated, reconciled against the audit trail. Every agent already shows you what it did; this is the version you can report from.",
        1400, 3,
        accept="Dashboard figures reconcile against the audit log for a full week."),
     _c("whitelabel", "Control", "White-label surfaces",
-       "Every page and message it touches carries your domain and your branding.",
+       "Every page and message it touches carries your domain and your branding — including the two pages your team uses every day and the chat widget on your site.",
        1500, 2,
        accept="No BlvkWare branding appears on any customer-facing surface, and links resolve on the customer's domain."),
     _c("lang.extra", "Control", "Additional language",
@@ -599,7 +595,7 @@ ROLES = [
        "The process runs without a shepherd",
        "The multi-step thing that crosses four systems and only works because one person remembers all of it. That person is the bottleneck, and they'd like a holiday.",
        core=["workflow.multistep", "workflow.exception"],
-       suggested=["crm.sync", "files.watch", "doc.generate", "api.custom", "approval.console"]),
+       suggested=["crm.sync", "files.watch", "doc.generate", "api.custom", "staging"]),
 
     _r("browser-operator", "Operations", "Browser Operator",
        "Works the systems that have no way in",
@@ -624,7 +620,7 @@ ROLES = [
        "Quote to invoice to paid to reconciled",
        "The whole money pipeline across whatever tools you already run. It doesn't replace your accounting package; it operates it, which is the part nobody has time for.",
        core=["doc.generate", "pay.collect", "pay.chase", "recon.match", "crm.sync"],
-       suggested=["doc.parse", "data.report", "data.alert", "approval.console", "dashboard"],
+       suggested=["doc.parse", "data.report", "data.alert", "export.api", "dashboard"],
        minTier=2),
 
     # ---- Intelligence ---------------------------------------------------
@@ -710,8 +706,8 @@ MODIFIERS = [
 AUTONOMY = [
     {"id": "L0", "name": "Watch",   "blurb": "Observes and reports. Takes no action.", "needs": []},
     {"id": "L1", "name": "Draft",   "blurb": "Prepares anything a customer would see; a human sends it. Keeps your records up to date as it goes.", "needs": []},
-    {"id": "L2", "name": "Approve", "blurb": "Acts on its own, but stops for you above a line you set.", "needs": ["approval.console"]},
-    {"id": "L3", "name": "Operate", "blurb": "Acts within scope, escalates exceptions. Enabled in writing after supervision.", "needs": ["approval.console"]},
+    {"id": "L2", "name": "Approve", "blurb": "Acts on its own, but stops for you above a line you set.", "needs": []},
+    {"id": "L3", "name": "Operate", "blurb": "Acts within scope, escalates exceptions. Enabled in writing after supervision.", "needs": []},
 ]
 
 
