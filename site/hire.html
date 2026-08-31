@@ -234,6 +234,20 @@
         .total .amt { font-family: var(--mono); font-size: 1.55rem; font-weight: 500; color: var(--accent); letter-spacing: -0.02em; }
         .total.sec { margin-top: 0.5rem; }
         .total.sec .amt { font-size: 1.05rem; color: var(--brass); }
+        .payback { margin-top: 0.3rem; }
+        .pb-q { font-size: 0.9rem; color: var(--ink); margin: 0.5rem 0 0.1rem; font-weight: 600; }
+        .pb-sub { font-size: 0.74rem; color: var(--ink-2); margin: 0 0 0.7rem; }
+        .pb-row { display: flex; align-items: center; justify-content: space-between;
+                  gap: 0.6rem; font-size: 0.8rem; color: var(--ink-2); margin-bottom: 0.45rem; }
+        .pb-in { display: inline-flex; align-items: center; gap: 0.15rem; color: var(--ink-2); }
+        .pb-in input { width: 5.2rem; background: #0D0C0A; border: 1px solid var(--line);
+                       border-radius: 7px; color: var(--ink); font: inherit; font-size: 0.85rem;
+                       padding: 0.3rem 0.5rem; text-align: right; }
+        .pb-in input:focus { outline: 2px solid rgba(217,182,92,0.35); outline-offset: 1px; }
+        .pb-out { font-size: 0.84rem; line-height: 1.55; color: var(--ink); margin: 0.7rem 0 0;
+                  min-height: 1.2rem; }
+        .pb-out b { color: var(--brass); }
+        .pb-out.no b { color: var(--ink); }
         .panel-foot { font-size: 0.74rem; line-height: 1.5; color: var(--ink-3, var(--ink-2));
                       margin-top: 0.55rem; opacity: 0.78; }
         .panel-meta { font-family: var(--mono); font-size: 0.7rem; color: var(--ink-2); margin-top: 0.9rem; line-height: 1.65; }
@@ -319,8 +333,13 @@
             body.picked .panel { transform: none; }
             body.picked { padding-bottom: 6rem; }
             .panel > h3, .panel .lines, .panel .btn-2, .panel .panel-rule,
-            .panel .panel-meta, .panel .panel-foot, .panel .tierbadge, .panel .whytier,
-            .panel .trial-box { display: none; }
+            /* Below 980px the panel is a fixed bar across the bottom of the
+               screen. Anything added to it comes straight off the page the
+               buyer is reading — the payback block alone took it to 398px on
+               an 812px phone, which is half the screen to show arithmetic
+               nobody does one-handed. Same call as the meta line above it. */
+            .panel .panel-meta, .panel .panel-foot, .panel .payback,
+            .panel .tierbadge, .panel .whytier, .panel .trial-box { display: none; }
             #totals { flex: 1; min-width: 0; }
             #totals .total { justify-content: flex-start; gap: 0.55rem; }
             #totals .total .lab { font-size: 0.58rem; }
@@ -480,6 +499,21 @@
                     <div class="total"><span class="lab">Due to start</span><span class="amt" id="t-now">$0</span></div>
                     <div class="total sec"><span class="lab" id="t-rec-lab">Then monthly</span><span class="amt" id="t-rec">$0</span></div>
                     <p class="panel-meta" id="t-meta"></p>
+                    <div class="payback" id="payback" hidden>
+                        <div class="panel-rule"></div>
+                        <p class="pb-q">Would this pay for itself?</p>
+                        <p class="pb-sub">Your numbers, not ours. Nothing is
+                           sent anywhere.</p>
+                        <label class="pb-row"><span>A job is worth, on average</span>
+                            <span class="pb-in">$<input type="number" id="pb-value"
+                              min="0" step="50" inputmode="numeric"
+                              placeholder="2,100"></span></label>
+                        <label class="pb-row"><span id="pb-unit-label">Quotes you send a month</span>
+                            <span class="pb-in"><input type="number" id="pb-vol"
+                              min="0" step="5" inputmode="numeric"
+                              placeholder="80"></span></label>
+                        <p class="pb-out" id="pb-out"></p>
+                    </div>
                     <p class="panel-foot" id="t-foot" hidden>One action is one thing the agent finishes &mdash; a follow-up sent, a slot booked, a record updated. Going over costs a published rate; it never stops working.</p>
                 </div>
                 <button type="button" class="btn" id="go">See the specification</button>
@@ -869,6 +903,7 @@ try {
         clear(host); clear(badge); clear(why);
 
         var q = state.roleId ? E.price(state) : null;
+        railQuote = q;
         document.body.classList.toggle("picked", !!q);
 
         if (!q) {
@@ -922,6 +957,7 @@ try {
             " actions included a month · " +
             (state.billing === "annual" ? "annual billing" : "cancel any month");
         document.getElementById("t-foot").hidden = false;
+        renderPayback();
         document.getElementById("rush-price").textContent = "+" + money(Math.round(q.subtotal * C.pricing.rushPct));
 
         /* dependencies the engine had to add on the buyer's behalf, and the
@@ -1035,6 +1071,94 @@ try {
         return sp;
     }
 
+    /* What the agent is counted as saving, per role. The unit has to be the
+       thing that role actually recovers, or the arithmetic is a fiction: a
+       follow-up agent saves quotes that went cold, a front desk saves calls
+       that went unanswered, a collections agent saves invoices that aged out. */
+    var PAYBACK_UNITS = {
+        "follow-up":       ["Quotes you send a month", "quote", "quotes", "go cold"],
+        "revenue-deputy":  ["Quotes you send a month", "quote", "quotes", "go cold"],
+        "lead-qualifier":  ["Enquiries you get a month", "enquiry", "enquiries", "never get worked"],
+        "outreach":        ["Enquiries you get a month", "enquiry", "enquiries", "never get worked"],
+        "front-desk":      ["Calls and messages a month", "enquiry", "enquiries", "are missed"],
+        "email-manager":   ["Enquiries you get a month", "enquiry", "enquiries", "get buried"],
+        "support":         ["Customers you serve a month", "customer", "customers", "leave over service"],
+        "appointment":     ["Appointments a month", "appointment", "appointments", "no-show or lapse"],
+        "collections":     ["Invoices you issue a month", "invoice", "invoices", "go unpaid too long"],
+        "renewals":        ["Renewals a year", "renewal", "renewals", "lapse quietly"],
+        "onboarding":      ["New customers a month", "customer", "customers", "churn early"]
+    };
+
+    function article(word) {
+        return "aeiou".indexOf(String(word).charAt(0).toLowerCase()) >= 0 ? "an" : "a";
+    }
+
+    function paybackUnit() {
+        var r = state.roleId && C.roles ? null : null;
+        var u = PAYBACK_UNITS[state.roleId];
+        return u || ["Jobs you handle a month", "job", "jobs", "slip through"];
+    }
+
+    function renderPayback() {
+        var box = document.getElementById("payback");
+        var out = document.getElementById("pb-out");
+        var q = railQuote;
+        if (!q) { box.hidden = true; return; }
+        box.hidden = false;
+
+        var unit = paybackUnit();
+        document.getElementById("pb-unit-label").textContent = unit[0];
+
+        var value = parseFloat(document.getElementById("pb-value").value);
+        var volume = parseFloat(document.getElementById("pb-vol").value);
+        if (!(value > 0)) { out.className = "pb-out"; out.textContent = ""; return; }
+
+        /* First-year cost, because that is the number a buyer is deciding
+           about. Saying "it pays back in two jobs" while quietly ignoring
+           twelve months of the fee would be the sort of arithmetic that gets
+           found out on month two. */
+        var firstYear = q.buildAfterCredit + q.recurring * (state.billing === "annual" ? 1 : 12);
+        var jobs = Math.ceil(firstYear / value);
+
+        var lead = "It costs " + money(firstYear) + " in the first year, "
+                 + "everything included. At " + money(value) + " "
+                 + article(unit[1]) + " " + unit[1]
+                 + ", it has paid for itself the moment it saves <b>"
+                 + jobs + " " + (jobs === 1 ? unit[1] : unit[2]) + "</b>.";
+
+        if (volume > 0) {
+            var pct = (jobs / volume) * 100;
+            if (pct <= 25) {
+                lead += " That is " + (pct < 1 ? "under 1" : Math.round(pct))
+                     + "% of the " + volume + " you handle. The question is "
+                     + "whether more than that " + unit[3] + " today.";
+                out.className = "pb-out";
+            } else if (pct <= 60) {
+                lead += " That is " + Math.round(pct) + "% of the " + volume
+                     + " you handle &mdash; a real number, not a rounding error. "
+                     + "Worth being honest with yourself about how many "
+                     + unit[3] + " now.";
+                out.className = "pb-out";
+            } else {
+                lead += " That is " + Math.round(pct) + "% of the " + volume
+                     + " you handle, which is almost certainly more than are "
+                     + "being lost. <b>On these numbers I would not buy this.</b> "
+                     + "Talk to me before you do &mdash; either the figures are "
+                     + "wrong or this is the wrong thing to spend on.";
+                out.className = "pb-out no";
+            }
+        } else {
+            out.className = "pb-out";
+        }
+        out.innerHTML = lead;
+    }
+
+    ["pb-value", "pb-vol"].forEach(function (id) {
+        document.addEventListener("input", function (e) {
+            if (e.target && e.target.id === id) { renderPayback(); }
+        });
+    });
+
     function orderText(sp, q) {
         var L = [];
         L.push("AGENT ORDER " + sp.ref);
@@ -1088,7 +1212,7 @@ try {
         return L.join("\n");
     }
 
-    var currentSpec = null, currentQuote = null;
+    var currentSpec = null, currentQuote = null, railQuote = null;
 
     document.getElementById("go").addEventListener("click", function () {
         if (!state.roleId) {
