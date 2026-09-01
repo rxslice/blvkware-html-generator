@@ -97,7 +97,15 @@
         .hero-foot { font-family: var(--mono); font-size: 0.74rem; color: var(--ink-2); opacity: 0.82; margin-top: 1.3rem; }
         .rule { height: 1px; background: var(--line); margin: 2.75rem 0; }
 
-        .layout { display: grid; grid-template-columns: 1fr 348px; gap: 2.5rem; align-items: start; }
+        /* `align-items: start` collapsed the aside to the height of the panel
+           inside it, and a sticky element can only travel inside its own
+           parent — so the price rail had no room to stick and simply scrolled
+           away with the top of the page. It never followed anyone down the
+           form, which is the one thing a price rail is for. Everything put in
+           it — the payback calculator, now the trial — was placed there on the
+           strength of "this is what the buyer is looking at when the number
+           lands", and that was not true. */
+        .layout { display: grid; grid-template-columns: 1fr 348px; gap: 2.5rem; align-items: stretch; }
 
         section.step { scroll-margin-top: 1.5rem; }
         .step-head { display: flex; align-items: baseline; gap: 0.85rem; margin-bottom: 0.4rem;
@@ -216,12 +224,33 @@
         .seg-note { font-family: var(--mono); font-size: 0.74rem; color: var(--brass); margin-top: 0.65rem; }
 
         /* ---- price rail ---- */
-        .panel { position: sticky; top: 1.5rem; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 1.4rem; }
+        /* Making the rail genuinely sticky exposes the second half of the
+           problem: with a real configuration in it the panel is 1,184px
+           against a 900px viewport, and a top-anchored sticky element taller
+           than the viewport pins at the top and leaves its own bottom below
+           the fold permanently — so "See the specification", the button the
+           whole page exists to get pressed, would never appear. Hence the cap:
+           the priced detail scrolls inside the rail and the buttons are held
+           at the bottom of it, which is the part that must never move. */
+        .panel { position: sticky; top: 1.5rem; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 1.4rem;
+                 max-height: calc(100vh - 3rem); display: flex; flex-direction: column; }
+        /* The classic pure-CSS scroll shadow: the two `local` gradients paint
+           the panel's own colour over the two `scroll` shadows, so a shadow is
+           visible only on the edge that actually has more content behind it.
+           Without it the priced detail simply appears to stop. */
+        .panel-scroll {
+            overflow-y: auto; min-height: 0;
+            background:
+                linear-gradient(var(--surface) 30%, rgba(23,20,15,0)) top / 100% 22px no-repeat local,
+                linear-gradient(rgba(23,20,15,0), var(--surface) 70%) bottom / 100% 22px no-repeat local,
+                radial-gradient(farthest-side at 50% 0, rgba(0,0,0,0.45), rgba(0,0,0,0)) top / 100% 9px no-repeat scroll,
+                radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,0.45), rgba(0,0,0,0)) bottom / 100% 9px no-repeat scroll;
+        }
         .panel h3 { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--brass); font-weight: 500; margin-bottom: 0.9rem; }
         .tierbadge { display: inline-flex; align-items: center; gap: 0.45rem; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); border: 1px solid rgba(212,242,74,0.35); border-radius: 999px; padding: 0.2rem 0.6rem; margin-bottom: 0.85rem; }
         .tierbadge.t2 { color: var(--brass); border-color: rgba(217,182,92,0.4); }
         .whytier { font-size: 0.79rem; color: var(--ink-2); line-height: 1.5; margin-bottom: 0.9rem; padding-bottom: 0.9rem; border-bottom: 1px solid var(--line); }
-        .lines { font-size: 0.86rem; max-height: 34vh; overflow-y: auto; }
+        .lines { font-size: 0.86rem; }
         .line { display: flex; justify-content: space-between; gap: 0.9rem; padding: 0.33rem 0; color: var(--ink-2); }
         .line b { color: var(--ink); font-weight: 700; text-align: left; }
         .line .v { font-family: var(--mono); color: var(--ink); flex: none; }
@@ -257,12 +286,44 @@
         .btn-2:hover { color: var(--ink); border-color: var(--ink-2); text-decoration: none; }
         .empty { color: var(--ink-2); font-size: 0.88rem; }
 
-        .trial-box { background: rgba(232,115,74,0.07); border: 1px solid rgba(232,115,74,0.3); border-radius: 12px; padding: 0.95rem 1.05rem; margin-top: 1.1rem; display: flex; gap: 0.8rem; align-items: flex-start; cursor: pointer; }
-        .trial-box input { appearance: none; -webkit-appearance: none; width: 18px; height: 18px; flex: none; margin-top: 0.15rem; border: 1.5px solid var(--warm); border-radius: 5px; cursor: pointer; position: relative; }
-        .trial-box input:checked { background: var(--warm); }
-        .trial-box input:checked::after { content: "✓"; position: absolute; inset: 0; display: grid; place-items: center; color: #14170A; font-size: 0.76rem; font-weight: 800; }
-        .trial-box b { display: block; font-size: 0.91rem; }
-        .trial-box span { display: block; font-size: 0.82rem; color: var(--ink-2); line-height: 1.45; margin-top: 0.12rem; }
+        /* How you start is a fork, not an add-on. It was a checkbox stacked
+           under Rush delivery, which reads as an upsell you decline — so a
+           buyer looking at $3,500 from a stranger never saw the $750 door. */
+        .startpick { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+        .sp { background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+              padding: 0.95rem 1rem; cursor: pointer; display: block; transition: border-color .15s, background .15s; }
+        .sp:hover { border-color: rgba(217,182,92,0.4); }
+        .sp input { position: absolute; opacity: 0; width: 0; height: 0; }
+        .sp .sph { display: flex; justify-content: space-between; align-items: baseline; gap: 0.6rem; }
+        .sp .spn { font-weight: 800; font-size: 0.95rem; }
+        .sp .spp { font-family: var(--mono); font-size: 0.82rem; color: var(--ink-2); flex: none; }
+        .sp .spd { font-size: 0.81rem; color: var(--ink-2); line-height: 1.45; margin-top: 0.35rem; }
+        .sp .spd b { color: var(--ink); }
+        .sp:has(input:checked) { border-color: rgba(212,242,74,0.5); background: rgba(212,242,74,0.06); }
+        .sp:has(input:checked) .spp { color: var(--accent); }
+        .sp:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .sp.warm:has(input:checked) { border-color: rgba(232,115,74,0.55); background: rgba(232,115,74,0.08); }
+        .sp.warm:has(input:checked) .spp { color: var(--warm); }
+        .sp .spf { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.11em;
+                   text-transform: uppercase; color: var(--warm); display: block; margin-top: 0.5rem; }
+        @media (max-width: 620px) { .startpick { grid-template-columns: 1fr; } }
+
+        /* The same offer, restated where the flinch happens: beside the total. */
+        .railtrial { margin-top: 0.85rem; }
+        .rt-open { width: 100%; text-align: left; background: rgba(232,115,74,0.08);
+                   border: 1px solid rgba(232,115,74,0.32); border-radius: 11px;
+                   padding: 0.7rem 0.8rem; font: inherit; color: var(--ink); cursor: pointer; }
+        .rt-open:hover { border-color: rgba(232,115,74,0.6); }
+        .rt-open b { display: block; font-size: 0.84rem; color: var(--warm); }
+        .rt-open span { display: block; font-size: 0.76rem; color: var(--ink-2); line-height: 1.45; margin-top: 0.15rem; }
+        .rt-on { border: 1px solid rgba(232,115,74,0.32); background: rgba(232,115,74,0.08);
+                 border-radius: 11px; padding: 0.7rem 0.8rem; }
+        .rt-on b { display: block; font-size: 0.84rem; color: var(--warm); }
+        .rt-on span { display: block; font-size: 0.76rem; color: var(--ink-2); line-height: 1.45; margin-top: 0.15rem; }
+        .rt-on button { background: none; border: 0; padding: 0; margin-top: 0.35rem; font: inherit;
+                        font-size: 0.76rem; color: var(--ink-2); text-decoration: underline; cursor: pointer; }
+        .rt-on button:hover { color: var(--ink); }
+        .rt-short { display: none; }
 
         /* ---- the spec ---- */
         #spec { display: none; }
@@ -326,20 +387,32 @@
                 position: fixed; left: 0; right: 0; bottom: 0; top: auto;
                 border-radius: 14px 14px 0 0; border-bottom: 0;
                 padding: 0.8rem 1.05rem calc(0.8rem + env(safe-area-inset-bottom, 0px));
-                z-index: 40; display: flex; align-items: center; gap: 0.85rem;
+                /* The desktop rail is a flex *column* so its buttons can be
+                   held at the bottom of a scrolling panel. Down here the same
+                   element is a bar, so the direction has to be set back. */
+                z-index: 40; display: flex; flex-direction: row; align-items: center; gap: 0.85rem;
                 box-shadow: 0 -12px 28px rgba(0,0,0,0.55);
                 transform: translateY(115%); transition: transform 0.25s ease;
             }
             body.picked .panel { transform: none; }
             body.picked { padding-bottom: 6rem; }
-            .panel > h3, .panel .lines, .panel .btn-2, .panel .panel-rule,
+            .panel h3, .panel .lines, .panel .btn-2, .panel .panel-rule,
+            .panel .rt-long, .panel .rt-open span, .panel .rt-on span,
             /* Below 980px the panel is a fixed bar across the bottom of the
                screen. Anything added to it comes straight off the page the
                buyer is reading — the payback block alone took it to 398px on
                an 812px phone, which is half the screen to show arithmetic
                nobody does one-handed. Same call as the meta line above it. */
             .panel .panel-meta, .panel .panel-foot, .panel .payback,
-            .panel .tierbadge, .panel .whytier, .panel .trial-box { display: none; }
+            .panel .tierbadge, .panel .whytier { display: none; }
+            /* The block itself stays — stripped to a single tappable line, so
+               the bar grows by one line rather than by a card. */
+            .panel .railtrial { margin-top: 0.2rem; }
+            .panel .rt-open, .panel .rt-on { background: none; border: 0; padding: 0; }
+            .panel .rt-short { display: block; font-size: 0.72rem; color: var(--warm);
+                               text-decoration: underline; text-underline-offset: 2px; }
+            .panel .rt-back { margin-top: 0; font-size: 0.72rem; color: var(--warm); }
+            .panel-scroll { flex: 1; min-width: 0; overflow: visible; max-height: none; background: none; }
             #totals { flex: 1; min-width: 0; }
             #totals .total { justify-content: flex-start; gap: 0.55rem; }
             #totals .total .lab { font-size: 0.58rem; }
@@ -464,25 +537,32 @@
                     <div class="field"><label for="f-phone">Best number <span class="hint">— optional</span></label><input type="text" id="f-phone" data-a="phone" autocomplete="tel" inputmode="tel"></div>
                 </div>
 
-                <p class="step-sub" style="margin-top:1.25rem">How would you like to pay for the monthly?</p>
+                <p class="step-sub" style="margin-top:1.75rem">And how do you want to start?</p>
+                <div class="startpick" role="radiogroup" aria-label="How to start">
+                    <label class="sp">
+                        <input type="radio" name="startmode" id="start-build" checked>
+                        <span class="sph"><span class="spn">Hire it outright</span><span class="spp" id="sp-build-price">—</span></span>
+                        <span class="spd">The whole job, built and delivered, working in <span id="sp-build-days">10</span> business days.</span>
+                    </label>
+                    <label class="sp warm">
+                        <input type="radio" name="startmode" id="start-trial">
+                        <span class="sph"><span class="spn">Interview it first</span><span class="spp">$750</span></span>
+                        <span class="spd">Fourteen days on your real data doing one part of the job, at Draft, so nothing reaches a customer without you seeing it. <b>Continue and the whole $750 comes off the build.</b> Stop and there is nothing further to pay.</span>
+                        <span class="spf">The smaller way in</span>
+                    </label>
+                </div>
+
+                <p class="step-sub" style="margin-top:1.75rem">How would you like to pay for the monthly?</p>
                 <div class="seg" role="group" aria-label="Billing period">
                     <button type="button" data-bill="monthly" aria-pressed="true">Monthly</button>
                     <button type="button" data-bill="annual" aria-pressed="false">Annual — 2 months free</button>
                 </div>
                 <p class="seg-note" id="bill-note">Cancel any month. Thirty days' notice, no exit fee.</p>
 
-                <label class="opt" style="margin-top:1.1rem;max-width:520px">
+                <label class="opt" id="rush-opt" style="margin-top:1.1rem;max-width:520px">
                     <input type="checkbox" id="rush">
                     <span class="ob"><span class="on"><span>Rush delivery</span><span class="op" id="rush-price">+40%</span></span>
-                    <span class="od">Half the timeline. It's priced against the build because it displaces other work.</span></span>
-                </label>
-
-                <label class="trial-box">
-                    <input type="checkbox" id="trial">
-                    <span>
-                        <b>Interview it first — $750 for 14 days</b>
-                        <span>One job, your real data, at Draft autonomy so nothing goes out without you seeing it. If you continue, the whole $750 comes off the build. If you don't, it stops and you owe nothing further.</span>
-                    </span>
+                    <span class="od" id="rush-desc">Half the timeline. It's priced against the build because it displaces other work.</span></span>
                 </label>
             </section>
         </div>
@@ -490,6 +570,7 @@
         <!-- PRICE RAIL -->
         <aside>
             <div class="panel">
+              <div class="panel-scroll">
                 <h3>Your agent</h3>
                 <div id="tier-badge"></div>
                 <div id="why-tier"></div>
@@ -499,6 +580,7 @@
                     <div class="total"><span class="lab">Due to start</span><span class="amt" id="t-now">$0</span></div>
                     <div class="total sec"><span class="lab" id="t-rec-lab">Then monthly</span><span class="amt" id="t-rec">$0</span></div>
                     <p class="panel-meta" id="t-meta"></p>
+                    <div class="railtrial" id="railtrial" hidden></div>
                     <div class="payback" id="payback" hidden>
                         <div class="panel-rule"></div>
                         <p class="pb-q">Would this pay for itself?</p>
@@ -516,6 +598,7 @@
                     </div>
                     <p class="panel-foot" id="t-foot" hidden>One action is one thing the agent finishes &mdash; a follow-up sent, a slot booked, a record updated. Going over costs a published rate; it never stops working.</p>
                 </div>
+              </div>
                 <button type="button" class="btn" id="go">See the specification</button>
                 <a class="btn-2" href="https://cal.com/blvkware/15min" target="_blank" rel="noopener noreferrer">Rather ask a question first?</a>
             </div>
@@ -667,6 +750,7 @@ try {
         return n;
     }
     function clear(n) { while (n.firstChild) n.removeChild(n.firstChild); }
+
 
     /* option row: checkbox or radio with name, price, description, notes */
     function option(o) {
@@ -874,9 +958,24 @@ try {
     document.getElementById("rush").addEventListener("change", function (e) {
         state.modifiers.rush = e.target.checked; render();
     });
-    document.getElementById("trial").addEventListener("change", function (e) {
-        state.trial = e.target.checked; render();
-    });
+
+    /* How you start is offered twice — as a fork in step 06 and again in the
+     * price rail, because the rail is where the total lands and where a buyer
+     * decides it is too much. Two controls, one setter: the last time this
+     * codebase let two places hold the same fact they drifted and a web chat
+     * reply went out as an email. Both call this; render() puts both back in
+     * step with the state afterwards. */
+    function setStart(trial) {
+        state.trial = !!trial;
+        /* Rush buys a shorter build. During a trial there is no build yet, so
+         * leaving it ticked would price a 40% surcharge onto a decision that
+         * is two weeks away. Drop it rather than carry a line item the buyer
+         * did not mean. */
+        if (state.trial) { state.modifiers.rush = false; }
+        render();
+    }
+    document.getElementById("start-build").addEventListener("change", function () { setStart(false); });
+    document.getElementById("start-trial").addEventListener("change", function () { setStart(true); });
 
     /* ---- render ---- */
     function line(host, label, value, cls) {
@@ -909,6 +1008,7 @@ try {
         if (!q) {
             host.appendChild(el("p", "empty", "Pick a job and the price appears here, updating as you answer."));
             totals.hidden = true;
+            document.getElementById("railtrial").hidden = true;
             return;
         }
         totals.hidden = false;
@@ -957,6 +1057,7 @@ try {
             " actions included a month · " +
             (state.billing === "annual" ? "annual billing" : "cancel any month");
         document.getElementById("t-foot").hidden = false;
+        renderStart(q);
         renderPayback();
         document.getElementById("rush-price").textContent = "+" + money(Math.round(q.subtotal * C.pricing.rushPct));
 
@@ -1037,6 +1138,26 @@ try {
         p(sp.role.name + " · " + q.def.label + " · live in " + q.days +
           " business days · " + aim + ".");
 
+        /* A trial buyer was being handed a specification that read as though
+           the whole build were being delivered — every capability, every
+           acceptance test — with nothing anywhere on the page saying they had
+           bought fourteen days. The scope below is what they are buying *into*,
+           not what arrives on Friday, and the document has to say which. */
+        if (q.trial) {
+            h("How this starts");
+            p("You are starting with the 14-day interview, not the build. " +
+              money(q.credit) + " now covers fourteen days on your real data, " +
+              "running one part of the job below — which one is agreed with you " +
+              "before anything is wired — at Draft, so nothing reaches a customer " +
+              "without you seeing it first.");
+            p("Everything else on this page is what gets built if you continue. " +
+              "The build is then " + money(q.buildAfterCredit) + ", because the " +
+              money(q.credit) + " comes off it in full, plus " + money(q.recurring) +
+              (state.billing === "annual" ? " a year" : " a month") +
+              ". If you stop at fourteen days there is nothing further to pay and " +
+              "your data is exported to you.");
+        }
+
         h("What it will own");
         list(sp.capabilities.map(function (c) { return { bold: c.name, text: E.capById(c.id).blurb }; }));
 
@@ -1097,6 +1218,61 @@ try {
         var r = state.roleId && C.roles ? null : null;
         var u = PAYBACK_UNITS[state.roleId];
         return u || ["Jobs you handle a month", "job", "jobs", "slip through"];
+    }
+
+    /* Both places that offer the smaller way in, redrawn from one state. */
+    function renderStart(q) {
+        document.getElementById("start-trial").checked = q.trial;
+        document.getElementById("start-build").checked = !q.trial;
+        document.getElementById("sp-build-price").textContent = money(q.build + q.recurring);
+        document.getElementById("sp-build-days").textContent = String(q.days);
+
+        /* Rush is meaningless while a trial is running — see setStart. Saying
+           so beats silently unticking a box the buyer just ticked. */
+        var rushBox = document.getElementById("rush");
+        var rushOpt = document.getElementById("rush-opt");
+        rushBox.disabled = q.trial;
+        rushBox.checked = !!q.rush;
+        rushOpt.style.opacity = q.trial ? "0.45" : "";
+        rushOpt.style.cursor = q.trial ? "default" : "";
+        document.getElementById("rush-desc").textContent = q.trial
+            ? "Not applicable while you're interviewing it — there is no build to shorten yet. You can rush it when you decide to continue."
+            : "Half the timeline. It's priced against the build because it displaces other work.";
+
+        var rt = document.getElementById("railtrial");
+        clear(rt);
+        rt.hidden = false;
+        if (q.trial) {
+            var on = el("div", "rt-on");
+            on.appendChild(el("b", "rt-long", "You're starting with the 14-day interview."));
+            on.appendChild(el("span", null,
+                money(q.credit) + " now. Continue and the build is " +
+                money(q.buildAfterCredit) + " — the " + money(q.credit) +
+                " is already taken off. Stop and there is nothing further to pay."));
+            var back = el("button", "rt-back", "Hire it outright instead");
+            back.type = "button";
+            back.addEventListener("click", function () { setStart(false); });
+            on.appendChild(back);
+            rt.appendChild(on);
+        } else {
+            var open = el("button", "rt-open");
+            open.type = "button";
+            open.appendChild(el("b", "rt-long", "Or interview it first — " + money(C.pricing.trial) + " for 14 days"));
+            /* The fixed bar on a phone has room for about twenty characters
+               beside the button, and this offer has to be in it: on mobile the
+               rail's full block is hidden, so without this the smaller way in
+               does not appear until step 06, eight thousand pixels down. */
+            open.appendChild(el("b", "rt-short", "or interview it — " + money(C.pricing.trial) + " →"));
+            /* No figure restated here: the total is the line directly above,
+               and a second number for the same thing is how two places that
+               had to agree stop agreeing. */
+            open.appendChild(el("span", null,
+                "Fourteen days on your real data before you commit to that. "
+                + "If you continue, the whole " + money(C.pricing.trial)
+                + " comes off the build."));
+            open.addEventListener("click", function () { setStart(true); });
+            rt.appendChild(open);
+        }
     }
 
     function renderPayback() {
@@ -1433,7 +1609,8 @@ try {
         document.querySelectorAll("#volume .opt").forEach(function (l, i) {
             l.querySelector("input").checked = C.volume[i].id === state.volumeId;
         });
-        document.getElementById("trial").checked = state.trial;
+        document.getElementById("start-trial").checked = state.trial;
+        document.getElementById("start-build").checked = !state.trial;
         document.querySelectorAll("[data-bill]").forEach(function (n) {
             n.setAttribute("aria-pressed", String(n.dataset.bill === state.billing));
         });
