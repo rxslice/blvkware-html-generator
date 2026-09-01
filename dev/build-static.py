@@ -378,6 +378,11 @@ MARKETING_PAGES = [
     ("what-is-an-ai-agent.html", "what-is-an-ai-agent"),
     ("ai-agent-pricing.html", "ai-agent-pricing"),
     ("ai-agent-permissions.html", "ai-agent-permissions"),
+    # The specifics behind the safety argument: credentials, what leaves the
+    # customer's systems, the log, and the stop. Linked from the objection
+    # rather than from the navigation, because it is read by somebody who has
+    # already decided the idea is fine and now wants to know the mechanics.
+    ("how-agents-are-controlled.html", "how-agents-are-controlled"),
 ]
 
 # Every canonical URL on the site, with a crawl priority.
@@ -391,6 +396,7 @@ SITEMAP = [
     ("/what-is-an-ai-agent/", "0.9", "monthly"),
     ("/ai-agent-pricing/", "0.9", "monthly"),
     ("/ai-agent-permissions/", "0.85", "monthly"),
+    ("/how-agents-are-controlled/", "0.85", "monthly"),
     ("/quote-follow-up-automation/", "0.8", "monthly"),
     ("/ai-automation-for-plumbers/", "0.8", "monthly"),
     ("/privacy/", "0.3", "yearly"),
@@ -652,6 +658,16 @@ payment, no server. They exist as the work sample in place of case studies.
   ladder (Watch, Draft, Approve, Operate), least privilege for agents, the three
   things every agent must have before it touches a customer (a reasoning log, a
   reverse, a stop), what must never be unsupervised, and where liability sits.
+- [How BlvkWare agents are controlled](https://blvkware.dev/how-agents-are-controlled/):
+  the mechanics rather than the argument. Where credentials live (a permissioned
+  file on the agent's own machine, never in the codebase, not separately
+  encrypted at rest and stated as such), the two destinations data goes to (the
+  customer's own vendors, and the model provider for reasoning only), that the
+  agent runs with no model at all on a deterministic path and what that costs in
+  escalations, the append-only log written before each side effect, what can and
+  cannot be undone, the customer's own one-press stop, export on exit, and an
+  explicit list of what the page does NOT claim (no SOC 2, no encryption at
+  rest, and that the agent can be wrong).
 - [Quote follow-up automation](https://blvkware.dev/quote-follow-up-automation/):
   how automated quote follow-up works, the arithmetic for deciding whether it
   pays, why the sequence must stop when the customer answers, and why US A2P

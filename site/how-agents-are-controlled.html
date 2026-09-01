@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How BlvkWare Agents Are Controlled — Permissions, Credentials, Data</title>
+    <meta name="description" content="Where your credentials live, what leaves your systems and where it goes, what is logged, what needs a person, and how you stop the agent yourself in one press. Including what this page does not claim.">
+    <link rel="canonical" href="https://blvkware.dev/how-agents-are-controlled/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta property="og:title" content="What the agent can reach, and how you take it back">
+    <meta property="og:description" content="Credentials, what leaves your systems, the log, the human gates, and the stop button. Including what is not claimed.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://blvkware.dev/how-agents-are-controlled/">
+    <meta property="og:image" content="https://blvkware.dev/assets/og.png">
+    <meta property="og:site_name" content="BlvkWare">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+    <link rel="apple-touch-icon" href="/assets/logo-192.png">
+    <meta name="theme-color" content="#0A0908">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "BlvkWare", "item": "https://blvkware.dev/"},
+        {"@type": "ListItem", "position": 2, "name": "How agents are controlled", "item": "https://blvkware.dev/how-agents-are-controlled/"}
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {"@type": "Question", "name": "Can I stop the agent myself?",
+         "acceptedAnswer": {"@type": "Answer", "text": "Yes, in one press, from a page that comes with every agent. Stopping puts it on Watch immediately: it carries on reading and recording what it would have done, and does none of it. It stays stopped through a restart until you start it again, and starting it again returns it to the level it was at. Nothing already sent can be unsent, by this or any other system."}},
+        {"@type": "Question", "name": "Where are my credentials stored?",
+         "acceptedAnswer": {"@type": "Answer", "text": "In a single file in the agent's own directory on the machine it runs on, protected by that machine's file permissions and excluded from version control. The software itself never holds a secret: each system declares the names of the credentials it needs, and the values live only in that file. It is not separately encrypted at rest. If you need managed secret storage with rotation and an access log, that is a different arrangement and worth raising before buying."}},
+        {"@type": "Question", "name": "What data leaves my systems?",
+         "acceptedAnswer": {"@type": "Answer", "text": "Two destinations only. Your own vendors, which the agent operates the same way you do. And the model provider for the reasoning: the text being worked on plus the relevant passages from your own documents. Credentials, customer lists and the record store are not sent there. There is no BlvkWare server in the middle."}},
+        {"@type": "Question", "name": "Can the agent run without sending anything to an AI model?",
+         "acceptedAnswer": {"@type": "Answer", "text": "Yes. Every reasoning operation has a deterministic version underneath that uses no model and no network, and the whole agent can run that way. Much more work lands on a person and nothing is guessed: on a purpose-built test set the no-model path is confidently wrong zero times and answers zero questions the documents do not cover, at the cost of escalating far more."}},
+        {"@type": "Question", "name": "Is every action reversible?",
+         "acceptedAnswer": {"@type": "Answer", "text": "No, and any supplier saying otherwise is overstating it. Where the connected system can undo something — a booking, a reschedule, a record update, a payment request — the agent records how to undo it at the moment it acts. Sending is not reversible: a message somebody has read cannot be recalled. That is exactly why sending is what Draft holds for a person."}}
+      ]
+    }
+  ]
+}
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Fira+Code:wght@500&display=swap');
+        :root {
+            --bg: #0A0908; --surface: #17140F; --accent: #D4F24A; --brass: #D9B65C; --warm: #E8734A; --bad: #E8524A;
+            --ink: #F5F0E6; --ink-2: #A89D8B; --line: rgba(245,240,230,0.1);
+            --font: 'Manrope', system-ui, -apple-system, sans-serif;
+            --mono: 'Fira Code', ui-monospace, monospace;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+        .wrap { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+        .top { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 3.5rem; text-decoration: none; color: inherit; }
+        .mark { width: 52px; height: 52px; border-radius: 14px; background: #060504; overflow: hidden; flex: none; }
+        .mark img { width: 100%; height: 100%; display: block; }
+        .wordmark { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; }
+        .wordmark span { color: var(--accent); }
+        .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--brass); margin-bottom: 1rem; }
+        h1 { font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 1rem; line-height: 1.12; }
+        .lede { font-size: 1.15rem; color: var(--ink-2); margin-bottom: 2.5rem; padding-bottom: 2.5rem; border-bottom: 1px solid var(--line); }
+        h2 { font-size: 1.5rem; font-weight: 700; margin: 3rem 0 1rem; letter-spacing: -0.01em; }
+        h3 { font-size: 1.05rem; font-weight: 700; margin: 1.75rem 0 0.6rem; color: var(--brass); }
+        p { color: var(--ink-2); margin-bottom: 1.1rem; }
+        ul, ol { margin: 0 0 1.1rem 1.2rem; color: var(--ink-2); }
+        li { margin-bottom: 0.6rem; }
+        strong { color: var(--ink); font-weight: 700; }
+        em { color: var(--ink); font-style: italic; }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem; margin: 1.75rem 0; }
+        .box p:last-child { margin-bottom: 0; }
+        .box.warn { border-color: rgba(232,115,74,.3); background: rgba(232,115,74,.06); }
+        .box.never { border-color: rgba(232,82,74,.35); background: rgba(232,82,74,.06); }
+        /* A price range must not wrap mid-figure, so these cells cannot shrink.
+           Wide tables therefore scroll inside their own container rather than
+           pushing the whole page sideways — the body must never scroll
+           horizontally on a phone. */
+        .tw { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1.5rem 0; }
+        .tw table { margin: 0; min-width: 30rem; }
+        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
+        th, td { text-align: left; padding: 0.7rem 0.6rem; border-bottom: 1px solid var(--line); color: var(--ink-2); vertical-align: top; }
+        th { color: var(--ink); font-weight: 700; }
+        td strong { color: var(--ink); }
+        .cta { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 2rem; margin: 3rem 0 0; }
+        .btn { display: inline-block; background: var(--accent); color: #14170A; font-weight: 700; padding: 0.85rem 1.5rem; border-radius: 10px; margin-top: 0.5rem; }
+        .btn:hover { text-decoration: none; opacity: 0.92; }
+        .btn-2 { display: inline-block; color: var(--ink-2); font-weight: 600; padding: 0.85rem 1.2rem; border: 1px solid var(--line); border-radius: 10px; margin: 0.5rem 0 0 0.4rem; }
+        .btn-2:hover { color: var(--ink); text-decoration: none; }
+        .foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--ink-2); }
+        /* Flex with a gap, not inline margins: a trailing margin-right on the
+           last link of a wrapped line still occupies space and pushed the page
+           16px wider than the viewport on a phone. */
+        .foot-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+        .foot a { margin-right: 0; }
+
+        /* The ladder, drawn as four rungs with the blast radius rising. The
+           whole argument of the page is in this one figure. */
+        .fig { margin: 2.2rem 0; }
+        .fig svg { width: 100%; height: auto; display: block; }
+        .fig-cap { font-family: var(--mono); font-size: 0.74rem; color: var(--ink-2); text-align: center; margin-top: 0.7rem; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <a class="top" href="/">
+        <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
+        <span class="wordmark">BlvkWare<span>.</span></span>
+    </a>
+
+    <div class="eyebrow">Control · Credentials · Data</div>
+    <h1>What the agent can reach,<br>and how you take it back</h1>
+
+    <p class="lede">You are considering giving a piece of software your inbox, your calendar and your customers. That deserves specifics rather than reassurance. This page is the specifics: where your credentials live, what leaves your systems and where it goes, what is written down, what needs a person, and how you stop it yourself at two in the morning without ringing anybody. Everything here describes what the software actually does. Where something is a limitation rather than a feature, it says so.</p>
+
+    <h2>You can stop it yourself, in one press</h2>
+
+    <p>Every agent comes with a page called <strong>What it may do</strong>. It is in the same place on every agent, and it has one button that stops it.</p>
+
+    <p>Stopping puts the agent on <strong>Watch</strong> immediately. On Watch it carries on reading what comes in and carries on writing down what it would have done, and it does none of it — nothing reaches a customer, nothing is booked, nothing is changed in your systems. It stays stopped until you start it again, including through a restart of the machine it runs on. Starting it again puts it back at the level it was at, not at the top.</p>
+
+    <p>Two things worth being straight about. The log of what it <em>would</em> have done keeps filling up while it is stopped, and that log is usually the reason you stopped it — it is the fastest way to see what it was about to get wrong. And nothing already sent can be unsent, by this or by any other system. Stopping stops what has not happened yet.</p>
+
+    <p>You do not need us to do it and there is no ticket. It is recorded against you with the time, and every change to what the agent may do is listed on that page with who made it.</p>
+
+    <h2>What it is allowed to do</h2>
+
+    <p>Every agent runs at one of four levels, and it is bought at a level rather than arriving with one.</p>
+
+    <div class="tw"><table>
+        <thead><tr><th style="width:9rem">Level</th><th>What it may do</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Watch</strong></td><td>Nothing. It reads and records what it would have done. This is also what the stop button does.</td></tr>
+            <tr><td><strong>Draft</strong></td><td>It does the work and keeps your own records straight. Anything a customer would see waits for you to send it. <strong>Every agent goes live here</strong>, whatever was ordered.</td></tr>
+            <tr><td><strong>Approve</strong></td><td>It acts within limits you set, and stops to ask above them. Anything it cannot undo waits for a person unless you have said otherwise in writing.</td></tr>
+            <tr><td><strong>Operate</strong></td><td>It acts on its own inside the job it was given. Your own rules still bind.</td></tr>
+        </tbody>
+    </table></div>
+
+    <p>Two things about this are structural rather than promised. There is exactly one route in the software from a decision to a side effect, and that route runs the level check first — a capability cannot send, book, charge or change anything without passing it. And <em>your</em> rules are checked before the level, not after: if you have said the agent must always ask before it updates a record, that binds at Operate as well as at Draft. Checked the other way round, a promotion would quietly cancel your own instruction.</p>
+
+    <p>An agent is also only ever given the systems its job needs. A follow-up agent is not handed your accounting login because the same person happens to own both.</p>
+
+    <h2>Where your credentials live</h2>
+
+    <p><strong>The software never holds a secret.</strong> Each system the agent operates declares the names of the credentials it needs and where you get each one. The values themselves go into a single file on the machine the agent runs on, in the agent's own directory. That directory is created outside our source code, the file is generated empty for you to fill in, and it is excluded from version control so that committing one by accident is awkward on purpose.</p>
+
+    <p>To be precise about what that is and is not: it is an ordinary file protected by that machine's own permissions. <strong>It is not separately encrypted at rest, and we are not going to tell you it is.</strong> If your business needs managed secret storage with rotation and an access log, that is a real requirement, it is a different arrangement, and it is worth saying so before you buy rather than after.</p>
+
+    <p>One detail that exists because of how this goes wrong: the agent's own file takes precedence over anything set in the surrounding environment. A leftover setting in an operator's terminal silently pointing an agent at a different customer's account is a mistake worth making impossible rather than unlikely.</p>
+
+    <p>Nothing about an integration is reported as working because a credential was typed in. Before delivery every credential is actually used against the real system and the result recorded. A build sheet that says "connected" on the strength of a filled-in field is how you find out on day nine.</p>
+
+    <h2>What leaves your systems, and where it goes</h2>
+
+    <p>There are exactly two destinations.</p>
+
+    <p><strong>Your own vendors.</strong> The systems you told the agent to operate — your mail host, your calendar, your CRM, your payment provider. It talks to them the same way you do.</p>
+
+    <p><strong>The model provider, for the reasoning.</strong> When the agent classifies a message or drafts a reply, the text it is working on and the relevant passages from your own documents go to Anthropic's API and the answer comes back. Nothing else is sent there — not your credentials, not your customer list, not your record store. Their terms govern what they do with it; read them rather than taking our paraphrase, because it is their policy and not ours to promise.</p>
+
+    <p>There is no BlvkWare server in the middle. The agent runs on its own machine and talks directly to those two.</p>
+
+    <h3>And it will run with no model at all</h3>
+
+    <p>This is unusual and it is worth understanding, because it is the strongest answer available to "what if I do not want a model seeing this."</p>
+
+    <p>Every reasoning operation in the agent has a deterministic version underneath it that uses no model and no network. You can run the whole agent that way. It still sorts, still records, still follows your sequences, still refuses to answer things your documents do not cover, and it tells you which of the two paths produced each decision.</p>
+
+    <p>The trade-off is real and here it is measured rather than described. Against a 29-message inbox and a 30-document knowledge pack built for the purpose: with no model the classifier reaches a confident answer on roughly a third of messages and sends the rest to a person, and the answering side declines seventeen questions it could technically have found in order to avoid inventing a single one. Its record on the two failures that actually cost you something — a confident wrong classification, and answering a question your documents do not cover — is zero and zero.</p>
+
+    <p>So: much more lands on your desk, and nothing is guessed. With a model far less lands on your desk. That is the actual choice, and it is yours.</p>
+
+    <h2>What is written down</h2>
+
+    <p>Every action the agent takes or wants to take is one entry: what it was looking at, what it decided, why, exactly what it would do, which level it was at, and who approved it if anybody did.</p>
+
+    <p>Two properties make that log worth having. The entry is written <em>before</em> the side effect is attempted, so a process that dies halfway through shows an attempt rather than showing nothing. And entries are never edited — if something is undone, that is a new entry pointing at the original. A log that can be tidied up afterwards is not evidence of anything.</p>
+
+    <p>If a person rewrites what the agent drafted before sending it, that is recorded as its own entry with the words that were there before. "The agent sent this" and "a person rewrote this and sent it" are different facts, and a log that cannot tell them apart is one that quietly takes credit.</p>
+
+    <h2>What can be undone, and what genuinely cannot</h2>
+
+    <p>Some suppliers will tell you every action is reversible. It is not true and it is worth knowing where the line is.</p>
+
+    <p>When the agent does something the connected system can undo — a booking, a reschedule, a record update, a payment request, a step in a sequence — it records how to undo it <em>at the moment it acts</em>, so reversing it later is one instruction rather than a reconstruction. Where it did not record one, the software refuses to pretend and says so rather than doing something approximate.</p>
+
+    <p>Sending is not reversible. A message somebody has read cannot be recalled, whatever any software claims. Money that has moved may be refundable but the event still happened. <strong>This is exactly why sending is the thing Draft holds</strong> — the irreversible category is the one that waits for a person by default, rather than the one you are asked to trust.</p>
+
+    <h2>When it does not know</h2>
+
+    <p>The failure that actually damages a business is not an agent that stops too often. It is one that answers a question about your prices or your terms with something plausible that nobody at your company ever said.</p>
+
+    <p>So the answering side works only from material you gave it, and when your documents do not cover a question it says which passage came closest and hands the question to a person rather than filling the gap. That is deliberately tuned to decline things it could probably have answered, because a question that reaches you costs a minute and a confident wrong answer about your own terms costs considerably more.</p>
+
+    <p>The same principle governs sorting. When the agent is not sure which pile a message belongs in, it escalates instead of picking. Escalation is the system working, not the system failing.</p>
+
+    <h2>Your data, and getting it back</h2>
+
+    <p>It is yours. It stays yours. If you stop paying, the agent pauses and everything it holds is exported to you within five business days, all of it, in a format you can use.</p>
+
+    <p>If you would rather keep running it yourself, the source is available at twelve times the monthly fee. That is published on purpose: "you will never get your business back out" is the fair objection to every managed service and it deserves an answer in writing rather than a reassurance on a call.</p>
+
+    <h2>What this page does not claim</h2>
+
+    <p>It is a shorter list than the one above, and it is here because a page like this is only worth reading if it contains one.</p>
+
+    <ul>
+        <li><strong>No formal certification.</strong> There is no SOC 2 report and no ISO certificate. This is a one-person company and pretending otherwise would be the first thing you found out was untrue.</li>
+        <li><strong>Credentials are not separately encrypted at rest.</strong> Stated above, repeated here so it is not something you find in a paragraph.</li>
+        <li><strong>The agent can be wrong.</strong> Every provider telling you theirs cannot is either inexperienced or not being straight with you. What is offered instead is that it goes live unable to act on its own, that you can see everything it does, that you can stop it yourself, and that the commercial position is written down: liability is capped at fees paid, in the <a href="/terms/">terms</a>, where you can read it before you buy rather than after something happens.</li>
+    </ul>
+
+    <div class="cta">
+        <h2 style="margin-top:0">See exactly what one would be allowed to do</h2>
+        <p>Scope an agent, set the level you are working towards, and read the specification — what it would own, what it may touch, and what it must escalate. The price is on the screen. No call and no estimate.</p>
+        <a class="btn" href="/hire/">Scope an agent</a>
+        <a class="btn-2" href="/ai-agent-permissions/">How the autonomy ladder works</a>
+    </div>
+
+    <footer class="foot">
+        <div class="foot-links"><a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/hire/">Hire an agent</a><a href="/what-is-an-ai-agent/">What is an agent</a><a href="/ai-agent-permissions/">Permissions</a><a href="/ai-agent-pricing/">Pricing</a><a href="/terms/">Terms</a></div>
+        <p style="margin-top:1rem">BlvkWare — <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> · Mississippi, serving the United States.</p>
+    </footer>
+</div>
+</body>
+</html>

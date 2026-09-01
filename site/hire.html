@@ -509,7 +509,7 @@
             <!-- 05 AUTONOMY -->
             <section class="step locked" id="s-auto" aria-disabled="true">
                 <div class="step-head"><span class="step-n">05</span><h2>How much should it be allowed to do?</h2><span class="lock-note">Pick a job first</span></div>
-                <p class="step-sub">Every agent goes live at <b style="color:var(--ink)">Draft</b> whatever you pick here &mdash; it does the work and keeps your records straight, and anything a customer would see waits for you to send it. Every agent comes with the page where that waiting work appears, and the page showing everything it has done; neither is an extra. What you choose is the level you are working <em>towards</em> — it tells me what to build for, and picking Approve or Operate adds the approval queue that makes them safe. You raise it yourself once you've watched it work, and you can lower it again at any time. Every action is logged and reversible.</p>
+                <p class="step-sub">Every agent goes live at <b style="color:var(--ink)">Draft</b> whatever you pick here &mdash; it does the work and keeps your records straight, and anything a customer would see waits for you to send it. Every agent comes with the page where that waiting work appears, and the page showing everything it has done; neither is an extra. What you choose is the level you are working <em>towards</em> — it tells me what to build for, and picking Approve or Operate adds the approval queue that makes them safe. You raise it yourself once you've watched it work, and you can lower it again at any time. Every action is logged and attributed, and anything the connected system can undo is recorded with its undo at the moment it happens.</p>
                 <div class="ladder" id="autonomy"></div>
                 <div id="auto-notice"></div>
             </section>
@@ -655,7 +655,7 @@
         <details class="faq">
             <summary>What if the agent does something wrong?</summary>
             <p>It ships at Draft, where it can't act on its own at all — it prepares the work and a person sends it. It only acts unsupervised at a level you turn on in writing, after you've watched it work, and you can turn it back down instantly. Before it touches a live customer it rehearses against your real history taking no action, and you read that log first.</p>
-            <p>Every action is logged with what it saw, what it decided, why, and what it did — and actions are reversible. The commercial answer is in the <a href="/terms/">terms</a> and isn't hidden: liability is capped at fees paid. Any provider telling you their agent can't make a mistake is either lying or hasn't shipped one.</p>
+            <p>Every action is logged with what it saw, what it decided, why, and what it did. Where the connected system supports undoing something the agent records how before it acts, so it can be rolled back. A message somebody has read cannot be recalled by anyone, which is why sending is the thing Draft holds. You can also stop it yourself in one press from the page that comes with it. <a href="/how-agents-are-controlled/">Where your credentials live, what leaves your systems, and how you stop it</a> is written out in full. The commercial answer is in the <a href="/terms/">terms</a> and isn't hidden: liability is capped at fees paid. Any provider telling you their agent can't make a mistake is either lying or hasn't shipped one.</p>
         </details>
 
         <details class="faq">
