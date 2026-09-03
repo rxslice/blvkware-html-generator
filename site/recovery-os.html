@@ -3,12 +3,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Four Documents In, an Operating System Out — BlvkWare Build Log</title>
-    <meta name="description" content="A slide deck, a call script, a spreadsheet and a strategy memo went in. An eight-stage operating system came out, with 203 self-checks and three defects caught before it shipped. Try the part identifier yourself.">
+    <title>What a Working Agent Actually Runs On — BlvkWare</title>
+    <meta name="description" content="Two pieces of a real system, running in your browser: the reader that turns a messy list into structured data, and the dashboard that shows you what the agent did and what it refused to do. Built from four ordinary business documents.">
     <link rel="canonical" href="https://blvkware.dev/recovery-os/">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
-    <meta property="og:title" content="Four Documents In, an Operating System Out">
-    <meta property="og:description" content="What happens when you hand over the documents that describe how your business works. A real build, with the judgment calls and the bugs left in view.">
+    <meta property="og:title" content="What a Working Agent Actually Runs On">
+    <meta property="og:description" content="Everyone can show you a chat box. This is the machinery underneath — the rules an agent operates inside, and the dashboard that shows you what it refused to do.">
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://blvkware.dev/recovery-os/">
     <meta property="og:image" content="https://blvkware.dev/assets/og.png">
@@ -21,8 +21,8 @@
 {
   "@context": "https://schema.org",
   "@type": "Article",
-  "headline": "Four documents in, an operating system out",
-  "description": "A build log: turning a slide deck, a call script, a spreadsheet and a strategy memo into a working eight-stage operating system, with the judgment calls and the defects left in view.",
+  "headline": "What a working agent actually runs on",
+  "description": "Two working pieces of a real system in the page: the reader that structures a messy list, and the dashboard that shows what an agent did and what it refused to do.",
   "author": { "@type": "Organization", "name": "BlvkWare", "url": "https://blvkware.dev/" },
   "publisher": {
     "@type": "Organization", "name": "BlvkWare",
@@ -38,13 +38,16 @@
         :root {
             --bg: #0A0908; --surface: #17140F; --accent: #D4F24A; --brass: #D9B65C; --warm: #E8734A;
             --ink: #F5F0E6; --ink-2: #A89D8B; --line: rgba(245,240,230,0.1);
-            --ok: #9BD154; --bad: #E8734A;
+            --ok: #9BD154;
             --font: 'Manrope', system-ui, -apple-system, sans-serif;
             --mono: 'Fira Code', ui-monospace, monospace;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.7; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
         .wrap { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+        /* .wrap already centres with margin:0 auto, so widening the max-width is
+           enough - the block stays centred on the same axis as the prose column. */
+        .wide { max-width: 1080px; }
         .top { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 3.5rem; text-decoration: none; color: inherit; }
         .mark { width: 52px; height: 52px; border-radius: 14px; background: #060504; overflow: hidden; flex: none; }
         .mark img { width: 100%; height: 100%; display: block; }
@@ -73,21 +76,21 @@
         th { color: var(--brass); font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500; white-space: nowrap; }
         td strong { color: var(--ink); }
 
-        /* The counters carry the whole credibility argument above the fold, so
-           they are figures with sources, not adjectives. */
         .numbers { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin: 2rem 0 0; }
         .num { background: var(--surface); padding: 1.1rem 1.2rem; }
         .num b { display: block; font-size: 1.85rem; font-weight: 800; letter-spacing: -0.03em; color: var(--ink); line-height: 1.1; }
         .num span { font-size: 0.78rem; color: var(--ink-2); }
         .num.acc b { color: var(--accent); }
 
-        /* The demo breaks the reading column because a parts table needs the
-           width. Everything else stays at 760px so the prose keeps its measure. */
-        /* .wrap already centres with margin:0 auto, so widening the max-width is
-           enough - the block stays centred on the same axis as the prose column.
-           Setting an explicit negative margin-left instead kills the auto centring
-           and drags the block off the left edge on wide screens. */
-        .wide { max-width: 1080px; }
+        /* The three layers. Reading left to right is the whole argument, so the
+           middle one is emphasised - it is the layer nobody else shows. */
+        .layers { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin: 1.75rem 0; }
+        .layer { background: var(--surface); padding: 1.3rem 1.35rem; }
+        .layer.mid { background: #1c1810; }
+        .layer .n { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.18em; color: var(--brass); text-transform: uppercase; }
+        .layer b { display: block; font-size: 1.05rem; color: var(--ink); margin: 0.35rem 0 0.4rem; }
+        .layer p { font-size: 0.88rem; margin: 0; }
+        .layer .who { display: inline-block; margin-top: 0.7rem; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); border: 1px solid rgba(212,242,74,.3); border-radius: 999px; padding: 0.1rem 0.5rem; }
 
         .demo { background: #060504; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; margin: 1.75rem 0; }
         .demo-bar { display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 1.1rem; border-bottom: 1px solid var(--line); background: var(--surface); flex-wrap: wrap; }
@@ -100,6 +103,7 @@
         .demo-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.8rem; align-items: center; }
         .chip { font-family: var(--font); font-size: 0.8rem; font-weight: 600; color: var(--ink-2); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 0.42rem 0.9rem; cursor: pointer; }
         .chip:hover { color: var(--ink); border-color: var(--brass); }
+        .chip[aria-pressed="true"] { color: var(--ink); border-color: var(--accent); background: rgba(212,242,74,.1); }
         .go { font-family: var(--font); font-size: 0.85rem; font-weight: 700; background: var(--accent); color: #14170A; border: none; border-radius: 999px; padding: 0.5rem 1.3rem; cursor: pointer; }
         .go:hover { opacity: 0.92; }
         .readout { margin-top: 1.2rem; }
@@ -119,8 +123,6 @@
         .conf i { display: block; height: 100%; background: var(--brass); }
         .demo-note { font-size: 0.8rem; color: var(--ink-2); margin: 0.9rem 0 0; }
 
-        /* Each judgment call is a claim plus the reason it exists. The reason is
-           the part a generated codebase cannot produce, so it gets the emphasis. */
         .calls { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin: 1.75rem 0; }
         .call { background: var(--surface); padding: 1.3rem 1.4rem; }
         .call h4 { font-size: 1rem; font-weight: 700; color: var(--ink); margin-bottom: 0.4rem; }
@@ -129,10 +131,59 @@
         .call p:last-child { margin-bottom: 0; }
         .call .why { color: var(--ink); border-left: 2px solid var(--brass); padding-left: 0.85rem; font-size: 0.88rem; }
 
-        .stages { display: grid; grid-template-columns: repeat(auto-fit, minmax(112px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin: 1.75rem 0; }
-        .stage { background: var(--surface); padding: 0.9rem 0.8rem; text-align: center; }
-        .stage b { display: block; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--brass); margin-bottom: 0.3rem; }
-        .stage span { font-size: 0.72rem; color: var(--ink-2); line-height: 1.4; display: block; }
+        /* ---- The dashboard demo -------------------------------------------
+           Every colour it paints comes from a --d-* variable, so a theme is a
+           block of six values rather than a rebuild. That is the whole
+           white-label argument, made testable in the page instead of asserted:
+           change the swatch, watch it become somebody else's product. */
+        .dash {
+            --d-bg: #07070a; --d-panel: #101018; --d-line: rgba(255,255,255,.09);
+            --d-ink: #ECECF2; --d-mut: #8B8B9C; --d-accent: #D4F24A; --d-warn: #E8734A; --d-ok: #6EE7A8;
+            --d-radius: 14px;
+            background: var(--d-bg); color: var(--d-ink); padding: 1.1rem;
+            border-radius: 12px; transition: background .35s ease, color .35s ease;
+        }
+        .dash-head { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .dash-logo { width: 26px; height: 26px; border-radius: 7px; background: var(--d-accent); flex: none;
+                     display: grid; place-items: center; color: var(--d-bg); font-weight: 800; font-size: 0.8rem; }
+        .dash-name { font-weight: 800; letter-spacing: -0.01em; font-size: 0.98rem; }
+        .dash-sub { font-size: 0.72rem; color: var(--d-mut); }
+        .dash-live { margin-left: auto; font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.12em;
+                     text-transform: uppercase; color: var(--d-mut); border: 1px solid var(--d-line);
+                     border-radius: 999px; padding: 0.12rem 0.55rem; }
+        .dash-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); gap: 0.6rem; margin-bottom: 0.85rem; }
+        .dtile { background: var(--d-panel); border: 1px solid var(--d-line); border-radius: var(--d-radius); padding: 0.8rem 0.9rem; }
+        .dtile .k { font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--d-mut); }
+        .dtile .v { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; margin-top: 0.15rem; }
+        .dtile .v.acc { color: var(--d-accent); }
+        .dtile .v.warn { color: var(--d-warn); }
+        .dtile .d { font-size: 0.68rem; color: var(--d-mut); }
+        .dash-cols { display: grid; grid-template-columns: 1.15fr 1fr; gap: 0.6rem; }
+        @media (max-width: 720px) { .dash-cols { grid-template-columns: 1fr; } }
+        .dpanel { background: var(--d-panel); border: 1px solid var(--d-line); border-radius: var(--d-radius); padding: 0.9rem; }
+        .dpanel h5 { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--d-mut); font-weight: 600; margin-bottom: 0.7rem; }
+        .drow { display: grid; grid-template-columns: 74px 1fr 26px; align-items: center; gap: 0.5rem; margin-bottom: 0.42rem; font-size: 0.72rem; }
+        .drow span { color: var(--d-mut); }
+        .drow b { color: var(--d-ink); font-variant-numeric: tabular-nums; text-align: right; font-size: 0.72rem; }
+        /* The track is derived from the theme's own ink rather than hardcoded
+           white: on a light theme a white track over a white panel composites to
+           a contrast ratio of 1.00 and the empty half of every bar disappears.
+           The rgba line is the fallback for browsers without color-mix. */
+        .dbar { height: 7px; border-radius: 4px; overflow: hidden;
+                background: rgba(128,128,128,.18);
+                background: color-mix(in srgb, var(--d-ink) 14%, transparent); }
+        .dbar i { display: block; height: 100%; background: var(--d-accent); border-radius: 4px; transition: width .5s ease; }
+        .dfeed { list-style: none; margin: 0; padding: 0; }
+        .dfeed li { display: flex; gap: 0.55rem; align-items: flex-start; padding: 0.42rem 0; border-bottom: 1px solid var(--d-line); font-size: 0.75rem; color: var(--d-mut); }
+        .dfeed li:last-child { border-bottom: none; }
+        .dpip { width: 6px; height: 6px; border-radius: 50%; background: var(--d-ok); flex: none; margin-top: 0.4rem; }
+        .dpip.warn { background: var(--d-warn); }
+        .dpip.mut { background: var(--d-mut); }
+        .dfeed b { color: var(--d-ink); font-weight: 600; }
+        .dfeed .refused b { color: var(--d-warn); }
+        .theme-row { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
+        .theme-row label { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-2); }
+        input[type=color] { width: 34px; height: 28px; padding: 0; border: 1px solid var(--line); border-radius: 7px; background: transparent; cursor: pointer; }
 
         .cta { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 2rem; margin: 3.5rem 0 0; }
         .btn { display: inline-block; background: var(--accent); color: #14170A; font-weight: 700; padding: 0.85rem 1.5rem; border-radius: 10px; margin-top: 0.5rem; }
@@ -151,78 +202,78 @@
         <span class="wordmark">BlvkWare<span>.</span></span>
     </a>
 
-    <div class="eyebrow">Build log</div>
-    <h1>Four documents in. An operating&nbsp;system out.</h1>
+    <div class="eyebrow">What we actually build</div>
+    <h1>Everyone can show you a chat box. This is the whole machine.</h1>
 
-    <p class="lede">A slide deck, a call script, a spreadsheet and a strategy memo went in. What came out
-    runs an eight-stage business process, refuses to do the three things that would get its owner
-    sued, and tests itself 203 times. Nobody paid for this one — which is the point. This is what a
-    working session looks like when you hand over the documents that describe how your business
-    actually works.</p>
+    <p class="lede">A slide deck, a call script, a spreadsheet and a strategy memo went in. What came
+    out runs an eight-stage business process, refuses to do the three things that would get its owner
+    sued, and tests itself 203 times. Two pieces of it are running on this page &mdash; the part that
+    reads, and the part that shows you what happened. Both work. Use them.</p>
 
     <div class="numbers">
-        <div class="num acc"><b>4</b><span>source documents</span></div>
-        <div class="num"><b>8</b><span>pipeline stages</span></div>
+        <div class="num acc"><b>4</b><span>documents in</span></div>
+        <div class="num"><b>8</b><span>stages enforced</span></div>
         <div class="num acc"><b>203</b><span>self-checks, all passing</span></div>
-        <div class="num"><b>3</b><span>defects caught pre-ship</span></div>
-        <div class="num"><b>0</b><span>dependencies</span></div>
+        <div class="num"><b>6</b><span>things it refuses to do</span></div>
+        <div class="num"><b>2</b><span>live demos below</span></div>
     </div>
 
-    <h2>What went in</h2>
+    <h2>An agent is three things, and two of them are invisible</h2>
 
-    <p>Four files, of the kind every business has sitting in a shared drive. None of them was a
-    specification. All of them described a business nobody had built yet.</p>
+    <p>Most of what gets sold as an AI agent is the first column below and nothing else. That is why
+    it demos beautifully and then does something expensive in week three.</p>
 
-    <div class="tw"><table>
-        <thead><tr><th>File</th><th>What it actually contained</th></tr></thead>
-        <tbody>
-        <tr><td><strong>A 15-slide deck</strong><br><code>.pptx</code></td><td>An eight-stage pipeline with a named owner and a required output per stage, an exception queue, and a daily schedule.</td></tr>
-        <tr><td><strong>A call playbook</strong><br><code>.docx</code></td><td>Gatekeeper and decision-maker scripts, six objection responses, nine qualification questions, and a list of things never to accept.</td></tr>
-        <tr><td><strong>A dealbook</strong><br><code>.xlsx</code></td><td>Five sheets: 20 buyers with published purchasing interest, 25 scored prospects, nine market anchors, a call tracker, a read-me.</td></tr>
-        <tr><td><strong>A strategy memo</strong><br><code>.md</code></td><td>The commercial model, the risk rules, the unit economics, and a 90-day plan.</td></tr>
-        </tbody>
-    </table></div>
-
-    <p>The useful information was real but scattered: a deadline rule on slide 8, the reason for it in
-    the memo, the wording that depends on it in the call script, and the data it applies to in a
-    spreadsheet tab. Nobody can hold that in their head at 4pm on a Thursday. That is the job.</p>
-
-    <h2>What came back</h2>
-
-    <p>An eight-stage operating system where <strong>a record cannot advance to the next stage until the
-    current one has produced its evidence.</strong> Not a dashboard that displays the process — software
-    that enforces it.</p>
-
-    <div class="stages">
-        <div class="stage"><b>Demand</b><span>Verified buyer rules</span></div>
-        <div class="stage"><b>Target</b><span>Scored lead</span></div>
-        <div class="stage"><b>Discover</b><span>Correct contact</span></div>
-        <div class="stage"><b>Intake</b><span>Inventory packet</span></div>
-        <div class="stage"><b>Qualify</b><span>Risk-cleared lot</span></div>
-        <div class="stage"><b>Bid</b><span>Live comparable bids</span></div>
-        <div class="stage"><b>Close</b><span>Signed approval</span></div>
-        <div class="stage"><b>Settle</b><span>Payment and fee</span></div>
+    <div class="layers">
+        <div class="layer">
+            <span class="n">01</span>
+            <b>Something that decides</b>
+            <p>Reads what actually arrived, works out the next step, and knows when a case is outside
+            what it should decide alone.</p>
+            <span class="who">The agent</span>
+        </div>
+        <div class="layer mid">
+            <span class="n">02</span>
+            <b>Something that says no</b>
+            <p>The rules it operates inside. What it may touch, what it must evidence first, and the
+            things it is never allowed to do regardless of how confident it is.</p>
+            <span class="who">This page, demo one</span>
+        </div>
+        <div class="layer">
+            <span class="n">03</span>
+            <b>Something that shows you</b>
+            <p>What it did, what it is waiting on, and &mdash; the part nobody ships &mdash; what it
+            refused to do and why.</p>
+            <span class="who">This page, demo two</span>
+        </div>
     </div>
 
-    <p>Underneath: a part-number identifier covering 25 manufacturers, a five-gate risk screen, a
-    netback calculator, a private bid room, a milestone ledger with an append-only audit trail, and
-    seven contract templates that fill themselves in from live records.</p>
+    <div class="box">
+        <p><strong>Being precise about the word, since we sell it.</strong> Our
+        <a href="/what-is-an-ai-agent/">definition of an agent</a> is that it handles a case nobody
+        anticipated when it was built. The system on this page does not do that, and we are not going
+        to call it an agent to make a page read better. It contains no language model at all. It is
+        column two: the machinery an agent operates inside, built so that the unanticipated case gets
+        <em>refused</em> rather than guessed at.</p>
+        <p>We build both. Column two is the one almost nobody shows you, because it is the one that is
+        hard, and because it is difficult to make caution look impressive in a screenshot. So here it
+        is running instead.</p>
+    </div>
 
-    <h2>Try the part it does best</h2>
+    <h2>Demo one: the part that reads</h2>
 
-    <p>The identifier is the piece that makes the rest possible. A seller sends whatever they have —
-    a maintenance-system export, a forwarded email, six lines typed on a phone in a warehouse. It
-    reads that and produces something a buyer can actually price.</p>
+    <p>A seller sends whatever they have &mdash; a maintenance-system export, a forwarded email, six
+    lines typed on a phone in a warehouse. This turns that into something a buyer can actually price,
+    and flags every line it could not identify rather than filling in a plausible guess.</p>
 
-    <p><strong>This is the real engine, running in your browser.</strong> Same 94 patterns across 25
-    manufacturers, same rules. Paste anything, or use the buttons.</p>
+    <p>This is the real engine: the same 94 patterns across 25 manufacturers the live system uses,
+    embedded from its own data files. <strong>Paste anything, or use the buttons.</strong></p>
 </div>
 
 <div class="wrap wide" style="padding-top:0;padding-bottom:0">
     <div class="demo">
         <div class="demo-bar">
             <span class="dot"></span>
-            <span class="ttl">Intake &middot; identifier</span>
+            <span class="ttl">Intake &middot; the reader</span>
             <span class="live">live, in this page</span>
         </div>
         <div class="demo-body">
@@ -239,92 +290,159 @@
 </div>
 
 <div class="wrap" style="padding-top:0">
-    <p class="demo-note">Nothing is sent anywhere — the patterns and the rules are in the page. The
-    line it cannot identify is the important one: it comes back marked <em>unverified</em> with a
-    request for a nameplate photograph, rather than a confident guess. A wrong part number sent to a
-    buyer is worse than no part number at all.</p>
+    <p class="demo-note">Nothing leaves the page. The line it cannot identify is the important one:
+    it comes back marked <em>unverified</em> with a request for a nameplate photograph. A wrong part
+    number sent to a buyer is worse than no part number at all &mdash; so the system is built to
+    prefer the embarrassment of asking over the cost of guessing.</p>
 
-    <h2>The six decisions that make it real</h2>
+    <h2>The six things it refuses to do</h2>
 
     <p>Anyone can generate a codebase now. What is scarce is knowing what the software must
-    <em>refuse</em> to do. Each of these is enforced in code and has a test that fails if someone
-    later removes it.</p>
+    <em>refuse</em>. Each of these is enforced in code and has a test that fails if somebody later
+    takes it out. This is what we mean when we say our agents are built differently &mdash; not that
+    they are cleverer, but that they are fenced.</p>
 
     <div class="calls">
         <div class="call">
-            <h4><span>01</span>It will not let you sell to a buyer who never agreed to pay you</h4>
-            <p>All 20 buyers ship as <em>published interest</em> — we saw them advertise — not as
-            customers. Nothing routes to them until a human records a confirmed rule, a fee basis and
-            an expiry date. On a fresh install the system can source nothing at all.</p>
-            <p class="why">The plan said "no sourcing until buyer demand exists." A document says it
-            once. Software says it every single time, to everybody, including the founder at 2am.</p>
+            <h4><span>01</span>It will not sell to a buyer who never agreed to pay</h4>
+            <p>All 20 buyers ship as <em>published interest</em> &mdash; we saw them advertise &mdash;
+            not as customers. Nothing routes to them until a human records a confirmed rule, a fee
+            basis and an expiry date. On a fresh install the system can source nothing at all.</p>
+            <p class="why">The plan said &ldquo;no sourcing until buyer demand exists.&rdquo; A
+            document says that once. Software says it every time, to everybody, including the founder
+            at 2am.</p>
         </div>
         <div class="call">
-            <h4><span>02</span>One bid per buyer, and never the word "auction"</h4>
+            <h4><span>02</span>One bid per buyer, and never the word &ldquo;auction&rdquo;</h4>
             <p>Texas exempts a sale by sealed bid from auctioneer licensing only when no bid can be
             revised after opening. Mississippi and Louisiana carry comparable exemptions. So a second
-            number from the same buyer is refused unless a correction reason is stated, and any
+            number from the same buyer is refused unless a correction reason is stated, and the
             correction is disclosed to the seller with the original figure.</p>
-            <p class="why">This came from reading the statutes, not the brief. Let a buyer improve
+            <p class="why">That came from reading the statutes, not the brief. Let a buyer improve
             after seeing the field and the whole process becomes an auction, which needs a licensed
             auctioneer in all three states.</p>
         </div>
         <div class="call">
-            <h4><span>03</span>It caught itself leaking the seller's identity</h4>
+            <h4><span>03</span>It caught itself leaking a counterparty</h4>
             <p>Bid requests mask the seller until they authorise release. A test asserted that. It
-            failed — because a lot's internal title defaults to the seller's own company name, and
-            that title was going straight into the subject line.</p>
+            failed &mdash; because a lot&rsquo;s internal title defaults to the seller&rsquo;s own
+            company name, and that title was going straight into the subject line.</p>
             <p class="why">Buyer-facing text now builds its own title and scrubs seller name, contact,
             email and city from every line, because plant names hide in spreadsheet location columns.</p>
         </div>
         <div class="call">
             <h4><span>04</span>It prices the wait to be paid</h4>
             <p>Offers are ranked on what the seller nets <em>after</em> freight, loading, inspection
-            allowance, fee — and after discounting the payment delay at 18% a year.</p>
+            allowance and fee &mdash; and after discounting the payment delay at 18% a year.</p>
             <p class="why">A $28,900 offer at 45 days should not automatically beat $27,200 at 21. The
             seller is the one who waits, so the comparison prices the waiting.</p>
         </div>
         <div class="call">
             <h4><span>05</span>It refuses to be paid by both sides in silence</h4>
             <p>Taking a fee from the seller and the buyer on one transaction, undisclosed, risks
-            forfeiting the entire commission. So opening a deal file that pays from both sides is
-            blocked until both disclosure dates and both consents are on record.</p>
+            forfeiting the entire commission. Opening a deal that pays from both sides is blocked
+            until both disclosure dates and both consents are on record.</p>
             <p class="why">The safest structure is to be paid by one side only. The software makes
-            that the path of least resistance instead of a thing you remember on a good day.</p>
+            that the path of least resistance instead of something you remember on a good day.</p>
         </div>
         <div class="call">
             <h4><span>06</span>A headline number can never become a price</h4>
-            <p>The spreadsheet held nine market figures — "Fisher control valves $15,000+" and
-            similar. Every one is stored with its limitation attached and is structurally unable to
-            enter a calculation. The economics gate rejects one as a valuation basis outright.</p>
+            <p>The source spreadsheet held nine market figures &mdash; &ldquo;Fisher control valves
+            $15,000+&rdquo; and similar. Every one is stored with its limitation attached and is
+            structurally unable to enter a calculation.</p>
             <p class="why">Those are buyer marketing. Quote one to a seller as what they will receive
             and you have made a promise you cannot keep, on the first call.</p>
         </div>
     </div>
 
+    <h2>Demo two: the part that shows you</h2>
+
+    <p>An agent that works unsupervised is only worth having if you can see what it did. That is the
+    real objection, and a dashboard is the answer to it &mdash; not a nice-to-have bolted on at the
+    end, but the thing you look at every morning to decide whether to trust the thing.</p>
+
+    <p>So ours show the refusals, not just the wins. <strong>The panel below is styled entirely from
+    six CSS variables.</strong> Change the theme, or pick your own accent colour, and watch it become
+    somebody else&rsquo;s product. That is the whole white-label argument, testable rather than
+    asserted.</p>
+</div>
+
+<div class="wrap wide" style="padding-top:0;padding-bottom:0">
+    <div class="demo">
+        <div class="demo-bar">
+            <span class="dot"></span>
+            <span class="ttl">Operations dashboard</span>
+            <span class="live">sample data &middot; live theming</span>
+        </div>
+        <div class="demo-body">
+            <div class="dash" id="dash">
+                <div class="dash-head">
+                    <span class="dash-logo" id="dashLogo">N</span>
+                    <span>
+                        <span class="dash-name" id="dashName">Northgate Recovery</span>
+                        <span class="dash-sub">Surplus desk &middot; week to date</span>
+                    </span>
+                    <span class="dash-live">Agent active</span>
+                </div>
+
+                <div class="dash-tiles">
+                    <div class="dtile"><div class="k">Lots in play</div><div class="v">12</div><div class="d">4 new this week</div></div>
+                    <div class="dtile"><div class="k">Awaiting evidence</div><div class="v acc">5</div><div class="d">chased automatically</div></div>
+                    <div class="dtile"><div class="k">Refused by the gate</div><div class="v warn">3</div><div class="d">reasons recorded</div></div>
+                    <div class="dtile"><div class="k">Fees collected 30d</div><div class="v">$24,180</div><div class="d">reconciled to receipts</div></div>
+                </div>
+
+                <div class="dash-cols">
+                    <div class="dpanel">
+                        <h5>Pipeline</h5>
+                        <div id="dashPipe"></div>
+                    </div>
+                    <div class="dpanel">
+                        <h5>What it did &mdash; and would not do</h5>
+                        <ul class="dfeed" id="dashFeed"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="theme-row">
+                <label for="accent">Theme</label>
+                <button class="chip" data-theme="blvk" aria-pressed="true" type="button">BlvkWare</button>
+                <button class="chip" data-theme="clinic" aria-pressed="false" type="button">Clinical</button>
+                <button class="chip" data-theme="foundry" aria-pressed="false" type="button">Foundry</button>
+                <button class="chip" data-theme="slate" aria-pressed="false" type="button">Slate</button>
+                <label for="accent" style="margin-left:0.6rem">Accent</label>
+                <input type="color" id="accent" value="#D4F24A" aria-label="Dashboard accent colour">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="wrap" style="padding-top:0">
+    <p class="demo-note">Four themes and a colour picker, all changing the same six variables. A real
+    one carries your logo, your typeface and your language, and reads from whatever the agent is
+    actually running &mdash; the numbers above are sample data, as any dashboard demo is.</p>
+
     <h2>Three defects, found before anything shipped</h2>
 
     <p>Left in view deliberately. Software that never had a bug was never really tested.</p>
 
-    <ol>
+    <ul>
         <li><strong>The self-checks were wiping the live desk.</strong> They shared a state directory
-        with the running system and destroyed a working session mid-test. Tests now run in a
-        throwaway directory — wiping a real desk to run a test would be the most expensive bug in the
-        product, so it is now structurally impossible.</li>
+        with the running system. Tests now run in a throwaway directory, so destroying real data to
+        run a test is structurally impossible.</li>
         <li><strong>Seed data was handed out by reference.</strong> Confirming a buyer mutated the
         shipped dataset in memory, so a later reset wrote the edit back out as though it were
-        original. Found because a browser showed six confirmed buyers on what should have been a
-        clean install.</li>
-        <li><strong>The risk reserve scaled with the prize instead of the risk.</strong> It was set as
-        a percentage of deal value, which blocked every healthy small deal. Now sized from actual
+        original.</li>
+        <li><strong>The risk reserve scaled with the prize instead of the risk.</strong> Set as a
+        percentage of deal value, it blocked every healthy small deal. Now sized from actual
         logistics exposure.</li>
-    </ol>
+    </ul>
 
     <div class="box">
-        <p><strong>203 self-checks, and they test policy rather than plumbing.</strong> Not "does this
-        function return a number" but: does an unconfirmed buyer stay unreachable, does a milestone
-        refuse to advance without evidence, does a market anchor stay out of a price, does a bid
-        request leak a name. Those are the checks that still matter in a year.</p>
+        <p><strong>203 self-checks, and they test policy rather than plumbing.</strong> Not
+        &ldquo;does this function return a number&rdquo; but: does an unconfirmed buyer stay
+        unreachable, does a milestone refuse to advance without evidence, does a bid request leak a
+        name. Those are the checks that still matter in a year.</p>
     </div>
 
     <h2>What this means if it is your business</h2>
@@ -332,13 +450,8 @@
     <p>The domain here happens to be industrial surplus. That part is incidental. The transferable
     claim is this: <strong>you have documents that describe how your business runs, and nobody has
     built the thing that runs it.</strong> A process lives across a slide deck, a spreadsheet, three
-    email templates and one person's memory — and the gap between those and working software is the
-    entire job.</p>
-
-    <p>What that gap actually contains, on the evidence above: reading the documents properly,
-    modelling the domain, finding the rules that are implied rather than stated, checking the ones
-    with legal consequences, and building the refusals in so the system holds the line when the
-    person is tired.</p>
+    email templates and one person&rsquo;s memory &mdash; and the gap between those and working
+    software is the entire job.</p>
 
     <div class="tw"><table>
         <thead><tr><th>You already have</th><th>What it becomes</th></tr></thead>
@@ -349,24 +462,40 @@
         <tr><td>A compliance checklist</td><td>Gates that stop the work, naming what would clear them</td></tr>
         <tr><td>Contract templates in Word</td><td>Documents that fill themselves from the record</td></tr>
         <tr><td>A list nobody maintains</td><td>A registry with expiry dates that refuses stale entries</td></tr>
+        <tr><td>A weekly status meeting</td><td>A dashboard that already answered it</td></tr>
         </tbody>
     </table></div>
 
     <div class="box warn">
         <p><strong>When this is the wrong purchase.</strong> If your process is genuinely one person
-        using judgment on every case, there is nothing to enforce and you should not buy this. If the
-        documents contradict each other, that has to be settled by you first — software makes
+        using judgment on every case, there is nothing to enforce and you should not buy it. If the
+        documents contradict each other, that has to be settled by you first &mdash; software makes
         disagreement permanent rather than resolving it. And if nobody follows the process today, a
         system that enforces it will be resented rather than used.</p>
     </div>
 
-    <h2>The same engine, pointed at your operation</h2>
+    <h2>What you can buy</h2>
 
-    <p>An <strong>Operating System build</strong> starts at <strong>$8,500</strong>, delivered in two
-    to four weeks depending on how many stages and rules there are. You get the running system, its
-    self-checks, its data, and the source — it runs on your own machine or your own server, with no
-    per-seat fee and nothing to renew. Ongoing changes are the standard
-    <a href="/ai-agent-pricing/">operations fee</a> if you want them, and nothing if you do not.</p>
+    <div class="tw"><table>
+        <thead><tr><th>Thing</th><th>What it is</th><th>Price</th></tr></thead>
+        <tbody>
+        <tr><td><strong>An agent</strong></td>
+            <td>A digital worker with a defined job, built from priced capabilities you pick yourself.</td>
+            <td><a href="/hire/">from $3,500</a> + monthly</td></tr>
+        <tr><td><strong>A dashboard</strong></td>
+            <td>The window onto it &mdash; your branding, your metrics, your language. Shows what the
+                agent did, what it is waiting on, and what it refused.</td>
+            <td>priced per panel, <a href="/agents/">on the catalog</a></td></tr>
+        <tr><td><strong>An operating system</strong></td>
+            <td>The whole process, enforced. Stages, gates, documents and the refusals &mdash; what
+                this page is a working example of.</td>
+            <td>from $8,500</td></tr>
+        </tbody>
+    </table></div>
+
+    <p>A dashboard is priced the way every other capability is: per thing it does, listed on the
+    catalog, totalled on the page before you buy. No per-seat licence, no metered charge for looking
+    at your own numbers, and no bill that arrives shaped differently from the quote.</p>
 
     <p>The first step is not a discovery call. <strong>Send the documents.</strong> Within two working
     days you get back a written read: the stages you actually have, the rules implied but never
@@ -375,31 +504,33 @@
 
     <div class="cta">
         <h2 style="margin-top:0">Send four documents. Get a build plan back.</h2>
-        <p>Whatever you have — the deck, the spreadsheet, the SOP, the templates. Messy is fine and
-        more useful than tidy. No sign-up, no call required to start.</p>
+        <p>Whatever you have &mdash; the deck, the spreadsheet, the SOP, the templates. Messy is fine
+        and more useful than tidy. No sign-up, and no call required to start.</p>
         <a class="btn" href="mailto:russ@blvkware.dev?subject=Operating%20system%20build%20%E2%80%94%20my%20documents&amp;body=Attaching%20the%20documents%20that%20describe%20how%20we%20work.%20Here%20is%20the%20part%20that%20costs%20us%20the%20most%20time%3A%0A%0A">Email the documents</a>
         <a class="btn-2" href="https://cal.com/blvkware/30min">Or book 30 minutes</a>
     </div>
 
     <h2>Related</h2>
 
-    <p>If you would rather see the diagnosis before the build: <a href="/augur/">AUGUR</a> reads your
-    live website and works out which jobs are costing you most. <a href="/scry/">SCRY</a> takes a
-    description of how your business runs and designs the system for it.
-    <a href="/sigil/">SIGIL</a> is the forge that writes single-file tools from a prompt. All three
-    are free and run in your browser. <a href="/agents/">The agent catalog</a> and
-    <a href="/hire/">the configurator</a> price the smaller, single-job version of this work.</p>
+    <p>To see the diagnosis before the build: <a href="/augur/">AUGUR</a> reads your live website and
+    works out which jobs are costing you most. <a href="/scry/">SCRY</a> takes a description of how
+    your business runs and designs the agent for it. <a href="/sigil/">SIGIL</a> is the forge that
+    writes single-file tools from a prompt. All three are free and run in your browser.
+    <a href="/agents/">The catalog</a> lists every capability and its price;
+    <a href="/hire/">the configurator</a> totals them without a call. If you want the argument behind
+    all of this: <a href="/what-is-an-ai-agent/">what an agent actually is</a> and
+    <a href="/how-agents-are-controlled/">how one is kept under control</a>.</p>
 
     <footer class="foot">
         <div class="foot-links"><a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/hire/">Hire an agent</a><a href="/ai-agent-pricing/">Pricing</a><a href="/ai-agent-permissions/">Permissions</a><a href="/privacy/">Privacy</a></div>
-        <p style="margin-top:1rem">BlvkWare — <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> · Mississippi, serving the United States.</p>
+        <p style="margin-top:1rem">BlvkWare &mdash; <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> &middot; Mississippi, serving the United States.</p>
     </footer>
 </div>
 
 <script>
 /* The identifier, ported from the Python engine that runs the real system. The
    pattern tables below are the same data files, embedded verbatim at build time,
-   so what a visitor sees here is what the desk actually does — not a mock-up. */
+   so what a visitor sees here is what the desk actually does - not a mock-up. */
 const CATALOG = {"manufacturers":[{"name":"Allen-Bradley","aliases":["allen bradley","allen-bradley","a-b","ab","rockwell","rockwell automation"],"patterns":[{"re":"^1756-L[0-9]","family":"plc","label":"ControlLogix processor","category":"automation_controls"},{"re":"^1756-[A-Z0-9]+","family":"io_module","label":"ControlLogix I/O","category":"automation_controls"},{"re":"^1769-L[0-9]","family":"plc","label":"CompactLogix processor","category":"automation_controls"},{"re":"^1769-[A-Z0-9]+","family":"io_module","label":"CompactLogix I/O","category":"automation_controls"},{"re":"^1794-[A-Z0-9]+","family":"io_module","label":"FLEX I/O","category":"automation_controls"},{"re":"^1734-[A-Z0-9]+","family":"io_module","label":"POINT I/O","category":"automation_controls"},{"re":"^174[67]-[A-Z0-9]+","family":"plc","label":"SLC 500","category":"automation_controls"},{"re":"^1771-[A-Z0-9]+","family":"io_module","label":"PLC-5 I/O","category":"automation_controls"},{"re":"^1785-[A-Z0-9]+","family":"plc","label":"PLC-5","category":"automation_controls"},{"re":"^2711P-[A-Z0-9]+","family":"hmi","label":"PanelView Plus","category":"automation_controls"},{"re":"^2711[CR]?-[A-Z0-9]+","family":"hmi","label":"PanelView","category":"automation_controls"},{"re":"^20[A-Z]{1,2}[0-9A-Z]+","family":"vfd","label":"PowerFlex 700/750","category":"automation_controls"},{"re":"^2[25][A-F]-[A-Z0-9]+","family":"vfd","label":"PowerFlex 4/40/520","category":"automation_controls"},{"re":"^2094-[A-Z0-9]+","family":"servo_drive","label":"Kinetix 6000","category":"automation_controls"},{"re":"^2198-[A-Z0-9]+","family":"servo_drive","label":"Kinetix 5500/5700","category":"automation_controls"},{"re":"^(MPL|VPL|MPM|TLY)-[A-Z0-9]+","family":"servo_motor","label":"Kinetix servo motor","category":"automation_controls"},{"re":"^1783-[A-Z0-9]+","family":"network","label":"Stratix switch","category":"automation_controls"},{"re":"^1606-[A-Z0-9]+","family":"power_supply","label":"Bulletin 1606 supply","category":"automation_controls"},{"re":"^440R-[A-Z0-9]+","family":"safety","label":"Guardmaster safety relay","category":"automation_controls"},{"re":"^84[25][A-Z]-[A-Z0-9]+","family":"encoder","label":"Bulletin 842/845 encoder","category":"automation_controls"},{"re":"^87[123]-[A-Z0-9]+","family":"sensor","label":"Bulletin 871/872 sensor","category":"automation_controls"},{"re":"^1(00|04)-C[0-9]+","family":"contactor","label":"Bulletin 100 contactor","category":"electrical_power"},{"re":"^14(89|92)-[A-Z0-9]+","family":"breaker","label":"Bulletin 1489 breaker","category":"electrical_power"}]},{"name":"Siemens","aliases":["siemens","simatic","sinamics","sitop"],"patterns":[{"re":"^6ES7[0-9A-Z-]+","family":"plc","label":"SIMATIC S7","category":"automation_controls"},{"re":"^6AV[0-9A-Z-]+","family":"hmi","label":"SIMATIC HMI","category":"automation_controls"},{"re":"^6SL3[0-9A-Z-]+","family":"vfd","label":"SINAMICS","category":"automation_controls"},{"re":"^6SE[0-9A-Z-]+","family":"vfd","label":"MICROMASTER/SINAMICS","category":"automation_controls"},{"re":"^6EP[0-9A-Z-]+","family":"power_supply","label":"SITOP supply","category":"automation_controls"},{"re":"^6GK[0-9A-Z-]+","family":"network","label":"SCALANCE/network","category":"automation_controls"},{"re":"^3R[TVHU][0-9A-Z-]+","family":"contactor","label":"SIRIUS contactor/breaker","category":"electrical_power"},{"re":"^1F[KTS][0-9A-Z-]+","family":"servo_motor","label":"SIMOTICS servo motor","category":"automation_controls"},{"re":"^6DR[0-9A-Z-]+","family":"positioner","label":"SIPART positioner","category":"instrumentation"},{"re":"^7M[FEP][0-9A-Z-]+","family":"pressure_transmitter","label":"SITRANS","category":"instrumentation"}]},{"name":"Fanuc","aliases":["fanuc","ge fanuc"],"patterns":[{"re":"^A06B-[0-9A-Z-]+","family":"servo_drive","label":"Fanuc servo/amplifier","category":"automation_controls"},{"re":"^A(16|20)B-[0-9A-Z-]+","family":"plc","label":"Fanuc control board","category":"automation_controls"},{"re":"^A02B-[0-9A-Z-]+","family":"plc","label":"Fanuc control unit","category":"automation_controls"},{"re":"^A03B-[0-9A-Z-]+","family":"io_module","label":"Fanuc I/O","category":"automation_controls"}]},{"name":"ABB","aliases":["abb","baldor abb"],"patterns":[{"re":"^AC[SH][0-9]{3}[0-9A-Z-]*","family":"vfd","label":"ACS/ACH drive","category":"automation_controls"},{"re":"^3HAC[0-9A-Z-]+","family":"robot","label":"ABB robot part","category":"automation_controls"},{"re":"^DSQC[0-9A-Z ]+","family":"robot","label":"DSQC controller board","category":"automation_controls"},{"re":"^1SDA[0-9A-Z]+","family":"breaker","label":"Tmax breaker","category":"electrical_power"}]},{"name":"Schneider Electric","aliases":["schneider","telemecanique","modicon","square d","squared"],"patterns":[{"re":"^ATV[0-9A-Z]+","family":"vfd","label":"Altivar drive","category":"automation_controls"},{"re":"^ATS[0-9A-Z]+","family":"soft_starter","label":"Altistart","category":"automation_controls"},{"re":"^BMX[0-9A-Z]+","family":"plc","label":"Modicon M340","category":"automation_controls"},{"re":"^TM[2357][0-9A-Z]+","family":"plc","label":"Modicon TM","category":"automation_controls"},{"re":"^140[A-Z]{3}[0-9]+","family":"plc","label":"Modicon Quantum","category":"automation_controls"},{"re":"^LC[12][DFK][0-9]+","family":"contactor","label":"TeSys contactor","category":"electrical_power"},{"re":"^(HMIGTO|HMISTU|XBT)[0-9A-Z]+","family":"hmi","label":"Magelis HMI","category":"automation_controls"},{"re":"^(QO|QOB|EDB|EGB|FAL|KAL|LAL|MAL|HDL|JDL)[0-9]{3,}","family":"breaker","label":"Square D breaker","category":"electrical_power"}]},{"name":"Omron","aliases":["omron"],"patterns":[{"re":"^C[JS][12][A-Z0-9-]+","family":"plc","label":"SYSMAC CJ/CS","category":"automation_controls"},{"re":"^CP1[A-Z][-0-9A-Z]*","family":"plc","label":"SYSMAC CP1","category":"automation_controls"},{"re":"^N[JXY][0-9A-Z-]+","family":"plc","label":"SYSMAC NJ/NX","category":"automation_controls"},{"re":"^N[SBA][0-9A-Z-]+","family":"hmi","label":"Omron HMI","category":"automation_controls"},{"re":"^E[23][A-Z]-[0-9A-Z]+","family":"sensor","label":"Omron photo/prox sensor","category":"automation_controls"},{"re":"^R88[MD]-[0-9A-Z]+","family":"servo_drive","label":"OMNUC servo","category":"automation_controls"}]},{"name":"Mitsubishi Electric","aliases":["mitsubishi","melsec","mitsu"],"patterns":[{"re":"^FX[12358][A-Z0-9-]*","family":"plc","label":"MELSEC FX","category":"automation_controls"},{"re":"^Q[0-9]{2}[A-Z0-9]*","family":"plc","label":"MELSEC Q","category":"automation_controls"},{"re":"^Q[JXYD][0-9A-Z]+","family":"io_module","label":"MELSEC Q I/O","category":"automation_controls"},{"re":"^MR-J[2345][0-9A-Z-]*","family":"servo_drive","label":"MELSERVO amplifier","category":"automation_controls"},{"re":"^H[GFC]-[0-9A-Z]+","family":"servo_motor","label":"MELSERVO motor","category":"automation_controls"},{"re":"^FR-[ADEF][0-9A-Z-]*","family":"vfd","label":"FREQROL inverter","category":"automation_controls"},{"re":"^GT2[157][0-9A-Z-]*","family":"hmi","label":"GOT2000 HMI","category":"automation_controls"}]},{"name":"Cognex","aliases":["cognex"],"patterns":[{"re":"^IS[0-9]{4}[0-9A-Z-]*","family":"machine_vision","label":"In-Sight camera","category":"automation_controls"},{"re":"^DM[0-9]{3}[0-9A-Z-]*","family":"machine_vision","label":"DataMan reader","category":"automation_controls"},{"re":"^ISM[0-9]{4}[0-9A-Z-]*","family":"machine_vision","label":"In-Sight Micro","category":"automation_controls"}]},{"name":"Keyence","aliases":["keyence"],"patterns":[{"re":"^(FS|LR|PZ|SR|GT2|CV|XG|LJ|IM|IG|IB|FD|GV)-[0-9A-Z]+","family":"sensor","label":"Keyence sensor","category":"automation_controls"},{"re":"^IV[0-9]?-[0-9A-Z]+","family":"machine_vision","label":"IV vision sensor","category":"automation_controls"}]},{"name":"Yaskawa","aliases":["yaskawa","motoman"],"patterns":[{"re":"^SGM[0-9A-Z]+","family":"servo_motor","label":"Sigma servo motor","category":"automation_controls"},{"re":"^SGD[0-9A-Z]+","family":"servo_drive","label":"Sigma servo amplifier","category":"automation_controls"},{"re":"^CIMR-[0-9A-Z]+","family":"vfd","label":"Yaskawa inverter","category":"automation_controls"},{"re":"^JZSP-[0-9A-Z]+","family":"servo_drive","label":"Sigma accessory","category":"automation_controls"}]},{"name":"Rosemount","aliases":["rosemount","emerson rosemount"],"patterns":[{"re":"^3051[0-9A-Z]*","family":"pressure_transmitter","label":"3051 pressure transmitter","category":"instrumentation"},{"re":"^(644|648|848)[0-9A-Z]*","family":"temp_transmitter","label":"Temperature transmitter","category":"instrumentation"},{"re":"^87[13][2-9][0-9A-Z]*","family":"flow_meter","label":"Magnetic flowmeter","category":"instrumentation"},{"re":"^5[34][0-9]{2}[0-9A-Z]*","family":"level","label":"Radar level","category":"instrumentation"}]},{"name":"Fisher","aliases":["fisher","fisher controls","emerson fisher"],"patterns":[{"re":"^DVC[0-9]{4}[0-9A-Z]*","family":"positioner","label":"FIELDVUE positioner","category":"instrumentation"},{"re":"^(667|657|1052|585)[0-9A-Z-]*","family":"actuator","label":"Fisher actuator","category":"valves_pvf"},{"re":"^(ED|EZ|ET|EWT|HP|V150|V200|8532|8580)[0-9A-Z-]*","family":"control_valve","label":"Fisher control valve","category":"valves_pvf"}]},{"name":"GE","aliases":["ge","general electric","ge fanuc","emerson ge"],"patterns":[{"re":"^IC6(9[3479]|00)[0-9A-Z]+","family":"plc","label":"Series 90/RX3i","category":"automation_controls"},{"re":"^IC200[0-9A-Z]+","family":"io_module","label":"VersaMax I/O","category":"automation_controls"}]},{"name":"Eaton","aliases":["eaton","cutler-hammer","cutler hammer","moeller"],"patterns":[{"re":"^(DILM|XTCE|PKZ|C440|EMS)[0-9A-Z-]*","family":"contactor","label":"Eaton contactor/starter","category":"electrical_power"},{"re":"^(FD|HFD|KD|LD|ND|EGB|EHD)[0-9]{3}[0-9A-Z]*","family":"breaker","label":"Eaton breaker","category":"electrical_power"}]},{"name":"Phoenix Contact","aliases":["phoenix contact","phoenix"],"patterns":[{"re":"^(QUINT|TRIO|UNO|STEP)[0-9A-Z-]*","family":"power_supply","label":"Phoenix power supply","category":"automation_controls"}]},{"name":"SICK","aliases":["sick","sick ag"],"patterns":[{"re":"^(WL|WT|WS|GL|DT|WTB|LMS|DFS|TIM)[0-9]+[0-9A-Z-]*","family":"sensor","label":"SICK sensor","category":"automation_controls"}]},{"name":"Banner","aliases":["banner","banner engineering"],"patterns":[{"re":"^(Q4X|QS18|QS30|LX|EZ-SCREEN|SM31|WLB)[0-9A-Z-]*","family":"sensor","label":"Banner sensor","category":"automation_controls"}]},{"name":"Turck","aliases":["turck"],"patterns":[{"re":"^(BI|NI|RU|BC)[0-9]+[0-9A-Z-]*","family":"sensor","label":"Turck proximity sensor","category":"automation_controls"}]},{"name":"Pepperl+Fuchs","aliases":["pepperl+fuchs","pepperl fuchs","pepperl"],"patterns":[{"re":"^(NBB|NBN|NJ|OBT|OBE|UB|KFD)[0-9]+[0-9A-Z-]*","family":"sensor","label":"P+F sensor/isolator","category":"automation_controls"}]},{"name":"Balluff","aliases":["balluff"],"patterns":[{"re":"^B(ES|TL|OS|NI|CC)[0-9A-Z-]+","family":"sensor","label":"Balluff sensor","category":"automation_controls"}]},{"name":"Danfoss","aliases":["danfoss","vlt"],"patterns":[{"re":"^(FC-?[0-9]{3}|VLT)[0-9A-Z-]*","family":"vfd","label":"VLT drive","category":"automation_controls"}]},{"name":"SEW-Eurodrive","aliases":["sew","sew-eurodrive","sew eurodrive"],"patterns":[{"re":"^(MDX|MC07|MOVITRAC|MOVIDRIVE)[0-9A-Z-]*","family":"vfd","label":"MOVIDRIVE/MOVITRAC","category":"automation_controls"}]},{"name":"Endress+Hauser","aliases":["endress+hauser","endress hauser","endress","e+h"],"patterns":[{"re":"^(PMD|PMC|FMR|FMP|FTL|PROMAG|PROMASS)[0-9A-Z-]*","family":"pressure_transmitter","label":"E+H instrument","category":"instrumentation"}]},{"name":"Honeywell","aliases":["honeywell"],"patterns":[{"re":"^ST[0-9]{3}[0-9A-Z-]*","family":"pressure_transmitter","label":"SmartLine transmitter","category":"instrumentation"},{"re":"^TC-[0-9A-Z]+","family":"plc","label":"Experion/TDC module","category":"automation_controls"}]},{"name":"Parker","aliases":["parker","parker hannifin"],"patterns":[{"re":"^(D1FP|D3FP|PVP|PGP|F11|F12)[0-9A-Z-]*","family":"hydraulic","label":"Parker hydraulic","category":"process_equipment"}]}],"keyword_families":[{"words":["plc","programmable logic","processor module","cpu module"],"family":"plc","category":"automation_controls"},{"words":["i/o module","io module","input module","output module","analog input","digital output"],"family":"io_module","category":"automation_controls"},{"words":["hmi","operator interface","panelview","touch panel","touchscreen"],"family":"hmi","category":"automation_controls"},{"words":["vfd","variable frequency","inverter drive","ac drive","powerflex","altivar"],"family":"vfd","category":"automation_controls"},{"words":["servo drive","servo amplifier","servo amp"],"family":"servo_drive","category":"automation_controls"},{"words":["servo motor","servomotor"],"family":"servo_motor","category":"automation_controls"},{"words":["encoder","resolver"],"family":"encoder","category":"automation_controls"},{"words":["photoeye","photo eye","proximity sensor","prox switch","limit switch","sensor"],"family":"sensor","category":"automation_controls"},{"words":["machine vision","vision camera","barcode reader","code reader","smart camera"],"family":"machine_vision","category":"automation_controls"},{"words":["power supply","24vdc supply","psu"],"family":"power_supply","category":"automation_controls"},{"words":["breaker","circuit breaker","molded case","mccb"],"family":"breaker","category":"electrical_power"},{"words":["switchgear","switchboard","mcc","motor control center","bus plug"],"family":"switchgear","category":"electrical_power"},{"words":["transformer","xfmr"],"family":"transformer","category":"electrical_power"},{"words":["contactor","starter","overload relay"],"family":"contactor","category":"electrical_power"},{"words":["pressure transmitter","dp transmitter","differential pressure"],"family":"pressure_transmitter","category":"instrumentation"},{"words":["temperature transmitter","rtd","thermocouple"],"family":"temp_transmitter","category":"instrumentation"},{"words":["flow meter","flowmeter","magmeter","coriolis"],"family":"flow_meter","category":"instrumentation"},{"words":["level transmitter","radar level","level gauge"],"family":"level","category":"instrumentation"},{"words":["positioner","valve positioner"],"family":"positioner","category":"instrumentation"},{"words":["analyzer","gas detector","ph probe"],"family":"analyzer","category":"instrumentation"},{"words":["control valve","globe valve"],"family":"control_valve","category":"valves_pvf"},{"words":["ball valve","gate valve","check valve","butterfly valve","plug valve","valve"],"family":"valve","category":"valves_pvf"},{"words":["actuator","gear operator"],"family":"actuator","category":"valves_pvf"},{"words":["flange","weld neck","slip on","blind flange"],"family":"flange","category":"pipe_fittings_flanges"},{"words":["elbow","tee fitting","reducer","coupling","fitting"],"family":"fitting","category":"pipe_fittings_flanges"},{"words":["pipe","tubing","spool","casing"],"family":"pipe","category":"pipe_fittings_flanges"},{"words":["gearbox","gear reducer","speed reducer"],"family":"gearbox","category":"rotating_equipment"},{"words":["pump","centrifugal pump","positive displacement"],"family":"pump","category":"rotating_equipment"},{"words":["motor","electric motor","induction motor","hp motor"],"family":"motor","category":"rotating_equipment"},{"words":["tank","vessel","skid","heat exchanger","compressor"],"family":"process_equipment","category":"process_equipment"},{"words":["copper","brass","aluminum","stainless","bright wire","busbar","extrusion"],"family":"nonferrous","category":"metals_nonferrous"},{"words":["steel scrap","structural steel","ferrous","cast iron"],"family":"ferrous","category":"metals_ferrous"},{"words":["hdpe","ldpe","polypropylene","regrind","purge","resin","abs scrap","pvc scrap"],"family":"resin","category":"plastics_post_industrial"},{"words":["pallet","ibc","tote","gaylord","drum","bulk bag","supersack"],"family":"packaging","category":"reusable_packaging"}],"condition_phrases":{"new_surplus":["new","nib","new in box","unused","new surplus","sealed","factory sealed","nos"],"used_working":["used working","working","tested","tested good","removed working","operational","functional"],"untested":["untested","as-is","as is","unknown condition","no test","surplus untested"],"repairable":["repairable","for parts","faulted","needs repair","core","damaged"],"scrap":["scrap","recycle","weight only","salvage"]}};
 const HOLDS = [{"code":"HAZ_ASBESTOS","match":["asbestos","acm","transite"],"reason":"Possible asbestos-containing material.","clears_with":"Written survey or abatement documentation, plus a qualified reviewer. Out of scope for v1 regardless."},{"code":"HAZ_MERCURY","match":["mercury","hg switch","mercury switch","manometer"],"reason":"Mercury-containing device.","clears_with":"Nothing in v1. Route to a licensed handler."},{"code":"HAZ_RADIOACTIVE","match":["radioactive","nuclear gauge","cs-137","cesium","americium","density gauge","level gauge source","sealed source"],"reason":"Possible sealed radioactive source. Nuclear density and level gauges are common in refineries and are licensed devices.","clears_with":"Nothing in v1. The licensee must handle transfer through its own regulator."},{"code":"HAZ_REFRIGERANT","match":["refrigerant","r-22","r22","r-134","freon","chiller charge"],"reason":"Regulated refrigerant.","clears_with":"Certified recovery documentation and a licensed buyer. Out of scope for v1."},{"code":"HAZ_PCB","match":["pcb","askarel","pyranol","oil-filled transformer","oil filled transformer"],"reason":"Oil-filled equipment may contain PCBs.","clears_with":"Oil test results showing non-PCB status, from the seller."},{"code":"HAZ_BATTERY","match":["battery","batteries","ups bank","lithium cell","lead acid"],"reason":"Batteries presented as ordinary surplus or scrap.","clears_with":"Chemistry, quantity and a buyer licensed for that chemistry. Not an automatic lane."},{"code":"HAZ_UNKNOWN_CONTENTS","match":["unknown contents","unknown chemical","prior contents unknown","unlabeled drum","unmarked tote","residue"],"reason":"Container with unknown or undocumented prior contents.","clears_with":"Prior-content history, SDS for the last product, and a triple-rinse or cleaning record."},{"code":"HAZ_LEAKING","match":["leaking","leak","spill","contaminated","sludge","wet with oil","saturated"],"reason":"Leaking or contaminated material.","clears_with":"Nothing in the automatic lane. Route to the seller environmental group."},{"code":"HAZ_BIO","match":["biomedical","medical waste","sharps","biohazard"],"reason":"Biomedical material.","clears_with":"Nothing in v1."},{"code":"OWN_GOVERNMENT","match":["government property","us navy","navsea","dod","military property","gfe","government furnished"],"reason":"Possible government-owned property.","clears_with":"Written confirmation that title is the sellers and that no public disposal process applies."},{"code":"OWN_LIEN","match":["lien","financed","leased","repossess","receiver","bankruptcy estate","trustee"],"reason":"Ownership or lien uncertainty.","clears_with":"Lien release, court authorization, or the lessor written consent."},{"code":"EXP_CONTROL","match":["itar","ear99","export controlled","controlled technology","munitions"],"reason":"Possible export-control exposure.","clears_with":"Seller classification in writing plus counsel review before any cross-border routing."},{"code":"SAFETY_CRITICAL","match":["sil rated","sil 2","sil 3","safety instrumented","relief valve","psv","rupture disc","fire suppression","lifting","sling","crane hook"],"reason":"Safety-critical equipment whose reuse depends on certification.","clears_with":"Current certification or an explicit sold-for-parts-only, not-for-safety-service designation agreed by the buyer."},{"code":"SVC_CUSTODY","match":["you transport","you store","you certify","can you pick it up","warehouse it for us","you test it","you recertify"],"reason":"The seller is asking BLVKWARE to take custody, transport, store, process or certify.","clears_with":"Nothing in v1. Restate the model: the buyer and seller contract directly and the carrier is engaged by one of them."}];
 
@@ -616,6 +747,76 @@ document.querySelectorAll('[data-load]').forEach(b => b.addEventListener('click'
 }));
 document.getElementById('feed').value = SAMPLES.messy;
 run();
+
+/* ---- Dashboard demo -------------------------------------------------------
+   A theme is six variables and a name. Nothing about the markup changes, which
+   is the point being demonstrated: re-skinning one of these is a config change,
+   not a rebuild, so a client-branded dashboard is cheap enough to include. */
+const THEMES = {
+  blvk:    { name: 'Northgate Recovery', initial: 'N', accent: '#D4F24A',
+             v: { '--d-bg': '#07070a', '--d-panel': '#101018', '--d-line': 'rgba(255,255,255,.09)',
+                  '--d-ink': '#ECECF2', '--d-mut': '#8B8B9C', '--d-warn': '#E8734A', '--d-ok': '#6EE7A8',
+                  '--d-radius': '14px' } },
+  clinic:  { name: 'Meridian Group', initial: 'M', accent: '#2563EB',
+             v: { '--d-bg': '#F4F6FA', '--d-panel': '#FFFFFF', '--d-line': 'rgba(15,23,42,.10)',
+                  '--d-ink': '#0F172A', '--d-mut': '#64748B', '--d-warn': '#DC2626', '--d-ok': '#059669',
+                  '--d-radius': '10px' } },
+  foundry: { name: 'Foundry Assets', initial: 'F', accent: '#F59E0B',
+             v: { '--d-bg': '#12100E', '--d-panel': '#1C1916', '--d-line': 'rgba(245,158,11,.16)',
+                  '--d-ink': '#F5EFE6', '--d-mut': '#9C8F7E', '--d-warn': '#EF4444', '--d-ok': '#84CC16',
+                  '--d-radius': '4px' } },
+  slate:   { name: 'Harbor Industrial', initial: 'H', accent: '#38BDF8',
+             v: { '--d-bg': '#0B1220', '--d-panel': '#131C2E', '--d-line': 'rgba(148,163,184,.18)',
+                  '--d-ink': '#E2E8F0', '--d-mut': '#7C8DA6', '--d-warn': '#FB7185', '--d-ok': '#34D399',
+                  '--d-radius': '18px' } }
+};
+
+const PIPE = [
+  ['Demand', 18, 18], ['Target', 24, 24], ['Discover', 11, 24], ['Intake', 12, 24],
+  ['Qualify', 7, 24], ['Bid', 5, 24], ['Close', 3, 24], ['Settle', 2, 24]
+];
+
+/* The refusals are deliberately in the same feed as the wins. A dashboard that
+   only shows what went right is a screensaver. */
+const FEED = [
+  ['ok',   'Fee collected', '$8,960 reconciled against the remittance'],
+  ['warn', 'Refused', 'L0047 held — sealed radioactive source in the list', true],
+  ['ok',   'Bid round closed', '4 offers, compared after freight and payment terms'],
+  ['warn', 'Refused', 'routing blocked — buyer rule expired 3 days ago', true],
+  ['mut',  'Evidence requested', '6 lines need nameplate photographs'],
+  ['ok',   'Gate cleared', 'L0042 passed ownership, material and economics'],
+  ['warn', 'Refused', 'second bid from the same buyer, no correction reason', true],
+  ['mut',  'Chased', 'two buyers reminded, bids close Friday']
+];
+
+function paintDash(key, accentOverride) {
+  const t = THEMES[key] || THEMES.blvk;
+  const el = document.getElementById('dash');
+  Object.entries(t.v).forEach(([k, v]) => el.style.setProperty(k, v));
+  el.style.setProperty('--d-accent', accentOverride || t.accent);
+  document.getElementById('dashName').textContent = t.name;
+  document.getElementById('dashLogo').textContent = t.initial;
+  if (!accentOverride) document.getElementById('accent').value = t.accent;
+
+  document.getElementById('dashPipe').innerHTML = PIPE.map(([label, v, max]) =>
+    '<div class="drow"><span>' + label + '</span>'
+    + '<span class="dbar"><i style="width:' + Math.round(100 * v / max) + '%"></i></span>'
+    + '<b>' + v + '</b></div>').join('');
+
+  document.getElementById('dashFeed').innerHTML = FEED.map(([kind, head, detail, refused]) =>
+    '<li class="' + (refused ? 'refused' : '') + '"><span class="dpip ' + kind + '"></span>'
+    + '<span><b>' + head + '</b> &middot; ' + detail + '</span></li>').join('');
+}
+
+document.querySelectorAll('[data-theme]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('[data-theme]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  paintDash(b.dataset.theme);
+}));
+document.getElementById('accent').addEventListener('input', (e) => {
+  const active = document.querySelector('[data-theme][aria-pressed="true"]');
+  paintDash(active ? active.dataset.theme : 'blvk', e.target.value);
+});
+paintDash('blvk');
 </script>
 </body>
 </html>
