@@ -479,6 +479,64 @@
         .nav-links a { color: var(--color-text-secondary); text-decoration: none; font-weight: 600; transition: color 0.3s ease; }
         .nav-links a:hover { color: var(--color-text-primary); }
 
+        /* --- Showcase submenu ---------------------------------------------
+           Hover opens it on a pointer device with no script at all; the button
+           underneath makes it work for keyboard and touch, where hover does not
+           exist. The panel keeps [hidden] as its source of truth while closed,
+           so the links inside are genuinely out of the tab order rather than
+           merely invisible - the same rule the mobile panel already follows. */
+        .has-menu { position: relative; }
+        .nav-parent {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: none; border: 0; padding: 0; cursor: pointer;
+            font-family: inherit; font-size: inherit; font-weight: 600;
+            color: var(--color-text-secondary); transition: color 0.3s ease;
+        }
+        .nav-parent:hover, .has-menu:hover .nav-parent { color: var(--color-text-primary); }
+        .nav-parent:focus-visible { outline: 2px solid var(--color-primary-accent); outline-offset: 4px; border-radius: 4px; }
+        .nav-parent .caret { transition: transform 0.25s ease; opacity: 0.7; }
+        .has-menu:hover .nav-parent .caret,
+        .nav-parent[aria-expanded="true"] .caret { transform: rotate(180deg); opacity: 1; }
+
+        /* The transparent padding-top is the bridge between trigger and panel.
+           Without it the cursor crosses a dead gap on the way down and the menu
+           closes underneath it. */
+        .submenu { position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+                   padding-top: 0.95rem; min-width: 380px; z-index: 60; }
+        .submenu[hidden] { display: none; }
+        @media (hover: hover) and (min-width: 769px) {
+            .has-menu:hover > .submenu { display: block; }
+        }
+        .submenu-panel {
+            background: #0A0908; border: 1px solid var(--glass-border);
+            border-top: 1px solid var(--rule-strong); border-radius: 14px;
+            box-shadow: 0 20px 46px rgba(0, 0, 0, 0.62); padding: 0.55rem;
+        }
+        .sub-item {
+            display: flex; gap: 0.85rem; align-items: flex-start;
+            padding: 0.8rem 0.85rem; border-radius: 10px; text-decoration: none;
+            transition: background 0.2s ease;
+        }
+        .sub-item:hover { background: rgba(245, 240, 230, 0.045); }
+        .sub-item:focus-visible { outline: 2px solid var(--color-primary-accent); outline-offset: -2px; }
+        .sub-mark { flex: none; width: 40px; height: 40px; }
+        .sub-mark svg { width: 100%; height: 100%; display: block; }
+        .sub-mark .sm-plate { fill: none; stroke: var(--color-brass); stroke-width: 1.6; opacity: 0.55; }
+        .sub-mark .sm-rail { stroke: var(--color-brass); stroke-width: 1.6; stroke-linecap: round; opacity: 0.8; }
+        .sub-mark .sm-ring { fill: none; stroke: var(--color-primary-accent); stroke-width: 1.8; }
+        .sub-mark .sm-node { fill: var(--color-primary-accent); }
+        .sub-text b { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+                      color: var(--color-text-primary); font-size: 0.97rem; font-weight: 700;
+                      margin-bottom: 0.18rem; }
+        .sub-text span { display: block; color: var(--color-text-secondary);
+                         font-size: 0.82rem; line-height: 1.5; font-weight: 400; }
+        .sub-tag { font-family: var(--font-code); font-size: 0.6rem; letter-spacing: 0.14em;
+                   text-transform: uppercase; color: var(--color-brass); font-weight: 500;
+                   border: 1px solid var(--rule); border-radius: 999px; padding: 0.08rem 0.45rem; }
+        .sub-note { font-family: var(--font-code); font-size: 0.66rem; letter-spacing: 0.1em;
+                    text-transform: uppercase; color: var(--color-text-secondary); opacity: 0.6;
+                    padding: 0.55rem 0.85rem 0.3rem; margin: 0; border-top: 1px solid var(--glass-border); }
+
         /* --- Mobile navigation ---
            Hiding the links below 768px left the site with no navigation at all
            on the device most visitors arrive on. This is a real menu: a labelled
@@ -903,6 +961,17 @@
                 display: block; padding: 0.95rem 0.25rem; font-size: 1.05rem;
                 color: var(--color-text-primary);
             }
+            /* No hover on a touch device, so the submenu becomes a plain
+               nested list that the button opens. Absolute positioning would put
+               it off the side of a phone. */
+            .nav-parent { width: 100%; justify-content: space-between;
+                          padding: 0.95rem 0.25rem; font-size: 1.05rem;
+                          color: var(--color-text-primary); }
+            .submenu { position: static; transform: none; padding-top: 0; min-width: 0; }
+            .submenu-panel { background: transparent; border: 0; box-shadow: none;
+                             border-radius: 0; padding: 0 0 0.6rem; }
+            .sub-item { padding: 0.7rem 0.25rem; }
+            .sub-note { padding-left: 0.25rem; }
             /* The header only paints a background once scrolled; an open menu
                needs one immediately or the page shows through behind it. Driven
                by a class the script sets rather than :has(), so it does not
@@ -952,6 +1021,32 @@
                     <li><a href="/agents/">Agents</a></li>
                     <li><a href="#services">Pricing</a></li>
                     <li><a href="#lab">The Lab</a></li>
+                    <li class="has-menu">
+                        <button type="button" class="nav-parent" id="showcase-btn"
+                                aria-expanded="false" aria-controls="showcase-menu">Showcase<svg class="caret" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button>
+                        <div class="submenu" id="showcase-menu" hidden>
+                            <div class="submenu-panel">
+                                <a class="sub-item" href="/recovery-os/">
+                                    <span class="sub-mark" aria-hidden="true">
+                                        <!-- Documents feeding an instrument: the plates go in
+                                             on the left, the ring and its node come out. -->
+                                        <svg viewBox="0 0 40 40">
+                                            <rect class="sm-plate" x="4.5" y="9" width="10.5" height="14.5" rx="2"/>
+                                            <rect class="sm-plate" x="8" y="13" width="10.5" height="14.5" rx="2"/>
+                                            <path class="sm-rail" d="M21.5 20h5"/>
+                                            <circle class="sm-ring" cx="32" cy="20" r="6.2"/>
+                                            <circle class="sm-node" cx="32" cy="20" r="2.2"/>
+                                        </svg>
+                                    </span>
+                                    <span class="sub-text">
+                                        <b>Recovery OS <span class="sub-tag">Build log</span></b>
+                                        <span>Four ordinary business documents became an eight&#8209;stage operating system. The part identifier runs live on the page &mdash; paste a list and watch it read.</span>
+                                    </span>
+                                </a>
+                                <p class="sub-note">More systems as they ship</p>
+                            </div>
+                        </div>
+                    </li>
                     <li><a href="#faq">FAQ</a></li>
                     <li><a href="#cta">Contact</a></li>
                 </ul>
@@ -1205,7 +1300,8 @@
                     </a>
 
                 </div>
-                <p class="lab-note fade-in">No case studies and no logo wall. These three are the portfolio &mdash; they are free, they are live, and they do real work on your real business. Go use one and judge from that.</p>
+                <p class="lab-note fade-in">No logo wall, and no case study about somebody else&rsquo;s business. These three are the portfolio &mdash; they are free, they are live, and they do real work on your real business. Go use one and judge from that.</p>
+                <p class="lab-note fade-in" style="margin-top:1rem">If you would rather see a whole system than a single tool, the build log is the same idea at full size: <a href="/recovery-os/" style="color:var(--color-primary-accent)">four documents in, an operating system out</a> &mdash; with the part identifier running live in the page, so you can test the claim rather than take it.</p>
                 <p class="lab-note fade-in" style="margin-top:1rem">New to this? Start with <a href="/what-is-an-ai-agent/" style="color:var(--color-primary-accent)">what an AI agent actually is</a>, <a href="/ai-agent-pricing/" style="color:var(--color-primary-accent)">what one should cost</a>, or <a href="/ai-agent-permissions/" style="color:var(--color-primary-accent)">how to let one loose safely</a>.</p>
             </div>
         </section>
@@ -1448,11 +1544,20 @@
             const navLinks = document.getElementById('nav-links');
             if (navToggle && navLinks) {
                 const headerEl = document.getElementById('header');
+                const subBtn = document.getElementById('showcase-btn');
+                const subMenu = document.getElementById('showcase-menu');
+                const setSub = (open) => {
+                    if (!subBtn || !subMenu) return;
+                    subBtn.setAttribute('aria-expanded', String(open));
+                    subMenu.hidden = !open;
+                };
                 const setMenu = (open) => {
                     navToggle.setAttribute('aria-expanded', String(open));
                     navToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
                     navLinks.hidden = !open;
                     if (headerEl) headerEl.classList.toggle('menu-open', open);
+                    // Never leave a submenu open behind a panel that just closed.
+                    if (!open) setSub(false);
                 };
                 const isOpen = () => navToggle.getAttribute('aria-expanded') === 'true';
 
@@ -1482,6 +1587,30 @@
                 window.matchMedia('(max-width: 768px)').addEventListener('change', (ev) => {
                     if (!ev.matches) setMenu(false);
                 });
+
+                // Showcase submenu. CSS already opens it on hover for a mouse;
+                // everything here exists for the people hover does not serve.
+                if (subBtn && subMenu) {
+                    const group = subBtn.closest('.has-menu');
+                    subBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        setSub(subBtn.getAttribute('aria-expanded') !== 'true');
+                    });
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape' && subBtn.getAttribute('aria-expanded') === 'true') {
+                            setSub(false);
+                            subBtn.focus();     // never strand focus inside a closed panel
+                        }
+                    });
+                    document.addEventListener('click', (e) => {
+                        if (!e.target.closest('.has-menu')) setSub(false);
+                    });
+                    // Tabbing out of the group closes it, so a keyboard user is
+                    // never left with an open panel they have already walked past.
+                    group.addEventListener('focusout', (e) => {
+                        if (!e.relatedTarget || !e.relatedTarget.closest('.has-menu')) setSub(false);
+                    });
+                }
             }
 
             // 4. Hero title reveal

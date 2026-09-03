@@ -108,7 +108,7 @@ operations fee.
 ## Free tools
 
 All three run entirely in the visitor's browser. No account, no sign-up, no
-payment, no server. They exist as the work sample in place of case studies.
+payment, no server. They exist as the work sample in place of client case studies.
 
 - [AUGUR](https://blvkware.dev/augur/) finds the work. Give it a company's public
   website and it reads the live page, works out which jobs are quietly costing
@@ -132,13 +132,23 @@ payment, no server. They exist as the work sample in place of case studies.
 
 - Every dollar figure produced by the free tools is a **projection modelled from
   public industry benchmarks**, never a measurement of a real business's finances.
-- BlvkWare has **no published case studies or client references**. This is stated
-  openly on the site; the tools are offered as the evidence instead.
+- BlvkWare has **no client case studies and no client references**. This is stated
+  openly on the site; the tools are offered as the evidence instead. The one
+  long-form write-up, the Recovery OS build log, documents a system BlvkWare
+  built from its own planning documents -- no client commissioned or paid for it,
+  and the page says so.
 - Tool output is AI-generated and is not financial, legal or engineering advice.
 
 ## Pages
 
 - [Home](https://blvkware.dev/): the model, the two agent tiers, prices, tools, FAQ
+- [Recovery OS build log](https://blvkware.dev/recovery-os/): a worked example of
+  the larger engagement -- four ordinary business documents (a slide deck, a call
+  script, a spreadsheet, a strategy memo) turned into an eight-stage operating
+  system with 203 self-checks. Documents the six rules the software enforces, the
+  three defects found before shipping, and carries the part-number identifier
+  running live in the page so a reader can test it. Built by BlvkWare from its own
+  planning documents; no client paid for it.
 - [Hire an agent](https://blvkware.dev/hire/): the configurator. Pick a role, add
   components, choose monthly or annual, and the total is calculated on the page.
   Produces a written order that becomes the scope of record. No call required.

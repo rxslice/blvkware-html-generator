@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Four Documents In, an Operating System Out — BlvkWare Build Log</title>
+    <meta name="description" content="A slide deck, a call script, a spreadsheet and a strategy memo went in. An eight-stage operating system came out, with 203 self-checks and three defects caught before it shipped. Try the part identifier yourself.">
+    <link rel="canonical" href="https://blvkware.dev/recovery-os/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta property="og:title" content="Four Documents In, an Operating System Out">
+    <meta property="og:description" content="What happens when you hand over the documents that describe how your business works. A real build, with the judgment calls and the bugs left in view.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://blvkware.dev/recovery-os/">
+    <meta property="og:image" content="https://blvkware.dev/assets/og.png">
+    <meta property="og:site_name" content="BlvkWare">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+    <link rel="apple-touch-icon" href="/assets/logo-192.png">
+    <meta name="theme-color" content="#0A0908">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Four documents in, an operating system out",
+  "description": "A build log: turning a slide deck, a call script, a spreadsheet and a strategy memo into a working eight-stage operating system, with the judgment calls and the defects left in view.",
+  "author": { "@type": "Organization", "name": "BlvkWare", "url": "https://blvkware.dev/" },
+  "publisher": {
+    "@type": "Organization", "name": "BlvkWare",
+    "logo": { "@type": "ImageObject", "url": "https://blvkware.dev/assets/logo-512.png" }
+  },
+  "mainEntityOfPage": "https://blvkware.dev/recovery-os/",
+  "image": "https://blvkware.dev/assets/og.png",
+  "inLanguage": "en"
+}
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Fira+Code:wght@500&display=swap');
+        :root {
+            --bg: #0A0908; --surface: #17140F; --accent: #D4F24A; --brass: #D9B65C; --warm: #E8734A;
+            --ink: #F5F0E6; --ink-2: #A89D8B; --line: rgba(245,240,230,0.1);
+            --ok: #9BD154; --bad: #E8734A;
+            --font: 'Manrope', system-ui, -apple-system, sans-serif;
+            --mono: 'Fira Code', ui-monospace, monospace;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.7; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+        .wrap { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+        .top { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 3.5rem; text-decoration: none; color: inherit; }
+        .mark { width: 52px; height: 52px; border-radius: 14px; background: #060504; overflow: hidden; flex: none; }
+        .mark img { width: 100%; height: 100%; display: block; }
+        .wordmark { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; }
+        .wordmark span { color: var(--accent); }
+        .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--brass); margin-bottom: 1rem; }
+        h1 { font-size: clamp(2rem, 5vw, 2.9rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 1rem; line-height: 1.1; }
+        .lede { font-size: 1.15rem; color: var(--ink-2); margin-bottom: 2.5rem; padding-bottom: 2.5rem; border-bottom: 1px solid var(--line); }
+        h2 { font-size: 1.55rem; font-weight: 700; margin: 3.5rem 0 1rem; letter-spacing: -0.01em; }
+        h3 { font-size: 1.02rem; font-weight: 700; margin: 1.9rem 0 0.5rem; color: var(--brass); }
+        p { color: var(--ink-2); margin-bottom: 1.1rem; }
+        ul, ol { margin: 0 0 1.1rem 1.2rem; color: var(--ink-2); }
+        li { margin-bottom: 0.55rem; }
+        strong { color: var(--ink); font-weight: 700; }
+        em { color: var(--ink); font-style: italic; }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        code { font-family: var(--mono); font-size: 0.87em; background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; color: var(--brass); }
+        .box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem; margin: 1.75rem 0; }
+        .box p:last-child { margin-bottom: 0; }
+        .box.warn { border-color: rgba(232,115,74,.3); background: rgba(232,115,74,.06); }
+        .tw { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1.5rem 0; }
+        .tw table { margin: 0; min-width: 32rem; }
+        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
+        th, td { text-align: left; padding: 0.7rem 0.6rem; border-bottom: 1px solid var(--line); color: var(--ink-2); vertical-align: top; }
+        th { color: var(--brass); font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500; white-space: nowrap; }
+        td strong { color: var(--ink); }
+
+        /* The counters carry the whole credibility argument above the fold, so
+           they are figures with sources, not adjectives. */
+        .numbers { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin: 2rem 0 0; }
+        .num { background: var(--surface); padding: 1.1rem 1.2rem; }
+        .num b { display: block; font-size: 1.85rem; font-weight: 800; letter-spacing: -0.03em; color: var(--ink); line-height: 1.1; }
+        .num span { font-size: 0.78rem; color: var(--ink-2); }
+        .num.acc b { color: var(--accent); }
+
+        /* The demo breaks the reading column because a parts table needs the
+           width. Everything else stays at 760px so the prose keeps its measure. */
+        /* .wrap already centres with margin:0 auto, so widening the max-width is
+           enough - the block stays centred on the same axis as the prose column.
+           Setting an explicit negative margin-left instead kills the auto centring
+           and drags the block off the left edge on wide screens. */
+        .wide { max-width: 1080px; }
+
+        .demo { background: #060504; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; margin: 1.75rem 0; }
+        .demo-bar { display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 1.1rem; border-bottom: 1px solid var(--line); background: var(--surface); flex-wrap: wrap; }
+        .demo-bar .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--brass); flex: none; }
+        .demo-bar .ttl { font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--brass); }
+        .demo-bar .live { margin-left: auto; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-2); border: 1px solid var(--line); border-radius: 999px; padding: 0.15rem 0.6rem; }
+        .demo-body { padding: 1.2rem; }
+        textarea#feed { width: 100%; min-height: 132px; background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-radius: 10px; padding: 0.85rem; font-family: var(--mono); font-size: 0.78rem; line-height: 1.65; resize: vertical; }
+        textarea#feed:focus { outline: none; border-color: var(--brass); }
+        .demo-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.8rem; align-items: center; }
+        .chip { font-family: var(--font); font-size: 0.8rem; font-weight: 600; color: var(--ink-2); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 0.42rem 0.9rem; cursor: pointer; }
+        .chip:hover { color: var(--ink); border-color: var(--brass); }
+        .go { font-family: var(--font); font-size: 0.85rem; font-weight: 700; background: var(--accent); color: #14170A; border: none; border-radius: 999px; padding: 0.5rem 1.3rem; cursor: pointer; }
+        .go:hover { opacity: 0.92; }
+        .readout { margin-top: 1.2rem; }
+        .rstats { display: flex; gap: 1.4rem; flex-wrap: wrap; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 0.9rem; }
+        .rstats b { color: var(--ink); }
+        .rstats .flagged b { color: var(--warm); }
+        .hold { border-left: 3px solid var(--warm); background: rgba(232,115,74,.08); padding: 0.75rem 1rem; border-radius: 0 8px 8px 0; margin-bottom: 0.7rem; font-size: 0.86rem; color: var(--ink-2); }
+        .hold b { color: var(--warm); font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.06em; }
+        .rtable { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin: 0; }
+        .rtable th { font-size: 0.62rem; letter-spacing: 0.12em; padding: 0.4rem 0.5rem; }
+        .rtable td { padding: 0.48rem 0.5rem; font-family: var(--mono); font-size: 0.74rem; color: var(--ink-2); }
+        .rtable td.n { color: var(--ink); }
+        .tag { display: inline-block; font-family: var(--font); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.08rem 0.42rem; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-2); white-space: nowrap; }
+        .tag.ok { color: var(--ok); border-color: rgba(155,209,84,.4); background: rgba(155,209,84,.1); }
+        .tag.no { color: var(--warm); border-color: rgba(232,115,74,.4); background: rgba(232,115,74,.1); }
+        .conf { display: inline-block; width: 42px; height: 5px; border-radius: 3px; background: rgba(245,240,230,.12); overflow: hidden; vertical-align: middle; }
+        .conf i { display: block; height: 100%; background: var(--brass); }
+        .demo-note { font-size: 0.8rem; color: var(--ink-2); margin: 0.9rem 0 0; }
+
+        /* Each judgment call is a claim plus the reason it exists. The reason is
+           the part a generated codebase cannot produce, so it gets the emphasis. */
+        .calls { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin: 1.75rem 0; }
+        .call { background: var(--surface); padding: 1.3rem 1.4rem; }
+        .call h4 { font-size: 1rem; font-weight: 700; color: var(--ink); margin-bottom: 0.4rem; }
+        .call h4 span { font-family: var(--mono); font-size: 0.7rem; color: var(--brass); margin-right: 0.6rem; letter-spacing: 0.1em; }
+        .call p { font-size: 0.92rem; margin-bottom: 0.55rem; }
+        .call p:last-child { margin-bottom: 0; }
+        .call .why { color: var(--ink); border-left: 2px solid var(--brass); padding-left: 0.85rem; font-size: 0.88rem; }
+
+        .stages { display: grid; grid-template-columns: repeat(auto-fit, minmax(112px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin: 1.75rem 0; }
+        .stage { background: var(--surface); padding: 0.9rem 0.8rem; text-align: center; }
+        .stage b { display: block; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--brass); margin-bottom: 0.3rem; }
+        .stage span { font-size: 0.72rem; color: var(--ink-2); line-height: 1.4; display: block; }
+
+        .cta { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 2rem; margin: 3.5rem 0 0; }
+        .btn { display: inline-block; background: var(--accent); color: #14170A; font-weight: 700; padding: 0.85rem 1.5rem; border-radius: 10px; margin-top: 0.5rem; }
+        .btn:hover { text-decoration: none; opacity: 0.92; }
+        .btn-2 { display: inline-block; color: var(--ink-2); font-weight: 600; padding: 0.85rem 1.2rem; border: 1px solid var(--line); border-radius: 10px; margin: 0.5rem 0 0 0.4rem; }
+        .btn-2:hover { color: var(--ink); text-decoration: none; }
+        .foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--ink-2); }
+        .foot-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+        .foot a { margin-right: 0; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <a class="top" href="/">
+        <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
+        <span class="wordmark">BlvkWare<span>.</span></span>
+    </a>
+
+    <div class="eyebrow">Build log</div>
+    <h1>Four documents in. An operating&nbsp;system out.</h1>
+
+    <p class="lede">A slide deck, a call script, a spreadsheet and a strategy memo went in. What came out
+    runs an eight-stage business process, refuses to do the three things that would get its owner
+    sued, and tests itself 203 times. Nobody paid for this one — which is the point. This is what a
+    working session looks like when you hand over the documents that describe how your business
+    actually works.</p>
+
+    <div class="numbers">
+        <div class="num acc"><b>4</b><span>source documents</span></div>
+        <div class="num"><b>8</b><span>pipeline stages</span></div>
+        <div class="num acc"><b>203</b><span>self-checks, all passing</span></div>
+        <div class="num"><b>3</b><span>defects caught pre-ship</span></div>
+        <div class="num"><b>0</b><span>dependencies</span></div>
+    </div>
+
+    <h2>What went in</h2>
+
+    <p>Four files, of the kind every business has sitting in a shared drive. None of them was a
+    specification. All of them described a business nobody had built yet.</p>
+
+    <div class="tw"><table>
+        <thead><tr><th>File</th><th>What it actually contained</th></tr></thead>
+        <tbody>
+        <tr><td><strong>A 15-slide deck</strong><br><code>.pptx</code></td><td>An eight-stage pipeline with a named owner and a required output per stage, an exception queue, and a daily schedule.</td></tr>
+        <tr><td><strong>A call playbook</strong><br><code>.docx</code></td><td>Gatekeeper and decision-maker scripts, six objection responses, nine qualification questions, and a list of things never to accept.</td></tr>
+        <tr><td><strong>A dealbook</strong><br><code>.xlsx</code></td><td>Five sheets: 20 buyers with published purchasing interest, 25 scored prospects, nine market anchors, a call tracker, a read-me.</td></tr>
+        <tr><td><strong>A strategy memo</strong><br><code>.md</code></td><td>The commercial model, the risk rules, the unit economics, and a 90-day plan.</td></tr>
+        </tbody>
+    </table></div>
+
+    <p>The useful information was real but scattered: a deadline rule on slide 8, the reason for it in
+    the memo, the wording that depends on it in the call script, and the data it applies to in a
+    spreadsheet tab. Nobody can hold that in their head at 4pm on a Thursday. That is the job.</p>
+
+    <h2>What came back</h2>
+
+    <p>An eight-stage operating system where <strong>a record cannot advance to the next stage until the
+    current one has produced its evidence.</strong> Not a dashboard that displays the process — software
+    that enforces it.</p>
+
+    <div class="stages">
+        <div class="stage"><b>Demand</b><span>Verified buyer rules</span></div>
+        <div class="stage"><b>Target</b><span>Scored lead</span></div>
+        <div class="stage"><b>Discover</b><span>Correct contact</span></div>
+        <div class="stage"><b>Intake</b><span>Inventory packet</span></div>
+        <div class="stage"><b>Qualify</b><span>Risk-cleared lot</span></div>
+        <div class="stage"><b>Bid</b><span>Live comparable bids</span></div>
+        <div class="stage"><b>Close</b><span>Signed approval</span></div>
+        <div class="stage"><b>Settle</b><span>Payment and fee</span></div>
+    </div>
+
+    <p>Underneath: a part-number identifier covering 25 manufacturers, a five-gate risk screen, a
+    netback calculator, a private bid room, a milestone ledger with an append-only audit trail, and
+    seven contract templates that fill themselves in from live records.</p>
+
+    <h2>Try the part it does best</h2>
+
+    <p>The identifier is the piece that makes the rest possible. A seller sends whatever they have —
+    a maintenance-system export, a forwarded email, six lines typed on a phone in a warehouse. It
+    reads that and produces something a buyer can actually price.</p>
+
+    <p><strong>This is the real engine, running in your browser.</strong> Same 94 patterns across 25
+    manufacturers, same rules. Paste anything, or use the buttons.</p>
+</div>
+
+<div class="wrap wide" style="padding-top:0;padding-bottom:0">
+    <div class="demo">
+        <div class="demo-bar">
+            <span class="dot"></span>
+            <span class="ttl">Intake &middot; identifier</span>
+            <span class="live">live, in this page</span>
+        </div>
+        <div class="demo-body">
+            <textarea id="feed" spellcheck="false" aria-label="Paste an inventory list"></textarea>
+            <div class="demo-actions">
+                <button class="go" id="run" type="button">Read it</button>
+                <button class="chip" data-load="messy" type="button">A messy real list</button>
+                <button class="chip" data-load="csv" type="button">A clean export</button>
+                <button class="chip" data-load="danger" type="button">One with a problem in it</button>
+            </div>
+            <div class="readout" id="out"></div>
+        </div>
+    </div>
+</div>
+
+<div class="wrap" style="padding-top:0">
+    <p class="demo-note">Nothing is sent anywhere — the patterns and the rules are in the page. The
+    line it cannot identify is the important one: it comes back marked <em>unverified</em> with a
+    request for a nameplate photograph, rather than a confident guess. A wrong part number sent to a
+    buyer is worse than no part number at all.</p>
+
+    <h2>The six decisions that make it real</h2>
+
+    <p>Anyone can generate a codebase now. What is scarce is knowing what the software must
+    <em>refuse</em> to do. Each of these is enforced in code and has a test that fails if someone
+    later removes it.</p>
+
+    <div class="calls">
+        <div class="call">
+            <h4><span>01</span>It will not let you sell to a buyer who never agreed to pay you</h4>
+            <p>All 20 buyers ship as <em>published interest</em> — we saw them advertise — not as
+            customers. Nothing routes to them until a human records a confirmed rule, a fee basis and
+            an expiry date. On a fresh install the system can source nothing at all.</p>
+            <p class="why">The plan said "no sourcing until buyer demand exists." A document says it
+            once. Software says it every single time, to everybody, including the founder at 2am.</p>
+        </div>
+        <div class="call">
+            <h4><span>02</span>One bid per buyer, and never the word "auction"</h4>
+            <p>Texas exempts a sale by sealed bid from auctioneer licensing only when no bid can be
+            revised after opening. Mississippi and Louisiana carry comparable exemptions. So a second
+            number from the same buyer is refused unless a correction reason is stated, and any
+            correction is disclosed to the seller with the original figure.</p>
+            <p class="why">This came from reading the statutes, not the brief. Let a buyer improve
+            after seeing the field and the whole process becomes an auction, which needs a licensed
+            auctioneer in all three states.</p>
+        </div>
+        <div class="call">
+            <h4><span>03</span>It caught itself leaking the seller's identity</h4>
+            <p>Bid requests mask the seller until they authorise release. A test asserted that. It
+            failed — because a lot's internal title defaults to the seller's own company name, and
+            that title was going straight into the subject line.</p>
+            <p class="why">Buyer-facing text now builds its own title and scrubs seller name, contact,
+            email and city from every line, because plant names hide in spreadsheet location columns.</p>
+        </div>
+        <div class="call">
+            <h4><span>04</span>It prices the wait to be paid</h4>
+            <p>Offers are ranked on what the seller nets <em>after</em> freight, loading, inspection
+            allowance, fee — and after discounting the payment delay at 18% a year.</p>
+            <p class="why">A $28,900 offer at 45 days should not automatically beat $27,200 at 21. The
+            seller is the one who waits, so the comparison prices the waiting.</p>
+        </div>
+        <div class="call">
+            <h4><span>05</span>It refuses to be paid by both sides in silence</h4>
+            <p>Taking a fee from the seller and the buyer on one transaction, undisclosed, risks
+            forfeiting the entire commission. So opening a deal file that pays from both sides is
+            blocked until both disclosure dates and both consents are on record.</p>
+            <p class="why">The safest structure is to be paid by one side only. The software makes
+            that the path of least resistance instead of a thing you remember on a good day.</p>
+        </div>
+        <div class="call">
+            <h4><span>06</span>A headline number can never become a price</h4>
+            <p>The spreadsheet held nine market figures — "Fisher control valves $15,000+" and
+            similar. Every one is stored with its limitation attached and is structurally unable to
+            enter a calculation. The economics gate rejects one as a valuation basis outright.</p>
+            <p class="why">Those are buyer marketing. Quote one to a seller as what they will receive
+            and you have made a promise you cannot keep, on the first call.</p>
+        </div>
+    </div>
+
+    <h2>Three defects, found before anything shipped</h2>
+
+    <p>Left in view deliberately. Software that never had a bug was never really tested.</p>
+
+    <ol>
+        <li><strong>The self-checks were wiping the live desk.</strong> They shared a state directory
+        with the running system and destroyed a working session mid-test. Tests now run in a
+        throwaway directory — wiping a real desk to run a test would be the most expensive bug in the
+        product, so it is now structurally impossible.</li>
+        <li><strong>Seed data was handed out by reference.</strong> Confirming a buyer mutated the
+        shipped dataset in memory, so a later reset wrote the edit back out as though it were
+        original. Found because a browser showed six confirmed buyers on what should have been a
+        clean install.</li>
+        <li><strong>The risk reserve scaled with the prize instead of the risk.</strong> It was set as
+        a percentage of deal value, which blocked every healthy small deal. Now sized from actual
+        logistics exposure.</li>
+    </ol>
+
+    <div class="box">
+        <p><strong>203 self-checks, and they test policy rather than plumbing.</strong> Not "does this
+        function return a number" but: does an unconfirmed buyer stay unreachable, does a milestone
+        refuse to advance without evidence, does a market anchor stay out of a price, does a bid
+        request leak a name. Those are the checks that still matter in a year.</p>
+    </div>
+
+    <h2>What this means if it is your business</h2>
+
+    <p>The domain here happens to be industrial surplus. That part is incidental. The transferable
+    claim is this: <strong>you have documents that describe how your business runs, and nobody has
+    built the thing that runs it.</strong> A process lives across a slide deck, a spreadsheet, three
+    email templates and one person's memory — and the gap between those and working software is the
+    entire job.</p>
+
+    <p>What that gap actually contains, on the evidence above: reading the documents properly,
+    modelling the domain, finding the rules that are implied rather than stated, checking the ones
+    with legal consequences, and building the refusals in so the system holds the line when the
+    person is tired.</p>
+
+    <div class="tw"><table>
+        <thead><tr><th>You already have</th><th>What it becomes</th></tr></thead>
+        <tbody>
+        <tr><td>An SOP or a training deck</td><td>Stages that will not advance without their evidence</td></tr>
+        <tr><td>A pricing spreadsheet</td><td>A calculator that cannot show profit before costs</td></tr>
+        <tr><td>A call script</td><td>Briefs built from the live record, with the do-not list attached</td></tr>
+        <tr><td>A compliance checklist</td><td>Gates that stop the work, naming what would clear them</td></tr>
+        <tr><td>Contract templates in Word</td><td>Documents that fill themselves from the record</td></tr>
+        <tr><td>A list nobody maintains</td><td>A registry with expiry dates that refuses stale entries</td></tr>
+        </tbody>
+    </table></div>
+
+    <div class="box warn">
+        <p><strong>When this is the wrong purchase.</strong> If your process is genuinely one person
+        using judgment on every case, there is nothing to enforce and you should not buy this. If the
+        documents contradict each other, that has to be settled by you first — software makes
+        disagreement permanent rather than resolving it. And if nobody follows the process today, a
+        system that enforces it will be resented rather than used.</p>
+    </div>
+
+    <h2>The same engine, pointed at your operation</h2>
+
+    <p>An <strong>Operating System build</strong> starts at <strong>$8,500</strong>, delivered in two
+    to four weeks depending on how many stages and rules there are. You get the running system, its
+    self-checks, its data, and the source — it runs on your own machine or your own server, with no
+    per-seat fee and nothing to renew. Ongoing changes are the standard
+    <a href="/ai-agent-pricing/">operations fee</a> if you want them, and nothing if you do not.</p>
+
+    <p>The first step is not a discovery call. <strong>Send the documents.</strong> Within two working
+    days you get back a written read: the stages you actually have, the rules implied but never
+    written down, the ones with legal or financial consequences, and what it would cost to build.
+    That read is free, and it is yours whether or not you go ahead.</p>
+
+    <div class="cta">
+        <h2 style="margin-top:0">Send four documents. Get a build plan back.</h2>
+        <p>Whatever you have — the deck, the spreadsheet, the SOP, the templates. Messy is fine and
+        more useful than tidy. No sign-up, no call required to start.</p>
+        <a class="btn" href="mailto:russ@blvkware.dev?subject=Operating%20system%20build%20%E2%80%94%20my%20documents&amp;body=Attaching%20the%20documents%20that%20describe%20how%20we%20work.%20Here%20is%20the%20part%20that%20costs%20us%20the%20most%20time%3A%0A%0A">Email the documents</a>
+        <a class="btn-2" href="https://cal.com/blvkware/30min">Or book 30 minutes</a>
+    </div>
+
+    <h2>Related</h2>
+
+    <p>If you would rather see the diagnosis before the build: <a href="/augur/">AUGUR</a> reads your
+    live website and works out which jobs are costing you most. <a href="/scry/">SCRY</a> takes a
+    description of how your business runs and designs the system for it.
+    <a href="/sigil/">SIGIL</a> is the forge that writes single-file tools from a prompt. All three
+    are free and run in your browser. <a href="/agents/">The agent catalog</a> and
+    <a href="/hire/">the configurator</a> price the smaller, single-job version of this work.</p>
+
+    <footer class="foot">
+        <div class="foot-links"><a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/hire/">Hire an agent</a><a href="/ai-agent-pricing/">Pricing</a><a href="/ai-agent-permissions/">Permissions</a><a href="/privacy/">Privacy</a></div>
+        <p style="margin-top:1rem">BlvkWare — <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> · Mississippi, serving the United States.</p>
+    </footer>
+</div>
+
+<script>
+/* The identifier, ported from the Python engine that runs the real system. The
+   pattern tables below are the same data files, embedded verbatim at build time,
+   so what a visitor sees here is what the desk actually does — not a mock-up. */
+const CATALOG = {"manufacturers":[{"name":"Allen-Bradley","aliases":["allen bradley","allen-bradley","a-b","ab","rockwell","rockwell automation"],"patterns":[{"re":"^1756-L[0-9]","family":"plc","label":"ControlLogix processor","category":"automation_controls"},{"re":"^1756-[A-Z0-9]+","family":"io_module","label":"ControlLogix I/O","category":"automation_controls"},{"re":"^1769-L[0-9]","family":"plc","label":"CompactLogix processor","category":"automation_controls"},{"re":"^1769-[A-Z0-9]+","family":"io_module","label":"CompactLogix I/O","category":"automation_controls"},{"re":"^1794-[A-Z0-9]+","family":"io_module","label":"FLEX I/O","category":"automation_controls"},{"re":"^1734-[A-Z0-9]+","family":"io_module","label":"POINT I/O","category":"automation_controls"},{"re":"^174[67]-[A-Z0-9]+","family":"plc","label":"SLC 500","category":"automation_controls"},{"re":"^1771-[A-Z0-9]+","family":"io_module","label":"PLC-5 I/O","category":"automation_controls"},{"re":"^1785-[A-Z0-9]+","family":"plc","label":"PLC-5","category":"automation_controls"},{"re":"^2711P-[A-Z0-9]+","family":"hmi","label":"PanelView Plus","category":"automation_controls"},{"re":"^2711[CR]?-[A-Z0-9]+","family":"hmi","label":"PanelView","category":"automation_controls"},{"re":"^20[A-Z]{1,2}[0-9A-Z]+","family":"vfd","label":"PowerFlex 700/750","category":"automation_controls"},{"re":"^2[25][A-F]-[A-Z0-9]+","family":"vfd","label":"PowerFlex 4/40/520","category":"automation_controls"},{"re":"^2094-[A-Z0-9]+","family":"servo_drive","label":"Kinetix 6000","category":"automation_controls"},{"re":"^2198-[A-Z0-9]+","family":"servo_drive","label":"Kinetix 5500/5700","category":"automation_controls"},{"re":"^(MPL|VPL|MPM|TLY)-[A-Z0-9]+","family":"servo_motor","label":"Kinetix servo motor","category":"automation_controls"},{"re":"^1783-[A-Z0-9]+","family":"network","label":"Stratix switch","category":"automation_controls"},{"re":"^1606-[A-Z0-9]+","family":"power_supply","label":"Bulletin 1606 supply","category":"automation_controls"},{"re":"^440R-[A-Z0-9]+","family":"safety","label":"Guardmaster safety relay","category":"automation_controls"},{"re":"^84[25][A-Z]-[A-Z0-9]+","family":"encoder","label":"Bulletin 842/845 encoder","category":"automation_controls"},{"re":"^87[123]-[A-Z0-9]+","family":"sensor","label":"Bulletin 871/872 sensor","category":"automation_controls"},{"re":"^1(00|04)-C[0-9]+","family":"contactor","label":"Bulletin 100 contactor","category":"electrical_power"},{"re":"^14(89|92)-[A-Z0-9]+","family":"breaker","label":"Bulletin 1489 breaker","category":"electrical_power"}]},{"name":"Siemens","aliases":["siemens","simatic","sinamics","sitop"],"patterns":[{"re":"^6ES7[0-9A-Z-]+","family":"plc","label":"SIMATIC S7","category":"automation_controls"},{"re":"^6AV[0-9A-Z-]+","family":"hmi","label":"SIMATIC HMI","category":"automation_controls"},{"re":"^6SL3[0-9A-Z-]+","family":"vfd","label":"SINAMICS","category":"automation_controls"},{"re":"^6SE[0-9A-Z-]+","family":"vfd","label":"MICROMASTER/SINAMICS","category":"automation_controls"},{"re":"^6EP[0-9A-Z-]+","family":"power_supply","label":"SITOP supply","category":"automation_controls"},{"re":"^6GK[0-9A-Z-]+","family":"network","label":"SCALANCE/network","category":"automation_controls"},{"re":"^3R[TVHU][0-9A-Z-]+","family":"contactor","label":"SIRIUS contactor/breaker","category":"electrical_power"},{"re":"^1F[KTS][0-9A-Z-]+","family":"servo_motor","label":"SIMOTICS servo motor","category":"automation_controls"},{"re":"^6DR[0-9A-Z-]+","family":"positioner","label":"SIPART positioner","category":"instrumentation"},{"re":"^7M[FEP][0-9A-Z-]+","family":"pressure_transmitter","label":"SITRANS","category":"instrumentation"}]},{"name":"Fanuc","aliases":["fanuc","ge fanuc"],"patterns":[{"re":"^A06B-[0-9A-Z-]+","family":"servo_drive","label":"Fanuc servo/amplifier","category":"automation_controls"},{"re":"^A(16|20)B-[0-9A-Z-]+","family":"plc","label":"Fanuc control board","category":"automation_controls"},{"re":"^A02B-[0-9A-Z-]+","family":"plc","label":"Fanuc control unit","category":"automation_controls"},{"re":"^A03B-[0-9A-Z-]+","family":"io_module","label":"Fanuc I/O","category":"automation_controls"}]},{"name":"ABB","aliases":["abb","baldor abb"],"patterns":[{"re":"^AC[SH][0-9]{3}[0-9A-Z-]*","family":"vfd","label":"ACS/ACH drive","category":"automation_controls"},{"re":"^3HAC[0-9A-Z-]+","family":"robot","label":"ABB robot part","category":"automation_controls"},{"re":"^DSQC[0-9A-Z ]+","family":"robot","label":"DSQC controller board","category":"automation_controls"},{"re":"^1SDA[0-9A-Z]+","family":"breaker","label":"Tmax breaker","category":"electrical_power"}]},{"name":"Schneider Electric","aliases":["schneider","telemecanique","modicon","square d","squared"],"patterns":[{"re":"^ATV[0-9A-Z]+","family":"vfd","label":"Altivar drive","category":"automation_controls"},{"re":"^ATS[0-9A-Z]+","family":"soft_starter","label":"Altistart","category":"automation_controls"},{"re":"^BMX[0-9A-Z]+","family":"plc","label":"Modicon M340","category":"automation_controls"},{"re":"^TM[2357][0-9A-Z]+","family":"plc","label":"Modicon TM","category":"automation_controls"},{"re":"^140[A-Z]{3}[0-9]+","family":"plc","label":"Modicon Quantum","category":"automation_controls"},{"re":"^LC[12][DFK][0-9]+","family":"contactor","label":"TeSys contactor","category":"electrical_power"},{"re":"^(HMIGTO|HMISTU|XBT)[0-9A-Z]+","family":"hmi","label":"Magelis HMI","category":"automation_controls"},{"re":"^(QO|QOB|EDB|EGB|FAL|KAL|LAL|MAL|HDL|JDL)[0-9]{3,}","family":"breaker","label":"Square D breaker","category":"electrical_power"}]},{"name":"Omron","aliases":["omron"],"patterns":[{"re":"^C[JS][12][A-Z0-9-]+","family":"plc","label":"SYSMAC CJ/CS","category":"automation_controls"},{"re":"^CP1[A-Z][-0-9A-Z]*","family":"plc","label":"SYSMAC CP1","category":"automation_controls"},{"re":"^N[JXY][0-9A-Z-]+","family":"plc","label":"SYSMAC NJ/NX","category":"automation_controls"},{"re":"^N[SBA][0-9A-Z-]+","family":"hmi","label":"Omron HMI","category":"automation_controls"},{"re":"^E[23][A-Z]-[0-9A-Z]+","family":"sensor","label":"Omron photo/prox sensor","category":"automation_controls"},{"re":"^R88[MD]-[0-9A-Z]+","family":"servo_drive","label":"OMNUC servo","category":"automation_controls"}]},{"name":"Mitsubishi Electric","aliases":["mitsubishi","melsec","mitsu"],"patterns":[{"re":"^FX[12358][A-Z0-9-]*","family":"plc","label":"MELSEC FX","category":"automation_controls"},{"re":"^Q[0-9]{2}[A-Z0-9]*","family":"plc","label":"MELSEC Q","category":"automation_controls"},{"re":"^Q[JXYD][0-9A-Z]+","family":"io_module","label":"MELSEC Q I/O","category":"automation_controls"},{"re":"^MR-J[2345][0-9A-Z-]*","family":"servo_drive","label":"MELSERVO amplifier","category":"automation_controls"},{"re":"^H[GFC]-[0-9A-Z]+","family":"servo_motor","label":"MELSERVO motor","category":"automation_controls"},{"re":"^FR-[ADEF][0-9A-Z-]*","family":"vfd","label":"FREQROL inverter","category":"automation_controls"},{"re":"^GT2[157][0-9A-Z-]*","family":"hmi","label":"GOT2000 HMI","category":"automation_controls"}]},{"name":"Cognex","aliases":["cognex"],"patterns":[{"re":"^IS[0-9]{4}[0-9A-Z-]*","family":"machine_vision","label":"In-Sight camera","category":"automation_controls"},{"re":"^DM[0-9]{3}[0-9A-Z-]*","family":"machine_vision","label":"DataMan reader","category":"automation_controls"},{"re":"^ISM[0-9]{4}[0-9A-Z-]*","family":"machine_vision","label":"In-Sight Micro","category":"automation_controls"}]},{"name":"Keyence","aliases":["keyence"],"patterns":[{"re":"^(FS|LR|PZ|SR|GT2|CV|XG|LJ|IM|IG|IB|FD|GV)-[0-9A-Z]+","family":"sensor","label":"Keyence sensor","category":"automation_controls"},{"re":"^IV[0-9]?-[0-9A-Z]+","family":"machine_vision","label":"IV vision sensor","category":"automation_controls"}]},{"name":"Yaskawa","aliases":["yaskawa","motoman"],"patterns":[{"re":"^SGM[0-9A-Z]+","family":"servo_motor","label":"Sigma servo motor","category":"automation_controls"},{"re":"^SGD[0-9A-Z]+","family":"servo_drive","label":"Sigma servo amplifier","category":"automation_controls"},{"re":"^CIMR-[0-9A-Z]+","family":"vfd","label":"Yaskawa inverter","category":"automation_controls"},{"re":"^JZSP-[0-9A-Z]+","family":"servo_drive","label":"Sigma accessory","category":"automation_controls"}]},{"name":"Rosemount","aliases":["rosemount","emerson rosemount"],"patterns":[{"re":"^3051[0-9A-Z]*","family":"pressure_transmitter","label":"3051 pressure transmitter","category":"instrumentation"},{"re":"^(644|648|848)[0-9A-Z]*","family":"temp_transmitter","label":"Temperature transmitter","category":"instrumentation"},{"re":"^87[13][2-9][0-9A-Z]*","family":"flow_meter","label":"Magnetic flowmeter","category":"instrumentation"},{"re":"^5[34][0-9]{2}[0-9A-Z]*","family":"level","label":"Radar level","category":"instrumentation"}]},{"name":"Fisher","aliases":["fisher","fisher controls","emerson fisher"],"patterns":[{"re":"^DVC[0-9]{4}[0-9A-Z]*","family":"positioner","label":"FIELDVUE positioner","category":"instrumentation"},{"re":"^(667|657|1052|585)[0-9A-Z-]*","family":"actuator","label":"Fisher actuator","category":"valves_pvf"},{"re":"^(ED|EZ|ET|EWT|HP|V150|V200|8532|8580)[0-9A-Z-]*","family":"control_valve","label":"Fisher control valve","category":"valves_pvf"}]},{"name":"GE","aliases":["ge","general electric","ge fanuc","emerson ge"],"patterns":[{"re":"^IC6(9[3479]|00)[0-9A-Z]+","family":"plc","label":"Series 90/RX3i","category":"automation_controls"},{"re":"^IC200[0-9A-Z]+","family":"io_module","label":"VersaMax I/O","category":"automation_controls"}]},{"name":"Eaton","aliases":["eaton","cutler-hammer","cutler hammer","moeller"],"patterns":[{"re":"^(DILM|XTCE|PKZ|C440|EMS)[0-9A-Z-]*","family":"contactor","label":"Eaton contactor/starter","category":"electrical_power"},{"re":"^(FD|HFD|KD|LD|ND|EGB|EHD)[0-9]{3}[0-9A-Z]*","family":"breaker","label":"Eaton breaker","category":"electrical_power"}]},{"name":"Phoenix Contact","aliases":["phoenix contact","phoenix"],"patterns":[{"re":"^(QUINT|TRIO|UNO|STEP)[0-9A-Z-]*","family":"power_supply","label":"Phoenix power supply","category":"automation_controls"}]},{"name":"SICK","aliases":["sick","sick ag"],"patterns":[{"re":"^(WL|WT|WS|GL|DT|WTB|LMS|DFS|TIM)[0-9]+[0-9A-Z-]*","family":"sensor","label":"SICK sensor","category":"automation_controls"}]},{"name":"Banner","aliases":["banner","banner engineering"],"patterns":[{"re":"^(Q4X|QS18|QS30|LX|EZ-SCREEN|SM31|WLB)[0-9A-Z-]*","family":"sensor","label":"Banner sensor","category":"automation_controls"}]},{"name":"Turck","aliases":["turck"],"patterns":[{"re":"^(BI|NI|RU|BC)[0-9]+[0-9A-Z-]*","family":"sensor","label":"Turck proximity sensor","category":"automation_controls"}]},{"name":"Pepperl+Fuchs","aliases":["pepperl+fuchs","pepperl fuchs","pepperl"],"patterns":[{"re":"^(NBB|NBN|NJ|OBT|OBE|UB|KFD)[0-9]+[0-9A-Z-]*","family":"sensor","label":"P+F sensor/isolator","category":"automation_controls"}]},{"name":"Balluff","aliases":["balluff"],"patterns":[{"re":"^B(ES|TL|OS|NI|CC)[0-9A-Z-]+","family":"sensor","label":"Balluff sensor","category":"automation_controls"}]},{"name":"Danfoss","aliases":["danfoss","vlt"],"patterns":[{"re":"^(FC-?[0-9]{3}|VLT)[0-9A-Z-]*","family":"vfd","label":"VLT drive","category":"automation_controls"}]},{"name":"SEW-Eurodrive","aliases":["sew","sew-eurodrive","sew eurodrive"],"patterns":[{"re":"^(MDX|MC07|MOVITRAC|MOVIDRIVE)[0-9A-Z-]*","family":"vfd","label":"MOVIDRIVE/MOVITRAC","category":"automation_controls"}]},{"name":"Endress+Hauser","aliases":["endress+hauser","endress hauser","endress","e+h"],"patterns":[{"re":"^(PMD|PMC|FMR|FMP|FTL|PROMAG|PROMASS)[0-9A-Z-]*","family":"pressure_transmitter","label":"E+H instrument","category":"instrumentation"}]},{"name":"Honeywell","aliases":["honeywell"],"patterns":[{"re":"^ST[0-9]{3}[0-9A-Z-]*","family":"pressure_transmitter","label":"SmartLine transmitter","category":"instrumentation"},{"re":"^TC-[0-9A-Z]+","family":"plc","label":"Experion/TDC module","category":"automation_controls"}]},{"name":"Parker","aliases":["parker","parker hannifin"],"patterns":[{"re":"^(D1FP|D3FP|PVP|PGP|F11|F12)[0-9A-Z-]*","family":"hydraulic","label":"Parker hydraulic","category":"process_equipment"}]}],"keyword_families":[{"words":["plc","programmable logic","processor module","cpu module"],"family":"plc","category":"automation_controls"},{"words":["i/o module","io module","input module","output module","analog input","digital output"],"family":"io_module","category":"automation_controls"},{"words":["hmi","operator interface","panelview","touch panel","touchscreen"],"family":"hmi","category":"automation_controls"},{"words":["vfd","variable frequency","inverter drive","ac drive","powerflex","altivar"],"family":"vfd","category":"automation_controls"},{"words":["servo drive","servo amplifier","servo amp"],"family":"servo_drive","category":"automation_controls"},{"words":["servo motor","servomotor"],"family":"servo_motor","category":"automation_controls"},{"words":["encoder","resolver"],"family":"encoder","category":"automation_controls"},{"words":["photoeye","photo eye","proximity sensor","prox switch","limit switch","sensor"],"family":"sensor","category":"automation_controls"},{"words":["machine vision","vision camera","barcode reader","code reader","smart camera"],"family":"machine_vision","category":"automation_controls"},{"words":["power supply","24vdc supply","psu"],"family":"power_supply","category":"automation_controls"},{"words":["breaker","circuit breaker","molded case","mccb"],"family":"breaker","category":"electrical_power"},{"words":["switchgear","switchboard","mcc","motor control center","bus plug"],"family":"switchgear","category":"electrical_power"},{"words":["transformer","xfmr"],"family":"transformer","category":"electrical_power"},{"words":["contactor","starter","overload relay"],"family":"contactor","category":"electrical_power"},{"words":["pressure transmitter","dp transmitter","differential pressure"],"family":"pressure_transmitter","category":"instrumentation"},{"words":["temperature transmitter","rtd","thermocouple"],"family":"temp_transmitter","category":"instrumentation"},{"words":["flow meter","flowmeter","magmeter","coriolis"],"family":"flow_meter","category":"instrumentation"},{"words":["level transmitter","radar level","level gauge"],"family":"level","category":"instrumentation"},{"words":["positioner","valve positioner"],"family":"positioner","category":"instrumentation"},{"words":["analyzer","gas detector","ph probe"],"family":"analyzer","category":"instrumentation"},{"words":["control valve","globe valve"],"family":"control_valve","category":"valves_pvf"},{"words":["ball valve","gate valve","check valve","butterfly valve","plug valve","valve"],"family":"valve","category":"valves_pvf"},{"words":["actuator","gear operator"],"family":"actuator","category":"valves_pvf"},{"words":["flange","weld neck","slip on","blind flange"],"family":"flange","category":"pipe_fittings_flanges"},{"words":["elbow","tee fitting","reducer","coupling","fitting"],"family":"fitting","category":"pipe_fittings_flanges"},{"words":["pipe","tubing","spool","casing"],"family":"pipe","category":"pipe_fittings_flanges"},{"words":["gearbox","gear reducer","speed reducer"],"family":"gearbox","category":"rotating_equipment"},{"words":["pump","centrifugal pump","positive displacement"],"family":"pump","category":"rotating_equipment"},{"words":["motor","electric motor","induction motor","hp motor"],"family":"motor","category":"rotating_equipment"},{"words":["tank","vessel","skid","heat exchanger","compressor"],"family":"process_equipment","category":"process_equipment"},{"words":["copper","brass","aluminum","stainless","bright wire","busbar","extrusion"],"family":"nonferrous","category":"metals_nonferrous"},{"words":["steel scrap","structural steel","ferrous","cast iron"],"family":"ferrous","category":"metals_ferrous"},{"words":["hdpe","ldpe","polypropylene","regrind","purge","resin","abs scrap","pvc scrap"],"family":"resin","category":"plastics_post_industrial"},{"words":["pallet","ibc","tote","gaylord","drum","bulk bag","supersack"],"family":"packaging","category":"reusable_packaging"}],"condition_phrases":{"new_surplus":["new","nib","new in box","unused","new surplus","sealed","factory sealed","nos"],"used_working":["used working","working","tested","tested good","removed working","operational","functional"],"untested":["untested","as-is","as is","unknown condition","no test","surplus untested"],"repairable":["repairable","for parts","faulted","needs repair","core","damaged"],"scrap":["scrap","recycle","weight only","salvage"]}};
+const HOLDS = [{"code":"HAZ_ASBESTOS","match":["asbestos","acm","transite"],"reason":"Possible asbestos-containing material.","clears_with":"Written survey or abatement documentation, plus a qualified reviewer. Out of scope for v1 regardless."},{"code":"HAZ_MERCURY","match":["mercury","hg switch","mercury switch","manometer"],"reason":"Mercury-containing device.","clears_with":"Nothing in v1. Route to a licensed handler."},{"code":"HAZ_RADIOACTIVE","match":["radioactive","nuclear gauge","cs-137","cesium","americium","density gauge","level gauge source","sealed source"],"reason":"Possible sealed radioactive source. Nuclear density and level gauges are common in refineries and are licensed devices.","clears_with":"Nothing in v1. The licensee must handle transfer through its own regulator."},{"code":"HAZ_REFRIGERANT","match":["refrigerant","r-22","r22","r-134","freon","chiller charge"],"reason":"Regulated refrigerant.","clears_with":"Certified recovery documentation and a licensed buyer. Out of scope for v1."},{"code":"HAZ_PCB","match":["pcb","askarel","pyranol","oil-filled transformer","oil filled transformer"],"reason":"Oil-filled equipment may contain PCBs.","clears_with":"Oil test results showing non-PCB status, from the seller."},{"code":"HAZ_BATTERY","match":["battery","batteries","ups bank","lithium cell","lead acid"],"reason":"Batteries presented as ordinary surplus or scrap.","clears_with":"Chemistry, quantity and a buyer licensed for that chemistry. Not an automatic lane."},{"code":"HAZ_UNKNOWN_CONTENTS","match":["unknown contents","unknown chemical","prior contents unknown","unlabeled drum","unmarked tote","residue"],"reason":"Container with unknown or undocumented prior contents.","clears_with":"Prior-content history, SDS for the last product, and a triple-rinse or cleaning record."},{"code":"HAZ_LEAKING","match":["leaking","leak","spill","contaminated","sludge","wet with oil","saturated"],"reason":"Leaking or contaminated material.","clears_with":"Nothing in the automatic lane. Route to the seller environmental group."},{"code":"HAZ_BIO","match":["biomedical","medical waste","sharps","biohazard"],"reason":"Biomedical material.","clears_with":"Nothing in v1."},{"code":"OWN_GOVERNMENT","match":["government property","us navy","navsea","dod","military property","gfe","government furnished"],"reason":"Possible government-owned property.","clears_with":"Written confirmation that title is the sellers and that no public disposal process applies."},{"code":"OWN_LIEN","match":["lien","financed","leased","repossess","receiver","bankruptcy estate","trustee"],"reason":"Ownership or lien uncertainty.","clears_with":"Lien release, court authorization, or the lessor written consent."},{"code":"EXP_CONTROL","match":["itar","ear99","export controlled","controlled technology","munitions"],"reason":"Possible export-control exposure.","clears_with":"Seller classification in writing plus counsel review before any cross-border routing."},{"code":"SAFETY_CRITICAL","match":["sil rated","sil 2","sil 3","safety instrumented","relief valve","psv","rupture disc","fire suppression","lifting","sling","crane hook"],"reason":"Safety-critical equipment whose reuse depends on certification.","clears_with":"Current certification or an explicit sold-for-parts-only, not-for-safety-service designation agreed by the buyer."},{"code":"SVC_CUSTODY","match":["you transport","you store","you certify","can you pick it up","warehouse it for us","you test it","you recertify"],"reason":"The seller is asking BLVKWARE to take custody, transport, store, process or certify.","clears_with":"Nothing in v1. Restate the model: the buyer and seller contract directly and the carrier is engaged by one of them."}];
+
+const SAMPLES = {
+  messy: `4x Allen-Bradley 1756-L71 ControlLogix, new in box
+12 AB 1756-IB16 input modules used working
+2 Siemens 6ES7315-2AG10-0AB0 untested
+8x Rosemount 3051CD2A22A1AS5 transmitters, new surplus
+6 Fisher DVC6200 positioners untested
+20 SICK WL12-2B530 photo sensors new
+assorted control panel spares, one pallet`,
+  csv: `Manufacturer,Part Number,Description,Qty,Condition
+Allen-Bradley,2711P-T10C4D8,PanelView Plus 1000,2,new in box
+Allen-Bradley,20BD022A3AYNANC0,PowerFlex 700 15HP drive,4,used working
+Mitsubishi,MR-J4-40B,MELSERVO amplifier,3,untested
+Cognex,IS7402-01,In-Sight camera,1,new
+Yaskawa,SGDV-2R8A01A,Sigma-5 servo amp,2,used working`,
+  danger: `3x Allen-Bradley 1756-L71 processors, new in box
+2 nuclear density gauge with sealed source
+4 drums, prior contents unknown
+1 oil-filled transformer, untested
+6 Fisher DVC6200 positioners untested`
+};
+
+const PN = /[A-Za-z0-9][A-Za-z0-9./+-]{3,}/g;
+const QTY = /\b(?:qty|quantity|q)\s*[:.=]?\s*([0-9][0-9,]*)\b|\b([0-9][0-9,]*)\s*(ea|each|pcs?|pieces?|units?|lbs?|pounds?|tons?|ft|feet|pallets?)\b|\b([0-9][0-9,]*)\s*x(?![a-z0-9])|\bx\s*([0-9][0-9,]*)\b/i;
+
+let COMPILED = null;
+function compiled() {
+  if (COMPILED) return COMPILED;
+  COMPILED = CATALOG.manufacturers.map(m => ({
+    name: m.name,
+    aliases: m.aliases.map(a => a.toLowerCase()),
+    pats: m.patterns.map(p => ({ re: new RegExp(p.re, 'i'), meta: p }))
+  }));
+  return COMPILED;
+}
+
+function matchPart(token) {
+  const pn = token.toUpperCase().replace(/^[.,;:|]+|[.,;:|]+$/g, '');
+  if (pn.length < 3) return null;              // a series prefix is not a unit
+  for (const m of compiled()) {
+    for (const p of m.pats) {
+      const hit = p.re.exec(pn);
+      if (hit && hit.index === 0) {
+        return { manufacturer: m.name, part: pn, family: p.meta.family,
+                 label: p.meta.label, category: p.meta.category };
+      }
+    }
+  }
+  return null;
+}
+
+function findManufacturer(text) {
+  const low = ' ' + text.toLowerCase().replace(/[^a-z0-9+&/. -]/g, ' ') + ' ';
+  let best = [null, 0];
+  for (const m of compiled()) {
+    for (const a of m.aliases) {
+      const rx = new RegExp('(?:^|[^a-z0-9])' + a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?![a-z0-9])');
+      if (rx.test(low)) {
+        const score = a.length > 3 ? 0.9 : 0.55;
+        if (score > best[1]) best = [m.name, score];
+      }
+    }
+  }
+  return best;
+}
+
+function findFamily(text) {
+  const low = text.toLowerCase();
+  let best = null, bestLen = 0;
+  for (const kf of CATALOG.keyword_families) {
+    for (const w of kf.words) {
+      if (low.includes(w) && w.length > bestLen) { best = kf; bestLen = w.length; }
+    }
+  }
+  return best;
+}
+
+let CONDS = null;
+function findCondition(text) {
+  if (!CONDS) {
+    CONDS = [];
+    for (const [cond, words] of Object.entries(CATALOG.condition_phrases)) {
+      for (const w of words) CONDS.push([w.toLowerCase(), cond]);
+    }
+    CONDS.sort((a, b) => b[0].length - a[0].length);   // longest phrase wins
+  }
+  const low = ' ' + text.toLowerCase() + ' ';
+  for (const [phrase, cond] of CONDS) {
+    const rx = new RegExp('(?:^|[^a-z])' + phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?![a-z])');
+    if (rx.test(low)) return [cond, phrase.length > 4 ? 0.8 : 0.6];
+  }
+  return ['unknown', 0];
+}
+
+function findQuantity(text) {
+  const m = QTY.exec(text);
+  if (!m) return [null, 0];
+  const raw = m[1] || m[2] || m[4] || m[5];
+  const v = parseFloat(String(raw).replace(/,/g, ''));
+  return isNaN(v) ? [null, 0] : [v, m[3] ? 0.85 : 0.6];
+}
+
+function identify(line) {
+  const r = { raw: line, manufacturer: null, part: null, label: null, category: null,
+              condition: 'unknown', quantity: null, conf: {}, missing: [] };
+  if (!line.trim()) return r;
+
+  for (const tok of (line.match(PN) || [])) {
+    const hit = matchPart(tok);
+    if (hit) { Object.assign(r, hit); r.conf.part = 0.95; r.conf.manufacturer = 0.9; r.conf.category = 0.9; break; }
+  }
+  const [brand, bscore] = findManufacturer(line);
+  if (brand) {
+    if (!r.manufacturer) { r.manufacturer = brand; r.conf.manufacturer = bscore; }
+    else if (brand !== r.manufacturer) { r.conf.manufacturer = 0.5; r.missing.push('manufacturer_conflict'); }
+  }
+  if (!r.category) {
+    const fam = findFamily(line);
+    if (fam) { r.category = fam.category; r.label = fam.family; r.conf.category = 0.55; }
+  }
+  if (!r.part) {
+    const cands = (line.match(PN) || [])
+      .map(t => t.toUpperCase())
+      .filter(t => /[0-9]/.test(t) && !/^[0-9,.]+$/.test(t));
+    if (cands.length) { r.part = cands[0]; r.conf.part = 0.35; }
+  }
+  const [cond, cscore] = findCondition(line);
+  r.condition = cond;
+  if (cscore) r.conf.condition = cscore;
+  const [qty, qscore] = findQuantity(line);
+  r.quantity = qty;
+  if (qscore) r.conf.quantity = qscore;
+
+  if ((r.conf.part || 0) < 0.9) r.missing.push('full part number');
+  if (!r.manufacturer) r.missing.push('manufacturer');
+  if (!r.category) r.missing.push('category');
+  if (r.condition === 'unknown') r.missing.push('condition');
+  if (r.quantity === null) r.missing.push('quantity');
+
+  r.identified = !!r.category && (r.conf.part || 0) >= 0.9;
+  r.score = Math.round((0.5 * (r.conf.part || 0) + 0.2 * (r.conf.manufacturer || 0)
+            + 0.2 * (r.conf.category || 0) + 0.1 * (r.conf.condition || 0)) * 100) / 100;
+  return r;
+}
+
+function scanHolds(text) {
+  const blob = text.toLowerCase();
+  const out = [];
+  for (const rule of HOLDS) {
+    for (const phrase of rule.match) {
+      const rx = new RegExp('(?:^|[^a-z0-9])' + phrase.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?![a-z0-9])');
+      if (rx.test(blob)) { out.push({ code: rule.code, matched: phrase, reason: rule.reason, clears: rule.clears_with }); break; }
+    }
+  }
+  return out;
+}
+
+/* A delimited row is joined so the identifier reads the whole line, matching how
+   the real intake treats an export whose header it has already mapped. */
+function rows(text) {
+  return text.replace(/\r\n?/g, '\n').split('\n')
+    .map(l => l.trim()).filter(Boolean)
+    .filter((l, i) => !(i === 0 && /manufacturer|part\s*number|description/i.test(l) && l.includes(',')))
+    .map(l => l.includes(',') ? l.split(',').map(c => c.trim()).filter(Boolean).join(' ') : l);
+}
+
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+function run() {
+  const text = document.getElementById('feed').value;
+  const out = document.getElementById('out');
+  if (!text.trim()) { out.innerHTML = '<p class="demo-note">Paste a list, or press one of the buttons.</p>'; return; }
+
+  const items = rows(text).map(identify);
+  const holds = scanHolds(text);
+  const known = items.filter(i => i.identified).length;
+  const cats = [...new Set(items.map(i => i.category).filter(Boolean))];
+
+  let html = '<div class="rstats">'
+    + '<span>lines <b>' + items.length + '</b></span>'
+    + '<span>identified <b>' + known + '</b> (' + Math.round(100 * known / (items.length || 1)) + '%)</span>'
+    + '<span>categories <b>' + (cats.length || 0) + '</b></span>'
+    + '<span class="' + (holds.length ? 'flagged' : '') + '">auto-holds <b>' + holds.length + '</b></span>'
+    + '</div>';
+
+  for (const h of holds) {
+    html += '<div class="hold"><b>' + esc(h.code) + '</b> &mdash; matched &ldquo;' + esc(h.matched)
+         + '&rdquo;. ' + esc(h.reason) + '<br><span style="opacity:.75">Clears with: ' + esc(h.clears) + '</span></div>';
+  }
+
+  html += '<div class="tw"><table class="rtable"><thead><tr><th>#</th><th>Qty</th><th>Part</th>'
+       + '<th>Manufacturer</th><th>What it is</th><th>Condition</th><th>Confidence</th>'
+       + '<th>Still needed</th></tr></thead><tbody>';
+  items.forEach((it, i) => {
+    html += '<tr><td>' + (i + 1) + '</td>'
+      + '<td class="n">' + (it.quantity === null ? '<span class="tag no">?</span>' : it.quantity) + '</td>'
+      + '<td class="n">' + esc(it.part || '—') + '</td>'
+      + '<td>' + esc(it.manufacturer || '—') + '</td>'
+      + '<td>' + esc(it.label || '—') + (it.identified ? ' <span class="tag ok">identified</span>' : ' <span class="tag no">unverified</span>') + '</td>'
+      + '<td>' + esc(it.condition) + '</td>'
+      + '<td><span class="conf"><i style="width:' + Math.round(it.score * 100) + '%"></i></span> ' + it.score.toFixed(2) + '</td>'
+      + '<td>' + (it.missing.length ? esc(it.missing.join(', ')) : '—') + '</td></tr>';
+  });
+  html += '</tbody></table></div>';
+  out.innerHTML = html;
+}
+
+document.getElementById('run').addEventListener('click', run);
+document.querySelectorAll('[data-load]').forEach(b => b.addEventListener('click', () => {
+  document.getElementById('feed').value = SAMPLES[b.dataset.load];
+  run();
+}));
+document.getElementById('feed').value = SAMPLES.messy;
+run();
+</script>
+</body>
+</html>
