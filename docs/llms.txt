@@ -120,7 +120,7 @@ payment, no server. They exist as the work sample in place of client case studie
   what it has to be able to do, which existing systems it must operate, what is
   ready on day one and what still needs a person -- then prices it and hands the
   finished design to checkout with every option already set.
-- [SIGIL](https://blvkware.dev/sigil/) is the forge. Given a paid order it writes
+- [SIGIL](https://blvkware.dev/sigil/) builds it. Given a paid order it writes
   the configuration that turns shared, tested machinery into one specific agent:
   the triage labels, the routing table, the chase cadence and the words it will
   use, followed by an honest account of what it finished and what was handed to a

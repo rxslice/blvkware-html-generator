@@ -1853,7 +1853,7 @@ try {
         var h = el("div", "spech", "Paid — order " + (ref || "received"));
         card.appendChild(h);
         card.appendChild(el("p", null,
-            "Thank you. Your agent goes into the forge now, and you will have a " +
+            "Thank you. Your agent goes into the build queue now, and you will have a " +
             "signed job description — what it owns, what it may touch, what it " +
             "must escalate, and the tests it has to pass — within one business day."));
 
@@ -1869,7 +1869,7 @@ try {
             card.appendChild(ta);
 
             var acts = el("div", "actions");
-            var forge = el("a", "btn", "Open it in the Forge");
+            var forge = el("a", "btn", "Open your build");
             try {
                 forge.href = "/sigil/#order=" +
                     btoa(unescape(encodeURIComponent(JSON.stringify(spec))));

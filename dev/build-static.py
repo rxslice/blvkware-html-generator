@@ -42,17 +42,17 @@ TOOLS = [
         "src": "app.html",
         "slug": "sigil",
         "name": "SIGIL",
-        "role": "Forge",
+        "role": "Build",
         "subcategory": "AI agent configuration",
         "features": ["Configures an ordered agent from the buyer's own words",
                      "Writes the triage labels, routing and chase cadence",
                      "Reports what is finished and what still needs a person",
                      "Runs entirely in the browser, no account"],
         "title": "BlvkWare SIGIL — Describe it, and it gets built",
-        "desc": ("Write down what you want and watch it become real software — a complete, working, "
+        "desc": ("Write down what you want and watch it become real software: a complete, working, "
                  "single-file application streamed into the page, then run, audited and repaired. "
-                 "The same forge configures ordered BlvkWare agents: the triage labels, the "
-                 "routing table, the chase cadence and the words they will use."),
+                 "The same builder configures ordered BlvkWare agents, writing the triage labels, "
+                 "the routing table, the chase cadence and the words they will use."),
     },
     {
         "src": "augur.html",
@@ -624,7 +624,7 @@ payment, no server. They exist as the work sample in place of client case studie
   what it has to be able to do, which existing systems it must operate, what is
   ready on day one and what still needs a person -- then prices it and hands the
   finished design to checkout with every option already set.
-- [SIGIL](https://blvkware.dev/sigil/) is the forge. Given a paid order it writes
+- [SIGIL](https://blvkware.dev/sigil/) builds it. Given a paid order it writes
   the configuration that turns shared, tested machinery into one specific agent:
   the triage labels, the routing table, the chase cadence and the words it will
   use, followed by an honest account of what it finished and what was handed to a

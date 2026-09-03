@@ -1,6 +1,6 @@
 /* The design engine: business signals in, a costed agent design out.
  *
- * Shared by AUGUR (find the need), SCRY (design the agent) and SIGIL (forge it),
+ * Shared by AUGUR (find the need), SCRY (design the agent) and SIGIL (build it),
  * so all three propose the same thing for the same business.
  *
  * The rule that governs this whole file: **the model interprets, the catalog

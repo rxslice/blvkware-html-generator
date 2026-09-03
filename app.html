@@ -1391,19 +1391,19 @@ generateText = {import:ai-text-plugin}
   .fg-err { color: #E8524A; }
 </style>
 
-<div id="forge" role="dialog" aria-label="The Forge">
+<div id="forge" role="dialog" aria-label="Build an ordered agent">
   <div class="fg-wrap">
     <div class="fg-top">
-      <span class="fg-tag">The Forge</span>
+      <span class="fg-tag">Order to agent</span>
       <div style="flex:1"></div>
       <button class="btn ghost sm" id="fgClose">Back to SIGIL</button>
       <a class="btn ghost sm" href="/">Home</a>
     </div>
 
     <h1 id="fgTitle">Turn a paid order into a working agent</h1>
-    <p class="fg-lede">Paste the order manifest. The forge writes the configuration that makes it
-      <em>this</em> business&rsquo;s agent &mdash; the labels, the routing, the chase cadence, the
-      words &mdash; then reports honestly on what still needs a human.</p>
+    <p class="fg-lede">Paste the order manifest. SIGIL writes the configuration that makes it
+      <em>this</em> business&rsquo;s agent: the labels, the routing, the chase cadence and the
+      words. Then it reports honestly on what still needs a human.</p>
 
     <div class="fg-card" id="fgInputCard">
       <h3>The order</h3>
@@ -1411,7 +1411,7 @@ generateText = {import:ai-text-plugin}
       <textarea class="fg-in" id="fgIn" spellcheck="false"
                 placeholder='{ "schema": "blvkware.agent-order/1", ... }'></textarea>
       <div class="fg-bar">
-        <button class="btn primary" id="fgRun"><svg class="ic ic-16"><use href="#i-spark"/></svg> Forge this agent</button>
+        <button class="btn primary" id="fgRun"><svg class="ic ic-16"><use href="#i-spark"/></svg> Build this agent</button>
         <span class="status" id="fgStatus"></span>
       </div>
     </div>
@@ -1490,25 +1490,25 @@ catch (e) { window.BLVK_CATALOG = null; }
          '<div class="fg-meter"><i style="width:' + o.after + '%"></i></div>' +
          '<div class="fg-stat">' +
            '<span>standing <b>' + o.after + '%</b></span>' +
-           '<span>was <b>' + o.before + '%</b> before forging</span>' +
+           '<span>was <b>' + o.before + '%</b> before this build</span>' +
            '<span>configured <b>' + res.forged.length + '</b> of ' + res.plan.can.length + '</span>' +
            '<span>needs you <b>' + o.stillManual.length + '</b></span>' +
            (o.gated.length ? '<span>blocked <b>' + o.gated.length + '</b></span>' : '') +
          '</div></div>';
 
     h += '<div class="fg-cols">';
-    h += '<div class="fg-card"><h3>Forged and standing</h3>' +
+    h += '<div class="fg-card"><h3>Built and standing</h3>' +
          '<p>Configured from what the customer actually told us. No person needed.</p>' +
          '<ul class="fg-list">';
     var stood = o.forgedNow.concat(D.readiness(spec).auto);
     h += (stood.map(function (c) {
             return '<li><span class="mk ok">&#10003;</span><span><b>' + esc(c.name) + '</b>' +
               '<span class="n">' + esc((E.capById(c.id) || {}).blurb || '') + '</span></span></li>';
-          }).join('') || '<li>Nothing could be forged from this order alone.</li>');
+          }).join('') || '<li>Nothing could be built from this order alone.</li>');
     h += '</ul></div>';
 
     h += '<div class="fg-card"><h3>Needs a human</h3>' +
-         '<p>Credentials, real samples and decisions the forge will not invent.</p>' +
+         '<p>Credentials, real samples and decisions SIGIL will not invent.</p>' +
          '<ul class="fg-list">';
     h += o.stillManual.map(function (c) {
       return '<li><span class="mk todo">&#9679;</span><span><b>' + esc(c.name) + '</b>' +

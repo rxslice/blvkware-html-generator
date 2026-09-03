@@ -3,12 +3,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>What a Working Agent Actually Runs On — BlvkWare</title>
+    <title>What a Working Agent Actually Runs On | BlvkWare</title>
     <meta name="description" content="Two pieces of a real system, running in your browser: the reader that turns a messy list into structured data, and the dashboard that shows you what the agent did and what it refused to do. Built from four ordinary business documents.">
     <link rel="canonical" href="https://blvkware.dev/recovery-os/">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
     <meta property="og:title" content="What a Working Agent Actually Runs On">
-    <meta property="og:description" content="Everyone can show you a chat box. This is the machinery underneath — the rules an agent operates inside, and the dashboard that shows you what it refused to do.">
+    <meta property="og:description" content="Everyone can show you a chat box. This is the machinery underneath: the rules an agent operates inside, and the dashboard that shows you what it refused to do.">
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://blvkware.dev/recovery-os/">
     <meta property="og:image" content="https://blvkware.dev/assets/og.png">
@@ -185,6 +185,18 @@
         .theme-row label { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-2); }
         input[type=color] { width: 34px; height: 28px; padding: 0; border: 1px solid var(--line); border-radius: 7px; background: transparent; cursor: pointer; }
 
+        /* Four steps, numbered, no arrows. The sequence is the promise: the
+           thing a buyer is checking for is whether a call appears anywhere in
+           it, so the row has to be short enough to take in at a glance. */
+        .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+                 gap: 1px; background: var(--line); border: 1px solid var(--line);
+                 border-radius: 14px; overflow: hidden; margin: 1.75rem 0; }
+        .step { background: var(--surface); padding: 1.15rem 1.2rem; }
+        .step .sn { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.18em;
+                    color: var(--brass); }
+        .step b { display: block; color: var(--ink); font-size: 1rem; margin: 0.3rem 0 0.35rem; }
+        .step p { font-size: 0.85rem; margin: 0; }
+
         .cta { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 2rem; margin: 3.5rem 0 0; }
         .btn { display: inline-block; background: var(--accent); color: #14170A; font-weight: 700; padding: 0.85rem 1.5rem; border-radius: 10px; margin-top: 0.5rem; }
         .btn:hover { text-decoration: none; opacity: 0.92; }
@@ -207,7 +219,7 @@
 
     <p class="lede">A slide deck, a call script, a spreadsheet and a strategy memo went in. What came
     out runs an eight-stage business process, refuses to do the three things that would get its owner
-    sued, and tests itself 203 times. Two pieces of it are running on this page &mdash; the part that
+    sued, and tests itself 203 times. Two pieces of it are running on this page: the part that
     reads, and the part that shows you what happened. Both work. Use them.</p>
 
     <div class="numbers">
@@ -241,8 +253,8 @@
         <div class="layer">
             <span class="n">03</span>
             <b>Something that shows you</b>
-            <p>What it did, what it is waiting on, and &mdash; the part nobody ships &mdash; what it
-            refused to do and why.</p>
+            <p>What it did, what it is waiting on, and the part nobody ships: what it refused to do,
+            and why.</p>
             <span class="who">This page, demo two</span>
         </div>
     </div>
@@ -261,7 +273,7 @@
 
     <h2>Demo one: the part that reads</h2>
 
-    <p>A seller sends whatever they have &mdash; a maintenance-system export, a forwarded email, six
+    <p>A seller sends whatever they have: a maintenance-system export, a forwarded email, six
     lines typed on a phone in a warehouse. This turns that into something a buyer can actually price,
     and flags every line it could not identify rather than filling in a plausible guess.</p>
 
@@ -292,21 +304,21 @@
 <div class="wrap" style="padding-top:0">
     <p class="demo-note">Nothing leaves the page. The line it cannot identify is the important one:
     it comes back marked <em>unverified</em> with a request for a nameplate photograph. A wrong part
-    number sent to a buyer is worse than no part number at all &mdash; so the system is built to
-    prefer the embarrassment of asking over the cost of guessing.</p>
+    number sent to a buyer is worse than no part number at all, so the system prefers the
+    embarrassment of asking over the cost of guessing.</p>
 
     <h2>The six things it refuses to do</h2>
 
     <p>Anyone can generate a codebase now. What is scarce is knowing what the software must
     <em>refuse</em>. Each of these is enforced in code and has a test that fails if somebody later
-    takes it out. This is what we mean when we say our agents are built differently &mdash; not that
-    they are cleverer, but that they are fenced.</p>
+    takes it out. This is what we mean when we say our agents are built differently. Not cleverer.
+    Fenced.</p>
 
     <div class="calls">
         <div class="call">
             <h4><span>01</span>It will not sell to a buyer who never agreed to pay</h4>
-            <p>All 20 buyers ship as <em>published interest</em> &mdash; we saw them advertise &mdash;
-            not as customers. Nothing routes to them until a human records a confirmed rule, a fee
+            <p>All 20 buyers ship as <em>published interest</em>, meaning we watched them advertise,
+            rather than as customers. Nothing routes to them until a human records a confirmed rule, a fee
             basis and an expiry date. On a fresh install the system can source nothing at all.</p>
             <p class="why">The plan said &ldquo;no sourcing until buyer demand exists.&rdquo; A
             document says that once. Software says it every time, to everybody, including the founder
@@ -325,7 +337,7 @@
         <div class="call">
             <h4><span>03</span>It caught itself leaking a counterparty</h4>
             <p>Bid requests mask the seller until they authorise release. A test asserted that. It
-            failed &mdash; because a lot&rsquo;s internal title defaults to the seller&rsquo;s own
+            failed, because a lot&rsquo;s internal title defaults to the seller&rsquo;s own
             company name, and that title was going straight into the subject line.</p>
             <p class="why">Buyer-facing text now builds its own title and scrubs seller name, contact,
             email and city from every line, because plant names hide in spreadsheet location columns.</p>
@@ -333,7 +345,7 @@
         <div class="call">
             <h4><span>04</span>It prices the wait to be paid</h4>
             <p>Offers are ranked on what the seller nets <em>after</em> freight, loading, inspection
-            allowance and fee &mdash; and after discounting the payment delay at 18% a year.</p>
+            allowance and fee, then after discounting the payment delay at 18% a year.</p>
             <p class="why">A $28,900 offer at 45 days should not automatically beat $27,200 at 21. The
             seller is the one who waits, so the comparison prices the waiting.</p>
         </div>
@@ -347,8 +359,8 @@
         </div>
         <div class="call">
             <h4><span>06</span>A headline number can never become a price</h4>
-            <p>The source spreadsheet held nine market figures &mdash; &ldquo;Fisher control valves
-            $15,000+&rdquo; and similar. Every one is stored with its limitation attached and is
+            <p>The source spreadsheet held nine market figures, such as &ldquo;Fisher control valves
+            $15,000+&rdquo;. Every one is stored with its limitation attached and is
             structurally unable to enter a calculation.</p>
             <p class="why">Those are buyer marketing. Quote one to a seller as what they will receive
             and you have made a promise you cannot keep, on the first call.</p>
@@ -358,8 +370,8 @@
     <h2>Demo two: the part that shows you</h2>
 
     <p>An agent that works unsupervised is only worth having if you can see what it did. That is the
-    real objection, and a dashboard is the answer to it &mdash; not a nice-to-have bolted on at the
-    end, but the thing you look at every morning to decide whether to trust the thing.</p>
+    real objection, and a dashboard is the answer to it. Not a nice-to-have bolted on at the end,
+    but the thing you open every morning to decide whether you still trust it.</p>
 
     <p>So ours show the refusals, not just the wins. <strong>The panel below is styled entirely from
     six CSS variables.</strong> Change the theme, or pick your own accent colour, and watch it become
@@ -398,7 +410,7 @@
                         <div id="dashPipe"></div>
                     </div>
                     <div class="dpanel">
-                        <h5>What it did &mdash; and would not do</h5>
+                        <h5>What it did, and would not do</h5>
                         <ul class="dfeed" id="dashFeed"></ul>
                     </div>
                 </div>
@@ -408,7 +420,7 @@
                 <label for="accent">Theme</label>
                 <button class="chip" data-theme="blvk" aria-pressed="true" type="button">BlvkWare</button>
                 <button class="chip" data-theme="clinic" aria-pressed="false" type="button">Clinical</button>
-                <button class="chip" data-theme="foundry" aria-pressed="false" type="button">Foundry</button>
+                <button class="chip" data-theme="amber" aria-pressed="false" type="button">Amber</button>
                 <button class="chip" data-theme="slate" aria-pressed="false" type="button">Slate</button>
                 <label for="accent" style="margin-left:0.6rem">Accent</label>
                 <input type="color" id="accent" value="#D4F24A" aria-label="Dashboard accent colour">
@@ -420,7 +432,7 @@
 <div class="wrap" style="padding-top:0">
     <p class="demo-note">Four themes and a colour picker, all changing the same six variables. A real
     one carries your logo, your typeface and your language, and reads from whatever the agent is
-    actually running &mdash; the numbers above are sample data, as any dashboard demo is.</p>
+    actually running. The numbers above are sample data, as any dashboard demo is.</p>
 
     <h2>Three defects, found before anything shipped</h2>
 
@@ -450,8 +462,8 @@
     <p>The domain here happens to be industrial surplus. That part is incidental. The transferable
     claim is this: <strong>you have documents that describe how your business runs, and nobody has
     built the thing that runs it.</strong> A process lives across a slide deck, a spreadsheet, three
-    email templates and one person&rsquo;s memory &mdash; and the gap between those and working
-    software is the entire job.</p>
+    email templates and one person&rsquo;s memory. The gap between those and working software is
+    the entire job.</p>
 
     <div class="tw"><table>
         <thead><tr><th>You already have</th><th>What it becomes</th></tr></thead>
@@ -469,8 +481,8 @@
     <div class="box warn">
         <p><strong>When this is the wrong purchase.</strong> If your process is genuinely one person
         using judgment on every case, there is nothing to enforce and you should not buy it. If the
-        documents contradict each other, that has to be settled by you first &mdash; software makes
-        disagreement permanent rather than resolving it. And if nobody follows the process today, a
+        documents contradict each other, that has to be settled by you first, because software
+        makes disagreement permanent rather than resolving it. And if nobody follows the process today, a
         system that enforces it will be resented rather than used.</p>
     </div>
 
@@ -483,12 +495,12 @@
             <td>A digital worker with a defined job, built from priced capabilities you pick yourself.</td>
             <td><a href="/hire/">from $3,500</a> + monthly</td></tr>
         <tr><td><strong>A dashboard</strong></td>
-            <td>The window onto it &mdash; your branding, your metrics, your language. Shows what the
-                agent did, what it is waiting on, and what it refused.</td>
+            <td>The window onto it, in your branding, your metrics and your language. Shows what
+                the agent did, what it is waiting on, and what it refused.</td>
             <td>priced per panel, <a href="/agents/">on the catalog</a></td></tr>
         <tr><td><strong>An operating system</strong></td>
-            <td>The whole process, enforced. Stages, gates, documents and the refusals &mdash; what
-                this page is a working example of.</td>
+            <td>The whole process, enforced. Stages, gates, documents and the refusals. What this
+                page is a working example of.</td>
             <td>from $8,500</td></tr>
         </tbody>
     </table></div>
@@ -497,15 +509,40 @@
     catalog, totalled on the page before you buy. No per-seat licence, no metered charge for looking
     at your own numbers, and no bill that arrives shaped differently from the quote.</p>
 
-    <p>The first step is not a discovery call. <strong>Send the documents.</strong> Within two working
-    days you get back a written read: the stages you actually have, the rules implied but never
-    written down, the ones with legal or financial consequences, and what it would cost to build.
-    That read is free, and it is yours whether or not you go ahead.</p>
+    <h2>How buying works</h2>
+
+    <p>The reason the tools on this site are free and the prices are printed is that we would rather
+    not run a sales process. You should be able to buy this the way you buy anything else that works.</p>
+
+    <div class="steps">
+        <div class="step"><span class="sn">01</span><b>Say what you need</b>
+            <p>Type it, or hand over the files: the deck, the spreadsheet, the SOP, a link to your
+            site. Messier is more useful than tidier.</p></div>
+        <div class="step"><span class="sn">02</span><b>See the price</b>
+            <p>Every capability is listed with what it costs. The total is on the page before you
+            decide, not in a proposal a week later.</p></div>
+        <div class="step"><span class="sn">03</span><b>Pay</b>
+            <p>The order becomes the scope of record. What you paid for is what gets built, in
+            writing, with an acceptance line per capability.</p></div>
+        <div class="step"><span class="sn">04</span><b>Receive it built</b>
+            <p>Delivered and working against those acceptance lines. Not a slide deck about what we
+            would build.</p></div>
+    </div>
+
+    <p><strong>There is no discovery call, no proposal, and no sales process.</strong> You never have
+    to speak to anybody, and if you would rather talk it through, that is an option you choose rather
+    than a gate you pass. An agent and its dashboard price themselves at
+    <a href="/hire/">the configurator</a> right now.</p>
+
+    <p>A whole operating system is the one thing that cannot be priced blind, because nobody knows
+    how many stages and rules are in your documents until somebody reads them. So send them and you
+    get back a written plan and a fixed price within two working days. Still not a call. That read is
+    free and it is yours whether or not you go ahead.</p>
 
     <div class="cta">
         <h2 style="margin-top:0">Send four documents. Get a build plan back.</h2>
-        <p>Whatever you have &mdash; the deck, the spreadsheet, the SOP, the templates. Messy is fine
-        and more useful than tidy. No sign-up, and no call required to start.</p>
+        <p>Whatever you have: the deck, the spreadsheet, the SOP, the templates. Messy is fine and
+        more useful than tidy. No sign-up, and no call at any point.</p>
         <a class="btn" href="mailto:russ@blvkware.dev?subject=Operating%20system%20build%20%E2%80%94%20my%20documents&amp;body=Attaching%20the%20documents%20that%20describe%20how%20we%20work.%20Here%20is%20the%20part%20that%20costs%20us%20the%20most%20time%3A%0A%0A">Email the documents</a>
         <a class="btn-2" href="https://cal.com/blvkware/30min">Or book 30 minutes</a>
     </div>
@@ -514,8 +551,8 @@
 
     <p>To see the diagnosis before the build: <a href="/augur/">AUGUR</a> reads your live website and
     works out which jobs are costing you most. <a href="/scry/">SCRY</a> takes a description of how
-    your business runs and designs the agent for it. <a href="/sigil/">SIGIL</a> is the forge that
-    writes single-file tools from a prompt. All three are free and run in your browser.
+    your business runs and designs the agent for it. <a href="/sigil/">SIGIL</a> writes single-file
+    tools from a description. All three are free and run in your browser.
     <a href="/agents/">The catalog</a> lists every capability and its price;
     <a href="/hire/">the configurator</a> totals them without a call. If you want the argument behind
     all of this: <a href="/what-is-an-ai-agent/">what an agent actually is</a> and
@@ -523,7 +560,7 @@
 
     <footer class="foot">
         <div class="foot-links"><a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/hire/">Hire an agent</a><a href="/ai-agent-pricing/">Pricing</a><a href="/ai-agent-permissions/">Permissions</a><a href="/privacy/">Privacy</a></div>
-        <p style="margin-top:1rem">BlvkWare &mdash; <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> &middot; Mississippi, serving the United States.</p>
+        <p style="margin-top:1rem">BlvkWare &middot; <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> &middot; Mississippi, serving the United States.</p>
     </footer>
 </div>
 
@@ -719,7 +756,7 @@ function run() {
     + '</div>';
 
   for (const h of holds) {
-    html += '<div class="hold"><b>' + esc(h.code) + '</b> &mdash; matched &ldquo;' + esc(h.matched)
+    html += '<div class="hold"><b>' + esc(h.code) + '</b> matched &ldquo;' + esc(h.matched)
          + '&rdquo;. ' + esc(h.reason) + '<br><span style="opacity:.75">Clears with: ' + esc(h.clears) + '</span></div>';
   }
 
@@ -729,12 +766,12 @@ function run() {
   items.forEach((it, i) => {
     html += '<tr><td>' + (i + 1) + '</td>'
       + '<td class="n">' + (it.quantity === null ? '<span class="tag no">?</span>' : it.quantity) + '</td>'
-      + '<td class="n">' + esc(it.part || '—') + '</td>'
-      + '<td>' + esc(it.manufacturer || '—') + '</td>'
-      + '<td>' + esc(it.label || '—') + (it.identified ? ' <span class="tag ok">identified</span>' : ' <span class="tag no">unverified</span>') + '</td>'
+      + '<td class="n">' + esc(it.part || '-') + '</td>'
+      + '<td>' + esc(it.manufacturer || '-') + '</td>'
+      + '<td>' + esc(it.label || '-') + (it.identified ? ' <span class="tag ok">identified</span>' : ' <span class="tag no">unverified</span>') + '</td>'
       + '<td>' + esc(it.condition) + '</td>'
       + '<td><span class="conf"><i style="width:' + Math.round(it.score * 100) + '%"></i></span> ' + it.score.toFixed(2) + '</td>'
-      + '<td>' + (it.missing.length ? esc(it.missing.join(', ')) : '—') + '</td></tr>';
+      + '<td>' + (it.missing.length ? esc(it.missing.join(', ')) : '-') + '</td></tr>';
   });
   html += '</tbody></table></div>';
   out.innerHTML = html;
@@ -761,7 +798,7 @@ const THEMES = {
              v: { '--d-bg': '#F4F6FA', '--d-panel': '#FFFFFF', '--d-line': 'rgba(15,23,42,.10)',
                   '--d-ink': '#0F172A', '--d-mut': '#64748B', '--d-warn': '#DC2626', '--d-ok': '#059669',
                   '--d-radius': '10px' } },
-  foundry: { name: 'Foundry Assets', initial: 'F', accent: '#F59E0B',
+  amber:   { name: 'Vance Metals', initial: 'V', accent: '#F59E0B',
              v: { '--d-bg': '#12100E', '--d-panel': '#1C1916', '--d-line': 'rgba(245,158,11,.16)',
                   '--d-ink': '#F5EFE6', '--d-mut': '#9C8F7E', '--d-warn': '#EF4444', '--d-ok': '#84CC16',
                   '--d-radius': '4px' } },
@@ -780,9 +817,9 @@ const PIPE = [
    only shows what went right is a screensaver. */
 const FEED = [
   ['ok',   'Fee collected', '$8,960 reconciled against the remittance'],
-  ['warn', 'Refused', 'L0047 held — sealed radioactive source in the list', true],
+  ['warn', 'Refused', 'L0047 held, sealed radioactive source in the list', true],
   ['ok',   'Bid round closed', '4 offers, compared after freight and payment terms'],
-  ['warn', 'Refused', 'routing blocked — buyer rule expired 3 days ago', true],
+  ['warn', 'Refused', 'routing blocked, buyer rule expired 3 days ago', true],
   ['mut',  'Evidence requested', '6 lines need nameplate photographs'],
   ['ok',   'Gate cleared', 'L0042 passed ownership, material and economics'],
   ['warn', 'Refused', 'second bid from the same buyer, no correction reason', true],
