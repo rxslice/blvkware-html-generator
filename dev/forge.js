@@ -135,7 +135,16 @@
         "whitelabel": { keys: { surfaces: "array" },
             ask: 'surfaces: every place a customer of theirs will see this agent, as short strings (for example "quote emails", "booking page", "SMS sender name"). Never include BlvkWare in any of them.' },
         "lang.extra": { keys: { languages: "array" },
-            ask: 'languages: the language codes this business actually serves, as short strings such as ["en","es"]. Only languages they told us about.' }
+            ask: 'languages: the language codes this business actually serves, as short strings such as ["en","es"]. Only languages they told us about.' },
+
+        /* Two of the dashboard extensions carry a real decision rather than a
+         * setting: which number this business watches, and which figures it is
+         * willing to show its own customers. Both are answerable from what they
+         * told us, so neither should reach the operator as a question. */
+        "dash.metric": { keys: { name: "string", measure: "string" },
+            ask: 'name: what this business calls the number it watches, in their words. measure: which figure on the board it maps to, one of handled, waiting, held_back, escalated, prepared, sent, recovered.' },
+        "dash.share": { keys: { published: "array" },
+            ask: 'published: the figures they would be willing to show their own customers, as short strings from handled, waiting, held_back, escalated, prepared, sent, recovered. When in doubt publish less; this is a read-only link that leaves the building.' }
     };
 
     function forgeable(capId) { return !!SCHEMA[capId]; }

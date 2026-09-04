@@ -436,6 +436,32 @@ CAPABILITIES = [
        "Ninety minutes, remote, recorded, so your team knows how to work with it and when to overrule it.",
        450, 0,
        accept="Session delivered and the recording handed over."),
+    # ---- Dashboard ------------------------------------------------------
+    # Extensions to `dashboard` above, not alternatives to it. A dashboard is
+    # priced per thing it does, like everything else here, so the total is
+    # arithmetic rather than a quote. The refusal log is the one worth buying
+    # first: "what did it decline, and why" is the question people actually have
+    # about an agent working unsupervised, and almost nobody ships it.
+    _c("dash.refusals", "Control", "Refusal log",
+       "Every action it declined and the rule that stopped it, in the same view as the work it finished. The answer to the question everybody asks about an agent left running.",
+       650, 1, needs=["dashboard"],
+       accept="Every action declined over a replayed week appears with the rule that stopped it and what would clear it."),
+    _c("dash.metric", "Control", "An extra tracked number",
+       "One more measure on the board, defined the way your business defines it rather than the way the software finds convenient.",
+       250, 1, needs=["dashboard"],
+       accept="The figure matches the same number recomputed from the audit log by a second route."),
+    _c("dash.share", "Control", "Client-facing view",
+       "A read-only version your own customers can open, showing only the figures you choose to publish.",
+       650, 1, ops=20, needs=["dashboard"],
+       accept="Nothing outside the published set is reachable from the shared link, including by editing the address."),
+    _c("dash.digest", "Control", "Scheduled digest",
+       "The same picture pushed to an inbox or a channel on your schedule, so nobody has to remember to go and look.",
+       450, 1, ops=15, needs=["dashboard"], integ=["email"],
+       accept="The digest figures match the live board for the same period."),
+    _c("dash.source", "Control", "One more data source",
+       "A second system feeding the same board: the CRM, the accounting package, or the spreadsheet somebody still keeps by hand.",
+       750, 2, ops=25, needs=["dashboard"],
+       accept="Figures reconcile against the source system for a full period."),
     # ---- Orders ---------------------------------------------------------
     # "Where is my order" is the highest-volume support ticket in ecommerce by
     # a wide margin, and returns are the most labour-intensive thing in one.
@@ -723,6 +749,8 @@ AUTONOMY = [
 
 SETUP_NEEDS = {
     "knowledge.pack":   ["their documents, prices and policies"],
+    "dash.source":      ["credentials for the extra source"],
+    "dash.share":       ["who is allowed to see it"],
     "email.triage":     ["a sample of real inbox traffic to calibrate against"],
     "email.draft":      ["examples of how they already write to customers"],
     "email.cleanup":    ["access to the existing backlog"],
