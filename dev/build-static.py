@@ -387,6 +387,10 @@ MARKETING_PAGES = [
     # rather than a single agent - carrying the identifier live in the page so a
     # stranger can test the claim instead of taking it on trust.
     ("recovery-os.html", "recovery-os"),
+    # The buying decision, with both sides sourced. It carries the comparison
+    # queries the definitional and pricing pages cannot, and it is the only
+    # page here whose calculator can conclude against a sale.
+    ("ai-employee.html", "ai-employee"),
 ]
 
 # Every canonical URL on the site, with a crawl priority.
@@ -402,6 +406,7 @@ SITEMAP = [
     ("/ai-agent-permissions/", "0.85", "monthly"),
     ("/how-agents-are-controlled/", "0.85", "monthly"),
     ("/recovery-os/", "0.9", "monthly"),
+    ("/ai-employee/", "0.9", "monthly"),
     ("/quote-follow-up-automation/", "0.8", "monthly"),
     ("/ai-automation-for-plumbers/", "0.8", "monthly"),
     ("/privacy/", "0.3", "yearly"),

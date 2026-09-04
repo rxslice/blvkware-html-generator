@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Employee vs Hiring Someone: Do the Arithmetic First | BlvkWare</title>
+    <meta name="description" content="What an AI employee actually costs against a real hire, using BLS employer-cost data and published agent prices. Includes a calculator that will tell you not to buy one, and corrects the MIT statistic everybody misquotes.">
+    <link rel="canonical" href="https://blvkware.dev/ai-employee/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta property="og:title" content="AI Employee vs Hiring Someone: Do the Arithmetic First">
+    <meta property="og:description" content="The honest sum, with primary sources on both sides, and a calculator that is allowed to tell you the answer is a person.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://blvkware.dev/ai-employee/">
+    <meta property="og:image" content="https://blvkware.dev/assets/og.png">
+    <meta property="og:site_name" content="BlvkWare">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+    <link rel="apple-touch-icon" href="/assets/logo-192.png">
+    <meta name="theme-color" content="#0A0908">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "AI employee vs hiring someone: do the arithmetic first",
+      "description": "What an AI employee costs against a real hire, using Bureau of Labor Statistics employer-cost data and published agent prices, with a calculator that is allowed to recommend against buying.",
+      "author": { "@type": "Organization", "name": "BlvkWare", "url": "https://blvkware.dev/" },
+      "publisher": {
+        "@type": "Organization", "name": "BlvkWare",
+        "logo": { "@type": "ImageObject", "url": "https://blvkware.dev/assets/logo-512.png" }
+      },
+      "mainEntityOfPage": "https://blvkware.dev/ai-employee/",
+      "image": "https://blvkware.dev/assets/og.png",
+      "inLanguage": "en"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is an AI employee?",
+          "acceptedAnswer": { "@type": "Answer", "text": "It is a marketing term for an AI agent scoped to one job: software that is given a job rather than a set of instructions, reads what actually arrived, decides the next step, operates the business software you already run, and escalates what it should not decide alone. Nobody is employed. There is no contract of employment, no notice period and no employment law, which cuts both ways." }
+        },
+        {
+          "@type": "Question",
+          "name": "How much does an AI employee cost compared to hiring a person?",
+          "acceptedAnswer": { "@type": "Answer", "text": "A US private-industry employee costs roughly 1.43 times their salary once benefits are included, because Bureau of Labor Statistics data for March 2026 puts wages at 69.9 percent of total employer cost. A scoped agent is commonly a build fee plus a monthly operations fee, for example 3,500 dollars to build plus 349 dollars a month. The comparison only means something once you multiply by the share of the job the agent actually handles, which is never 100 percent." }
+        },
+        {
+          "@type": "Question",
+          "name": "Is it true that only 23 percent of jobs can be automated economically?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No, and the figure is routinely misquoted. The 2024 MIT study found that about 23 percent of wages paid for tasks that can be done with computer vision were economically viable to automate with computer vision at then-current costs. It was about vision tasks, not all jobs, and not about language-model agents at all. The transferable finding is that technically possible and economically sensible are different questions." }
+        },
+        {
+          "@type": "Question",
+          "name": "When should a small business not buy an AI agent?",
+          "acceptedAnswer": { "@type": "Answer", "text": "When the work is low volume, when every case needs judgment, when the process is not written down anywhere, when nobody follows the process today, or when the payback period runs past a year. In those cases the honest answer is to hire a person, fix the process first, or buy nothing." }
+        }
+      ]
+    }
+  ]
+}
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Fira+Code:wght@500&display=swap');
+        :root {
+            --bg: #0A0908; --surface: #17140F; --accent: #D4F24A; --brass: #D9B65C; --warm: #E8734A;
+            --ink: #F5F0E6; --ink-2: #A89D8B; --line: rgba(245,240,230,0.1); --ok: #9BD154;
+            --font: 'Manrope', system-ui, -apple-system, sans-serif;
+            --mono: 'Fira Code', ui-monospace, monospace;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.7; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+        .wrap { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+        .top { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 3.5rem; text-decoration: none; color: inherit; }
+        .mark { width: 52px; height: 52px; border-radius: 14px; background: #060504; overflow: hidden; flex: none; }
+        .mark img { width: 100%; height: 100%; display: block; }
+        .wordmark { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; }
+        .wordmark span { color: var(--accent); }
+        .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--brass); margin-bottom: 1rem; }
+        h1 { font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 1rem; line-height: 1.12; }
+        .lede { font-size: 1.15rem; color: var(--ink-2); margin-bottom: 2.5rem; padding-bottom: 2.5rem; border-bottom: 1px solid var(--line); }
+        h2 { font-size: 1.5rem; font-weight: 700; margin: 3rem 0 1rem; letter-spacing: -0.01em; }
+        h3 { font-size: 1.05rem; font-weight: 700; margin: 1.75rem 0 0.6rem; color: var(--brass); }
+        p { color: var(--ink-2); margin-bottom: 1.1rem; }
+        ul, ol { margin: 0 0 1.1rem 1.2rem; color: var(--ink-2); }
+        li { margin-bottom: 0.6rem; }
+        strong { color: var(--ink); font-weight: 700; }
+        em { color: var(--ink); font-style: italic; }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        code { font-family: var(--mono); font-size: 0.87em; background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; color: var(--brass); }
+        .box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem; margin: 1.75rem 0; }
+        .box p:last-child { margin-bottom: 0; }
+        .box.warn { border-color: rgba(232,115,74,.3); background: rgba(232,115,74,.06); }
+        .box.key { border-left: 3px solid var(--accent); }
+        .tw { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1.5rem 0; }
+        .tw table { margin: 0; min-width: 30rem; }
+        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
+        th, td { text-align: left; padding: 0.7rem 0.6rem; border-bottom: 1px solid var(--line); color: var(--ink-2); vertical-align: top; }
+        th { color: var(--brass); font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500; white-space: nowrap; }
+        td strong { color: var(--ink); }
+        td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+        /* The calculator. It is the reason to link to this page, so it has to be
+           able to reach a conclusion the seller does not want, or it is an
+           advert with input fields. */
+        .calc { background: #060504; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; margin: 1.75rem 0; }
+        .calc-bar { display: flex; align-items: center; gap: 0.7rem; padding: 0.7rem 1.1rem; border-bottom: 1px solid var(--line); background: var(--surface); }
+        .calc-bar .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--brass); }
+        .calc-bar .ttl { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--brass); }
+        .calc-body { padding: 1.2rem; }
+        .fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(168px, 1fr)); gap: 0.9rem; }
+        .field label { display: block; font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 0.3rem; }
+        .field input, .field select { width: 100%; background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 0.55rem 0.7rem; font: inherit; font-size: 0.95rem; }
+        .field input:focus, .field select:focus { outline: none; border-color: var(--brass); }
+        .field .hint { font-size: 0.7rem; color: var(--ink-2); opacity: .75; margin-top: 0.25rem; }
+        .verdict { margin-top: 1.2rem; border-radius: 12px; padding: 1.1rem 1.2rem; border: 1px solid var(--line); background: var(--surface); }
+        .verdict.buy { border-color: rgba(155,209,84,.4); background: rgba(155,209,84,.07); }
+        .verdict.no { border-color: rgba(232,115,74,.4); background: rgba(232,115,74,.07); }
+        .verdict .v { font-size: 1.12rem; font-weight: 800; color: var(--ink); margin-bottom: 0.35rem; }
+        .verdict.buy .v { color: var(--ok); }
+        .verdict.no .v { color: var(--warm); }
+        .verdict p { margin: 0; font-size: 0.92rem; }
+        .sums { list-style: none; margin: 0.9rem 0 0; padding: 0.9rem 0 0; border-top: 1px solid var(--line); }
+        .sums li { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.85rem; color: var(--ink-2); margin-bottom: 0.4rem; font-variant-numeric: tabular-nums; }
+        .sums li b { color: var(--ink); }
+        .sums li.total { border-top: 1px solid var(--line); padding-top: 0.5rem; margin-top: 0.55rem; }
+
+        .cta { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 2rem; margin: 3rem 0 0; }
+        .btn { display: inline-block; background: var(--accent); color: #14170A; font-weight: 700; padding: 0.85rem 1.5rem; border-radius: 10px; margin-top: 0.5rem; }
+        .btn:hover { text-decoration: none; opacity: 0.92; }
+        .btn-2 { display: inline-block; color: var(--ink-2); font-weight: 600; padding: 0.85rem 1.2rem; border: 1px solid var(--line); border-radius: 10px; margin: 0.5rem 0 0 0.4rem; }
+        .btn-2:hover { color: var(--ink); text-decoration: none; }
+        .foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--ink-2); }
+        .foot-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+        .foot a { margin-right: 0; }
+        .src { font-size: 0.82rem; color: var(--ink-2); }
+        .src li { margin-bottom: 0.45rem; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <a class="top" href="/">
+        <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
+        <span class="wordmark">BlvkWare<span>.</span></span>
+    </a>
+
+    <div class="eyebrow">The arithmetic</div>
+    <h1>AI employee vs hiring someone</h1>
+
+    <p class="lede">Every page about this is written by somebody selling one. We sell them too, so
+    here is the sum with both sides sourced: what a person actually costs according to the Bureau of
+    Labor Statistics, what an agent actually costs at published prices, and a calculator that is
+    allowed to tell you not to buy. It does, quite often.</p>
+
+    <div class="box key">
+        <p><strong>The short answer.</strong> A US private-industry employee costs about
+        <strong>1.43 times their salary</strong> once benefits are counted. A scoped agent is
+        typically a build fee plus a monthly fee, in our case <strong>$3,500 plus $349 a month</strong>.
+        The agent wins when the work is high volume, rule-shaped and already written down. The person
+        wins when volume is low, judgment is constant, or nobody has ever written the process down.
+        Most jobs are a mix, which is why the useful question is never "person or agent" but
+        <strong>"which hours of this job"</strong>.</p>
+    </div>
+
+    <h2>What is an AI employee?</h2>
+
+    <p>It is a marketing term, not a category of software. What is being sold is an
+    <a href="/what-is-an-ai-agent/">AI agent</a> scoped to one job: software given a job rather than a
+    list of instructions, which reads what actually arrived, works out the next step, operates the
+    business software you already run, and escalates what it should not decide alone.</p>
+
+    <p>Nobody is employed. There is no contract of employment, no notice period, no employment law
+    and no unfair dismissal. That cuts both ways, and it is worth being clear about which way in each
+    direction:</p>
+
+    <div class="tw"><table>
+        <thead><tr><th></th><th>A person</th><th>An agent</th></tr></thead>
+        <tbody>
+        <tr><td><strong>Cost shape</strong></td><td>Salary plus roughly 43% on top</td><td>One build fee, then a flat monthly fee</td></tr>
+        <tr><td><strong>Ramp</strong></td><td>Weeks to months</td><td>Days to weeks, then it is either right or it is not</td></tr>
+        <tr><td><strong>Hours</strong></td><td>About 2,000 a year, minus leave and sickness</td><td>Every hour, including the ones nobody wants</td></tr>
+        <tr><td><strong>Unusual cases</strong></td><td>Handles them, often without being asked</td><td>Should escalate them, and must be built to</td></tr>
+        <tr><td><strong>Getting it wrong</strong></td><td>Notices, and tells you</td><td>Repeats the mistake at volume until somebody looks</td></tr>
+        <tr><td><strong>Leaving</strong></td><td>Takes the knowledge with them</td><td>The configuration is the knowledge, and it stays</td></tr>
+        <tr><td><strong>Scaling up</strong></td><td>Another salary</td><td>Usually the same monthly fee</td></tr>
+        </tbody>
+    </table></div>
+
+    <h2>What a person actually costs</h2>
+
+    <p>Not their salary. The Bureau of Labor Statistics measures this directly, and for March 2026 in
+    private industry it puts <strong>wages and salaries at 69.9% of total employer cost</strong>, with
+    benefits making up the other 30.1%. Divide by 0.699 and you get the real number.</p>
+
+    <div class="tw"><table>
+        <thead><tr><th>Salary</th><th class="num">True employer cost</th><th class="num">Per working hour</th></tr></thead>
+        <tbody>
+        <tr><td>$38,000</td><td class="num">$54,400</td><td class="num">$27</td></tr>
+        <tr><td>$45,000</td><td class="num">$64,400</td><td class="num">$32</td></tr>
+        <tr><td>$55,000</td><td class="num">$78,700</td><td class="num">$39</td></tr>
+        <tr><td>$70,000</td><td class="num">$100,100</td><td class="num">$50</td></tr>
+        </tbody>
+    </table></div>
+
+    <p>Hourly figures assume about 2,000 paid hours a year. They are still understated, because they
+    exclude recruitment, the manager's time, the desk, the software seat and the months of reduced
+    output while somebody learns the job.</p>
+
+    <h2>Do the sum for your own case</h2>
+
+    <p>The number that decides this is not the salary. It is <strong>the share of the job an agent
+    genuinely takes</strong>. Every vendor calculator quietly assumes 100%. None of them hit it.
+    Sixty to eighty per cent is a realistic band for well-defined work, and the remainder does not
+    disappear: it becomes exceptions somebody still has to handle.</p>
+</div>
+
+<div class="wrap" style="padding-top:0;padding-bottom:0">
+    <div class="calc">
+        <div class="calc-bar"><span class="dot"></span><span class="ttl">Should you buy one</span></div>
+        <div class="calc-body">
+            <div class="fields">
+                <div class="field">
+                    <label for="salary">Salary of whoever does this</label>
+                    <input type="number" id="salary" value="45000" min="0" step="1000">
+                    <div class="hint">Their salary, not the loaded cost</div>
+                </div>
+                <div class="field">
+                    <label for="hours">Hours a week on this task</label>
+                    <input type="number" id="hours" value="12" min="0" max="40" step="1">
+                </div>
+                <div class="field">
+                    <label for="share">Share the agent handles</label>
+                    <select id="share">
+                        <option value="0.5">Half of it</option>
+                        <option value="0.7" selected>About 70%</option>
+                        <option value="0.85">Most of it, 85%</option>
+                        <option value="1">All of it</option>
+                    </select>
+                    <div class="hint">100% is the vendor assumption. It is rarely true.</div>
+                </div>
+                <div class="field">
+                    <label for="nature">The work is mostly</label>
+                    <select id="nature">
+                        <option value="rule">The same shape every time</option>
+                        <option value="mixed" selected>Mixed, with regular exceptions</option>
+                        <option value="judgment">A judgment call each time</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="written">Is the process written down?</label>
+                    <select id="written">
+                        <option value="yes">Yes, and people follow it</option>
+                        <option value="partly" selected>Partly, or it is out of date</option>
+                        <option value="no">No, it lives in someone's head</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="build">Build fee</label>
+                    <input type="number" id="build" value="3500" min="0" step="250">
+                    <div class="hint">Monthly fee assumed at $349</div>
+                </div>
+            </div>
+            <div class="verdict" id="verdict"></div>
+            <ul class="sums" id="sums"></ul>
+        </div>
+    </div>
+</div>
+
+<div class="wrap" style="padding-top:0">
+    <p class="src">Nothing is sent anywhere and nothing is stored. The arithmetic is in the page, and
+    you can read it by viewing source.</p>
+
+    <h2>The statistic everybody misquotes</h2>
+
+    <p>You will read, on page after page, that <em>"MIT found only 23% of jobs are economically
+    viable to automate"</em>. It is repeated by vendors on both sides of the argument, and it is not
+    what the study says.</p>
+
+    <div class="box warn">
+        <p><strong>What the 2024 MIT study actually found.</strong> It examined tasks that could be
+        done with <strong>computer vision</strong>, and concluded that about 23% of the
+        <em>wages paid for those vision tasks</em> would be economically viable to automate with
+        computer vision at then-current costs. It was not a finding about all jobs, and it was not
+        about language-model agents, which barely feature in it.</p>
+        <p>The transferable point is the one worth keeping, and it is genuinely important:
+        <strong>technically possible and economically sensible are different questions</strong>, and
+        the gap between them is mostly the cost of building and running the thing. That is exactly
+        the gap this page is asking you to measure.</p>
+    </div>
+
+    <p>We are pointing this out against our own interest in one direction and for it in another,
+    which is roughly the definition of a fact worth citing. If you quote the figure, quote it as what
+    it is: vision tasks, 2024 costs, wages rather than roles.</p>
+
+    <h2>When the answer is a person</h2>
+
+    <p>These are the cases where we tell people not to buy, and we would rather say it here than on a
+    call in six weeks:</p>
+
+    <ul>
+        <li><strong>Low volume.</strong> If the task happens a few times a week, the build fee will
+        never amortise. Ten minutes of somebody's day is not a business case.</li>
+        <li><strong>Judgment every time.</strong> If no two cases are alike, there is no rule to
+        encode and you are buying a very expensive way to generate exceptions.</li>
+        <li><strong>The process is not written down.</strong> Software cannot enforce a process
+        nobody has articulated. Write it down first. That exercise alone often fixes the problem, and
+        it costs nothing.</li>
+        <li><strong>Nobody follows the process today.</strong> A system that enforces an ignored
+        process does not create compliance, it creates resentment and a workaround.</li>
+        <li><strong>The documents contradict each other.</strong> Software makes disagreement
+        permanent rather than resolving it. Settle it first.</li>
+    </ul>
+
+    <h2>When the answer is an agent</h2>
+
+    <ul>
+        <li><strong>Volume with a shape.</strong> The same kind of thing arriving many times a week,
+        where the right response follows from what arrived.</li>
+        <li><strong>Hours nobody wants.</strong> Evenings, weekends and the first hour of the morning,
+        where the cost of a slow reply is a lost job rather than an inconvenience.</li>
+        <li><strong>Work that is already documented.</strong> If you have an SOP, a template set or a
+        script, most of the build is done and you are paying somebody to encode it.</li>
+        <li><strong>A queue that is quietly costing you.</strong> Quotes that were never chased,
+        invoices nobody followed up, enquiries answered two days late.</li>
+    </ul>
+
+    <h2>What to check before you buy one, from anybody</h2>
+
+    <p>Six questions. Any vendor who cannot answer them plainly is selling you a demo:</p>
+
+    <ol>
+        <li><strong>What exactly does it own, and what does it escalate?</strong> A defined job
+        description, not "handles your email".</li>
+        <li><strong>What is it allowed to do without asking?</strong> Read, draft, or send. Those are
+        three very different purchases. Ours are set per action and are covered in
+        <a href="/ai-agent-permissions/">permissions</a>.</li>
+        <li><strong>How do I see what it did, and what it refused to do?</strong> If the answer is a
+        log file, that is not an answer. See <a href="/how-agents-are-controlled/">how one is kept
+        under control</a>.</li>
+        <li><strong>How do I stop it?</strong> There should be an off switch a non-technical person
+        can reach in seconds.</li>
+        <li><strong>What is the acceptance test?</strong> The specific, checkable thing that proves it
+        works before you pay for it working.</li>
+        <li><strong>What is the total first-year cost?</strong> Build, monthly, and anything metered.
+        Ours is <a href="/ai-agent-pricing/">printed</a> and totalled at
+        <a href="/hire/">the configurator</a> before you decide.</li>
+    </ol>
+
+    <h2>How we price it, since we are asking you to compare</h2>
+
+    <p>It would be poor form to publish a cost comparison and hide our own half of it. An agent is a
+    build fee plus a flat monthly operations fee, and every capability is listed with its own price so
+    the total is arithmetic rather than a quote. A <a href="/recovery-os/">dashboard</a> to watch it
+    is priced the same way, per thing it does.</p>
+
+    <p>There is no discovery call and no proposal. You describe the job, the price is on the page, you
+    pay, and you receive it built. If you would rather see the diagnosis first,
+    <a href="/augur/">AUGUR</a> reads your public website and works out which jobs are costing you
+    most, and <a href="/scry/">SCRY</a> designs the agent for a business you describe. Both are free
+    and neither asks for an account.</p>
+
+    <div class="cta">
+        <h2 style="margin-top:0">Find out which job is costing you most</h2>
+        <p>Free, about a minute, no sign-up. If the arithmetic says no, it says no, and that costs us
+        nothing to tell you.</p>
+        <a class="btn" href="/augur/">Read my business, free</a>
+        <a class="btn-2" href="/hire/">Or price one yourself</a>
+    </div>
+
+    <h2>Sources</h2>
+    <ul class="src">
+        <li><a href="https://www.bls.gov/news.release/ecec.nr0.htm" rel="nofollow">US Bureau of Labor
+        Statistics, Employer Costs for Employee Compensation, March 2026</a>. Private industry:
+        wages and salaries 69.9% of total compensation cost, benefits 30.1%.</li>
+        <li><a href="https://ide.mit.edu/wp-content/uploads/2024/01/Beyond-AI-Exposure-Which-Tasks-are-Cost-Effective-to-Automate-with-Computer-Vision.pdf" rel="nofollow">Beyond
+        AI Exposure: Which Tasks are Cost-Effective to Automate with Computer Vision</a>, MIT, January
+        2024. The source of the widely misquoted 23% figure.</li>
+        <li><a href="https://www.csail.mit.edu/news/rethinking-ais-impact-mit-csail-study-reveals-economic-limits-job-automation" rel="nofollow">MIT
+        CSAIL summary of the same study</a>, which states the vision-task scope plainly.</li>
+    </ul>
+
+    <p class="src">Prices on this page are BlvkWare's published prices at the time of writing.
+    Salary figures are illustrative. This is a commercial comparison written by a vendor, which is
+    why both sides are sourced and the calculator is allowed to reach a conclusion we do not profit
+    from.</p>
+
+    <footer class="foot">
+        <div class="foot-links"><a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/hire/">Hire an agent</a><a href="/ai-agent-pricing/">Pricing</a><a href="/what-is-an-ai-agent/">What is an agent</a><a href="/ai-agent-permissions/">Permissions</a><a href="/privacy/">Privacy</a></div>
+        <p style="margin-top:1rem">BlvkWare &middot; <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> &middot; Mississippi, serving the United States.</p>
+    </footer>
+</div>
+
+<script>
+/* The comparison. Two rules keep it honest: the BLS multiplier is a real
+   published figure rather than a guess, and the verdict is allowed to say no.
+   A calculator that always recommends buying is an advert with input fields. */
+(function () {
+    "use strict";
+    var WAGE_SHARE = 0.699;      // BLS, private industry, March 2026
+    var MONTHLY = 349;
+    var HOURS_YEAR = 2000;
+
+    var $ = function (id) { return document.getElementById(id); };
+    var money = function (n) {
+        return "$" + Math.round(n).toLocaleString("en-US");
+    };
+
+    function calc() {
+        var salary = Math.max(0, +$("salary").value || 0);
+        var hours = Math.max(0, Math.min(40, +$("hours").value || 0));
+        var share = +$("share").value;
+        var nature = $("nature").value;
+        var written = $("written").value;
+        var build = Math.max(0, +$("build").value || 0);
+
+        var loaded = salary / WAGE_SHARE;
+        var taskCost = loaded * (hours / 40);
+        var recovered = taskCost * share;
+        var yearOne = build + MONTHLY * 12;
+        var yearTwo = MONTHLY * 12;
+        var netYearOne = recovered - yearOne;
+        var payback = recovered > 0 ? (yearOne / (recovered / 12)) : Infinity;
+
+        $("sums").innerHTML = [
+            ["Loaded cost of that person", money(loaded) + " a year"],
+            ["The share spent on this task", money(taskCost) + " a year"],
+            ["Value the agent could recover", money(recovered) + " a year"],
+            ["Agent, first year", money(yearOne)],
+            ["Agent, every year after", money(yearTwo)]
+        ].map(function (r) {
+            return "<li><span>" + r[0] + "</span><b>" + r[1] + "</b></li>";
+        }).join("") +
+        '<li class="total"><span>First-year difference</span><b>' +
+        (netYearOne >= 0 ? money(netYearOne) + " in your favour"
+                         : money(-netYearOne) + " against you") + "</b></li>";
+
+        // Money is necessary but not sufficient. A process nobody wrote down
+        // cannot be enforced by software, however good the arithmetic looks.
+        var v = $("verdict"), cls, head, body;
+
+        if (written === "no") {
+            cls = "no"; head = "Write the process down first";
+            body = "The sum may well work, but a system cannot enforce a process that only " +
+                   "exists in somebody's head. Writing it down costs nothing, takes an " +
+                   "afternoon, and often fixes enough of the problem that you no longer need " +
+                   "to buy anything. Come back with the document.";
+        } else if (nature === "judgment") {
+            cls = "no"; head = "This one wants a person";
+            body = "If the work is a judgment call every time, there is no rule to encode. " +
+                   "You would be buying an expensive way to generate exceptions that somebody " +
+                   "still has to handle. Hire, or leave it alone.";
+        } else if (hours < 4) {
+            cls = "no"; head = "Too little of it to be worth automating";
+            body = "At " + hours + " hour" + (hours === 1 ? "" : "s") + " a week the build fee " +
+                   "will not amortise in any sensible period. Wait until the volume is real.";
+        } else if (payback > 18) {
+            cls = "no"; head = "The payback is too long";
+            body = "On these numbers it takes about " + Math.round(payback) + " months to get " +
+                   "the build fee back. Anything past a year and a half is a bet on nothing " +
+                   "changing, and something always changes.";
+        } else if (payback > 12) {
+            cls = ""; head = "Marginal, and worth waiting on";
+            body = "About " + Math.round(payback) + " months to pay back. That is not a bad " +
+                   "deal, but it is not an obvious one either. If the volume is growing, revisit " +
+                   "in a quarter and it will be.";
+        } else {
+            cls = "buy"; head = "The arithmetic works";
+            body = "About " + Math.round(payback) + " months to pay back the build, then " +
+                   money(recovered - yearTwo) + " a year in your favour. " +
+                   (nature === "mixed"
+                     ? "Budget for the exceptions: a person still handles the cases that do not fit."
+                     : "Well-shaped work is where this actually pays.");
+        }
+
+        if (written === "partly" && cls === "buy") {
+            body += " Your process is only partly written down, so expect the first week to be " +
+                    "spent settling what the rules actually are.";
+        }
+
+        v.className = "verdict " + cls;
+        v.innerHTML = '<div class="v">' + head + "</div><p>" + body + "</p>";
+    }
+
+    ["salary", "hours", "share", "nature", "written", "build"].forEach(function (id) {
+        $(id).addEventListener("input", calc);
+        $(id).addEventListener("change", calc);
+    });
+    calc();
+})();
+</script>
+</body>
+</html>
