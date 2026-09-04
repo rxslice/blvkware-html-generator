@@ -1033,6 +1033,22 @@ def main():
         print("ABORTED: tier thresholds are wrong - see above")
         return 1
 
+    # The browser writes a configuration and agentcore consumes it, from two
+    # separate repos. Drift between them is invisible in a diff and shows up as
+    # an order arriving as manual work, or as configuration silently discarded
+    # at load. Warn rather than abort: agentcore is private, and a copy of this
+    # repo without it must still be able to publish the site.
+    try:
+        import importlib.util
+        _spec = importlib.util.spec_from_file_location(
+            "forge_coverage", os.path.join(os.path.dirname(__file__), "check-forge-coverage.py"))
+        _mod = importlib.util.module_from_spec(_spec)
+        _spec.loader.exec_module(_mod)
+        if _mod.main() != 0:
+            print("WARNING: the builder and agentcore have drifted - see above")
+    except Exception as e:                       # never let a check break a build
+        print("note: forge coverage check skipped (%s)" % e)
+
     # The logo assets are a build input, not a build product — regenerate them
     # with dev/embed-logo.py whenever the master changes.
     missing = [n for n in ("favicon-48.png", "logo-192.png", "og.png")

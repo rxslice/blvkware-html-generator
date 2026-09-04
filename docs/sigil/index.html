@@ -2565,7 +2565,22 @@ catch (e) { window.BLVK_CATALOG = null; }
         "renewal.watch": { keys: { warn_days: "number", noun: "string" },
             ask: "warn_days: how far ahead to raise a renewal. noun: what they call these (contract, retainer, subscription)." },
         "cert.expiry": { keys: { warn_days: "number", noun: "string" },
-            ask: "warn_days: how far ahead to warn. noun: what they call these (certificate, licence, ticket, insurance)." }
+            ask: "warn_days: how far ahead to warn. noun: what they call these (certificate, licence, ticket, insurance)." },
+
+        /* These five were falling to the operator for no reason: agentcore
+         * already knows how to tailor them, because their template's fields are
+         * read by the runtime. The key names below are agentcore's own, so what
+         * gets written is what gets consumed. */
+        "crm.logging": { keys: { required: "array" },
+            ask: 'required: the fields an interaction record must carry to be worth having here, as short strings. Their fields, not every field the CRM offers.' },
+        "browser.extract": { keys: { fields: "array" },
+            ask: 'fields: the fields that must be present for an extraction to count as valid, as short strings. These are a tripwire: if the portal layout changes and one goes missing, extraction stops rather than returning a wrong answer.' },
+        "browser.operate": { keys: { fields: "array" },
+            ask: 'fields: the fields that must be present for the operation to be considered done, as short strings. Do not invent the steps of a portal nobody has seen; name only what a finished result must contain.' },
+        "whitelabel": { keys: { surfaces: "array" },
+            ask: 'surfaces: every place a customer of theirs will see this agent, as short strings (for example "quote emails", "booking page", "SMS sender name"). Never include BlvkWare in any of them.' },
+        "lang.extra": { keys: { languages: "array" },
+            ask: 'languages: the language codes this business actually serves, as short strings such as ["en","es"]. Only languages they told us about.' }
     };
 
     function forgeable(capId) { return !!SCHEMA[capId]; }
@@ -2706,11 +2721,27 @@ catch (e) { window.BLVK_CATALOG = null; }
         // A capability whose setup need is now supplied by forged config counts
         // as standing. Anything needing a credential, a real sample or a human
         // decision never does, whatever the model produced.
-        var CREDENTIAL = /credential|account|registration|verification|phone number|domain|API documentation/i;
+        // A credential is only one of the things a model cannot supply. Real
+        // data, access to a live system, a human being and the customer's own
+        // existing material are equally unforgeable, and a capability whose
+        // acceptance test needs one of them is not standing however good the
+        // configuration is. email.triage is the case that exposed this: it is
+        // configured from invented example messages, but its acceptance test
+        // needs fifty of the owner's real ones, so it cannot pass yet.
+        var UNFORGEABLE = new RegExp([
+            "credential", "account", "registration", "verification",
+            "phone number", "domain", "API documentation",   // secrets and identifiers
+            "real inbox", "real transaction", "a month of", "backlog",
+            "sample of real",                                // data that has to exist
+            "read connection", "access to", "walkthrough",   // access to a live system
+            "native reviewer", "reviewer",                   // a person
+            "documentation", "help centre", "brand assets", "price list"
+        ].join("|"), "i");
+
         var stood = [], remaining = [];
         after.manual.forEach(function (c) {
             var supplied = !!config[c.id];
-            var blocked = (c.needs || []).some(function (n) { return CREDENTIAL.test(n); });
+            var blocked = (c.needs || []).some(function (n) { return UNFORGEABLE.test(n); });
             if (supplied && !blocked) stood.push(c); else remaining.push(c);
         });
 
