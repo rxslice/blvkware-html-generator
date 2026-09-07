@@ -726,8 +726,13 @@ def redirect_page(slug):
 
     The query string is carried across so Agent Designer's `?prompt=` hand-off still lands
     if anything is holding the old URL.
+
+    The destination is named rather than hard-coded. This was written for one
+    rename and then reused for four, at which point every old URL was telling
+    the visitor it had become the App Builder.
     """
     url = "/%s/" % slug
+    name = next((t["name"] for t in TOOLS if t["slug"] == slug), slug)
     close_script = "<" + "/script>"
     return (
         "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n"
@@ -735,12 +740,13 @@ def redirect_page(slug):
         "<meta http-equiv=\"refresh\" content=\"0; url=" + url + "\">\n"
         "<link rel=\"canonical\" href=\"https://" + CUSTOM_DOMAIN + url + "\">\n"
         "<meta name=\"robots\" content=\"noindex\">\n"
-        "<title>Moved to App Builder</title>\n"
+        "<title>Moved to " + name + "</title>\n"
         "<script>location.replace('" + url + "' + location.search + location.hash);"
         + close_script + "\n"
         "</head>\n<body style=\"background:#0a0908;color:#a89d8b;font:15px/1.6 system-ui,sans-serif;"
         "display:grid;place-items:center;height:100vh;margin:0\">\n"
-        "<p>The HTML generator is now <a href=\"" + url + "\" style=\"color:#d4f24a\">App Builder</a>.</p>\n"
+        "<p>This is now <a href=\"" + url + "\" style=\"color:#d4f24a\">" + name
+        + "</a>.</p>\n"
         "</body>\n</html>\n"
     )
 
