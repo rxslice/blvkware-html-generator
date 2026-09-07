@@ -740,7 +740,7 @@ AUTONOMY = [
 # --------------------------------------------------------------------------
 # What a capability needs from the customer before it can run for real.
 #
-# This is what separates "the forge built it" from "it is ready". Anything
+# This is what separates "the builder configured it" from "it is ready". Anything
 # listed here that a design cannot supply becomes operator work, and saying so
 # up front is what stops "live in 10 business days" from being a guess. It lives
 # in the catalog rather than in the tools so the buyer-facing readiness estimate

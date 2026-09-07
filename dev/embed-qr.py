@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Embed a PayPal donation QR into app.html as a data URI.
+Embed a PayPal donation QR into builder.html as a data URI.
 
     1. Save your PayPal QR image to  assets/paypal-qr.png
     2. python dev/embed-qr.py [--paypal https://paypal.me/yourhandle]
@@ -21,11 +21,11 @@ import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-APP = os.path.join(ROOT, "app.html")
+APP = os.path.join(ROOT, "builder.html")
 DEFAULT_QR = os.path.join(ROOT, "assets", "paypal-qr.png")
 
 # A QR only needs to be crisp, not large; 512px is plenty for a 178px panel on
-# a 2x display. Anything bigger just inflates app.html.
+# a 2x display. Anything bigger just inflates builder.html.
 MAX_PX = 512
 
 
@@ -59,7 +59,7 @@ def optimise(raw, path):
 
 
 def main():
-    ap = argparse.ArgumentParser(description="Embed a donation QR into app.html.")
+    ap = argparse.ArgumentParser(description="Embed a donation QR into builder.html.")
     ap.add_argument("--image", default=DEFAULT_QR, help="path to the QR image")
     ap.add_argument("--paypal", help="donation URL, e.g. https://paypal.me/yourhandle")
     args = ap.parse_args()
@@ -79,7 +79,7 @@ def main():
 
     new, n = re.subn(r"(qr:\s*)'[^']*'", lambda m: m.group(1) + "'" + uri + "'", src, count=1)
     if not n:
-        print("ERROR: could not find the `qr:` field in app.html.")
+        print("ERROR: could not find the `qr:` field in builder.html.")
         return 1
 
     if args.paypal:

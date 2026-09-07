@@ -54,7 +54,7 @@ today. The page never offers a payment it cannot take.
 Use a test key (`sk_test_...`) and card `4242 4242 4242 4242`, any future
 expiry, any CVC. Walk the whole path: configure at `/hire/`, pay, land back on
 `/hire/?paid=1&ref=…`, and check the specification comes back and "Open it in
-the Forge" carries it into SIGIL.
+the build" carries it into App Builder.
 
 Then try to break it: edit `commercial.build` in devtools before paying. The
 function must answer **409** and charge nothing.

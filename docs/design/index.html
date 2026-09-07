@@ -1,0 +1,2169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agent Designer: Your Agent, Designed and Priced | BlvkWare</title>
+<meta name="description" content="Describe how your business actually operates. It works out which AI agent is worth hiring first, exactly what it needs to be able to do, which of your systems it has to operate, and what that costs, on the page, in about a minute. Free, no sign-up.">
+<meta property="og:title" content="Agent Designer: Your Agent, Designed and Priced | BlvkWare">
+<meta property="og:description" content="Describe how your business actually operates. It works out which AI agent is worth hiring first, exactly what it needs to be able to do, which of your systems it has to operate, and what that costs, on the page, in about a minute. Free, no sign-up.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://blvkware.dev/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:url" content="https://blvkware.dev/design/">
+<meta property="og:site_name" content="BlvkWare">
+<link rel="canonical" href="https://blvkware.dev/design/">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "@id": "https://blvkware.dev/design/#app",
+  "name": "Agent Designer",
+  "alternateName": "BlvkWare Agent Designer",
+  "url": "https://blvkware.dev/design/",
+  "description": "Describe how your business actually operates. It works out which AI agent is worth hiring first, exactly what it needs to be able to do, which of your systems it has to operate, and what that costs, on the page, in about a minute. Free, no sign-up.",
+  "applicationCategory": "BusinessApplication",
+  "applicationSubCategory": "AI agent design and pricing",
+  "operatingSystem": "Any (runs in a web browser)",
+  "browserRequirements": "Requires JavaScript.",
+  "featureList": [
+    "Works out which agent is worth hiring first",
+    "Designs exactly what it has to be able to do",
+    "Shows what is ready on day one and what needs you",
+    "Prices it from the published catalog, then hands it to checkout"
+  ],
+  "image": "https://blvkware.dev/assets/og.png",
+  "isAccessibleForFree": true,
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "publisher": {
+    "@id": "https://blvkware.dev/#org"
+  },
+  "isPartOf": {
+    "@id": "https://blvkware.dev/#website"
+  }
+}
+</script>
+<link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+<link rel="apple-touch-icon" href="/assets/logo-192.png">
+<script>
+(function () {
+  var LS_P = "blvkware.byok.provider", LS_K = "blvkware.byok.key";
+
+  var PROVIDERS = {
+    gemini: {
+      label: "Google AI Studio (Gemini)",
+      url: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+      model: "gemini-3.5-flash",
+      max: 32000,
+      get: "https://aistudio.google.com/apikey",
+      hint: "starts with AIza"
+    },
+    openrouter: {
+      label: "OpenRouter",
+      url: "https://openrouter.ai/api/v1/chat/completions",
+      model: "nvidia/nemotron-3-super-120b-a12b:free",
+      max: 32000,
+      get: "https://openrouter.ai/keys",
+      hint: "starts with sk-or-"
+    },
+    groq: {
+      label: "Groq",
+      url: "https://api.groq.com/openai/v1/chat/completions",
+      model: "llama-3.3-70b-versatile",
+      max: 8000,
+      get: "https://console.groq.com/keys",
+      hint: "starts with gsk_"
+    }
+  };
+
+  var SYSTEM = "You are a world-class front-end engineer and product designer. " +
+    "You output complete, self-contained, single-file HTML documents and nothing else.";
+
+  // A tool that needs a different persona (Agent Designer asks for JSON, not HTML) sets
+  // window.__blvkSystem before calling and clears it afterwards.
+  function system() { return window.__blvkSystem || SYSTEM; }
+
+  function creds() {
+    try {
+      return { p: localStorage.getItem(LS_P) || "gemini", k: localStorage.getItem(LS_K) || "" };
+    } catch (e) { return { p: "gemini", k: "" }; }
+  }
+
+  function guessProvider(key) {
+    if (/^AIza/.test(key)) return "gemini";
+    if (/^sk-or-/.test(key)) return "openrouter";
+    if (/^gsk_/.test(key)) return "groq";
+    return "";
+  }
+
+  /* ---------------- key dialog ---------------- */
+  function keyDialog() {
+    if (document.getElementById("byokBack")) return;
+    var c = creds();
+    var opts = "";
+    for (var id in PROVIDERS) {
+      opts += '<option value="' + id + '"' + (id === c.p ? " selected" : "") + '>' +
+              PROVIDERS[id].label + "</option>";
+    }
+    var back = document.createElement("div");
+    back.id = "byokBack";
+    back.className = "modal-back";
+    back.innerHTML =
+      '<div class="modal" role="dialog" aria-modal="true" aria-label="Connect an API key" style="width:min(520px,100%)">' +
+        '<div class="modal-head">' +
+          '<svg class="ic ic-20" style="color:var(--accent-ink)"><use href="#i-cpu"/></svg>' +
+          "<h3>Connect a model</h3><div class=\"spacer\"></div>" +
+          '<button class="btn ghost sm icon" data-x aria-label="Close"><svg class="ic ic-16"><use href="#i-close"/></svg></button>' +
+        "</div>" +
+        '<div class="modal-body">' +
+          '<p style="margin:0 0 16px;font-size:13px;line-height:1.6;color:var(--ink-2)">' +
+            "This is a static site with no server, so generation runs from your browser using your own key. " +
+            "It is stored only in this browser and sent only to the provider you pick, never to this site or anyone else." +
+          "</p>" +
+          '<div class="opt-title">Provider</div>' +
+          '<select class="picker" id="byokProv" style="max-width:none;width:100%;height:36px;margin-bottom:14px">' + opts + "</select>" +
+          '<div class="opt-title">API key</div>' +
+          '<input class="refine-input" id="byokKey" type="password" autocomplete="off" spellcheck="false" ' +
+            'placeholder="paste your key" style="width:100%;height:36px;margin-bottom:8px" value="' +
+            (c.k ? c.k.replace(/"/g, "&quot;") : "") + '">' +
+          '<p id="byokHint" style="margin:0 0 18px;font-size:11.5px;color:var(--ink-3)"></p>' +
+          '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+            '<button class="btn primary" id="byokSave"><svg class="ic ic-16"><use href="#i-check"/></svg> Save key</button>' +
+            '<a class="btn" id="byokGet" href="#" target="_blank" rel="noopener noreferrer">' +
+              '<svg class="ic ic-16"><use href="#i-external"/></svg> Get a free key</a>' +
+            '<div class="spacer"></div>' +
+            '<button class="btn ghost" id="byokClear">Forget key</button>' +
+          "</div>" +
+        "</div>" +
+      "</div>";
+    document.body.appendChild(back);
+
+    var sel = back.querySelector("#byokProv");
+    var inp = back.querySelector("#byokKey");
+    var hint = back.querySelector("#byokHint");
+    var get = back.querySelector("#byokGet");
+
+    function sync() {
+      var cfg = PROVIDERS[sel.value];
+      hint.textContent = "Free tier, no credit card. Key " + cfg.hint + ". Model: " + cfg.model + ".";
+      get.href = cfg.get;
+    }
+    sync();
+    sel.addEventListener("change", sync);
+
+    inp.addEventListener("input", function () {
+      var g = guessProvider(inp.value.trim());
+      if (g && g !== sel.value) { sel.value = g; sync(); }
+    });
+
+    function close() { back.remove(); }
+    back.addEventListener("click", function (e) {
+      if (e.target === back || e.target.closest("[data-x]")) close();
+    });
+    back.querySelector("#byokSave").addEventListener("click", function () {
+      var k = inp.value.trim();
+      if (!k) return;
+      try {
+        localStorage.setItem(LS_P, sel.value);
+        localStorage.setItem(LS_K, k);
+      } catch (e) {}
+      close();
+      if (window.__blvkToast) window.__blvkToast("Key saved, you're ready to generate", "ok");
+    });
+    back.querySelector("#byokClear").addEventListener("click", function () {
+      try { localStorage.removeItem(LS_K); } catch (e) {}
+      inp.value = "";
+      close();
+      if (window.__blvkToast) window.__blvkToast("Key removed from this browser", "info");
+    });
+    setTimeout(function () { inp.focus(); }, 60);
+  }
+
+  window.__blvkKeyDialog = keyDialog;
+
+  /* ---------------- generation ---------------- */
+  var CONTINUE = "\n\nYou have already written the beginning of this file. Here it is, " +
+    "verbatim, between markers:\n\n<<<PARTIAL_FILE_START>>>\n{P}\n<<<PARTIAL_FILE_END>>>\n\n" +
+    "Continue the file from exactly where it stops. Output ONLY the continuation. Do not " +
+    "repeat any of the text above, do not restart the document, do not explain. Your first " +
+    "character must be the character that comes next.";
+
+  window.root = {
+    generateText: function (o) {
+      var instruction = o.instruction || "";
+      var startWith = o.startWith || "";
+      var onChunk = o.onChunk;
+      var ctrl = new AbortController();
+      var generated = "";
+
+      var c = creds();
+      if (!c.k) {
+        keyDialog();
+        var p0 = Promise.reject(new Error(
+          "No API key connected. Add a free key to generate. It stays in your browser."));
+        p0.stop = function () {};
+        return p0;
+      }
+
+      var cfg = PROVIDERS[c.p] || PROVIDERS.gemini;
+      var content = startWith ? instruction + CONTINUE.replace("{P}", startWith) : instruction;
+
+      var p = fetch(cfg.url, {
+        method: "POST",
+        headers: { "content-type": "application/json", "authorization": "Bearer " + c.k },
+        signal: ctrl.signal,
+        body: JSON.stringify({
+          model: cfg.model,
+          max_tokens: cfg.max,
+          stream: true,
+          messages: [
+            { role: "system", content: system() },
+            { role: "user", content: content }
+          ]
+        })
+      }).then(function (res) {
+        if (!res.ok) {
+          return res.text().then(function (t) {
+            var msg = t.slice(0, 300);
+            if (res.status === 401 || res.status === 403) {
+              keyDialog();
+              msg = "That key was rejected by " + cfg.label + ". Check it and try again.";
+            } else if (res.status === 429) {
+              msg = cfg.label + " rate limit reached. Wait a moment, or connect a different provider.";
+            }
+            throw new Error(msg);
+          });
+        }
+        var reader = res.body.getReader();
+        var dec = new TextDecoder();
+        var buf = "";
+
+        function handle(line) {
+          line = line.trim();
+          if (line.indexOf("data:") !== 0) return;
+          var d = line.slice(5).trim();
+          if (!d || d === "[DONE]") return;
+          var ev;
+          try { ev = JSON.parse(d); } catch (e) { return; }
+          if (ev.error) throw new Error(ev.error.message || "stream error");
+          var ch = ev.choices && ev.choices[0];
+          var piece = ch && ch.delta && ch.delta.content;
+          if (typeof piece === "string" && piece) {
+            generated += piece;
+            if (onChunk) onChunk({ fullTextSoFar: startWith + generated, isFromStartWith: false });
+          }
+        }
+
+        function pump() {
+          return reader.read().then(function (r) {
+            if (r.done) {
+              if (buf.trim()) handle(buf);
+              return { text: startWith + generated, generatedText: generated };
+            }
+            buf += dec.decode(r.value, { stream: true });
+            var lines = buf.split("\n");
+            buf = lines.pop();
+            for (var i = 0; i < lines.length; i++) handle(lines[i]);
+            return pump();
+          });
+        }
+        return pump();
+      });
+
+      p.stop = function () { try { ctrl.abort(); } catch (e) {} };
+      return p;
+    }
+  };
+
+  /* a way back into the key dialog once a key is set, plus a route home */
+  document.addEventListener("DOMContentLoaded", function () {
+    var foot = document.querySelector(".rail-foot");
+    if (!foot) return;
+    var home = document.createElement("a");
+    home.className = "btn ghost icon";
+    home.href = "/";
+    home.setAttribute("data-tip", "BlvkWare home");
+    home.setAttribute("aria-label", "Back to BlvkWare");
+    home.innerHTML = '<svg class="ic ic-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 10.4 12 3.6l8.4 6.8V20a1.4 1.4 0 0 1-1.4 1.4H5A1.4 1.4 0 0 1 3.6 20Z"/><path d="M9.6 21.4v-7h4.8v7"/></svg>';
+    foot.insertBefore(home, foot.querySelector(".spacer"));
+    var b = document.createElement("button");
+    b.className = "btn ghost icon";
+    b.setAttribute("data-tip", "Model / API key");
+    b.setAttribute("aria-label", "Model and API key");
+    b.innerHTML = '<svg class="ic ic-16"><use href="#i-cpu"/></svg>';
+    b.addEventListener("click", keyDialog);
+    foot.insertBefore(b, foot.querySelector(".spacer"));
+  });
+})();
+</script>
+</head>
+<body>
+<style>
+  /* ============================================================
+     Agent Designer — find the software hiding inside a business
+     BlvkWare "Carbon & Acid"
+     ============================================================ */
+  :root {
+    color-scheme: dark;
+    --bg:        #0a0908;
+    --bg-2:      #100e0b;
+    --surface:   #17140f;
+    --surface-2: #1e1a15;
+    --surface-3: #29241d;
+    --line:      #2e2820;
+    --line-2:    #423a2e;
+    --ink:   #f5f0e6;
+    --ink-2: #a89d8b;
+    --ink-3: #726858;
+    --accent:     #d4f24a;
+    --accent-ink: #d4f24a;
+    --on-accent:  #14170a;
+    --clay:  #e8734a;
+    --jade:  #6ec8a8;
+    --brass: #d9b65c;
+    --info:  #8fbfd8;
+    --accent-soft: rgba(212,242,74,.11);
+    --accent-line: rgba(212,242,74,.34);
+    --r-sm: 10px; --r-md: 14px; --r-lg: 18px; --r-xl: 24px;
+    --sh-2: 0 4px 16px -4px rgba(0,0,0,.55), 0 1px 2px rgba(0,0,0,.4);
+    --sh-3: 0 20px 52px -14px rgba(0,0,0,.75);
+    --ease: cubic-bezier(.2,.8,.2,1);
+    --t: 190ms var(--ease);
+    --font: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    margin: 0; font-family: var(--font); font-size: 14px; line-height: 1.5;
+    color: var(--ink); background: var(--bg); -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(820px 460px at 6% -8%, rgba(212,242,74,.09), transparent 62%),
+      radial-gradient(700px 420px at 96% 2%, rgba(232,115,74,.09), transparent 62%);
+  }
+  button, input, textarea, select { font: inherit; color: inherit; }
+  button { background: none; border: none; cursor: pointer; }
+  ::selection { background: rgba(212,242,74,.3); }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 20px; border: 3px solid transparent; background-clip: content-box; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 5px; }
+  .ic { width: 18px; height: 18px; flex: none; display: block; }
+  .ic-14 { width: 14px; height: 14px; } .ic-16 { width: 16px; height: 16px; }
+  .ic-20 { width: 20px; height: 20px; } .ic-28 { width: 28px; height: 28px; }
+  .spacer { flex: 1; }
+  .hidden { display: none !important; }
+  .sr { position: fixed; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+  /* ---------- shell ---------- */
+  #app { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; }
+  .topbar {
+    flex: none; height: 88px; display: flex; align-items: center; gap: 12px; padding: 0 16px;
+    border-bottom: 1px solid var(--line);
+    background: color-mix(in oklab, var(--bg-2) 66%, transparent); backdrop-filter: blur(14px);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+  /* The mark brings its own black field and brass ring — the tile only rounds
+     the corners, so we do not stack a second border around it. */
+  .mark {
+    width: 70px; height: 70px; border-radius: 18px; flex: none;
+    background: #060504; overflow: hidden;
+    display: grid; place-items: center;
+  }
+  .mark img { width: 100%; height: 100%; display: block; }
+  .wordmark { font-size: 17px; font-weight: 800; letter-spacing: .2em; }
+  .wordmark i { color: var(--accent-ink); font-style: normal; }
+  .wordmark b { color: var(--brass); font-weight: 800; }
+  .by { font-size: 10.5px; color: var(--ink-3); letter-spacing: .04em; margin-top: 1px; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    height: 36px; padding: 0 14px; border-radius: var(--r-sm);
+    font-size: 13px; font-weight: 570; color: var(--ink-2);
+    background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line);
+    transition: all 140ms var(--ease); white-space: nowrap;
+  }
+  .btn:hover { color: var(--ink); background: var(--surface-3); }
+  .btn:disabled { opacity: .45; pointer-events: none; }
+  .btn.primary { color: var(--on-accent); background: var(--accent); font-weight: 680; box-shadow: 0 6px 18px -8px rgba(212,242,74,.6); }
+  .btn.primary:hover { background: color-mix(in oklab, var(--accent) 88%, #fff); }
+  .btn.ghost { background: transparent; box-shadow: none; }
+  .btn.ghost:hover { background: var(--surface-2); }
+  .btn.icon { width: 36px; padding: 0; }
+  .btn.lg { height: 46px; padding: 0 24px; font-size: 15px; border-radius: var(--r-md); }
+
+  /* ---------- stage 1: ask ---------- */
+  .scroll { flex: 1; min-height: 0; overflow-y: auto; }
+  .ask-wrap { min-height: 100%; display: grid; place-items: center; padding: 48px 20px; }
+  .ask { width: min(780px, 100%); text-align: center; }
+  .kicker { font-size: 11px; font-weight: 750; letter-spacing: .2em; text-transform: uppercase; color: var(--accent-ink); margin-bottom: 14px; }
+  .ask h1 { font-size: clamp(28px, 5vw, 46px); font-weight: 800; letter-spacing: -.025em; line-height: 1.12; margin: 0 0 16px; }
+  .ask h1 em { font-style: normal; background: linear-gradient(90deg, var(--accent), var(--brass)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .ask p.lede { font-size: 15.5px; color: var(--ink-2); max-width: 56ch; margin: 0 auto 32px; line-height: 1.65; }
+
+  .composer {
+    background: color-mix(in oklab, var(--surface) 92%, transparent);
+    border-radius: var(--r-xl); box-shadow: var(--sh-2), inset 0 0 0 1px var(--line);
+    overflow: hidden; text-align: left; transition: box-shadow var(--t);
+  }
+  .composer.focused { box-shadow: var(--sh-3), inset 0 0 0 1px var(--accent-line), 0 0 0 4px var(--accent-soft); }
+  #biz {
+    width: 100%; border: none; background: none; resize: none; outline: none;
+    font-size: 16.5px; line-height: 1.62; padding: 20px 20px 0; min-height: 96px; max-height: 240px;
+  }
+  #biz::placeholder { color: var(--ink-3); }
+  .composer-bar { display: flex; align-items: center; gap: 8px; padding: 12px 14px; border-top: 1px solid var(--line); margin-top: 10px; background: color-mix(in oklab, var(--surface-2) 55%, transparent); }
+
+  .examples { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 22px; }
+  .chip {
+    height: 32px; padding: 0 13px; border-radius: 30px; font-size: 12.6px; color: var(--ink-2);
+    background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line);
+    display: inline-flex; align-items: center; gap: 7px; transition: all 140ms var(--ease);
+  }
+  .chip:hover { color: var(--ink); box-shadow: inset 0 0 0 1px var(--accent-line); transform: translateY(-1px); }
+
+  /* ---------- stage 2: pipeline ---------- */
+  .pipe-wrap { min-height: 100%; display: grid; place-items: center; padding: 48px 20px; }
+  .pipe { width: min(680px, 100%); }
+  .pipe h2 { font-size: 20px; font-weight: 700; text-align: center; margin: 0 0 4px; }
+  .pipe .sub { text-align: center; color: var(--ink-3); font-size: 13px; margin-bottom: 34px; }
+  .steps { display: flex; flex-direction: column; gap: 2px; }
+  .step {
+    display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: var(--r-md);
+    transition: background var(--t), opacity var(--t); opacity: .38;
+  }
+  .step.active { opacity: 1; background: var(--surface); box-shadow: inset 0 0 0 1px var(--accent-line); }
+  .step.done { opacity: .8; }
+  .step-n {
+    width: 30px; height: 30px; border-radius: 9px; flex: none; display: grid; place-items: center;
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    background: var(--surface-3); color: var(--ink-3); box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .step.active .step-n { background: var(--accent); color: var(--on-accent); }
+  .step.done .step-n { background: rgba(110,200,168,.15); color: var(--jade); box-shadow: inset 0 0 0 1px rgba(110,200,168,.4); }
+  .step-name { font-size: 14px; font-weight: 620; }
+  .step-desc { font-size: 12.2px; color: var(--ink-3); margin-top: 1px; }
+  .spin { width: 15px; height: 15px; border-radius: 50%; border: 1.9px solid var(--line-2); border-top-color: var(--accent); animation: spin .7s linear infinite; flex: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---------- stage 3: the operating system ---------- */
+  .os { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .os-head {
+    flex: none; padding: 16px 20px 14px; border-bottom: 1px solid var(--line);
+    display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap;
+    background: color-mix(in oklab, var(--surface) 40%, transparent);
+  }
+  .os-title { font-size: 19px; font-weight: 750; letter-spacing: -.015em; }
+  .os-sub { font-size: 12.5px; color: var(--ink-3); margin-top: 3px; max-width: 70ch; }
+  .badge-sim {
+    display: inline-flex; align-items: center; gap: 6px; flex: none;
+    font-size: 11px; font-weight: 650; padding: 5px 10px; border-radius: 20px;
+    color: var(--brass); background: rgba(217,182,92,.1); box-shadow: inset 0 0 0 1px rgba(217,182,92,.35);
+  }
+
+  .os-body { flex: 1; min-height: 0; display: flex; overflow: hidden; }
+  .os-main { flex: 1; min-width: 0; overflow-y: auto; padding: 20px; }
+  .os-side {
+    width: 340px; flex: none; border-left: 1px solid var(--line); overflow-y: auto;
+    background: color-mix(in oklab, var(--bg-2) 55%, transparent); padding: 16px;
+  }
+
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .metric {
+    background: color-mix(in oklab, var(--surface) 70%, transparent); border-radius: var(--r-md);
+    padding: 15px 16px; box-shadow: inset 0 0 0 1px var(--line); position: relative; overflow: hidden;
+  }
+  .metric-label { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+  .metric-value { font-size: 26px; font-weight: 780; letter-spacing: -.02em; margin-top: 6px; font-variant-numeric: tabular-nums; }
+  .metric-note { font-size: 11.5px; color: var(--ink-3); margin-top: 3px; }
+  .metric-bar { height: 3px; border-radius: 3px; background: var(--surface-3); margin-top: 10px; overflow: hidden; }
+  .metric-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--brass)); border-radius: 3px; }
+
+  .sec-head { display: flex; align-items: center; gap: 10px; margin: 26px 2px 12px; }
+  .sec-head h3 { font-size: 11.5px; font-weight: 750; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3); margin: 0; }
+  .sec-head .rule { flex: 1; height: 1px; background: var(--line); }
+
+  .finds { display: flex; flex-direction: column; gap: 8px; }
+  .find {
+    display: flex; gap: 12px; align-items: flex-start; padding: 13px 14px; border-radius: var(--r-md);
+    background: color-mix(in oklab, var(--surface) 60%, transparent); box-shadow: inset 0 0 0 1px var(--line);
+    transition: all 140ms var(--ease); text-align: left; width: 100%;
+  }
+  .find:hover { box-shadow: inset 0 0 0 1px var(--accent-line); transform: translateX(2px); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; margin-top: 6px; }
+  .dot.bottleneck { background: var(--clay); }
+  .dot.automation { background: var(--accent); }
+  .dot.revenue    { background: var(--jade); }
+  .dot.gap        { background: var(--info); }
+  .dot.redundancy { background: var(--brass); }
+  .find-body { min-width: 0; flex: 1; }
+  .find-title { font-size: 13.6px; font-weight: 630; }
+  .find-detail { font-size: 12.4px; color: var(--ink-3); margin-top: 3px; line-height: 1.5; }
+  .tag {
+    font-family: var(--mono); font-size: 9.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    padding: 3px 7px; border-radius: 20px; flex: none; margin-top: 2px;
+    color: var(--ink-3); background: var(--surface-3);
+  }
+  .tag.high { color: var(--clay); background: rgba(232,115,74,.12); }
+
+  .systems { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .system {
+    padding: 16px; border-radius: var(--r-md);
+    background: color-mix(in oklab, var(--surface) 60%, transparent); box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .system h4 { margin: 0 0 6px; font-size: 14px; font-weight: 680; }
+  .system p { margin: 0 0 10px; font-size: 12.4px; color: var(--ink-3); line-height: 1.5; }
+  .mods { display: flex; gap: 5px; flex-wrap: wrap; }
+  .mod { font-size: 11px; padding: 3px 8px; border-radius: 20px; background: var(--surface-3); color: var(--ink-2); }
+
+  .side-title { font-size: 11px; font-weight: 750; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3); margin: 4px 2px 10px; }
+  .acts { display: flex; flex-direction: column; gap: 7px; }
+  .act {
+    display: flex; align-items: center; gap: 10px; padding: 12px 13px; border-radius: var(--r-md);
+    background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line); text-align: left;
+    font-size: 13.2px; font-weight: 570; color: var(--ink-2); transition: all 140ms var(--ease); width: 100%;
+  }
+  .act:hover { color: var(--ink); box-shadow: inset 0 0 0 1px var(--accent-line); transform: translateY(-1px); }
+  .act .ic { color: var(--accent-ink); }
+  .act.busy { opacity: .6; pointer-events: none; }
+
+  /* ---------- detail drawer ---------- */
+  .drawer-back { position: fixed; inset: 0; z-index: 80; background: rgba(6,5,3,.7); backdrop-filter: blur(6px); animation: fade 180ms var(--ease); }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+  .drawer {
+    position: fixed; top: 0; right: 0; bottom: 0; z-index: 81; width: min(720px, 100%);
+    background: var(--bg-2); box-shadow: -24px 0 60px -20px rgba(0,0,0,.9); border-left: 1px solid var(--line);
+    display: flex; flex-direction: column; animation: slideIn 300ms var(--ease);
+  }
+  @keyframes slideIn { from { transform: translateX(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .drawer-head { flex: none; display: flex; align-items: center; gap: 12px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+  .drawer-head h3 { margin: 0; font-size: 15.5px; font-weight: 700; }
+  .drawer-body { flex: 1; min-height: 0; overflow-y: auto; padding: 20px 22px 40px; }
+  .md { font-size: 14px; line-height: 1.72; color: var(--ink-2); }
+  .md h1, .md h2, .md h3 { color: var(--ink); font-weight: 700; margin: 22px 0 8px; line-height: 1.3; }
+  .md h1 { font-size: 19px; } .md h2 { font-size: 16.5px; } .md h3 { font-size: 14.5px; }
+  .md p { margin: 0 0 12px; }
+  .md ul, .md ol { margin: 0 0 12px; padding-left: 20px; }
+  .md li { margin-bottom: 5px; }
+  .md strong { color: var(--ink); font-weight: 650; }
+  .md code { font-family: var(--mono); font-size: 12.4px; background: var(--surface-2); padding: 2px 5px; border-radius: 5px; color: var(--brass); }
+  .md pre { background: var(--surface); border-radius: var(--r-sm); padding: 13px; overflow-x: auto; box-shadow: inset 0 0 0 1px var(--line); margin: 0 0 12px; }
+  .md pre code { background: none; padding: 0; color: var(--ink-2); }
+  .md hr { border: none; border-top: 1px solid var(--line); margin: 20px 0; }
+  .drawer-foot { flex: none; padding: 12px 18px; border-top: 1px solid var(--line); display: flex; gap: 8px; align-items: center; background: color-mix(in oklab, var(--surface) 40%, transparent); }
+
+  /* ---------- toasts / status ---------- */
+  .toasts { position: fixed; right: 18px; bottom: 18px; z-index: 95; display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+  .toast {
+    display: flex; gap: 9px; align-items: flex-start; max-width: 340px; padding: 11px 13px;
+    border-radius: var(--r-md); background: var(--surface-2); box-shadow: var(--sh-3), inset 0 0 0 1px var(--line-2);
+    font-size: 12.8px; animation: fade 220ms var(--ease);
+  }
+  .toast.err .ic { color: var(--clay); }
+  .toast.ok .ic { color: var(--jade); }
+  .status { display: inline-flex; align-items: center; gap: 7px; font-size: 12.2px; color: var(--ink-3); }
+
+  /* ---------- keep it / lead capture ---------- */
+  .keep-card {
+    background: linear-gradient(168deg, var(--surface) 0%, var(--bg-2) 70%);
+    border-radius: var(--r-md); box-shadow: inset 0 0 0 1px var(--accent-line);
+    padding: 13px;
+  }
+  .keep { display: flex; flex-direction: column; gap: 8px; }
+  .keep-go { color: var(--on-accent); background: var(--accent); box-shadow: none; font-weight: 680; }
+  .keep-input {
+    width: 100%; height: 36px; padding: 0 11px; border: none; border-radius: var(--r-sm);
+    background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line);
+    font-size: 13.4px; color: var(--ink); outline: none; transition: box-shadow var(--t);
+  }
+  .keep-input::placeholder { color: var(--ink-3); }
+  .keep-input:focus { box-shadow: inset 0 0 0 1px var(--accent-line), 0 0 0 3px var(--accent-soft); }
+  .keep-input.bad { box-shadow: inset 0 0 0 1px rgba(232,115,74,.6); }
+  .keep-note { font-size: 11.5px; color: var(--ink-3); margin: 10px 2px 0; line-height: 1.5; }
+  .keep-note.ok { color: var(--jade); }
+
+  /* ---------- BYOK key dialog (styled by the static shim) ---------- */
+  .modal-back { position: fixed; inset: 0; z-index: 90; background: rgba(6,5,3,.72); backdrop-filter: blur(6px); display: grid; place-items: center; padding: 20px; animation: fade 180ms var(--ease); }
+  .modal { background: var(--bg-2); border-radius: var(--r-lg); box-shadow: var(--sh-3), inset 0 0 0 1px var(--line-2); max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
+  .modal-head { flex: none; display: flex; align-items: center; gap: 11px; padding: 15px 18px; border-bottom: 1px solid var(--line); }
+  .modal-head h3 { margin: 0; font-size: 15px; font-weight: 700; }
+  .modal-body { padding: 18px; overflow-y: auto; }
+  .opt-title { font-size: 11px; font-weight: 730; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 7px; }
+  .picker, .refine-input {
+    background: var(--surface-2); border: none; border-radius: var(--r-sm); padding: 0 11px;
+    box-shadow: inset 0 0 0 1px var(--line); outline: none; font-size: 13.4px; color: var(--ink);
+  }
+  .picker:focus, .refine-input:focus { box-shadow: inset 0 0 0 1px var(--accent-line); }
+  .btn.sm { height: 30px; padding: 0 10px; font-size: 12.4px; }
+  .btn.sm.icon { width: 30px; padding: 0; }
+
+  @media (max-width: 900px) {
+    .os-body { flex-direction: column; }
+    .os-side { width: auto; border-left: none; border-top: 1px solid var(--line); }
+    .wordmark { font-size: 15px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M2.6 12S6.2 5.6 12 5.6 21.4 12 21.4 12 17.8 18.4 12 18.4 2.6 12 2.6 12Z"/><circle cx="12" cy="12" r="2.85"/>
+  </symbol>
+  <symbol id="i-map" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 4 3.5 6.2v13.6L9 17.6l6 2.2 5.5-2.2V4L15 6.2Z"/><path d="M9 4v13.6M15 6.2V19.8"/>
+  </symbol>
+  <symbol id="i-radar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="8.6"/><circle cx="12" cy="12" r="4.4"/><path d="M12 12 18.2 6.6"/>
+  </symbol>
+  <symbol id="i-cube" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2.7 20.2 7v10L12 21.3 3.8 17V7L12 2.7Z"/><path d="M3.8 7 12 11.4 20.2 7M12 11.4v9.9"/>
+  </symbol>
+  <symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7.5 4.8 19 12 7.5 19.2Z"/>
+  </symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2.8" y="4.8" width="18.4" height="14.4" rx="2.2"/><path d="m3.4 6.6 8.6 6 8.6-6"/>
+  </symbol>
+  <symbol id="i-hammer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m13.5 8.5-9 9a2.1 2.1 0 0 0 3 3l9-9"/><path d="M14.2 3.4 21 10.2l-2.6 2.6-6.8-6.8Z"/>
+  </symbol>
+  <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6.6 6.6 10.8 10.8M17.4 6.6 6.6 17.4"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m4.8 12.4 4.6 4.6L19.2 7"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.9 21 19.2a1.4 1.4 0 0 1-1.2 2.1H4.2A1.4 1.4 0 0 1 3 19.2L12 3.9Z"/><path d="M12 9.6v4.6M12 17.6h.01"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.6"/><path d="M12 11.2v5.2M12 7.8h.01"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 10.4 12 3.6l8.4 6.8V20a1.4 1.4 0 0 1-1.4 1.4H5A1.4 1.4 0 0 1 3.6 20Z"/><path d="M9.6 21.4v-7h4.8v7"/></symbol>
+  <symbol id="i-restart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M4.4 12a7.6 7.6 0 1 1 2.6 5.75"/><path d="M4.4 7.6V12h4.4"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M11.4 2.9 13 8.3l5.4 1.6-5.4 1.6-1.6 5.4-1.6-5.4L4.4 9.9 9.8 8.3z"/><path d="m18.4 14.6.75 2.25 2.25.75-2.25.75-.75 2.25-.75-2.25-2.25-.75 2.25-.75z"/>
+  </symbol>
+  <symbol id="i-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M13.4 4.6H19.4V10.6M19.4 4.6 11 13"/><path d="M18.2 14.6V19a1.4 1.4 0 0 1-1.4 1.4H5A1.4 1.4 0 0 1 3.6 19V7.2A1.4 1.4 0 0 1 5 5.8h4.4"/>
+  </symbol>
+  <symbol id="i-cpu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="6.4" y="6.4" width="11.2" height="11.2" rx="2.6"/><rect x="10" y="10" width="4" height="4" rx="1.2"/>
+    <path d="M9.6 3v3.4M14.4 3v3.4M9.6 17.6V21M14.4 17.6V21M3 9.6h3.4M3 14.4h3.4M17.6 9.6H21M17.6 14.4H21"/>
+  </symbol>
+</svg>
+
+<div id="app">
+
+  <div class="topbar">
+    <a class="brand" href="/">
+      <span class="mark">
+        <img src="data:image/webp;base64,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" alt="" width="160" height="160">
+      </span>
+      <span>
+        <span class="wordmark"><b>BLVKWARE</b> DESIG<i>N</i></span>
+        <div class="by">Agent designer</div>
+      </span>
+    </a>
+    <div class="spacer"></div>
+    <div class="status" id="status"></div>
+    <button class="btn ghost" id="restartBtn" style="display:none"><svg class="ic ic-16"><use href="#i-restart"/></svg> New scan</button>
+    <button class="btn ghost icon hidden" id="keyBtn" aria-label="Model and API key" title="Model / API key"><svg class="ic ic-16"><use href="#i-cpu"/></svg></button>
+    <a class="btn ghost icon" href="/" aria-label="BlvkWare home"><svg class="ic ic-16"><use href="#i-home"/></svg></a>
+  </div>
+
+  <!-- ============ STAGE 1: ASK ============ -->
+  <div class="scroll" id="stageAsk">
+    <div class="ask-wrap">
+      <div class="ask">
+        <div class="kicker">Agent design</div>
+        <h1>There is a job in your business<br>that <em>costs you every week.</em></h1>
+        <p class="lede">Describe how you actually operate. It works out which agent is worth hiring first,
+           designs exactly what it needs to be able to do, and prices it: on this page, in about a minute.</p>
+
+        <div class="composer" id="composer">
+          <label class="sr" for="biz">Describe your business</label>
+          <textarea id="biz" spellcheck="false" placeholder="I own a landscaping company. Four crews, mostly residential, some commercial contracts. We quote by site visit and schedule by text. Quotes go out and I chase them when I remember, which is not often."></textarea>
+          <div class="composer-bar">
+            <span class="status" id="counter">0</span>
+            <div class="spacer"></div>
+            <button class="btn primary lg" id="designBtn"><svg class="ic ic-16"><use href="#i-eye"/></svg> Design my agent</button>
+          </div>
+        </div>
+
+        <div class="examples" id="examples"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ STAGE 2: PIPELINE ============ -->
+  <div class="scroll hidden" id="stagePipe">
+    <div class="pipe-wrap">
+      <div class="pipe">
+        <h2 id="pipeTitle">Reading your operation</h2>
+        <p class="sub" id="pipeSub">This takes a few seconds.</p>
+        <div class="steps" id="steps"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ STAGE 3: THE OS ============ -->
+  <div class="os hidden" id="stageOs">
+    <div class="os-head">
+      <div style="min-width:0">
+        <div class="os-title" id="osTitle">Operating System</div>
+        <div class="os-sub" id="osSub"></div>
+      </div>
+      <div class="spacer"></div>
+      <span class="badge-sim" title="Every price here is computed from the published catalog">
+        <svg class="ic ic-14"><use href="#i-info"/></svg> Real prices, from the published catalog
+      </span>
+    </div>
+
+    <div class="os-body">
+      <div class="os-main">
+        <div class="metrics" id="metrics"></div>
+
+        <div class="sec-head"><h3>What we found</h3><div class="rule"></div></div>
+        <div class="finds" id="finds"></div>
+
+        <div class="sec-head"><h3>What this agent will own</h3><div class="rule"></div></div>
+        <div class="systems" id="systems"></div>
+
+        <div class="sec-head"><h3>Other jobs worth filling</h3><div class="rule"></div></div>
+        <div class="systems" id="alts"></div>
+
+        <div style="height:28px"></div>
+      </div>
+
+      <div class="os-side">
+        <div class="side-title">Adjust it</div>
+        <div class="acts" id="acts"></div>
+
+
+        <div class="side-title" style="margin-top:22px">Keep it</div>
+        <div class="keep-card">
+          <form class="keep" id="keepForm" novalidate>
+            <input class="keep-input" id="keepEmail" type="email" autocomplete="email"
+                   spellcheck="false" placeholder="you@company.com" aria-label="Your email">
+            <button class="act keep-go" type="submit" id="keepBtn">
+              <svg class="ic ic-16" style="color:var(--on-accent)"><use href="#i-mail"/></svg>
+              Email me this design
+            </button>
+          </form>
+          <p class="keep-note" id="keepNote">
+            The full design, the price, and what it would own. No account, no list: one email, from a person.
+          </p>
+        </div>
+        <div class="side-title" style="margin-top:22px">Hire it</div>
+        <div class="acts">
+          <button class="act" id="configureBtn" style="color:var(--on-accent);background:var(--accent);box-shadow:none;font-weight:680">
+            <svg class="ic ic-16" style="color:var(--on-accent)"><use href="#i-hammer"/></svg>
+            Take this design to checkout
+          </button>
+        </div>
+        <p style="font-size:11.5px;color:var(--ink-3);margin:10px 2px 0;line-height:1.5">
+          Opens the configurator with this design already loaded. Change anything,
+          then order. The price moves with you.
+        </p>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<!-- The catalog, the pricing engine and the design engine are compiled in at
+     build time from dev/catalog.py, dev/engine.js and dev/design.js — the same
+     sources the site and the runtime use. Agent Designer may interpret a business, but it
+     may not invent what BlvkWare sells or what it costs. -->
+<script id="blvk-catalog" type="application/json">{"tiers": {"1": {"key": 1, "name": "Operator", "label": "Operator · Tier I", "build": 3500, "ops": 349, "opsAnnual": 3490, "days": "10 business days", "buildDays": 10, "actions": 2000, "systems": 3, "channels": 2, "maxSystems": 5, "maxChannels": 4, "blurb": "Owns one job, start to finish."}, "2": {"key": 2, "name": "Deputy", "label": "Deputy · Tier II", "build": 9500, "ops": 899, "opsAnnual": 8990, "days": "25 business days", "buildDays": 25, "actions": 10000, "systems": 8, "channels": 6, "maxSystems": 14, "maxChannels": 8, "blurb": "Owns an entire function, with judgment and escalation."}}, "pricing": {"trial": 750, "extraSystem": 750, "extraChannel": 950, "rushPct": 0.4, "secondAgentPct": 0.3, "overagePer1000": 75, "prebuyPer1000": 30, "annualMonths": 10, "buyoutMultiple": 12, "tier2Weight": 20, "tier2Groups": 6, "splitWeight": 30}, "volume": [{"id": "light", "label": "Under 50 a week", "actions": 2000, "hint": "a small team, or a job that happens a few times a day"}, {"id": "standard", "label": "50 to 200 a week", "actions": 6000, "hint": "the usual answer for an established small business"}, {"id": "heavy", "label": "200 to 600 a week", "actions": 15000, "hint": "high volume, or several locations"}, {"id": "intense", "label": "More than 600 a week", "actions": 40000, "hint": "this is a Deputy's workload"}], "integrations": [{"id": "email", "name": "Email", "eg": "Google Workspace, Microsoft 365, Zoho"}, {"id": "calendar", "name": "Calendar / scheduling", "eg": "Google Calendar, Outlook, Calendly, Cal.com"}, {"id": "crm", "name": "CRM", "eg": "HubSpot, Pipedrive, Salesforce, Zoho, Go High Level"}, {"id": "fsm", "name": "Field service / jobs", "eg": "Jobber, ServiceTitan, Housecall Pro"}, {"id": "accounting", "name": "Accounting", "eg": "QuickBooks, Xero, FreshBooks"}, {"id": "payments", "name": "Payments", "eg": "Stripe, Square, PayPal"}, {"id": "helpdesk", "name": "Help desk / tickets", "eg": "Zendesk, Freshdesk, Intercom"}, {"id": "pm", "name": "Project / task", "eg": "Asana, Monday, ClickUp, Trello, Jira"}, {"id": "chatops", "name": "Team chat", "eg": "Slack, Microsoft Teams"}, {"id": "storage", "name": "Files / storage", "eg": "Google Drive, Dropbox, SharePoint"}, {"id": "sheets", "name": "Spreadsheets", "eg": "Google Sheets, Excel"}, {"id": "db", "name": "Database / warehouse", "eg": "Postgres, MySQL, BigQuery, Airtable"}, {"id": "ecom", "name": "E-commerce", "eg": "Shopify, WooCommerce"}, {"id": "telephony", "name": "Phone system", "eg": "RingCentral, Dialpad, Twilio, a plain mobile number"}, {"id": "portal", "name": "A web portal with no API", "eg": "a supplier, insurer, council or bank site you log into by hand"}, {"id": "inventory", "name": "Inventory / stock", "eg": "Cin7, Katana, Zoho Inventory, a spreadsheet"}, {"id": "carrier", "name": "Shipping / carriers", "eg": "ShipStation, Shippo, UPS, FedEx"}, {"id": "custom", "name": "Something in-house", "eg": "your own software, or an API you own"}], "channels": [{"id": "email", "name": "Email", "gate": null}, {"id": "webchat", "name": "Web chat", "gate": null}, {"id": "inbox", "name": "A shared inbox", "gate": null}, {"id": "chatops", "name": "Slack or Teams", "gate": null}, {"id": "voicein", "name": "Inbound phone", "gate": null, "cap": "voice.inbound"}, {"id": "sms", "name": "SMS", "gate": "10dlc", "cap": "chan.sms"}, {"id": "whatsapp", "name": "WhatsApp", "gate": "meta"}, {"id": "voiceout", "name": "Outbound phone", "gate": null, "cap": "voice.outbound"}], "gates": {"10dlc": {"short": "US carrier registration required: weeks, not days", "long": "Texting your customers from a US business number requires A2P 10DLC registration with the carriers. Part of it is a manual review that no supplier can hurry, so budget weeks rather than days. Everything else in your agent goes live on schedule; SMS switches on when the registration clears, at no extra cost."}, "meta": {"short": "Meta business verification required: usually days", "long": "WhatsApp Business messaging needs Meta to verify the business. It is normally days rather than weeks, but it is outside our control and so is not promised inside the delivery window."}}, "capabilities": [{"id": "email.triage", "group": "Email", "name": "Email triage", "blurb": "Reads every incoming message, works out what it is and how urgent it is, and sorts it.", "price": 850, "ops": 0, "weight": 2, "needs": [], "integ": ["email"], "tpl": "tpl-email-triage", "accept": "Given 50 real messages from the last month, classification matches the owner's own sorting on at least 45.", "gate": null, "judgment": false}, {"id": "email.draft", "group": "Email", "name": "Reply drafting", "blurb": "Writes the reply, in your voice, using your prices and policies rather than generic filler.", "price": 950, "ops": 0, "weight": 2, "needs": ["email.triage"], "integ": ["email"], "tpl": "tpl-email-draft", "accept": "Ten drafts across the five most common message types are sendable with no edit or a trivial one.", "gate": null, "judgment": false}, {"id": "email.route", "group": "Email", "name": "Routing and assignment", "blurb": "Sends each message to the right person or queue with the context already attached.", "price": 650, "ops": 0, "weight": 1, "needs": ["email.triage"], "integ": ["email"], "tpl": "tpl-email-route", "accept": "Every routing rule in the job description fires correctly against a replayed week.", "gate": null, "judgment": false}, {"id": "email.sla", "group": "Email", "name": "Response deadlines", "blurb": "Tracks how long anything has been waiting and escalates before a customer has to chase.", "price": 550, "ops": 0, "weight": 1, "needs": ["email.triage"], "integ": ["email"], "tpl": "tpl-email-sla", "accept": "A message left unanswered past the agreed threshold produces an escalation, every time.", "gate": null, "judgment": false}, {"id": "email.thread", "group": "Email", "name": "Conversation memory", "blurb": "Holds a multi-message conversation without losing the thread or repeating itself.", "price": 750, "ops": 0, "weight": 2, "needs": ["email.triage"], "integ": ["email"], "tpl": "tpl-email-thread", "accept": "A five-turn exchange stays coherent and never re-asks something already answered.", "gate": null, "judgment": false}, {"id": "email.cleanup", "group": "Email", "name": "Backlog clearance", "blurb": "Works through the existing pile once, so you start from zero instead of from four hundred.", "price": 650, "ops": 0, "weight": 1, "needs": ["email.triage"], "integ": ["email"], "tpl": "tpl-email-cleanup", "accept": "The historic backlog is classified and dispositioned, with a written summary of what was found.", "gate": null, "judgment": false}, {"id": "chan.webchat", "group": "Channels", "name": "Web chat", "blurb": "A chat widget on your site that the agent actually staffs.", "price": 950, "ops": 0, "weight": 2, "needs": [], "integ": [], "tpl": "tpl-chan-webchat", "accept": "A visitor conversation completes end to end on a staging page without a human.", "gate": null, "judgment": false}, {"id": "chan.chatops", "group": "Channels", "name": "Slack or Teams", "blurb": "It works where your team already talks, and can be asked things directly.", "price": 950, "ops": 0, "weight": 1, "needs": [], "integ": ["chatops"], "tpl": "tpl-chan-chatops", "accept": "The agent responds in-channel and its actions appear in the audit log.", "gate": null, "judgment": false}, {"id": "chan.sms", "group": "Channels", "name": "SMS", "blurb": "Texts your customers from a business number and acts on what they text back.", "price": 950, "ops": 39, "weight": 2, "needs": [], "integ": ["telephony"], "tpl": "tpl-chan-sms", "accept": "A round-trip text conversation completes, and opt-outs are honoured immediately and permanently.", "gate": "10dlc", "judgment": false}, {"id": "chan.whatsapp", "group": "Channels", "name": "WhatsApp", "blurb": "The same conversation on WhatsApp, for the customers who live there.", "price": 950, "ops": 39, "weight": 2, "needs": [], "integ": [], "tpl": "tpl-chan-whatsapp", "accept": "A round-trip WhatsApp conversation completes and opt-outs are honoured.", "gate": "meta", "judgment": false}, {"id": "voice.inbound", "group": "Channels", "name": "Answers the phone", "blurb": "Picks up in a real voice, understands the call, and takes the actions that come out of it.", "price": 2500, "ops": 99, "weight": 4, "needs": [], "integ": ["telephony"], "tpl": "tpl-voice-inbound", "accept": "Ten test calls covering the agreed scenarios are handled without a human, including one it must escalate.", "gate": null, "judgment": false}, {"id": "voice.outbound", "group": "Channels", "name": "Places calls", "blurb": "Rings customers to confirm, remind, chase or follow up, and records the outcome.", "price": 2900, "ops": 99, "weight": 5, "needs": ["voice.inbound"], "integ": ["telephony"], "tpl": "tpl-voice-outbound", "accept": "Outbound calls place, record an outcome against the right record, and respect calling-hour rules.", "gate": null, "judgment": true}, {"id": "lead.capture", "group": "Leads", "name": "Lead capture", "blurb": "Catches every enquiry from every source and puts it in one place, with nothing lost.", "price": 650, "ops": 0, "weight": 1, "needs": [], "integ": ["crm"], "tpl": "tpl-lead-capture", "accept": "Enquiries from each configured source appear as records within a minute, with no duplicates.", "gate": null, "judgment": false}, {"id": "lead.enrich", "group": "Leads", "name": "Lead enrichment", "blurb": "Fills in what the enquiry didn't tell you, from public sources, before anyone reads it.", "price": 850, "ops": 0, "weight": 2, "needs": ["lead.capture"], "integ": [], "tpl": "tpl-lead-enrich", "accept": "Enrichment runs on every new lead and is marked clearly as inferred rather than stated.", "gate": null, "judgment": false}, {"id": "lead.qualify", "group": "Leads", "name": "Lead qualification", "blurb": "Asks the qualifying questions and scores the lead against what a good customer looks like for you.", "price": 950, "ops": 0, "weight": 3, "needs": ["lead.capture"], "integ": [], "tpl": "tpl-lead-qualify", "accept": "Scoring against 30 historic leads matches the owner's own judgment on at least 25.", "gate": null, "judgment": true}, {"id": "lead.route", "group": "Leads", "name": "Lead routing", "blurb": "Hot ones to you immediately, the rest handled without you.", "price": 450, "ops": 0, "weight": 1, "needs": ["lead.qualify"], "integ": [], "tpl": "tpl-lead-route", "accept": "Every routing branch fires correctly on a replayed set of historic leads.", "gate": null, "judgment": false}, {"id": "lead.nurture", "group": "Leads", "name": "Long-game nurture", "blurb": "Keeps in touch with the ones who said not yet, so they come back to you and not a competitor.", "price": 1100, "ops": 0, "weight": 3, "needs": ["lead.capture"], "integ": [], "tpl": "tpl-lead-nurture", "accept": "A not-now lead receives the agreed sequence, and it stops the moment they respond.", "gate": null, "judgment": true}, {"id": "quote.followup", "group": "Leads", "name": "Quote follow-up", "blurb": "Chases every quote until the customer answers one way or the other, then stops.", "price": 950, "ops": 0, "weight": 2, "needs": [], "integ": [], "tpl": "tpl-quote-followup", "accept": "A quote is chased on the agreed schedule, stops instantly on any reply, and records the reason it was lost.", "gate": null, "judgment": true}, {"id": "outreach.sequence", "group": "Leads", "name": "Outbound sequences", "blurb": "Runs a multi-step outreach sequence to a list you supply, and stops on any reply.", "price": 1100, "ops": 0, "weight": 3, "needs": [], "integ": [], "tpl": "tpl-outreach-sequence", "accept": "Sequences send on schedule, halt on reply, honour suppression, and every send is attributable.", "gate": null, "judgment": true}, {"id": "appt.book", "group": "Appointments", "name": "Booking", "blurb": "Offers real slots that respect travel time and job length, then books them.", "price": 950, "ops": 0, "weight": 2, "needs": [], "integ": ["calendar"], "tpl": "tpl-appt-book", "accept": "Offered slots never conflict, never breach buffer rules, and land on the right calendar.", "gate": null, "judgment": false}, {"id": "appt.remind", "group": "Appointments", "name": "Reminders and confirmations", "blurb": "Confirms, then reminds at the intervals that actually reduce no-shows.", "price": 450, "ops": 0, "weight": 1, "needs": ["appt.book"], "integ": ["calendar"], "tpl": "tpl-appt-remind", "accept": "Every booking produces the agreed confirmation and reminder sequence.", "gate": null, "judgment": false}, {"id": "appt.reschedule", "group": "Appointments", "name": "Rescheduling and no-shows", "blurb": "Handles the reschedule conversation without you, and fills a cancellation from the waiting list.", "price": 850, "ops": 0, "weight": 2, "needs": ["appt.book"], "integ": ["calendar"], "tpl": "tpl-appt-reschedule", "accept": "A reschedule request completes without a human, and a cancelled slot is offered onward.", "gate": null, "judgment": true}, {"id": "appt.setting", "group": "Appointments", "name": "Outbound appointment setting", "blurb": "Works a list and books meetings into the calendar, rather than waiting to be contacted.", "price": 1200, "ops": 0, "weight": 3, "needs": ["appt.book"], "integ": ["calendar"], "tpl": "tpl-appt-setting", "accept": "A worked list produces booked meetings with correct records and honoured opt-outs.", "gate": null, "judgment": true}, {"id": "crm.sync", "group": "Systems", "name": "CRM read and write", "blurb": "Reads and updates your CRM itself, so records are right without anyone typing.", "price": 1200, "ops": 0, "weight": 3, "needs": [], "integ": ["crm"], "tpl": "tpl-crm-sync", "accept": "Records created and updated by the agent match the field mapping exactly, with no orphan records.", "gate": null, "judgment": false}, {"id": "crm.logging", "group": "Systems", "name": "Interaction logging", "blurb": "Every call, message and outcome logged against the right record, automatically.", "price": 500, "ops": 0, "weight": 1, "needs": ["crm.sync"], "integ": ["crm"], "tpl": "tpl-crm-logging", "accept": "Every agent interaction appears on the correct record within a minute.", "gate": null, "judgment": false}, {"id": "crm.hygiene", "group": "Systems", "name": "CRM hygiene", "blurb": "Deduplicates, normalises and fills the gaps, continuously, instead of never.", "price": 900, "ops": 0, "weight": 2, "needs": ["crm.sync"], "integ": ["crm"], "tpl": "tpl-crm-hygiene", "accept": "A dry run over the live database reports duplicates and fixes, and no merge happens without approval.", "gate": null, "judgment": false}, {"id": "crm.pipeline", "group": "Systems", "name": "Pipeline discipline", "blurb": "Nothing sits in a stage forever. It moves work along or tells you why it can't.", "price": 850, "ops": 0, "weight": 2, "needs": ["crm.sync"], "integ": ["crm"], "tpl": "tpl-crm-pipeline", "accept": "Stale records are surfaced on the agreed threshold and progressed or escalated.", "gate": null, "judgment": true}, {"id": "workflow.multistep", "group": "Systems", "name": "Multi-step process", "blurb": "Runs a whole process across several systems, in order, without a person shepherding it.", "price": 1800, "ops": 0, "weight": 4, "needs": [], "integ": [], "tpl": "tpl-workflow-multistep", "accept": "The documented process completes end to end on real data, in the right order, at least three times.", "gate": null, "judgment": true}, {"id": "workflow.exception", "group": "Systems", "name": "Exception handling", "blurb": "When something doesn't fit the process, it works it out or escalates. It doesn't just stall.", "price": 850, "ops": 0, "weight": 3, "needs": ["workflow.multistep"], "integ": [], "tpl": "tpl-workflow-exception", "accept": "Each exception listed in the job description is either resolved or escalated with the reason attached.", "gate": null, "judgment": true}, {"id": "browser.operate", "group": "Systems", "name": "Operates web apps with no API", "blurb": "Logs into the portal and does the work by hand, the way a person would, when there is no other way in.", "price": 2400, "ops": 120, "weight": 5, "needs": [], "integ": ["portal"], "tpl": "tpl-browser-operate", "accept": "The task completes on the live portal on three consecutive days, and a UI change produces an alert rather than silent failure.", "gate": null, "judgment": false}, {"id": "browser.extract", "group": "Systems", "name": "Portal data extraction", "blurb": "Pulls what you need out of a system that won't export it.", "price": 1400, "ops": 60, "weight": 3, "needs": [], "integ": ["portal"], "tpl": "tpl-browser-extract", "accept": "Extracted data matches a hand-checked sample exactly, and a format change raises an alert.", "gate": null, "judgment": false}, {"id": "files.watch", "group": "Systems", "name": "Watches files and folders", "blurb": "Notices when something lands in a folder or a drive, and acts on it.", "price": 550, "ops": 0, "weight": 1, "needs": [], "integ": ["storage"], "tpl": "tpl-files-watch", "accept": "A file arriving in the watched location triggers the agreed action within the agreed window.", "gate": null, "judgment": false}, {"id": "api.custom", "group": "Systems", "name": "Your own software", "blurb": "Connects to the in-house system nobody else integrates with.", "price": 1400, "ops": 0, "weight": 3, "needs": [], "integ": ["custom"], "tpl": "tpl-api-custom", "accept": "Read and write against the customer's API succeed, with error handling and retries proven.", "gate": null, "judgment": false}, {"id": "doc.generate", "group": "Documents", "name": "Document generation", "blurb": "Produces the quote, contract, invoice or report itself, as a finished PDF.", "price": 850, "ops": 0, "weight": 2, "needs": [], "integ": [], "tpl": "tpl-doc-generate", "accept": "Generated documents match the approved template exactly, with correct figures on ten samples.", "gate": null, "judgment": false}, {"id": "doc.parse", "group": "Documents", "name": "Reads incoming documents", "blurb": "Opens the PDF, the invoice, the form, and pulls out what matters.", "price": 950, "ops": 0, "weight": 3, "needs": [], "integ": [], "tpl": "tpl-doc-parse", "accept": "Extraction from twenty real documents matches a hand-checked result on the agreed fields.", "gate": null, "judgment": false}, {"id": "pay.collect", "group": "Money", "name": "Payment collection", "blurb": "Sends payment links, takes deposits and issues invoices.", "price": 1200, "ops": 0, "weight": 3, "needs": [], "integ": ["payments"], "tpl": "tpl-pay-collect", "accept": "A test transaction completes end to end and reconciles against the right record.", "gate": null, "judgment": false}, {"id": "pay.chase", "group": "Money", "name": "Chases what's unpaid", "blurb": "Reminds before due, on due, and after, escalating tone gradually, stopping the moment it's paid.", "price": 850, "ops": 0, "weight": 2, "needs": ["pay.collect"], "integ": ["payments"], "tpl": "tpl-pay-chase", "accept": "The dunning sequence runs on schedule and halts within minutes of payment.", "gate": null, "judgment": true}, {"id": "recon.match", "group": "Money", "name": "Reconciliation", "blurb": "Matches what came in against what was owed, and flags what doesn't line up.", "price": 1600, "ops": 0, "weight": 4, "needs": ["pay.collect"], "integ": ["accounting"], "tpl": "tpl-recon-match", "accept": "A month of real transactions reconciles, with every discrepancy listed and explained.", "gate": null, "judgment": false}, {"id": "data.collect", "group": "Data", "name": "Data collection", "blurb": "Pulls the numbers out of the systems they're trapped in, on a schedule.", "price": 850, "ops": 0, "weight": 2, "needs": [], "integ": ["sheets"], "tpl": "tpl-data-collect", "accept": "Scheduled collection runs produce complete datasets, and a failed source raises an alert.", "gate": null, "judgment": false}, {"id": "data.analyze", "group": "Data", "name": "Analysis and answers", "blurb": "Answers questions about your own numbers, in plain language, with the working shown.", "price": 1200, "ops": 0, "weight": 3, "needs": ["data.collect"], "integ": [], "tpl": "tpl-data-analyze", "accept": "Ten questions answered against known data are correct and cite the rows they came from.", "gate": null, "judgment": true}, {"id": "data.viz", "group": "Data", "name": "Charts and visualisation", "blurb": "Turns the answer into something you can actually look at.", "price": 1250, "ops": 49, "weight": 3, "needs": ["data.collect"], "integ": [], "tpl": "tpl-data-viz", "accept": "Charts render correctly on desktop and mobile and match the underlying figures.", "gate": null, "judgment": false}, {"id": "data.report", "group": "Data", "name": "Scheduled reports", "blurb": "The Monday morning report writes and sends itself.", "price": 650, "ops": 0, "weight": 1, "needs": ["data.collect"], "integ": [], "tpl": "tpl-data-report", "accept": "The report generates and delivers on schedule for two consecutive cycles.", "gate": null, "judgment": false}, {"id": "data.alert", "group": "Data", "name": "Threshold alerts", "blurb": "Tells you the moment a number goes somewhere it shouldn't.", "price": 450, "ops": 0, "weight": 1, "needs": ["data.collect"], "integ": [], "tpl": "tpl-data-alert", "accept": "Each configured threshold fires correctly, and does not fire when it shouldn't.", "gate": null, "judgment": false}, {"id": "research.web", "group": "Data", "name": "Research", "blurb": "Goes and finds out: about a prospect, a competitor, a supplier, a market.", "price": 850, "ops": 0, "weight": 2, "needs": [], "integ": [], "tpl": "tpl-research-web", "accept": "Five research briefs are accurate, sourced, and clearly separate fact from inference.", "gate": null, "judgment": true}, {"id": "support.answer", "group": "Support", "name": "Answers support questions", "blurb": "Answers from your documentation rather than from the internet, and says so when it doesn't know.", "price": 950, "ops": 0, "weight": 2, "needs": ["knowledge.pack"], "integ": ["helpdesk"], "tpl": "tpl-support-answer", "accept": "Twenty real questions are answered correctly, and an unknown produces an escalation rather than a guess.", "gate": null, "judgment": true}, {"id": "support.status", "group": "Support", "name": "Proactive status updates", "blurb": "Tells the customer where things are before they have to ask.", "price": 650, "ops": 0, "weight": 1, "needs": [], "integ": [], "tpl": "tpl-support-status", "accept": "Status updates send at each agreed milestone against a replayed job.", "gate": null, "judgment": false}, {"id": "support.ticket", "group": "Support", "name": "Ticket handling", "blurb": "Opens, updates, escalates and closes tickets in the system you already use.", "price": 850, "ops": 0, "weight": 2, "needs": [], "integ": ["helpdesk"], "tpl": "tpl-support-ticket", "accept": "Full ticket lifecycle completes in the live help desk, with correct priority and ownership.", "gate": null, "judgment": false}, {"id": "onboard.run", "group": "Onboarding", "name": "Runs the checklist", "blurb": "Takes a new client or new hire through onboarding in order, the same way every time.", "price": 950, "ops": 0, "weight": 2, "needs": [], "integ": ["pm"], "tpl": "tpl-onboard-run", "accept": "A full onboarding run completes with every step recorded and nothing skipped.", "gate": null, "judgment": false}, {"id": "onboard.chase", "group": "Onboarding", "name": "Chases what's missing", "blurb": "Collects the documents and details, and keeps asking the humans who owe them.", "price": 650, "ops": 0, "weight": 1, "needs": ["onboard.run"], "integ": [], "tpl": "tpl-onboard-chase", "accept": "A missing item produces the agreed chase sequence and stops on receipt.", "gate": null, "judgment": false}, {"id": "knowledge.pack", "group": "Control", "name": "Knowledge pack", "blurb": "Your prices, policies, documents and SOPs loaded in, so it answers from your business.", "price": 900, "ops": 0, "weight": 2, "needs": [], "integ": [], "tpl": "tpl-knowledge-pack", "accept": "Twenty questions drawn from the source material are answered from it, with the source cited.", "gate": null, "judgment": false}, {"id": "dashboard", "group": "Control", "name": "Reporting dashboard", "blurb": "Figures rather than a log: what it handled, what it recovered, where it escalated, reconciled against the audit trail. Every agent already shows you what it did; this is the version you can report from.", "price": 1400, "ops": 0, "weight": 3, "needs": [], "integ": [], "tpl": "tpl-dashboard", "accept": "Dashboard figures reconcile against the audit log for a full week.", "gate": null, "judgment": false}, {"id": "whitelabel", "group": "Control", "name": "White-label surfaces", "blurb": "Every page and message it touches carries your domain and your branding, including the two pages your team uses every day and the chat widget on your site.", "price": 1500, "ops": 0, "weight": 2, "needs": [], "integ": [], "tpl": "tpl-whitelabel", "accept": "No BlvkWare branding appears on any customer-facing surface, and links resolve on the customer's domain.", "gate": null, "judgment": false}, {"id": "lang.extra", "group": "Control", "name": "Additional language", "blurb": "The same judgment and the same tone, in another language.", "price": 600, "ops": 0, "weight": 2, "needs": [], "integ": [], "tpl": "tpl-lang-extra", "accept": "Ten exchanges in the additional language are accurate and hold the agreed tone.", "gate": null, "judgment": false}, {"id": "export.api", "group": "Control", "name": "Data export and API", "blurb": "Everything it knows, available to your other systems, on demand or on a schedule.", "price": 700, "ops": 0, "weight": 2, "needs": [], "integ": [], "tpl": "tpl-export-api", "accept": "Export returns complete, well-formed data and the endpoint is authenticated.", "gate": null, "judgment": false}, {"id": "staging", "group": "Control", "name": "Staging environment", "blurb": "A safe copy to try changes against before they reach live customers.", "price": 500, "ops": 0, "weight": 1, "needs": [], "integ": [], "tpl": "tpl-staging", "accept": "A change deploys to staging, is exercised, and promotes to live without touching live data first.", "gate": null, "judgment": false}, {"id": "training", "group": "Control", "name": "Team training", "blurb": "Ninety minutes, remote, recorded, so your team knows how to work with it and when to overrule it.", "price": 450, "ops": 0, "weight": 0, "needs": [], "integ": [], "tpl": "tpl-training", "accept": "Session delivered and the recording handed over.", "gate": null, "judgment": false}, {"id": "dash.refusals", "group": "Control", "name": "Refusal log", "blurb": "Every action it declined and the rule that stopped it, in the same view as the work it finished. The answer to the question everybody asks about an agent left running.", "price": 650, "ops": 0, "weight": 1, "needs": ["dashboard"], "integ": [], "tpl": "tpl-dash-refusals", "accept": "Every action declined over a replayed week appears with the rule that stopped it and what would clear it.", "gate": null, "judgment": false}, {"id": "dash.metric", "group": "Control", "name": "An extra tracked number", "blurb": "One more measure on the board, defined the way your business defines it rather than the way the software finds convenient.", "price": 250, "ops": 0, "weight": 1, "needs": ["dashboard"], "integ": [], "tpl": "tpl-dash-metric", "accept": "The figure matches the same number recomputed from the audit log by a second route.", "gate": null, "judgment": false}, {"id": "dash.share", "group": "Control", "name": "Client-facing view", "blurb": "A read-only version your own customers can open, showing only the figures you choose to publish.", "price": 650, "ops": 20, "weight": 1, "needs": ["dashboard"], "integ": [], "tpl": "tpl-dash-share", "accept": "Nothing outside the published set is reachable from the shared link, including by editing the address.", "gate": null, "judgment": false}, {"id": "dash.digest", "group": "Control", "name": "Scheduled digest", "blurb": "The same picture pushed to an inbox or a channel on your schedule, so nobody has to remember to go and look.", "price": 450, "ops": 15, "weight": 1, "needs": ["dashboard"], "integ": ["email"], "tpl": "tpl-dash-digest", "accept": "The digest figures match the live board for the same period.", "gate": null, "judgment": false}, {"id": "dash.source", "group": "Control", "name": "One more data source", "blurb": "A second system feeding the same board: the CRM, the accounting package, or the spreadsheet somebody still keeps by hand.", "price": 750, "ops": 25, "weight": 2, "needs": ["dashboard"], "integ": [], "tpl": "tpl-dash-source", "accept": "Figures reconcile against the source system for a full period.", "gate": null, "judgment": false}, {"id": "order.status", "group": "Orders", "name": "Answers where my order is", "blurb": "Looks up the real order and the real tracking, and answers the question people ask most.", "price": 950, "ops": 0, "weight": 2, "needs": [], "integ": ["ecom"], "tpl": "tpl-order-status", "accept": "Twenty real order enquiries are answered from the actual order record, and an order it cannot find escalates instead of guessing.", "gate": null, "judgment": false}, {"id": "order.track", "group": "Orders", "name": "Watches every shipment", "blurb": "Follows each parcel and spots the ones that have stopped moving before the customer does.", "price": 1100, "ops": 49, "weight": 2, "needs": ["order.status"], "integ": ["carrier"], "tpl": "tpl-order-track", "accept": "A shipment with no movement past the agreed window is flagged, and a delivered one is not.", "gate": null, "judgment": false}, {"id": "order.returns", "group": "Orders", "name": "Runs returns and exchanges", "blurb": "Takes the return from request to label to refund, in order, without a person shepherding it.", "price": 1400, "ops": 0, "weight": 3, "needs": [], "integ": ["ecom"], "tpl": "tpl-order-returns", "accept": "A return completes end to end on real data, and anything outside the returns policy is escalated rather than approved.", "gate": null, "judgment": true}, {"id": "order.recover", "group": "Orders", "name": "Recovers abandoned checkouts", "blurb": "Follows up the carts that were nearly orders, then stops the moment they buy or ask you to.", "price": 950, "ops": 0, "weight": 2, "needs": [], "integ": ["ecom"], "tpl": "tpl-order-recover", "accept": "A recovery sequence sends on schedule, stops instantly on purchase or opt-out, and never messages the same cart twice.", "gate": null, "judgment": false}, {"id": "stock.watch", "group": "Inventory", "name": "Watches stock before it runs out", "blurb": "Knows what is running down, how fast, and says so while there is still time to order.", "price": 1200, "ops": 49, "weight": 3, "needs": [], "integ": ["inventory"], "tpl": "tpl-stock-watch", "accept": "An item projected to run out inside the agreed lead time raises exactly one alert, and a healthy item raises none.", "gate": null, "judgment": false}, {"id": "stock.reconcile", "group": "Inventory", "name": "Reconciles stock across channels", "blurb": "Compares what each system thinks you have and surfaces every difference rather than picking a winner.", "price": 1600, "ops": 0, "weight": 3, "needs": ["stock.watch"], "integ": ["inventory", "ecom"], "tpl": "tpl-stock-reconcile", "accept": "A full comparison lists every discrepancy with both figures, and no count is silently overwritten.", "gate": null, "judgment": false}, {"id": "supplier.chase", "group": "Inventory", "name": "Chases suppliers", "blurb": "Purchase orders nobody confirmed and deliveries that are late, chased on a schedule.", "price": 850, "ops": 0, "weight": 2, "needs": [], "integ": [], "tpl": "tpl-supplier-chase", "accept": "An unconfirmed order is chased on the agreed cadence and stops the moment the supplier replies.", "gate": null, "judgment": true}, {"id": "ship.eta", "group": "Logistics", "name": "Tells customers where things are", "blurb": "Proactive delivery updates, so the customer hears from you before they have to ask.", "price": 950, "ops": 0, "weight": 2, "needs": ["order.track"], "integ": [], "tpl": "tpl-ship-eta", "accept": "Each agreed milestone produces one update, and a delivered order stops producing them.", "gate": null, "judgment": false}, {"id": "ship.claims", "group": "Logistics", "name": "Claims for lost and damaged", "blurb": "Assembles the evidence and files the carrier claim, which is money most businesses quietly write off.", "price": 1400, "ops": 0, "weight": 3, "needs": [], "integ": ["carrier"], "tpl": "tpl-ship-claims", "accept": "A claim is assembled with every required document, and one missing a document is held rather than filed.", "gate": null, "judgment": true}, {"id": "review.request", "group": "Leads", "name": "Asks for the review", "blurb": "Asks after every finished job. Happy customers reach your review page; unhappy ones reach you first.", "price": 850, "ops": 0, "weight": 2, "needs": [], "integ": [], "tpl": "tpl-review-request", "accept": "Every customer is asked the same question, a high rating is offered the public review page, a low one alerts the owner within the minute, and nobody is prevented from posting.", "gate": null, "judgment": true}, {"id": "renewal.watch", "group": "Compliance", "name": "Never misses a renewal", "blurb": "Contracts, subscriptions and retainers, chased before they lapse rather than after.", "price": 850, "ops": 0, "weight": 2, "needs": [], "integ": [], "tpl": "tpl-renewal-watch", "accept": "A renewal inside the agreed window is actioned once, and one already renewed is left alone.", "gate": null, "judgment": true}, {"id": "cert.expiry", "group": "Compliance", "name": "Tracks certificates and licences", "blurb": "Insurance, tickets, licences and accreditations, with the chasing done before they expire.", "price": 750, "ops": 0, "weight": 2, "needs": [], "integ": [], "tpl": "tpl-cert-expiry", "accept": "An expiry inside the warning window raises exactly one escalation, and it does not repeat until the record changes.", "gate": null, "judgment": false}], "capGroups": ["Email", "Channels", "Leads", "Appointments", "Systems", "Documents", "Money", "Data", "Support", "Onboarding", "Control", "Orders", "Inventory", "Logistics", "Compliance"], "roles": [{"id": "email-manager", "family": "Communication", "name": "Email Manager", "oneLine": "The inbox stops being a swamp", "problem": "Four hundred unread, three people half-responsible, and the important one from Tuesday still buried. It reads everything, sorts it, routes it, and drafts the replies that write themselves.", "core": ["email.triage", "email.route", "email.draft"], "suggested": ["email.thread", "email.sla", "knowledge.pack", "email.cleanup"], "minTier": 1}, {"id": "front-desk", "family": "Communication", "name": "Front Desk", "oneLine": "All inbound, every channel, one memory", "problem": "The phone, the texts, the web form, the inbox: one worker owning all of it. A customer who called this morning and texts this afternoon isn't starting over.", "core": ["email.triage", "email.draft", "email.thread", "lead.capture", "appt.book", "knowledge.pack"], "suggested": ["voice.inbound", "chan.webchat", "lead.qualify", "appt.remind", "crm.logging"], "minTier": 2}, {"id": "support-agent", "family": "Communication", "name": "Support Agent", "oneLine": "Everything after the sale", "problem": "The part of the business that generates repeat work and referrals, and the part that always loses the fight for attention against new work. It doesn't lose that fight.", "core": ["support.answer", "knowledge.pack", "support.status"], "suggested": ["support.ticket", "email.triage", "chan.webchat", "email.sla"], "minTier": 1}, {"id": "lead-qualifier", "family": "Revenue", "name": "Lead Qualifier", "oneLine": "Only the real ones reach you", "problem": "Most enquiries aren't worth your time and a few are worth dropping everything for. Telling them apart is a job, and right now it's your job.", "core": ["lead.capture", "lead.qualify", "lead.route"], "suggested": ["lead.enrich", "crm.sync", "appt.book", "lead.nurture"], "minTier": 1}, {"id": "appointment-setter", "family": "Revenue", "name": "Appointment Setter", "oneLine": "The calendar fills itself", "problem": "Booking, confirming, reminding, rescheduling. The admin around appointments is nearly all of the work, and none of it needs a person.", "core": ["appt.book", "appt.remind", "appt.reschedule"], "suggested": ["lead.qualify", "crm.logging", "chan.sms", "appt.setting"], "minTier": 1}, {"id": "follow-up", "family": "Revenue", "name": "Follow-Up Agent", "oneLine": "Nothing you quoted goes quiet", "problem": "You sent the quote on Tuesday. Nobody rejected it. It just got buried. This chases every estimate until the customer actually answers.", "core": ["quote.followup"], "suggested": ["crm.logging", "lead.nurture", "doc.generate", "appt.book"], "minTier": 1}, {"id": "outreach", "family": "Revenue", "name": "Outreach Agent", "oneLine": "The list gets worked, every day", "problem": "Prospecting is the first thing to fall off the list when work gets busy, which means it fails hardest exactly when there is most to lose.", "core": ["outreach.sequence", "lead.capture"], "suggested": ["research.web", "lead.enrich", "appt.setting", "crm.sync"], "minTier": 1}, {"id": "revenue-deputy", "family": "Revenue", "name": "Revenue Deputy", "oneLine": "Owns the pipeline end to end", "problem": "From first enquiry to signed job. It moves work through the pipeline, chases what's stalled, and on Friday tells you what it won, what it lost, and why.", "core": ["lead.capture", "lead.qualify", "quote.followup", "crm.sync", "crm.pipeline", "data.report"], "suggested": ["doc.generate", "appt.book", "lead.nurture", "dashboard", "crm.logging"], "minTier": 2}, {"id": "crm-operator", "family": "Operations", "name": "CRM Operator", "oneLine": "The CRM stops lying to you", "problem": "A CRM is only worth what someone puts into it, which is why yours is half empty. This one keeps it true without anybody typing.", "core": ["crm.sync", "crm.logging", "crm.hygiene"], "suggested": ["lead.enrich", "crm.pipeline", "data.report", "api.custom"], "minTier": 1}, {"id": "workflow-operator", "family": "Operations", "name": "Workflow Operator", "oneLine": "The process runs without a shepherd", "problem": "The multi-step thing that crosses four systems and only works because one person remembers all of it. That person is the bottleneck, and they'd like a holiday.", "core": ["workflow.multistep", "workflow.exception"], "suggested": ["crm.sync", "files.watch", "doc.generate", "api.custom", "staging"], "minTier": 1}, {"id": "browser-operator", "family": "Operations", "name": "Browser Operator", "oneLine": "Works the systems that have no way in", "problem": "The supplier portal, the insurer's site, the council system: the ones with no API and no export, where somebody logs in and copies things by hand. It does that instead.", "core": ["browser.operate"], "suggested": ["browser.extract", "data.collect", "files.watch", "doc.parse", "data.alert"], "minTier": 1}, {"id": "onboarding", "family": "Operations", "name": "Onboarding Agent", "oneLine": "The first two weeks, identical every time", "problem": "New client or new hire, same problem: a checklist that exists in one person's head and gets done differently every time.", "core": ["onboard.run", "onboard.chase"], "suggested": ["doc.generate", "email.draft", "appt.book", "files.watch"], "minTier": 1}, {"id": "collections", "family": "Money", "name": "Collections Agent", "oneLine": "Invoices that chase themselves", "problem": "Chasing money is the job everyone hates and therefore the job nobody does. This one has no feelings about it and stays polite through every reminder.", "core": ["pay.chase", "pay.collect"], "suggested": ["doc.generate", "recon.match", "crm.logging", "data.alert"], "minTier": 1}, {"id": "back-office", "family": "Money", "name": "Back Office Deputy", "oneLine": "Quote to invoice to paid to reconciled", "problem": "The whole money pipeline across whatever tools you already run. It doesn't replace your accounting package; it operates it, which is the part nobody has time for.", "core": ["doc.generate", "pay.collect", "pay.chase", "recon.match", "crm.sync"], "suggested": ["doc.parse", "data.report", "data.alert", "export.api", "dashboard"], "minTier": 2}, {"id": "data-analyst", "family": "Intelligence", "name": "Data Analyst", "oneLine": "Answers about your own numbers", "problem": "The figures exist, spread across five systems, and getting a straight answer out of them takes a day you don't have. Ask it instead.", "core": ["data.collect", "data.analyze"], "suggested": ["data.viz", "data.report", "data.alert", "dashboard", "api.custom"], "minTier": 1}, {"id": "reporting", "family": "Intelligence", "name": "Reporting Agent", "oneLine": "The Monday report writes itself", "problem": "Somebody spends half a day a week assembling a report that three people skim. That half-day is recoverable.", "core": ["data.collect", "data.report"], "suggested": ["data.viz", "data.alert", "dashboard", "browser.extract"], "minTier": 1}, {"id": "research", "family": "Intelligence", "name": "Research Agent", "oneLine": "Finds out, before the meeting", "problem": "Prospect research, competitor moves, supplier checks: all valuable, all skipped, because it's an hour nobody has.", "core": ["research.web"], "suggested": ["lead.enrich", "data.report", "crm.sync", "email.draft"], "minTier": 1}, {"id": "order-desk", "family": "Commerce", "name": "Order Desk Agent", "oneLine": "Nobody has to ask where their order is", "problem": "Where is my order is the most common question in ecommerce and the least valuable use of anyone time. This one answers it from the real order and the real tracking, in seconds, every time.", "core": ["order.status", "knowledge.pack"], "suggested": ["order.track", "email.triage", "email.draft", "chan.webchat"], "minTier": 1}, {"id": "returns", "family": "Commerce", "name": "Returns Agent", "oneLine": "Returns stop eating the week", "problem": "A return is six small steps and a judgment call, repeated all day. It is the most labour-intensive thing in an online shop and the least interesting.", "core": ["order.returns", "knowledge.pack"], "suggested": ["order.status", "doc.generate", "email.draft"], "minTier": 1}, {"id": "ecommerce-deputy", "family": "Commerce", "name": "Ecommerce Deputy", "oneLine": "Owns everything after the buy button", "problem": "The whole post-purchase experience - order questions, tracking, exceptions, returns and the review request - owned by one worker with one memory of the customer.", "core": ["order.status", "order.track", "order.returns", "knowledge.pack", "email.triage"], "suggested": ["ship.eta", "review.request", "email.draft", "chan.webchat", "crm.sync"], "minTier": 2}, {"id": "stock", "family": "Operations", "name": "Stock Agent", "oneLine": "You stop finding out too late", "problem": "Running out is expensive, and finding out from a customer is worse. This watches what is running down, how fast, and says so while there is still time to order.", "core": ["stock.watch", "data.alert"], "suggested": ["stock.reconcile", "supplier.chase", "data.report"], "minTier": 1}, {"id": "shipments", "family": "Operations", "name": "Shipment Agent", "oneLine": "The stuck parcel finds you first", "problem": "Most delivery problems are known to the carrier long before they are known to you, and to the customer before either. This closes that gap, and claims for what never arrives.", "core": ["ship.eta", "order.track", "order.status"], "suggested": ["ship.claims", "support.status", "email.draft"], "minTier": 1}, {"id": "renewals", "family": "Operations", "name": "Renewals Agent", "oneLine": "Nothing lapses quietly", "problem": "Contracts, retainers, insurance, tickets and licences all expire on a date somebody was supposed to remember. Revenue and compliance leak through the same gap.", "core": ["renewal.watch", "cert.expiry"], "suggested": ["doc.generate", "email.draft", "crm.sync"], "minTier": 1}], "roleFamilies": ["Communication", "Revenue", "Operations", "Money", "Intelligence", "Commerce"], "modifiers": [{"id": "rush", "name": "Rush delivery", "kind": "pct", "pct": 0.4, "blurb": "Half the timeline. Priced against the build because it displaces other work."}], "autonomy": [{"id": "L0", "name": "Watch", "blurb": "Observes and reports. Takes no action.", "needs": []}, {"id": "L1", "name": "Draft", "blurb": "Prepares anything a customer would see; a human sends it. Keeps your records up to date as it goes.", "needs": []}, {"id": "L2", "name": "Approve", "blurb": "Acts on its own, but stops for you above a line you set.", "needs": []}, {"id": "L3", "name": "Operate", "blurb": "Acts within scope, escalates exceptions. Enabled in writing after supervision.", "needs": []}], "setupNeeds": {"knowledge.pack": ["their documents, prices and policies"], "dash.source": ["credentials for the extra source"], "dash.share": ["who is allowed to see it"], "email.triage": ["a sample of real inbox traffic to calibrate against"], "email.draft": ["examples of how they already write to customers"], "email.cleanup": ["access to the existing backlog"], "lead.qualify": ["what a good customer looks like to them"], "lead.enrich": ["which sources they consider acceptable"], "appt.book": ["job durations, travel buffers and working hours"], "appt.setting": ["the list to work, and calling-hours rules"], "doc.generate": ["their document template and branding"], "doc.parse": ["ten real documents to check extraction against"], "pay.collect": ["a payment provider account"], "pay.chase": ["their escalation tone and terms"], "recon.match": ["a month of real transactions to reconcile against"], "browser.operate": ["portal credentials and a recorded walkthrough"], "browser.extract": ["portal credentials and the page layout"], "api.custom": ["API documentation and a credential"], "files.watch": ["the folder to watch and what should happen"], "crm.sync": ["field mapping to their CRM"], "crm.hygiene": ["a decision on what may be merged automatically"], "crm.pipeline": ["their stages and what counts as stale"], "chan.sms": ["A2P 10DLC registration: weeks, outside our control"], "chan.whatsapp": ["Meta business verification"], "voice.inbound": ["a phone number and a call-flow walkthrough"], "voice.outbound": ["a phone number and calling-hours rules"], "whitelabel": ["their domain and brand assets"], "lang.extra": ["which languages, and a native reviewer"], "workflow.multistep": ["the process written down, step by step"], "workflow.exception": ["the exceptions they already know about"], "support.answer": ["their documentation or help centre"], "support.ticket": ["their help desk and priority rules"], "onboard.run": ["their onboarding checklist"], "data.collect": ["credentials for each source"], "data.analyze": ["the questions they actually want answered"], "data.report": ["who receives it, and when"], "data.alert": ["the thresholds that matter to them"], "research.web": ["what a useful brief looks like to them"], "training": ["a date and the attendee list"], "order.status": ["a read connection to their store and their order fields"], "order.track": ["carrier accounts, or the tracking data already in their store"], "order.returns": ["their returns policy, and who may approve an exception"], "order.recover": ["their checkout data and what they are willing to offer"], "stock.watch": ["reorder points and supplier lead times"], "stock.reconcile": ["which system is authoritative when two disagree"], "supplier.chase": ["supplier contacts and the agreed cadence"], "ship.eta": ["which milestones the customer should hear about"], "ship.claims": ["carrier accounts and the documents each claim needs"], "review.request": ["their public review link, and when a job counts as finished"], "renewal.watch": ["the contracts, their dates and their notice periods"], "cert.expiry": ["the certificates to track and how early to warn"]}}</script>
+<script>
+try { window.BLVK_CATALOG = JSON.parse(document.getElementById("blvk-catalog").textContent); }
+catch (e) { window.BLVK_CATALOG = null; }
+</script>
+<script>/* The agent pricing and specification engine.
+ *
+ * Injected verbatim into BOTH the buyer's configurator at /hire/ and the
+ * internal fulfilment console. That is deliberate: the console recomputes the
+ * price from the submitted specification and compares it against what the buyer
+ * was actually charged. If those ever disagree, the order is held rather than
+ * built — which is the only reliable defence against a configurator bug quietly
+ * selling a Deputy's workload at Operator money.
+ *
+ * Reads window.BLVK_CATALOG (compiled from dev/catalog.py at build time).
+ * Exposes window.BlvkEngine.
+ */
+(function (global) {
+    "use strict";
+
+    var C = global.BLVK_CATALOG;
+
+    function capById(id) { return C.capabilities.filter(function (c) { return c.id === id; })[0]; }
+    function roleById(id) { return C.roles.filter(function (r) { return r.id === id; })[0]; }
+    function bandById(id) { return C.volume.filter(function (v) { return v.id === id; })[0] || C.volume[0]; }
+    function chanById(id) { return C.channels.filter(function (c) { return c.id === id; })[0]; }
+
+    function keysOf(obj) {
+        return Object.keys(obj || {}).filter(function (k) { return obj[k]; });
+    }
+
+    /* Expand a selection to include everything it depends on. A capability
+     * whose dependency is missing does not half-work, it does not work — so the
+     * engine adds the dependency and the buyer is told, rather than the build
+     * failing inspection on day nine. */
+    function resolve(ids) {
+        var out = {}, added = [];
+        var queue = ids.slice();
+        while (queue.length) {
+            var id = queue.shift();
+            if (out[id]) continue;
+            var cap = capById(id);
+            if (!cap) continue;
+            out[id] = true;
+            cap.needs.forEach(function (n) {
+                if (!out[n]) {
+                    if (ids.indexOf(n) === -1 && added.indexOf(n) === -1) added.push(n);
+                    queue.push(n);
+                }
+            });
+        }
+        return { ids: Object.keys(out), added: added };
+    }
+
+    /* Channels are priced through their capability, never as a separate line,
+     * so that turning on the phone costs the voice capability and not the voice
+     * capability plus a channel surcharge. */
+    function channelCaps(channelIds) {
+        var out = [];
+        channelIds.forEach(function (cid) {
+            var ch = chanById(cid);
+            if (ch && ch.cap) out.push(ch.cap);
+        });
+        return out;
+    }
+
+    function autonomyNeeds(level) {
+        var a = C.autonomy.filter(function (x) { return x.id === level; })[0];
+        return a ? a.needs.slice() : [];
+    }
+
+    /* ---- tier derivation -------------------------------------------------
+     * The buyer never picks the tier. A scope that is really a Deputy cannot be
+     * bought at Operator money, and a buyer who genuinely needs less is not
+     * upsold into a tier they will not use. */
+    /* No single signal separates the tiers. Measured across the catalog, a
+     * Tier I role loaded with everything it suggests reaches 18 weight and 5
+     * capability groups, while a Tier II role's core alone sits at 11-14 weight
+     * and 3-4 groups — the ranges overlap. So the thresholds sit above what a
+     * fully-suggested Tier I configuration reaches, and the role's own declared
+     * minimum carries the cases that breadth cannot see.
+     *
+     * Systems and channels escalate only past the tier's *maximum*, not past
+     * what the base includes. The span between the two is sold at the published
+     * per-connection price, so a fourth system costs $750 rather than $6,000. */
+    function deriveTier(state, resolved) {
+        var role = roleById(state.roleId);
+        var systems = keysOf(state.systems).length;
+        var channels = keysOf(state.channels).length;
+
+        var weight = 0, groups = {};
+        resolved.ids.forEach(function (id) {
+            var cap = capById(id);
+            if (!cap) return;
+            weight += cap.weight;
+            groups[cap.group] = true;
+        });
+        var groupCount = Object.keys(groups).length;
+        var t1 = C.tiers[1];
+
+        var reasons = [];
+        if (role && role.minTier === 2) {
+            reasons.push("the " + role.name + " owns a whole function rather than one job");
+        }
+        if (weight > C.pricing.tier2Weight) {
+            reasons.push("you have scoped more work than one job's worth");
+        }
+        if (groupCount >= C.pricing.tier2Groups) {
+            reasons.push("it now spans " + groupCount + " different areas of your business rather than one");
+        }
+        if (systems > t1.maxSystems) {
+            reasons.push("it has to operate " + systems + " systems, which is past what a Tier I agent stretches to");
+        }
+        if (channels > t1.maxChannels) {
+            reasons.push("it works across " + channels + " channels, which is past what a Tier I agent stretches to");
+        }
+
+        var tier = reasons.length ? 2 : 1;
+
+        /* Crossing into Tier II costs the difference between the two base
+         * prices in a single click. That difference is real — it is 10 delivery
+         * days against 25 — but a buyer who meets it without warning reads it as
+         * a trap rather than a tier. So the engine reports when a configuration
+         * is one step away, and the page says so before the click rather than
+         * after it. */
+        var near = tier === 1 && (
+            weight > C.pricing.tier2Weight - 4 ||
+            groupCount >= C.pricing.tier2Groups - 1 ||
+            systems >= t1.maxSystems ||
+            channels >= t1.maxChannels
+        );
+
+        return {
+            tier: tier, key: tier, def: C.tiers[tier],
+            weight: weight, groups: groupCount, reasons: reasons,
+            systems: systems, channels: channels,
+            nearTier2: near,
+            tier2Delta: C.tiers[2].build - C.tiers[1].build,
+            oversized: weight > C.pricing.splitWeight
+        };
+    }
+
+    /* ---- pricing --------------------------------------------------------- */
+    function price(state) {
+        var role = roleById(state.roleId);
+        if (!role) return null;
+
+        var picked = keysOf(state.caps)
+            .concat(role.core)
+            .concat(channelCaps(keysOf(state.channels)))
+            .concat(autonomyNeeds(state.autonomy || "L1"));
+
+        // de-duplicate before resolving so `added` reports honestly
+        var seen = {}, unique = [];
+        picked.forEach(function (id) { if (!seen[id]) { seen[id] = 1; unique.push(id); } });
+
+        var resolved = resolve(unique);
+        var t = deriveTier(state, resolved);
+        var def = t.def;
+
+        var coreSet = {};
+        role.core.forEach(function (id) { coreSet[id] = true; });
+
+        var lines = [];
+        var addedBuild = 0, capOps = 0;
+        var gates = {};
+
+        resolved.ids.forEach(function (id) {
+            var cap = capById(id);
+            if (!cap) return;
+            if (cap.gate) gates[cap.gate] = true;
+            capOps += cap.ops || 0;
+            if (!coreSet[id]) {
+                addedBuild += cap.price;
+                lines.push({ kind: "cap", id: id, name: cap.name, amount: cap.price, group: cap.group });
+            }
+        });
+        lines.sort(function (a, b) { return a.group === b.group ? b.amount - a.amount : a.group < b.group ? -1 : 1; });
+
+        var extraSystems = Math.max(0, t.systems - def.systems);
+        var systemsCost = extraSystems * C.pricing.extraSystem;
+
+        var subtotal = def.build + addedBuild + systemsCost;
+
+        var rush = state.modifiers && state.modifiers.rush;
+        var rushCost = rush ? Math.round(subtotal * C.pricing.rushPct) : 0;
+        var build = subtotal + rushCost;
+
+        var band = bandById(state.volumeId);
+        var extraActions = Math.max(0, band.actions - def.actions);
+        var volumeOps = Math.ceil(extraActions / 1000) * C.pricing.prebuyPer1000;
+
+        var monthly = def.ops + capOps + volumeOps;
+        var annual = monthly * C.pricing.annualMonths;
+        var recurring = state.billing === "annual" ? annual : monthly;
+
+        var trial = !!state.trial;
+        var credit = trial ? C.pricing.trial : 0;
+        var dueNow = trial ? C.pricing.trial : build + recurring;
+
+        var days = def.buildDays;
+        if (rush) days = Math.ceil(days / 2);
+
+        return {
+            role: role, tier: t, def: def,
+            resolved: resolved, autoAdded: resolved.added,
+            lines: lines,
+            base: def.build, addedBuild: addedBuild,
+            extraSystems: extraSystems, systemsCost: systemsCost,
+            rush: !!rush, rushCost: rushCost,
+            subtotal: subtotal, build: build,
+            capOps: capOps, volumeOps: volumeOps, band: band,
+            includedActions: band.actions > def.actions ? band.actions : def.actions,
+            monthly: monthly, annual: annual, recurring: recurring,
+            trial: trial, credit: credit, dueNow: dueNow,
+            buildAfterCredit: build - credit,
+            gates: Object.keys(gates),
+            days: days,
+            billing: state.billing === "annual" ? "annual" : "monthly"
+        };
+    }
+
+    /* ---- the specification the operator actually builds from ------------- */
+    function spec(state, q) {
+        q = q || price(state);
+        if (!q) return null;
+
+        var caps = q.resolved.ids.map(function (id) {
+            var c = capById(id);
+            return { id: c.id, name: c.name, group: c.group, tpl: c.tpl, accept: c.accept, gate: c.gate };
+        }).sort(function (a, b) { return a.group < b.group ? -1 : a.group > b.group ? 1 : 0; });
+
+        /* Two different things end up on this list and the operator must be able
+         * to tell them apart. A "declared" system is one the buyer ticked and
+         * paid a connection fee for beyond the tier's allowance. An "implied"
+         * one comes with a capability they bought — the voice capability already
+         * covers wiring the phone system — so it is in scope and already paid
+         * for, but it is not what the connection count was charged on. Merging
+         * them silently is how a build ends up wiring more than was sold. */
+        var integ = {};
+        keysOf(state.systems).forEach(function (i) { integ[i] = "declared"; });
+        q.resolved.ids.forEach(function (id) {
+            var c = capById(id);
+            if (!c) return;
+            c.integ.forEach(function (i) { if (!integ[i]) integ[i] = "implied"; });
+        });
+
+        var integrations = Object.keys(integ).map(function (id) {
+            var d = C.integrations.filter(function (x) { return x.id === id; })[0];
+            var by = [];
+            if (integ[id] === "implied") {
+                q.resolved.ids.forEach(function (cid) {
+                    var c = capById(cid);
+                    if (c && c.integ.indexOf(id) !== -1) by.push(c.name);
+                });
+            }
+            return {
+                id: id, name: d ? d.name : id,
+                source: integ[id],
+                requiredBy: by,
+                detail: (state.systemDetail && state.systemDetail[id]) || ""
+            };
+        });
+
+        return {
+            schema: "blvkware.agent-order/1",
+            ref: state.ref || null,
+            role: { id: q.role.id, name: q.role.name, family: q.role.family },
+            tier: { key: q.tier.key, name: q.def.name, derivedBecause: q.tier.reasons, weight: q.tier.weight },
+            autonomy: state.autonomy || "L1",
+            channels: keysOf(state.channels).map(function (id) {
+                var c = chanById(id);
+                return { id: id, name: c ? c.name : id, gate: c ? c.gate : null };
+            }),
+            integrations: integrations,
+            volume: { id: q.band.id, label: q.band.label, includedActions: q.includedActions },
+            capabilities: caps,
+            templates: caps.map(function (c) { return c.tpl; }),
+            acceptance: caps.filter(function (c) { return c.accept; })
+                            .map(function (c) { return { cap: c.id, name: c.name, test: c.accept }; }),
+            gates: q.gates,
+            delivery: { businessDays: q.days, rush: q.rush },
+            commercial: {
+                build: q.build, subtotal: q.subtotal, rushCost: q.rushCost,
+                monthly: q.monthly, annual: q.annual, billing: q.billing,
+                trial: q.trial, credit: q.credit, dueNow: q.dueNow
+            },
+            business: state.answers || {}
+        };
+    }
+
+    /* Recompute a submitted spec from scratch and compare. Used by the
+     * fulfilment console before any build work starts. */
+    function verify(submitted) {
+        if (!submitted || submitted.schema !== "blvkware.agent-order/1") {
+            return { ok: false, fatal: "Not a BlvkWare agent order." };
+        }
+        var state = {
+            roleId: submitted.role && submitted.role.id,
+            caps: {}, systems: {}, channels: {},
+            volumeId: submitted.volume && submitted.volume.id,
+            autonomy: submitted.autonomy,
+            billing: submitted.commercial && submitted.commercial.billing,
+            trial: !!(submitted.commercial && submitted.commercial.trial),
+            modifiers: { rush: !!(submitted.delivery && submitted.delivery.rush) }
+        };
+        (submitted.capabilities || []).forEach(function (c) { state.caps[c.id] = true; });
+        (submitted.integrations || []).forEach(function (i) { state.systems[i.id] = true; });
+        (submitted.channels || []).forEach(function (c) { state.channels[c.id] = true; });
+
+        var q = price(state);
+        if (!q) return { ok: false, fatal: "Unknown role: " + state.roleId };
+
+        var was = submitted.commercial || {};
+        var diffs = [];
+        function cmp(label, got, expect) {
+            if (Number(got) !== Number(expect)) {
+                diffs.push({ label: label, charged: Number(got), recomputed: Number(expect) });
+            }
+        }
+        cmp("Build", was.build, q.build);
+        cmp("Monthly", was.monthly, q.monthly);
+        cmp("Due at order", was.dueNow, q.dueNow);
+        if (submitted.tier && Number(submitted.tier.key) !== q.tier.key) {
+            diffs.push({ label: "Tier", charged: "Tier " + submitted.tier.key, recomputed: "Tier " + q.tier.key });
+        }
+        return { ok: diffs.length === 0, diffs: diffs, quote: q, spec: spec(state, q) };
+    }
+
+    function money(n) {
+        return "$" + Number(n).toLocaleString("en-US");
+    }
+
+    global.BlvkEngine = {
+        price: price, spec: spec, verify: verify, resolve: resolve,
+        deriveTier: deriveTier, capById: capById, roleById: roleById,
+        bandById: bandById, chanById: chanById, keysOf: keysOf, money: money,
+        catalog: C
+    };
+    // Also usable outside a browser. The checkout function re-prices every
+    // order server-side from this exact file, because a price the client sends
+    // is a price anyone can edit.
+})(typeof window !== "undefined" ? window : globalThis);
+</script>
+<script>/* The design engine: business signals in, a costed agent design out.
+ *
+ * Shared by the scan (find the need), the designer (design the agent) and the builder (build it),
+ * so all three propose the same thing for the same business.
+ *
+ * The rule that governs this whole file: **the model interprets, the catalog
+ * decides.** A language model is good at reading a business and saying "these
+ * people are drowning in quotes nobody chases". It is not allowed to say what
+ * that costs, or to invent a capability. So every model output is filtered
+ * through `adopt()`, which discards anything that is not a real catalog id, and
+ * pricing only ever happens in BlvkEngine.
+ *
+ * The failure this prevents is specific and expensive: a hallucinated quote is
+ * a number a buyer will hold us to.
+ *
+ * Reads window.BLVK_CATALOG and window.BlvkEngine. Exposes window.BlvkDesign.
+ */
+(function (global) {
+    "use strict";
+
+    var C = global.BLVK_CATALOG;
+    var E = global.BlvkEngine;
+
+    /* ---------------------------------------------------------------
+     * Signals — the observable facts that imply an agent is worth having.
+     *
+     * Each is something a person can confirm about their own business in one
+     * sentence, because a diagnostic the buyer cannot check is just an opinion.
+     * `roles` maps the signal onto catalog roles with a weight: how strongly
+     * this signal argues for that role.
+     * ------------------------------------------------------------- */
+    var SIGNALS = [
+        { id: "quotes_unchased", ask: "You send quotes or estimates and nobody reliably chases them",
+          evidence: "quotes, estimates, proposals sent by email",
+          roles: { "follow-up": 5, "revenue-deputy": 3, "crm-operator": 1 } },
+
+        { id: "slow_reply", ask: "New enquiries can wait hours — or overnight — for a first reply",
+          evidence: "contact form, no live chat, no stated response time",
+          roles: { "lead-qualifier": 4, "front-desk": 4, "email-manager": 2 } },
+
+        { id: "missed_calls", ask: "Calls go unanswered when you're on a job",
+          evidence: "a phone number as the primary call to action",
+          roles: { "front-desk": 5, "appointment-setter": 2 } },
+
+        { id: "inbox_swamp", ask: "A shared inbox is where things go to die",
+          evidence: "info@ or admin@ as the published address",
+          roles: { "email-manager": 5, "support-agent": 2 } },
+
+        { id: "manual_booking", ask: "Booking and rescheduling is done by hand, by a person",
+          evidence: "no online booking; 'call us to arrange'",
+          roles: { "appointment-setter": 5, "front-desk": 3 } },
+
+        { id: "unpaid_invoices", ask: "You are owed money you haven't chased",
+          evidence: "invoicing mentioned; payment terms published",
+          roles: { "collections": 5, "back-office": 3 } },
+
+        { id: "crm_rot", ask: "Your CRM is only as good as whoever last remembered to update it",
+          evidence: "a CRM in the stack with no automation around it",
+          roles: { "crm-operator": 5, "revenue-deputy": 2 } },
+
+        { id: "portal_by_hand", ask: "Somebody logs into a supplier or insurer portal and copies things out",
+          evidence: "supplier, insurer, council or trade portal referenced",
+          roles: { "browser-operator": 6 } },
+
+        { id: "no_reporting", ask: "Getting a straight answer out of your own numbers takes a day",
+          evidence: "several systems, no dashboard, spreadsheet reporting",
+          roles: { "data-analyst": 5, "reporting": 4 } },
+
+        { id: "repeat_questions", ask: "The same customer questions get answered over and over",
+          evidence: "an FAQ page, published policies, a help centre",
+          roles: { "support-agent": 5, "email-manager": 2 } },
+
+        { id: "onboarding_adhoc", ask: "Onboarding a new client or hire is different every time",
+          evidence: "a documented process, a welcome pack, a checklist",
+          roles: { "onboarding": 5 } },
+
+        { id: "no_outreach", ask: "Prospecting is the first thing to fall off when work gets busy",
+          evidence: "a sales motion with no visible sequencing",
+          roles: { "outreach": 4, "research": 2 } },
+
+        { id: "no_reviews", ask: "You do good work and have far fewer reviews than you deserve",
+          evidence: "few or no public reviews against visible volume",
+          roles: { "follow-up": 2, "support-agent": 2 } },
+
+        { id: "multi_system", ask: "A job crosses four systems and only one person knows the whole path",
+          evidence: "several disconnected tools in the stack",
+          roles: { "workflow-operator": 6, "back-office": 3 } },
+
+        { id: "post_sale_drop", ask: "After the sale, customers hear nothing until they chase",
+          evidence: "no status updates, no service portal",
+          roles: { "support-agent": 4, "front-desk": 2 } },
+
+        { id: "wismo", ask: "Customers keep asking where their order is",
+          evidence: "an online store with order tracking, or a support inbox full of order queries",
+          roles: { "order-desk": 6, "ecommerce-deputy": 4, "shipments": 2 } },
+
+        { id: "returns_manual", ask: "Every return is handled by hand, one at a time",
+          evidence: "a published returns policy, an online store",
+          roles: { "returns": 6, "ecommerce-deputy": 3 } },
+
+        { id: "stockouts", ask: "You find out something has run out too late to reorder",
+          evidence: "physical products, stock held, a supplier lead time",
+          roles: { "stock": 6, "ecommerce-deputy": 1 } },
+
+        { id: "stock_disagrees", ask: "Two systems disagree about how much stock you have",
+          evidence: "selling on more than one channel; an inventory system alongside a store",
+          roles: { "stock": 5 } },
+
+        { id: "late_suppliers", ask: "Purchase orders go unconfirmed and deliveries turn up late",
+          evidence: "suppliers, purchase orders, lead times",
+          roles: { "stock": 4, "shipments": 2 } },
+
+        { id: "delivery_blind", ask: "You hear about a delivery problem from the customer, not the carrier",
+          evidence: "shipping, tracking numbers, a carrier account",
+          roles: { "shipments": 6, "order-desk": 3, "ecommerce-deputy": 3 } },
+
+        { id: "unclaimed_losses", ask: "Parcels go missing or arrive damaged and nobody claims for them",
+          evidence: "shipping at volume; a carrier account",
+          roles: { "shipments": 5 } },
+
+        { id: "renewals_slip", ask: "Contracts and retainers lapse because nobody was watching the date",
+          evidence: "recurring contracts, retainers, subscriptions",
+          roles: { "renewals": 6 } },
+
+        { id: "certs_expire", ask: "Insurance, licences or certificates expire before anyone notices",
+          evidence: "a regulated trade, accreditations, insured work",
+          roles: { "renewals": 5 } },
+    ];
+
+    var SIGNAL_BY_ID = {};
+    SIGNALS.forEach(function (s) { SIGNAL_BY_ID[s.id] = s; });
+
+    /* Integration categories a role usually implies, so a design arrives with a
+     * sensible stack rather than an empty one the buyer has to guess at. */
+    var ROLE_SYSTEMS = {
+        "email-manager": ["email"],
+        "front-desk": ["email", "calendar", "crm", "telephony"],
+        "support-agent": ["email", "helpdesk"],
+        "lead-qualifier": ["email", "crm"],
+        "appointment-setter": ["calendar", "crm"],
+        "follow-up": ["email", "crm"],
+        "outreach": ["email", "crm"],
+        "revenue-deputy": ["email", "crm", "calendar"],
+        "crm-operator": ["crm"],
+        "workflow-operator": ["crm", "pm", "storage"],
+        "browser-operator": ["portal", "sheets"],
+        "onboarding": ["email", "pm", "storage"],
+        "collections": ["accounting", "payments", "email"],
+        "back-office": ["accounting", "payments", "crm"],
+        "data-analyst": ["sheets", "db"],
+        "reporting": ["sheets", "db"],
+        "research": ["crm"],
+        "order-desk": ["ecom", "email"],
+        "returns": ["ecom", "email"],
+        "ecommerce-deputy": ["ecom", "carrier", "email", "crm"],
+        "stock": ["inventory", "ecom"],
+        "shipments": ["carrier", "ecom", "email"],
+        "renewals": ["crm", "email", "storage"],
+    };
+
+    function roleById(id) { return E.roleById(id); }
+    function capById(id) { return E.capById(id); }
+
+    /* ---------------------------------------------------------------
+     * Ranking: which agent should this business hire first?
+     * ------------------------------------------------------------- */
+    function rank(signalIds, opts) {
+        opts = opts || {};
+        var scores = {}, why = {};
+
+        /* Signals decay by the order they were reported. What a business leads
+         * with is what actually hurts; without this, three mild secondary
+         * mentions outrank the one thing they opened with — which is how a firm
+         * complaining that nobody chases its quotes gets recommended a CRM
+         * tidier instead of a Follow-Up Agent. */
+        (signalIds || []).forEach(function (sid, i) {
+            var sig = SIGNAL_BY_ID[sid];
+            if (!sig) return;
+            var decay = Math.pow(0.82, i);
+            Object.keys(sig.roles).forEach(function (roleId) {
+                if (!roleById(roleId)) return;
+                scores[roleId] = (scores[roleId] || 0) + sig.roles[roleId] * decay;
+                (why[roleId] = why[roleId] || []).push(sig.ask);
+            });
+        });
+
+        /* A role named after reading the whole description is evidence, not a
+         * footnote. Weighted below a lead signal but well above a passing one. */
+        (opts.nominated || []).forEach(function (rid, i) {
+            if (!roleById(rid)) return;
+            scores[rid] = (scores[rid] || 0) + Math.max(4 - i * 1.5, 1);
+            (why[rid] = why[rid] || []).unshift("named directly from how you described the business");
+        });
+
+        var out = Object.keys(scores).map(function (roleId) {
+            var role = roleById(roleId);
+            return {
+                roleId: roleId, role: role, score: scores[roleId],
+                reasons: why[roleId].slice(0, 3),
+                tier: role.minTier
+            };
+        });
+
+        // Strongest signal first; on a tie prefer the cheaper tier, because a
+        // first hire that costs less is a first hire that actually happens.
+        out.sort(function (a, b) {
+            return b.score - a.score || a.tier - b.tier ||
+                   (a.role.name < b.role.name ? -1 : 1);
+        });
+        return opts.limit ? out.slice(0, opts.limit) : out;
+    }
+
+    /* ---------------------------------------------------------------
+     * Designing one agent.
+     * ------------------------------------------------------------- */
+
+    /* Which of a role's suggested capabilities this business actually needs.
+     * Everything a buyer does not need is money they should not spend, and a
+     * design that ticks every box is a design nobody trusts. */
+    function relevantSuggestions(role, signalIds, systems) {
+        var sigs = {}; (signalIds || []).forEach(function (s) { sigs[s] = true; });
+        var sys = {}; (systems || []).forEach(function (s) { sys[s] = true; });
+
+        return role.suggested.filter(function (cid) {
+            var cap = capById(cid);
+            if (!cap) return false;
+            // A capability whose integration the business does not have is
+            // noise; do not sell a CRM writer to somebody with no CRM.
+            if (cap.integ.length && !cap.integ.some(function (i) { return sys[i]; })) {
+                // telephony and portal are opt-in, never assumed
+                if (cap.integ.indexOf("telephony") !== -1 ||
+                    cap.integ.indexOf("portal") !== -1) return false;
+            }
+            // Anything with a registration gate stays out of a default design.
+            if (cap.gate) return false;
+            return true;
+        });
+    }
+
+    function design(roleId, opts) {
+        opts = opts || {};
+        var role = roleById(roleId);
+        if (!role) return null;
+
+        var systems = (opts.systems && opts.systems.length)
+            ? opts.systems.slice() : (ROLE_SYSTEMS[roleId] || ["email"]).slice();
+        var channels = (opts.channels && opts.channels.length)
+            ? opts.channels.slice() : ["email"];
+
+        var chosen = {};
+        role.core.forEach(function (c) { chosen[c] = true; });
+        var suggested = opts.capabilities
+            ? opts.capabilities.filter(function (c) { return capById(c); })
+            : relevantSuggestions(role, opts.signals, systems);
+        suggested.forEach(function (c) { chosen[c] = true; });
+
+        var state = {
+            roleId: roleId,
+            caps: chosen,
+            systems: systems.reduce(function (a, s) { a[s] = true; return a; }, {}),
+            systemDetail: opts.systemDetail || {},
+            channels: channels.reduce(function (a, c) { a[c] = true; return a; }, {}),
+            volumeId: opts.volumeId || "standard",
+            autonomy: opts.autonomy || "L1",
+            modifiers: {},
+            billing: opts.billing || "monthly",
+            trial: !!opts.trial,
+            answers: opts.answers || {},
+            ref: opts.ref || null
+        };
+
+        var quote = E.price(state);
+        return {
+            roleId: roleId, role: role, state: state, quote: quote,
+            spec: E.spec(state, quote),
+            signals: (opts.signals || []).slice(),
+            reasons: (opts.reasons || []).slice()
+        };
+    }
+
+    /* ---------------------------------------------------------------
+     * Adopting model output. Nothing the model says is trusted directly.
+     * ------------------------------------------------------------- */
+    function adopt(raw) {
+        raw = raw || {};
+        var out = { signals: [], roles: [], capabilities: [], systems: [],
+                    channels: [], notes: [], dropped: [] };
+
+        (raw.signals || []).forEach(function (s) {
+            var id = typeof s === "string" ? s : (s && s.id);
+            if (SIGNAL_BY_ID[id]) out.signals.push(id);
+            else if (id) out.dropped.push("signal:" + id);
+        });
+        (raw.roles || []).forEach(function (r) {
+            var id = typeof r === "string" ? r : (r && r.id);
+            if (roleById(id)) out.roles.push(id);
+            else if (id) out.dropped.push("role:" + id);
+        });
+        (raw.capabilities || []).forEach(function (c) {
+            var id = typeof c === "string" ? c : (c && c.id);
+            if (capById(id)) out.capabilities.push(id);
+            else if (id) out.dropped.push("capability:" + id);
+        });
+        (raw.systems || []).forEach(function (s) {
+            var id = typeof s === "string" ? s : (s && s.id);
+            if (C.integrations.some(function (i) { return i.id === id; })) out.systems.push(id);
+            else if (id) out.dropped.push("system:" + id);
+        });
+        (raw.channels || []).forEach(function (c) {
+            var id = typeof c === "string" ? c : (c && c.id);
+            if (C.channels.some(function (x) { return x.id === id; })) out.channels.push(id);
+            else if (id) out.dropped.push("channel:" + id);
+        });
+        (raw.notes || []).forEach(function (n) {
+            if (typeof n === "string" && n.trim()) out.notes.push(n.trim());
+        });
+        out.business = typeof raw.business === "string" ? raw.business : "";
+        out.summary = typeof raw.summary === "string" ? raw.summary : "";
+        return out;
+    }
+
+    /* The instruction fragment every tool appends, so the model is constrained
+     * to the catalog rather than asked to be creative about the product. */
+    function vocabulary() {
+        var lines = [];
+        lines.push("SIGNALS you may report (use the id exactly):");
+        SIGNALS.forEach(function (s) {
+            lines.push("  " + s.id + " — " + s.ask);
+        });
+        lines.push("");
+        lines.push("ROLES you may recommend (use the id exactly):");
+        C.roles.forEach(function (r) {
+            lines.push("  " + r.id + " — " + r.name + ": " + r.oneLine);
+        });
+        lines.push("");
+        lines.push("SYSTEMS you may name (use the id exactly):");
+        lines.push("  " + C.integrations.map(function (i) { return i.id; }).join(", "));
+        lines.push("");
+        lines.push("RULES:");
+        lines.push("  - Never state a price, a fee, or a timeline. Those are computed, not written.");
+        lines.push("  - Never invent a role, capability or system id. Anything not on these lists is discarded.");
+        lines.push("  - Only report a signal you can point to actual evidence for.");
+        return lines.join("\n");
+    }
+
+    /* ---------------------------------------------------------------
+     * Readiness — how much of this can be built without the operator.
+     * ------------------------------------------------------------- */
+
+    /* What each capability needs before it can run for real comes from the
+     * catalog (SETUP_NEEDS), so the buyer-facing readiness estimate and the
+     * operator's handoff sheet are generated from one list. */
+    var NEEDS = (C && C.setupNeeds) || {};
+
+    function readiness(spec) {
+        var auto = [], manual = [], gated = [];
+        (spec.capabilities || []).forEach(function (c) {
+            var cap = capById(c.id);
+            if (!cap) return;
+            var entry = { id: c.id, name: cap.name, group: cap.group,
+                          needs: NEEDS[c.id] || [] };
+            if (cap.gate) { entry.gate = cap.gate; gated.push(entry); }
+            else if (entry.needs.length) manual.push(entry);
+            else auto.push(entry);
+        });
+        var total = auto.length + manual.length + gated.length;
+        return {
+            auto: auto, manual: manual, gated: gated, total: total,
+            // What can be stood up from the design alone, with no human input.
+            percent: total ? Math.round((auto.length / total) * 100) : 0
+        };
+    }
+
+    global.BlvkDesign = {
+        SIGNALS: SIGNALS, SIGNAL_BY_ID: SIGNAL_BY_ID, ROLE_SYSTEMS: ROLE_SYSTEMS,
+        NEEDS: NEEDS,
+        rank: rank, design: design, adopt: adopt, vocabulary: vocabulary,
+        readiness: readiness, relevantSuggestions: relevantSuggestions
+    };
+})(typeof window !== "undefined" ? window : globalThis);
+</script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var AI = (typeof root !== 'undefined' && root && typeof root.generateText === 'function') ? root : null;
+  var C = window.BLVK_CATALOG, E = window.BlvkEngine, D = window.BlvkDesign;
+
+  var el = {
+    biz: $('#biz'), composer: $('#composer'), designBtn: $('#designBtn'), counter: $('#counter'),
+    examples: $('#examples'), status: $('#status'), restartBtn: $('#restartBtn'),
+    stageAsk: $('#stageAsk'), stagePipe: $('#stagePipe'), stageOs: $('#stageOs'),
+    steps: $('#steps'), pipeTitle: $('#pipeTitle'), pipeSub: $('#pipeSub'),
+    osTitle: $('#osTitle'), osSub: $('#osSub'),
+    metrics: $('#metrics'), finds: $('#finds'), systems: $('#systems'),
+    alts: $('#alts'), acts: $('#acts'),
+    configureBtn: $('#configureBtn'), toasts: $('#toasts'),
+    keepForm: $('#keepForm'), keepEmail: $('#keepEmail'), keepBtn: $('#keepBtn'), keepNote: $('#keepNote')
+  };
+
+  var S = { model: null, brief: '', busy: false, adopted: null,
+            ranked: [], design: null, roleId: null };
+
+  var esc = function (s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  };
+
+  function toast(msg, kind) {
+    var t = document.createElement('div');
+    t.className = 'toast ' + (kind || 'info');
+    var ic = kind === 'ok' ? 'i-check' : kind === 'err' ? 'i-alert' : 'i-info';
+    t.innerHTML = '<svg class="ic ic-16"><use href="#' + ic + '"/></svg><div>' + esc(msg) + '</div>';
+    el.toasts.appendChild(t);
+    setTimeout(function () { t.remove(); }, 4200);
+  }
+  window.__blvkToast = toast;
+
+  function setStatus(s) { el.status.textContent = s || ''; }
+
+  /* ---------------- examples ---------------- */
+  var EXAMPLES = [
+    'I own a landscaping company. Four crews, mostly residential, some commercial contracts. We quote by site visit and schedule by text message.',
+    'I run a dental practice with three hygienists. Scheduling is by phone, recalls are tracked on paper, and no-shows are killing us.',
+    'We are a 12-person law firm doing personal injury. Intake is email and phone, case files live in Dropbox, billing is manual.',
+    'I run a small e-commerce brand selling handmade candles. Two people packing orders, inventory tracked in a spreadsheet.',
+    'We operate a fleet of 9 food trucks across the city. Staffing, prep quantities and route locations are decided the night before.'
+  ];
+  (function renderExamples() {
+    var h = '';
+    var labels = ['Landscaping', 'Dental practice', 'Law firm', 'E-commerce', 'Food trucks'];
+    for (var i = 0; i < EXAMPLES.length; i++) {
+      h += '<button class="chip" data-i="' + i + '"><svg class="ic ic-14"><use href="#i-spark"/></svg>' + labels[i] + '</button>';
+    }
+    el.examples.innerHTML = h;
+  })();
+  el.examples.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-i]');
+    if (!b) return;
+    el.biz.value = EXAMPLES[+b.dataset.i];
+    autosize(); el.biz.focus();
+  });
+
+  function autosize() {
+    el.biz.style.height = 'auto';
+    el.biz.style.height = Math.min(el.biz.scrollHeight, 240) + 'px';
+    el.counter.textContent = el.biz.value.length ? el.biz.value.length.toLocaleString() + ' chars' : '';
+  }
+  el.biz.addEventListener('input', autosize);
+  el.biz.addEventListener('focus', function () { el.composer.classList.add('focused'); });
+  el.biz.addEventListener('blur', function () { el.composer.classList.remove('focused'); });
+  el.biz.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); run(); }
+  });
+
+  /* ---------------- pipeline ---------------- */
+  var STEPS = [
+    { n: '01', name: 'Understand', desc: 'Parsing how the business actually operates' },
+    { n: '02', name: 'Map',        desc: 'Building a model of the operation' },
+    { n: '03', name: 'Detect',     desc: 'Finding bottlenecks, gaps and opportunities' },
+    { n: '04', name: 'Architect',  desc: 'Designing the systems that should exist' },
+    { n: '05', name: 'Simulate',   desc: 'Assembling a live interface you can use' }
+  ];
+  function renderSteps(active) {
+    var h = '';
+    for (var i = 0; i < STEPS.length; i++) {
+      var cls = i < active ? 'done' : (i === active ? 'active' : '');
+      h += '<div class="step ' + cls + '">' +
+        '<div class="step-n">' + (i < active ? '&#10003;' : STEPS[i].n) + '</div>' +
+        '<div style="flex:1"><div class="step-name">' + STEPS[i].name + '</div>' +
+        '<div class="step-desc">' + STEPS[i].desc + '</div></div>' +
+        (i === active ? '<div class="spin"></div>' : '') + '</div>';
+    }
+    el.steps.innerHTML = h;
+  }
+
+  function show(stage) {
+    el.stageAsk.classList.toggle('hidden', stage !== 'ask');
+    el.stagePipe.classList.toggle('hidden', stage !== 'pipe');
+    el.stageOs.classList.toggle('hidden', stage !== 'os');
+    el.restartBtn.style.display = stage === 'ask' ? 'none' : '';
+  }
+
+  /* ---------------- model prompts ---------------- */
+  // The shared runtime defaults to a "single-file HTML only" persona for the
+  // HTML generator. Every call from Agent Designer must override it or the model answers
+  // with a web page instead of an analysis.
+  var SYS_JSON = 'You read how a small business operates and report which jobs inside it are ' +
+    'going undone. You never invent products, prices or timelines: you report observations from a ' +
+    'fixed vocabulary and nothing else. You reply with STRICT JSON only - no markdown, no code ' +
+    'fences, no commentary.';
+
+  var SYS_MD = 'You are a senior business systems architect advising an owner-operator. ' +
+    'You write tight, concrete Markdown prose. You never output HTML documents, code fences ' +
+    'containing full web pages, or generic consulting filler.';
+
+  // Set the persona for one call and always clear it, so a later call from
+  // another tool on the same page can never inherit it.
+  async function ask(system, opts) {
+    window.__blvkSystem = system;
+    try {
+      return await AI.generateText(opts);
+    } finally {
+      window.__blvkSystem = null;
+    }
+  }
+
+  function designPrompt(desc) {
+    // The model reports observations from a fixed vocabulary. It cannot name a
+    // price, a timeline or a capability - those are computed from the catalog by
+    // BlvkDesign and BlvkEngine. A hallucinated quote is a number a buyer will
+    // hold us to, so the model is never given the chance to produce one.
+    return 'Read this business and report which jobs inside it are going undone.\n\n' +
+      'BUSINESS:\n' + desc + '\n\n' +
+      D.vocabulary() + '\n\n' +
+      'Return STRICT JSON matching exactly this shape:\n' +
+      '{\n' +
+      '  "business": "what this operation actually is, in six words",\n' +
+      '  "summary": "one sentence on where the time and money is leaking, operationally",\n' +
+      '  "signals": ["signal_id", "signal_id"],\n' +
+      '  "roles": ["role_id"],\n' +
+      '  "systems": ["system_id"],\n' +
+      '  "channels": ["email"],\n' +
+      '  "notes": ["one short sentence of evidence per signal you reported"]\n' +
+      '}\n\n' +
+      'RULES:\n' +
+      '- signals: 3 to 6, only ones you can point to evidence for in what they wrote. Use the ids exactly.\n' +
+      '- roles: 1 to 3, most valuable first. Use the ids exactly.\n' +
+      '- systems: only software they actually mention or clearly imply.\n' +
+      '- notes: one per signal, in their own vocabulary, naming the evidence.\n' +
+      '- Never state a price, a fee, a timeline or a percentage. Those are computed elsewhere.\n' +
+      '- Anything not in the vocabulary above is discarded, so do not invent ids.\n' +
+      '- Output raw JSON only. First character must be {';
+  }
+
+  function actionPrompt(model, question) {
+    return 'You are a senior business systems architect working on this operation:\n\n' +
+      'BUSINESS: ' + S.brief + '\n' +
+      'MODELLED AS: ' + model.osName + ' - ' + model.summary + '\n' +
+      'KNOWN ISSUES: ' + (model.findings || []).map(function (f) { return f.title; }).join('; ') + '\n\n' +
+      'THE OWNER ASKS: "' + question + '"\n\n' +
+      'Answer in Markdown prose. Be concrete and specific to this business - no filler, no generic consulting language. ' +
+      'Where you cite numbers, make clear they are projections from industry benchmarks rather than their real data. ' +
+      'Use these four headings exactly: "What happens today", "What should happen instead", ' +
+      '"How the system works", "What it is worth".\n\n' +
+      'Hard limits: under 400 words. Markdown only - no HTML, no code fences, no full web page. ' +
+      'Start directly with the first heading.';
+  }
+
+  /* ---------------- JSON extraction ---------------- */
+  function parseModel(text) {
+    var t = String(text || '').trim();
+    var fence = /```(?:json)?\s*([\s\S]*?)(?:```|$)/i.exec(t);
+    if (fence && fence[1].indexOf('{') !== -1) t = fence[1].trim();
+    var a = t.indexOf('{'), b = t.lastIndexOf('}');
+    if (a === -1 || b === -1 || b < a) throw new Error('The model did not return a usable analysis.');
+    return JSON.parse(t.slice(a, b + 1));
+  }
+
+  /* ---------------- normalisation ----------------
+     Different free providers key the same idea differently ("label" vs "title"
+     vs "name"), and a missing key must never render a blank button. Everything
+     downstream reads the canonical shape this produces, never the raw JSON. */
+  function pick(o, keys, dflt) {
+    for (var i = 0; i < keys.length; i++) {
+      var v = o && o[keys[i]];
+      if (v !== undefined && v !== null && v !== '') return v;
+    }
+    return dflt;
+  }
+
+  /* ---------------- design ----------------
+   * The model's JSON is filtered through BlvkDesign.adopt(), which discards
+   * anything that is not a real catalog id. Everything after that point is
+   * deterministic: the ranking, the capability set, the tier and the price. */
+
+  function buildDesign(raw, roleId) {
+    var adopted = D.adopt(raw);
+    S.adopted = adopted;
+
+    // Roles the model named are scored alongside the signals rather than being
+    // appended as an afterthought — it read the whole description, and that is
+    // worth more than a signal mentioned in passing.
+    var ranked = D.rank(adopted.signals, { limit: 6, nominated: adopted.roles });
+    if (!ranked.length) return null;
+    S.ranked = ranked;
+
+    var chosen = roleId || ranked[0].roleId;
+    S.roleId = chosen;
+    var entry = ranked.filter(function (r) { return r.roleId === chosen; })[0] || ranked[0];
+
+    var design = D.design(chosen, {
+      signals: adopted.signals,
+      systems: adopted.systems.length ? adopted.systems : null,
+      channels: adopted.channels.length ? adopted.channels : null,
+      reasons: entry.reasons,
+      answers: {
+        business: adopted.business || '',
+        whatWeDo: adopted.business || '',
+        jobDescription: S.brief
+      }
+    });
+    if (!design) return null;
+    design.summary = adopted.summary;
+    design.notes = adopted.notes;
+    design.entry = entry;
+    return design;
+  }
+
+  /* ---------------- run ---------------- */
+  async function run() {
+    var desc = el.biz.value.trim();
+    if (!desc) { el.biz.focus(); toast('Describe your business first.', 'err'); return; }
+    if (!AI) { toast('AI runtime not available here.', 'err'); return; }
+    if (!D || !E) { toast('The design engine failed to load.', 'err'); return; }
+    if (S.busy) return;
+
+    S.busy = true; S.brief = desc;
+    el.designBtn.disabled = true;
+    show('pipe');
+    renderSteps(0);
+    setStatus('Reading your operation…');
+
+    var step = 0;
+    var ticker = setInterval(function () {
+      if (step < 3) { step++; renderSteps(step); }
+    }, 2400);
+
+    try {
+      var res = await ask(SYS_JSON, { instruction: designPrompt(desc) });
+      clearInterval(ticker);
+      renderSteps(4);
+      var raw = parseModel(res && res.text);
+      var design = buildDesign(raw, null);
+      if (!design) {
+        throw new Error('Nothing in that description pointed at a job an agent could take. ' +
+                        'Try saying what actually eats your week.');
+      }
+      S.design = design;
+      await new Promise(function (r) { setTimeout(r, 380); });
+      renderDesign(design);
+      show('os');
+      setStatus('');
+      toast('Designed and priced from the live catalog', 'ok');
+    } catch (err) {
+      clearInterval(ticker);
+      show('ask');
+      setStatus('');
+      toast((err && err.message) ? err.message : String(err), 'err');
+    } finally {
+      S.busy = false;
+      el.designBtn.disabled = false;
+    }
+  }
+
+  /* ---------------- render the design ---------------- */
+  function money(n) { return '$' + Number(n).toLocaleString('en-US'); }
+
+  function renderDesign(d) {
+    var q = d.quote;
+    var ready = D.readiness(d.spec);
+
+    el.osTitle.textContent = 'The ' + d.role.name;
+    el.osSub.textContent = d.summary || d.role.problem;
+
+    // Price tiles. Every one of these is computed, never written by a model.
+    var tiles = [
+      { label: 'To build', value: money(q.build), note: q.def.label },
+      { label: 'Then monthly', value: money(q.monthly),
+        note: q.includedActions.toLocaleString('en-US') + ' actions included' },
+      { label: 'Live in', value: q.days + ' days', note: 'business days, from signing' },
+      { label: 'Standing on day one', value: ready.percent + '%',
+        note: ready.auto.length + ' of ' + ready.total + ' need nothing from you',
+        pct: ready.percent }
+    ];
+    el.metrics.innerHTML = tiles.map(function (x) {
+      return '<div class="metric"><div class="metric-label">' + esc(x.label) + '</div>' +
+        '<div class="metric-value">' + esc(x.value) + '</div>' +
+        '<div class="metric-note">' + esc(x.note) + '</div>' +
+        (typeof x.pct === 'number'
+          ? '<div class="metric-bar"><i style="width:' + Math.max(0, Math.min(100, x.pct)) + '%"></i></div>'
+          : '') + '</div>';
+    }).join('');
+
+    // What we found — the signals, in the buyer's own terms, with the evidence
+    // the model cited. A diagnostic somebody cannot check is just an opinion.
+    var notes = d.notes || [];
+    el.finds.innerHTML = (d.signals || []).map(function (sid, i) {
+      var sig = D.SIGNAL_BY_ID[sid];
+      if (!sig) return '';
+      var strong = Object.keys(sig.roles).indexOf(d.roleId) !== -1;
+      return '<button class="find" data-signal="' + esc(sid) + '">' +
+        '<span class="dot ' + (strong ? 'bottleneck' : 'gap') + '"></span>' +
+        '<span class="find-body"><span class="find-title">' + esc(sig.ask) + '</span>' +
+        '<span class="find-detail">' + esc(notes[i] || sig.evidence) + '</span></span>' +
+        '<span class="tag' + (strong ? ' high' : '') + '">' +
+        (strong ? 'this agent' : 'noted') + '</span></button>';
+    }).join('') || '<p class="keep-note">No specific signals were confirmed, ' +
+                   'the design below is the closest match to what you described.</p>';
+
+    // What it will own. Core capabilities are what the job IS; the rest are
+    // priced individually and can be dropped at checkout.
+    var core = {};
+    d.role.core.forEach(function (c) { core[c] = true; });
+    el.systems.innerHTML = (d.spec.capabilities || []).map(function (c) {
+      var cap = E.capById(c.id);
+      if (!cap) return '';
+      var isCore = !!core[c.id];
+      var needs = (C.setupNeeds && C.setupNeeds[c.id]) || [];
+      return '<div class="system"><h4>' + esc(cap.name) +
+        ' <span class="mod" style="vertical-align:middle">' +
+        (isCore ? 'included' : '+' + money(cap.price)) + '</span></h4>' +
+        '<p>' + esc(cap.blurb) + '</p>' +
+        '<div class="mods">' +
+        '<span class="mod">' + esc(cap.group) + '</span>' +
+        (cap.gate ? '<span class="mod">waits on ' + esc(cap.gate) + '</span>' : '') +
+        (needs.length ? '<span class="mod">needs: ' + esc(needs[0]) + '</span>'
+                      : '<span class="mod">ready to stand up</span>') +
+        '</div></div>';
+    }).join('');
+
+    // The other jobs worth handing over, each priced, each one click away.
+    el.alts.innerHTML = S.ranked.filter(function (r) {
+      return r.roleId !== d.roleId;
+    }).slice(0, 4).map(function (r) {
+      var alt = D.design(r.roleId, { signals: d.signals });
+      if (!alt) return '';
+      return '<div class="system" style="cursor:pointer" data-role="' + esc(r.roleId) + '">' +
+        '<h4>' + esc(r.role.name) + ' <span class="mod" style="vertical-align:middle">' +
+        money(alt.quote.build) + ' + ' + money(alt.quote.monthly) + '/mo</span></h4>' +
+        '<p>' + esc(r.role.oneLine) + '</p>' +
+        '<div class="mods"><span class="mod">' +
+        esc(r.reasons[0] || 'a job worth filling') + '</span>' +
+        '<span class="mod">design this instead &rarr;</span></div></div>';
+    }).join('') || '<p class="keep-note">This was the only job your description pointed at.</p>';
+
+    // Adjustments that change the price, so a buyer can see the shape of the
+    // decision without leaving the page.
+    var acts = [
+      { id: 'trial', label: 'Try it first: ' + money(C.pricing.trial) + ' for 14 days' },
+      { id: 'annual', label: 'Pay annually: two months free' },
+      { id: 'lean', label: 'Strip it to the core job only' }
+    ];
+    el.acts.innerHTML = acts.map(function (a) {
+      return '<button class="act" data-adjust="' + a.id + '">' +
+        '<svg class="ic ic-16"><use href="#i-radar"/></svg>' + esc(a.label) + '</button>';
+    }).join('');
+  }
+
+  /* Re-design for a different role, or apply an adjustment, without another
+   * model call — the observations do not change, only what we do with them. */
+  function redesign(opts) {
+    var d = S.design;
+    if (!d) return;
+    var next = D.design(S.roleId, {
+      signals: d.signals,
+      systems: Object.keys(d.state.systems),
+      channels: Object.keys(d.state.channels),
+      capabilities: opts && opts.lean ? E.roleById(S.roleId).core : null,
+      trial: opts && opts.trial !== undefined ? opts.trial : d.state.trial,
+      billing: opts && opts.billing ? opts.billing : d.state.billing,
+      answers: d.state.answers
+    });
+    if (!next) return;
+    next.summary = d.summary; next.notes = d.notes; next.entry = d.entry;
+    S.design = next;
+    renderDesign(next);
+  }
+
+  /* ---------------- drill-down drawer ---------------- */
+  // Block-based so a heading and the prose under it never share a block —
+  // that is what silently swallowed the paragraph wrappers before.
+  function markdown(src) {
+    var pre = [];
+    var s = esc(src);
+
+    // Pull fenced code out first so nothing else rewrites its contents.
+    s = s.replace(/```[a-z]*\n?([\s\S]*?)(?:```|$)/gi, function (m0, code) {
+      return '\n\n@@PRE' + (pre.push(code.replace(/\n+$/, '')) - 1) + '@@\n\n';
+    });
+
+    // Force headings and rules to stand alone as blocks.
+    s = s.replace(/^[ \t]*(#{1,3} .+)$/gm, '\n\n$1\n\n');
+    s = s.replace(/^[ \t]*(-{3,}|\*{3,})[ \t]*$/gm, '\n\n---\n\n');
+
+    s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    s = s.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+
+    var out = s.split(/\n{2,}/).map(function (block) {
+      block = block.replace(/^\n+|\n+$/g, '');
+      if (!block) return '';
+
+      var m = /^@@PRE(\d+)@@$/.exec(block);
+      if (m) return '<pre><code>' + pre[+m[1]] + '</code></pre>';
+      if (/^-{3,}$/.test(block)) return '<hr>';
+
+      m = /^(#{1,3}) (.+)$/.exec(block);
+      if (m) { var n = m[1].length; return '<h' + n + '>' + m[2] + '</h' + n + '>'; }
+
+      var lines = block.split('\n');
+      var bullets = lines.filter(function (l) { return /^\s*[-*+] +\S/.test(l); });
+      var numbers = lines.filter(function (l) { return /^\s*\d+[.)] +\S/.test(l); });
+
+      if (bullets.length && bullets.length >= lines.length - 1) {
+        return '<ul>' + bullets.map(function (l) {
+          return '<li>' + l.replace(/^\s*[-*+] +/, '') + '</li>';
+        }).join('') + '</ul>';
+      }
+      if (numbers.length && numbers.length >= lines.length - 1) {
+        return '<ol>' + numbers.map(function (l) {
+          return '<li>' + l.replace(/^\s*\d+[.)] +/, '') + '</li>';
+        }).join('') + '</ol>';
+      }
+      return '<p>' + lines.join('<br>') + '</p>';
+    }).join('');
+
+    return out;
+  }
+
+  function openDrawer(title) {
+    var back = document.createElement('div');
+    back.className = 'drawer-back'; back.id = 'drawerBack';
+    var d = document.createElement('div');
+    d.className = 'drawer'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-modal', 'true');
+    d.innerHTML =
+      '<div class="drawer-head"><svg class="ic ic-20" style="color:var(--accent-ink)"><use href="#i-radar"/></svg>' +
+      '<h3>' + esc(title) + '</h3><div class="spacer"></div>' +
+      '<button class="btn ghost icon" data-x aria-label="Close"><svg class="ic ic-16"><use href="#i-close"/></svg></button></div>' +
+      '<div class="drawer-body"><div class="md" id="drawerMd"><span class="status"><span class="spin"></span> Working through it…</span></div></div>' +
+      '<div class="drawer-foot"><span class="status"><svg class="ic ic-14"><use href="#i-info"/></svg> Figures are projections from industry benchmarks</span>' +
+      '<div class="spacer"></div><button class="btn" data-x>Close</button></div>';
+    document.body.appendChild(back); document.body.appendChild(d);
+    function close() { back.remove(); d.remove(); document.removeEventListener('keydown', onKey); }
+    function onKey(e) { if (e.key === 'Escape') close(); }
+    document.addEventListener('keydown', onKey);
+    back.addEventListener('click', close);
+    d.addEventListener('click', function (e) { if (e.target.closest('[data-x]')) close(); });
+    return d.querySelector('#drawerMd');
+  }
+
+  async function drill(title, question, btn) {
+    if (!AI || S.busy) return;
+    S.busy = true;
+    if (btn) btn.classList.add('busy');
+    var target = openDrawer(title);
+    try {
+      var out = '', last = 0;
+      await ask(SYS_MD, {
+        instruction: actionPrompt(S.model, question),
+        onChunk: function (d) {
+          out = (d && d.fullTextSoFar) || out;
+          // Re-parsing markdown on every token is wasted work; the eye cannot
+          // read faster than this anyway. The final render happens below.
+          var t = Date.now();
+          if (t - last < 90) return;
+          last = t;
+          target.innerHTML = markdown(out);
+        }
+      });
+      target.innerHTML = out.trim()
+        ? markdown(out)
+        : '<p style="color:var(--clay)">No answer came back. Try again.</p>';
+    } catch (err) {
+      target.innerHTML = '<p style="color:var(--clay)">' + esc((err && err.message) || String(err)) + '</p>';
+    } finally {
+      S.busy = false;
+      if (btn) btn.classList.remove('busy');
+    }
+  }
+
+  el.acts.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]');
+    if (!b || !S.model) return;
+    var a = (S.model.actions || [])[+b.dataset.act];
+    if (a) drill(a.label, a.ask || a.label, b);
+  });
+
+  el.finds.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-find]');
+    if (!b || !S.model) return;
+    var f = (S.model.findings || [])[+b.dataset.find];
+    if (f) drill(f.title, 'Go deep on this issue: "' + f.title + ' - ' + f.detail + '". How do we fix it with software, and what is it worth?', b);
+  });
+
+  /* ---------------- keep it ----------------
+     Somebody who scries their business has just described their bottlenecks and
+     their intent. Losing them at this exact moment is the whole leak.
+
+     This is a static site with no backend. Set CAPTURE_ENDPOINT to a form
+     endpoint (Web3Forms, Formspree, a Worker — anything that accepts a JSON
+     POST) and the field becomes a true inline capture. Left empty, it falls
+     back to opening the visitor's mail client with the map already written,
+     which still delivers the map and still puts their address in your inbox. */
+  var CAPTURE_ENDPOINT = '';
+  var CAPTURE_TO = 'russ@blvkware.dev';
+
+  function mapAsText() {
+    var m = S.model;
+    if (!m) return '';
+    var L = [];
+    L.push(m.osName);
+    if (m.summary) L.push(m.summary);
+    L.push('');
+    L.push('THE BUSINESS AS DESCRIBED');
+    L.push(S.brief);
+    L.push('');
+    L.push('PROJECTED OPERATING PICTURE (modelled from industry benchmarks, not real figures)');
+    (m.metrics || []).forEach(function (x) {
+      L.push('  ' + x.label + ': ' + x.value + (x.note ? ' (' + x.note + ')' : ''));
+    });
+    L.push('');
+    L.push('WHAT IS COSTING YOU');
+    (m.findings || []).forEach(function (f) {
+      L.push('  [' + f.type + '] ' + f.title);
+      if (f.detail) L.push('      ' + f.detail);
+    });
+    L.push('');
+    L.push('SYSTEMS WORTH BUILDING');
+    (m.systems || []).forEach(function (sys) {
+      L.push('  ' + sys.name + (sys.purpose ? ' — ' + sys.purpose : ''));
+      if (sys.modules && sys.modules.length) L.push('      modules: ' + sys.modules.join(', '));
+    });
+    L.push('');
+    L.push('Mapped by Agent Designer: blvkware.dev/design');
+    return L.join('\n');
+  }
+
+  function keepNote(msg, ok) {
+    el.keepNote.textContent = msg;
+    el.keepNote.classList.toggle('ok', !!ok);
+  }
+
+  el.keepForm.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    if (!S.model) return;
+    var email = el.keepEmail.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      el.keepEmail.classList.add('bad');
+      keepNote('That address does not look right. Check it and try again.');
+      el.keepEmail.focus();
+      return;
+    }
+    el.keepEmail.classList.remove('bad');
+    el.keepBtn.disabled = true;
+
+    var body = mapAsText();
+    if (CAPTURE_ENDPOINT) {
+      try {
+        var res = await fetch(CAPTURE_ENDPOINT, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ email: email, subject: 'Agent Designer map: ' + S.model.osName, map: body })
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        el.keepForm.classList.add('hidden');
+        keepNote('Sent. Check your inbox in a minute.', true);
+        return;
+      } catch (err) {
+        keepNote('Could not send that, opening your mail app instead.');
+      }
+    }
+    // No endpoint configured: hand it to their mail client, pre-written.
+    var sub = encodeURIComponent('Agent Designer map: ' + S.model.osName);
+    var text = encodeURIComponent('Send this and I will email the full map back to ' + email +
+      '.\n\n----------------------------------------\n\n' + body);
+    window.location.href = 'mailto:' + CAPTURE_TO + '?subject=' + sub + '&body=' + text;
+    keepNote('Your mail app should open with the design in it. Just hit send.', true);
+    el.keepBtn.disabled = false;
+  });
+
+  /* ---------------- hand off to checkout ---------------- */
+  // The design travels in the URL fragment rather than a query string so it is
+  // never sent to a server or written to a log. /hire/ reads it, applies it, and
+  // the buyer carries on configuring from exactly here.
+  el.configureBtn.addEventListener('click', function () {
+    if (!S.design) return;
+    var d = S.design;
+    var payload = {
+      role: S.roleId,
+      caps: Object.keys(d.state.caps),
+      systems: Object.keys(d.state.systems),
+      channels: Object.keys(d.state.channels),
+      volume: d.state.volumeId,
+      billing: d.state.billing,
+      trial: !!d.state.trial,
+      answers: d.state.answers
+    };
+    var hash;
+    try {
+      hash = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+    } catch (e) { hash = ''; }
+    window.location.href = hash ? '/hire/#d=' + hash : '/hire/';
+  });
+
+  // Switching to an alternative role, and the price adjustments.
+  document.addEventListener('click', function (ev) {
+    var alt = ev.target.closest && ev.target.closest('[data-role]');
+    if (alt && S.adopted) {
+      var d = buildDesign({
+        business: S.adopted.business, summary: S.adopted.summary,
+        signals: S.adopted.signals, roles: S.adopted.roles,
+        systems: S.adopted.systems, channels: S.adopted.channels,
+        notes: S.adopted.notes
+      }, alt.getAttribute('data-role'));
+      if (d) { S.design = d; renderDesign(d); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+      return;
+    }
+    var adj = ev.target.closest && ev.target.closest('[data-adjust]');
+    if (adj && S.design) {
+      var what = adj.getAttribute('data-adjust');
+      if (what === 'trial') redesign({ trial: !S.design.state.trial });
+      if (what === 'annual') {
+        redesign({ billing: S.design.state.billing === 'annual' ? 'monthly' : 'annual' });
+      }
+      if (what === 'lean') redesign({ lean: true });
+    }
+  });
+
+  el.designBtn.addEventListener('click', run);
+  el.restartBtn.addEventListener('click', function () {
+    S.model = null; show('ask'); setStatus(''); el.biz.focus();
+    el.keepForm.classList.remove('hidden');
+    el.keepBtn.disabled = false;
+    el.keepEmail.value = '';
+    el.keepEmail.classList.remove('bad');
+    keepNote('The whole map, plus the systems worth building. No account, no list: one email, from a person.');
+  });
+
+  // On the static build the shim exposes a BYOK dialog; locally the dev proxy
+  // holds the key and there is nothing for the visitor to connect.
+  var keyBtn = $('#keyBtn');
+  if (typeof window.__blvkKeyDialog === 'function') {
+    keyBtn.classList.remove('hidden');
+    keyBtn.addEventListener('click', window.__blvkKeyDialog);
+  }
+
+  autosize();
+  setTimeout(function () { el.biz.focus(); }, 150);
+  if (!AI) setStatus('AI runtime not detected');
+})();
+</script>
+
+</body>
+</html>

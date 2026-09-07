@@ -79,19 +79,19 @@
     <p>Typefaces are loaded from <strong>Google Fonts</strong> (<code>fonts.googleapis.com</code>). Your browser contacts Google to fetch them, which means Google receives your IP address and user agent as part of that request. No other Google service is used, and no font request carries any information about what you are doing on the site.</p>
 
     <h2>What the tools do with your input</h2>
-    <p>AUGUR, SCRY and SIGIL are client-side applications. Their code runs on your device. There is no BlvkWare backend receiving your prompts, your API key, or your results.</p>
+    <p>Business Scan, Agent Designer and App Builder are client-side applications. Their code runs on your device. There is no BlvkWare backend receiving your prompts, your API key, or your results.</p>
 
     <h3>Your AI provider key</h3>
     <p>The tools need an AI model to work. On this public site you supply your own key from a provider you choose. That key is stored in your browser's <code>localStorage</code>, on your own device, and is sent <strong>directly from your browser to the provider you selected</strong> (Google AI Studio, OpenRouter, or Groq) over HTTPS. It never passes through BlvkWare. Clearing your browser storage, or using the "Forget key" button, removes it permanently.</p>
     <p>Whatever you type into a tool is sent to that provider along with the request, and is handled under <em>their</em> privacy terms. Read those if you intend to enter anything sensitive.</p>
 
     <h3>Data kept in your browser</h3>
-    <p>The tools store a small amount of state in <code>localStorage</code> on your device: your chosen provider and API key, your light/dark theme preference, whether you've dismissed the support dialog, and, in SIGIL, the builds you've generated, so they survive a page reload. None of it leaves your device. Clearing site data in your browser deletes all of it.</p>
+    <p>The tools store a small amount of state in <code>localStorage</code> on your device: your chosen provider and API key, your light/dark theme preference, whether you've dismissed the support dialog, and, in App Builder, the builds you've generated, so they survive a page reload. None of it leaves your device. Clearing site data in your browser deletes all of it.</p>
 
-    <h3>AUGUR and third-party page readers</h3>
-    <p>AUGUR analyses a public web page you nominate. A browser cannot fetch an arbitrary website directly, so the address you enter is passed to public read-only relay services, currently <code>corsproxy.io</code>, <code>api.allorigins.win</code> and <code>r.jina.ai</code>, which retrieve the page and return it. <strong>Those services see the URL you asked for and your IP address.</strong> They are independent third parties operating under their own terms. Only the address is sent; no other information about you is included.</p>
+    <h3>Business Scan and third-party page readers</h3>
+    <p>Business Scan analyses a public web page you nominate. A browser cannot fetch an arbitrary website directly, so the address you enter is passed to public read-only relay services, currently <code>corsproxy.io</code>, <code>api.allorigins.win</code> and <code>r.jina.ai</code>, which retrieve the page and return it. <strong>Those services see the URL you asked for and your IP address.</strong> They are independent third parties operating under their own terms. Only the address is sent; no other information about you is included.</p>
 
-    <h3>SCRY's "Email me this map"</h3>
+    <h3>Agent Designer's "Email me this map"</h3>
     <p>This does not transmit anything on its own. It opens your own email application with the map already written into a draft addressed to BlvkWare. Nothing is sent unless you choose to press send, at which point it becomes an ordinary email, see below.</p>
 
     <h2>When you email BlvkWare</h2>

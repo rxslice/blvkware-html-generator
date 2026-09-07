@@ -1,9 +1,9 @@
-/* The forge: turn a paid order into a configured agent.
+/* Turning a paid order into a configured agent.
  *
  * A build template is generic — a sequencer, a triage, a router. What makes it
  * *this customer's* agent is configuration: their labels, their routing table,
  * their chase cadence, their qualification criteria, their words. Producing
- * that configuration is the work the forge automates, and it is the difference
+ * that configuration is the work this automates, and it is the difference
  * between an order arriving as a to-do list and arriving mostly finished.
  *
  * The rule, again, is that the model writes content and never structure. It is
@@ -12,12 +12,12 @@
  * the runtime or crash a capability at 2am; neither is acceptable, so it never
  * reaches the manifest.
  *
- * What the forge cannot invent — credentials, a real inbox sample, a phone
+ * What this cannot invent — credentials, a real inbox sample, a phone
  * number, someone's actual price list — is reported as operator work rather
  * than guessed at. Overstating readiness is the one failure that would make the
  * whole pipeline dishonest.
  *
- * Reads window.BLVK_CATALOG / BlvkEngine / BlvkDesign. Exposes window.BlvkForge.
+ * Reads window.BLVK_CATALOG / BlvkEngine / BlvkDesign. Exposes window.BlvkConfigure.
  */
 (function (global) {
     "use strict";
@@ -26,8 +26,8 @@
     var E = global.BlvkEngine;
     var D = global.BlvkDesign;
 
-    /* Per-capability config the forge is allowed to write, and the shape of it.
-     * Anything not described here is not forgeable and falls to the operator. */
+    /* Per-capability config this is allowed to write, and the shape of it.
+     * Anything not described here is not configurable and falls to the operator. */
     var SCHEMA = {
         "email.triage": {
             keys: { labels: "array", samples: "array" },
@@ -147,16 +147,16 @@
             ask: 'published: the figures they would be willing to show their own customers, as short strings from handled, waiting, held_back, escalated, prepared, sent, recovered. When in doubt publish less; this is a read-only link that leaves the building.' }
     };
 
-    function forgeable(capId) { return !!SCHEMA[capId]; }
+    function configurable(capId) { return !!SCHEMA[capId]; }
 
-    /* Which capabilities in this order the forge can configure. */
+    /* Which capabilities in this order this can configure. */
     function plan(spec) {
         var can = [], cannot = [];
         (spec.capabilities || []).forEach(function (c) {
             var id = c.id || c;
             var cap = E.capById(id);
             if (!cap) return;
-            (forgeable(id) ? can : cannot).push({
+            (configurable(id) ? can : cannot).push({
                 id: id, name: cap.name, group: cap.group,
                 ask: (SCHEMA[id] || {}).ask || "",
                 needs: (C.setupNeeds && C.setupNeeds[id]) || []
@@ -196,7 +196,7 @@
         return lines.join("\n");
     }
 
-    /* Validate one capability's forged config against its schema. */
+    /* Validate one capability's configured config against its schema. */
     function acceptOne(capId, raw) {
         var schema = SCHEMA[capId];
         if (!schema || !raw || typeof raw !== "object") return { config: null, dropped: [] };
@@ -215,7 +215,7 @@
         // Two different kinds of capability carry a `steps` key and they are not
         // the same shape: a cadence is [days, purpose] pairs, a process is
         // [{name, category, action}] objects. Validating both against the
-        // cadence shape silently threw away every process the forge wrote —
+        // cadence shape silently threw away every process this wrote —
         // which looked like the model failing rather than the validator.
         if (out.steps) {
             var wantProcess = schema.stepShape === "process";
@@ -254,14 +254,14 @@
     }
 
     function accept(raw) {
-        var config = {}, dropped = [], forged = [];
+        var config = {}, dropped = [], configured = [];
         Object.keys(raw || {}).forEach(function (capId) {
             if (!E.capById(capId)) { dropped.push("unknown capability: " + capId); return; }
             var got = acceptOne(capId, raw[capId]);
             dropped = dropped.concat(got.dropped);
-            if (got.config) { config[capId] = got.config; forged.push(capId); }
+            if (got.config) { config[capId] = got.config; configured.push(capId); }
         });
-        return { config: config, forged: forged, dropped: dropped };
+        return { config: config, configured: configured, dropped: dropped };
     }
 
     /* Knowledge is handled separately: it is content, not configuration, and it
@@ -273,7 +273,7 @@
         }).map(function (d) { return { title: String(d[0]), body: String(d[1]) }; });
     }
 
-    /* What the forge achieved, measured the same way the operator's handoff
+    /* What this achieved, measured the same way the operator's handoff
      * sheet measures it — so the number a buyer sees and the number on the
      * build sheet are the same number. */
     function outcome(spec, config) {
@@ -282,17 +282,17 @@
         var before = D.readiness(spec);
         var after = D.readiness(spec);
 
-        // A capability whose setup need is now supplied by forged config counts
+        // A capability whose setup need is now supplied by configured config counts
         // as standing. Anything needing a credential, a real sample or a human
         // decision never does, whatever the model produced.
         // A credential is only one of the things a model cannot supply. Real
         // data, access to a live system, a human being and the customer's own
-        // existing material are equally unforgeable, and a capability whose
+        // existing material are equally unconfigurable, and a capability whose
         // acceptance test needs one of them is not standing however good the
         // configuration is. email.triage is the case that exposed this: it is
         // configured from invented example messages, but its acceptance test
         // needs fifty of the owner's real ones, so it cannot pass yet.
-        var UNFORGEABLE = new RegExp([
+        var UNCONFIGURABLE = new RegExp([
             "credential", "account", "registration", "verification",
             "phone number", "domain", "API documentation",   // secrets and identifiers
             "real inbox", "real transaction", "a month of", "backlog",
@@ -305,7 +305,7 @@
         var stood = [], remaining = [];
         after.manual.forEach(function (c) {
             var supplied = !!config[c.id];
-            var blocked = (c.needs || []).some(function (n) { return UNFORGEABLE.test(n); });
+            var blocked = (c.needs || []).some(function (n) { return UNCONFIGURABLE.test(n); });
             if (supplied && !blocked) stood.push(c); else remaining.push(c);
         });
 
@@ -316,12 +316,12 @@
             before: before.percent,
             after: total ? Math.round((standing / total) * 100) : 0,
             standing: standing, total: total,
-            forgedNow: stood, stillManual: remaining, gated: after.gated
+            configuredNow: stood, stillManual: remaining, gated: after.gated
         };
     }
 
-    global.BlvkForge = {
-        SCHEMA: SCHEMA, forgeable: forgeable, plan: plan,
+    global.BlvkConfigure = {
+        SCHEMA: SCHEMA, configurable: configurable, plan: plan,
         instruction: instruction, accept: accept, acceptOne: acceptOne,
         knowledge: knowledge, outcome: outcome
     };

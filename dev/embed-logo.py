@@ -212,17 +212,17 @@ def main():
 
     ok = True
 
-    # --- app.html: every <use href="#i-blvkmark"/> keeps working untouched ---
+    # --- builder.html: every <use href="#i-blvkmark"/> keeps working untouched ---
     ok &= patch(
-        os.path.join(ROOT, "app.html"),
+        os.path.join(ROOT, "builder.html"),
         r'<symbol id="i-blvkmark"[^>]*>[\s\S]*?</symbol>',
         '<symbol id="i-blvkmark" viewBox="0 0 64 64">\n'
         '    <image href="' + uri + '" x="0" y="0" width="64" height="64"/>\n'
         '  </symbol>',
-        "app.html brand symbol")
+        "builder.html brand symbol")
 
     # --- tools that carry the mark inline in a <span class="mark"> ---
-    for name in ("scry.html", "augur.html"):
+    for name in ("designer.html", "scan.html"):
         ok &= patch(
             os.path.join(ROOT, name),
             r'<span class="mark">[\s\S]*?</span>',

@@ -4,7 +4,7 @@ Local dev server for the BlvkWare tools — backed by a real LLM API.
 
     python dev/serve.py
 
-Serves app.html at http://localhost:8777 with the `$meta` platform header stripped
+Serves builder.html at http://localhost:8777 with the `$meta` platform header stripped
 and a real `root.generateText` implementation injected. Generation streams from a
 live provider. There is no mock anywhere in this file.
 
@@ -21,7 +21,7 @@ free providers in DETECT_ORDER.
 
   GitHub Models is retired (410 as of Aug 2026) and is never auto-selected.
 
-Keys are read from the environment or a `.env` file next to app.html.
+Keys are read from the environment or a `.env` file next to builder.html.
 Override the provider, model, or output cap explicitly:
 
     python dev/serve.py --provider openrouter --model cohere/north-mini-code:free
@@ -45,7 +45,7 @@ import urllib.parse
 import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-APP = os.path.join(ROOT, "app.html")
+APP = os.path.join(ROOT, "builder.html")
 
 DEFAULT_MAX_TOKENS = 32000
 MAX_TOKENS = DEFAULT_MAX_TOKENS
@@ -209,7 +209,7 @@ MODEL = None
 # page assembly
 # ---------------------------------------------------------------------------
 
-# Same tokenizer rule as app.html applies to this shim: no HTML open-comment
+# Same tokenizer rule as builder.html applies to this shim: no HTML open-comment
 # sequence and no literal script open/close tag inside this JS.
 SHIM = r"""
 (function () {
@@ -287,7 +287,7 @@ SHIM = r"""
 
 
 def favicon_from_mark(src):
-    """Build a data-URI favicon from the brand symbol in app.html.
+    """Build a data-URI favicon from the brand symbol in builder.html.
 
     Derived rather than duplicated, so the tab icon can never drift from the mark
     rendered in the rail.
@@ -302,7 +302,7 @@ def favicon_from_mark(src):
     return "data:image/svg+xml," + urllib.parse.quote(svg, safe="")
 
 
-def build_page(src_name="app.html", title="SIGIL by BlvkWare"):
+def build_page(src_name="builder.html", title="App Builder by BlvkWare"):
     path = os.path.join(ROOT, src_name)
     with io.open(path, encoding="utf-8") as fh:
         src = fh.read()
@@ -323,18 +323,18 @@ def build_page(src_name="app.html", title="SIGIL by BlvkWare"):
 
 # path prefix -> (source file, title)
 PAGES = {
-    "/": ("app.html", "SIGIL by BlvkWare"),
-    "/index.html": ("app.html", "SIGIL by BlvkWare"),
-    "/app.html": ("app.html", "SIGIL by BlvkWare"),
-    # mirrors the deployed layout so SCRY's hand-off link resolves locally too
-    "/sigil": ("app.html", "SIGIL by BlvkWare"),
-    "/sigil/": ("app.html", "SIGIL by BlvkWare"),
-    "/scry": ("scry.html", "SCRY by BlvkWare"),
-    "/scry/": ("scry.html", "SCRY by BlvkWare"),
-    "/scry.html": ("scry.html", "SCRY by BlvkWare"),
-    "/augur": ("augur.html", "AUGUR by BlvkWare"),
-    "/augur/": ("augur.html", "AUGUR by BlvkWare"),
-    "/augur.html": ("augur.html", "AUGUR by BlvkWare"),
+    "/": ("builder.html", "App Builder by BlvkWare"),
+    "/index.html": ("builder.html", "App Builder by BlvkWare"),
+    "/builder.html": ("builder.html", "App Builder by BlvkWare"),
+    # mirrors the deployed layout so Agent Designer's hand-off link resolves locally too
+    "/build": ("builder.html", "App Builder by BlvkWare"),
+    "/build/": ("builder.html", "App Builder by BlvkWare"),
+    "/design": ("designer.html", "Agent Designer by BlvkWare"),
+    "/design/": ("designer.html", "Agent Designer by BlvkWare"),
+    "/designer.html": ("designer.html", "Agent Designer by BlvkWare"),
+    "/scan": ("scan.html", "Business Scan by BlvkWare"),
+    "/scan/": ("scan.html", "Business Scan by BlvkWare"),
+    "/scan.html": ("scan.html", "Business Scan by BlvkWare"),
 }
 
 
@@ -352,7 +352,7 @@ def build_request(instruction, start_with, system=None):
     """Return (urllib.Request, wire) for the active provider.
 
     `system` lets a tool swap the persona — the HTML generator wants "output
-    HTML only", SCRY wants "output JSON only".
+    HTML only", Agent Designer wants "output JSON only".
     """
     content = user_content(instruction, start_with)
     system = system or SYSTEM_PROMPT
@@ -507,7 +507,7 @@ def stream_completion(instruction, start_with, write_line, prefer=None, model_ov
         chain.sort(key=lambda t: 0 if t[0] == prefer else 1)
     if not chain:
         write_line({"error": "No API key found. Put GEMINI_API_KEY=... in a .env "
-                             "file next to app.html (free: aistudio.google.com/apikey)."})
+                             "file next to builder.html (free: aistudio.google.com/apikey)."})
         return
 
     last = None
@@ -691,11 +691,11 @@ def main():
         MAX_TOKENS = CLI_MAX_TOKENS or CFG.get("max_tokens", DEFAULT_MAX_TOKENS)
 
     if not os.path.isfile(APP):
-        print("ERROR: app.html not found at " + APP)
+        print("ERROR: builder.html not found at " + APP)
         return 1
 
     print("")
-    print("  SIGIL / SCRY - BlvkWare local dev server")
+    print("  App Builder / Agent Designer - BlvkWare local dev server")
     print("  http://localhost:%d/" % args.port)
     if KEY:
         print("  provider: %s" % CFG["label"])
@@ -709,7 +709,7 @@ def main():
         print("    OpenRouter        https://openrouter.ai/keys           -> OPENROUTER_API_KEY")
         print("    Groq              https://console.groq.com/keys        -> GROQ_API_KEY")
         print("")
-        print("  Put one in a .env file next to app.html, then restart.")
+        print("  Put one in a .env file next to builder.html, then restart.")
         print("  `python dev/serve.py --list` shows every supported provider.")
     print("  Ctrl-C to stop.")
     print("")

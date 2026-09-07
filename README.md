@@ -6,9 +6,9 @@ Three browser-only tools that read a business, find the software it should have,
 
 | | Tool | What it does | Live |
 |---|---|---|---|
-| **01** | **AUGUR** — *Analyse* | Reads a company's live public website and reports the revenue and automation systems it should be running but isn't | [blvkware.dev/augur](https://blvkware.dev/augur/) |
-| **02** | **SCRY** — *Architect* | Maps how a business actually operates, finds the missing systems, and turns them into a clickable operating console | [blvkware.dev/scry](https://blvkware.dev/scry/) |
-| **03** | **SIGIL** — *Build* | Streams a complete, working, single-file application into the page — then runs it, reads its own console, and repairs what it broke | [blvkware.dev/sigil](https://blvkware.dev/sigil/) |
+| **01** | **Business Scan** — *Analyse* | Reads a company's live public website and reports the revenue and automation systems it should be running but isn't | [blvkware.dev/scan](https://blvkware.dev/scan/) |
+| **02** | **Agent Designer** — *Architect* | Maps how a business actually operates, finds the missing systems, and turns them into a clickable operating console | [blvkware.dev/design](https://blvkware.dev/design/) |
+| **03** | **App Builder** — *Build* | Streams a complete, working, single-file application into the page — then runs it, reads its own console, and repairs what it broke | [blvkware.dev/build](https://blvkware.dev/build/) |
 
 No sign-up, no account, no server. Each tool is one HTML file that runs entirely in your browser using an API key you supply, stored only in your own `localStorage`.
 
@@ -18,7 +18,7 @@ No sign-up, no account, no server. Each tool is one HTML file that runs entirely
 
 They are the portfolio. Rather than a logo wall and case studies nobody can verify, the argument is: here is working software, go use it right now, judge the standard for yourself.
 
-They also happen to be the sales pipeline in order. AUGUR finds the problem, SCRY designs the fix, SIGIL builds it. Which is the same sequence used on a paying client.
+They also happen to be the sales pipeline in order. Business Scan finds the problem, Agent Designer designs the fix, App Builder builds it. Which is the same sequence used on a paying client.
 
 ---
 
@@ -27,9 +27,9 @@ They also happen to be the sales pipeline in order. AUGUR finds the problem, SCR
 Each tool is a **single, self-contained HTML file** — markup, styles, and logic in one document, no build step, no framework, no dependencies. Open the file and it works.
 
 ```
-app.html      → SIGIL   (156 KB)
-augur.html    → AUGUR   (113 KB)
-scry.html     → SCRY    (61 KB)
+builder.html      → App Builder   (156 KB)
+scan.html    → Business Scan   (113 KB)
+designer.html     → Agent Designer    (61 KB)
 site/         → the marketing site source
 dev/          → build and asset tooling
 docs/         → the built, published site (GitHub Pages serves this)
@@ -57,13 +57,13 @@ Only providers that permit cross-origin browser calls are offered. Anthropic is 
 
 **Single-file, no framework.** These tools have to be readable and runnable by anyone who opens the file, including a prospective client who wants to check what it does before running it. A build step and a `node_modules` tree would defeat that.
 
-**AUGUR reads pages through a CORS relay chain.** Browsers cannot fetch arbitrary origins. AUGUR tries relays in order and falls back to a readability service, so a site that blocks one path is still readable. It crawls several pages, not just the homepage — the difference is not cosmetic: on one test site the homepage alone surfaced *0 prices*, while five pages surfaced *3*, moving the evidence from banner copy to the actual pricing model and cancellation policy.
+**Business Scan reads pages through a CORS relay chain.** Browsers cannot fetch arbitrary origins. Business Scan tries relays in order and falls back to a readability service, so a site that blocks one path is still readable. It crawls several pages, not just the homepage — the difference is not cosmetic: on one test site the homepage alone surfaced *0 prices*, while five pages surfaced *3*, moving the evidence from banner copy to the actual pricing model and cancellation policy.
 
-**AUGUR's copy budget is explicit.** Page text is truncated against a token budget, and any trimmed page is reported in the scan log rather than silently dropped. A report that quietly analysed less than it claimed would be worse than no report.
+**Business Scan's copy budget is explicit.** Page text is truncated against a token budget, and any trimmed page is reported in the scan log rather than silently dropped. A report that quietly analysed less than it claimed would be worse than no report.
 
 **Shareable reports live in the URL fragment.** A report is gzipped and base64url-encoded into `#r=…`. Fragments are never transmitted to a server, which is what makes the published privacy policy literally true — there is no backend that *could* retain a report. The alternative (a Worker plus KV) would have been easier and would have made the privacy claim false.
 
-**SIGIL audits and repairs its own output.** It runs what it generated, reads the runtime console, and feeds its own errors back for repair. Generating code that looks plausible is easy; noticing it threw on load is the part that matters.
+**App Builder audits and repairs its own output.** It runs what it generated, reads the runtime console, and feeds its own errors back for repair. Generating code that looks plausible is easy; noticing it threw on load is the part that matters.
 
 **A tokenizer trap the hard way.** A literal `<!--` or `<script>`/`</script>` sequence inside an inline script silently breaks HTML parsing — the page loads and does nothing, with no error. Every generated script block splits those sequences (`"<" + "/script>"`). This cost real debugging time before it was understood.
 
@@ -77,7 +77,7 @@ Only providers that permit cross-origin browser calls are offered. Anthropic is 
 
 ## Running locally
 
-Open any of `app.html`, `augur.html`, or `scry.html` directly in a browser. That is the whole setup — they will prompt for an API key.
+Open any of `builder.html`, `scan.html`, or `designer.html` directly in a browser. That is the whole setup — they will prompt for an API key.
 
 For a real streaming harness against a live provider (no mocks anywhere in this project):
 
@@ -113,9 +113,9 @@ Stdlib only for the server; the logo tooling needs Pillow and numpy.
 Worth stating plainly, since the point of publishing these is that you can check them.
 
 - **Output quality tracks the model behind the key.** A free-tier model produces free-tier results. This is the largest single variable and it is not under the tool's control.
-- **AUGUR can only read what is public and server-rendered.** A site that renders entirely client-side, or that blocks every relay, will yield a thin report. It says so rather than inventing findings.
-- **SCRY's operating console is projected, not connected.** It models what your systems *would* show, from what you describe. It has no access to your real data and does not pretend otherwise.
-- **SIGIL builds single-file front-ends.** No backend, no database, no auth. It is a fast way to get to a working artefact, not a replacement for building a product.
+- **Business Scan can only read what is public and server-rendered.** A site that renders entirely client-side, or that blocks every relay, will yield a thin report. It says so rather than inventing findings.
+- **Agent Designer's operating console is projected, not connected.** It models what your systems *would* show, from what you describe. It has no access to your real data and does not pretend otherwise.
+- **App Builder builds single-file front-ends.** No backend, no database, no auth. It is a fast way to get to a working artefact, not a replacement for building a product.
 - **Everything is browser-side**, so anything a browser cannot do, these cannot do.
 
 ---
@@ -125,7 +125,7 @@ Worth stating plainly, since the point of publishing these is that you can check
 - Screenshots and a recorded walkthrough in this README
 - Per-tool documentation pages with worked examples
 - A changelog, once the tools stabilise enough to have one
-- AUGUR: aggregate scanning, to publish findings across a whole industry rather than one company at a time
+- Business Scan: aggregate scanning, to publish findings across a whole industry rather than one company at a time
 
 ---
 

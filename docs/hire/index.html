@@ -697,7 +697,7 @@
     </section>
 
     <footer class="foot">
-        <div class="foot-links"><a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/augur/">AUGUR</a><a href="/scry/">SCRY</a><a href="/sigil/">SIGIL</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></div>
+        <div class="foot-links"><a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/scan/">Business Scan</a><a href="/design/">Agent Designer</a><a href="/build/">App Builder</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></div>
         <p style="margin-top:1rem">BlvkWare, <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> · Mississippi, serving the United States.</p>
         <p style="margin-top:0.4rem">Copyright © 2026 BlvkWare / William Russell Wheeler. All Rights Reserved.</p>
     </footer>
@@ -1827,7 +1827,7 @@ try {
     });
 
     /* Coming back from Stripe. The specification is read out of this browser,
-     * not out of the URL, so a paid order carries its full scope into the forge
+     * not out of the URL, so a paid order carries its full scope into the build
      * without any of it having travelled through a query string. */
     function handleReturn() {
         var q = new URLSearchParams(location.search);
@@ -1869,12 +1869,12 @@ try {
             card.appendChild(ta);
 
             var acts = el("div", "actions");
-            var forge = el("a", "btn", "Open your build");
+            var openBuild = el("a", "btn", "Open your build");
             try {
-                forge.href = "/sigil/#order=" +
+                openBuild.href = "/build/#order=" +
                     btoa(unescape(encodeURIComponent(JSON.stringify(spec))));
-            } catch (e) { forge.href = "/sigil/#forge"; }
-            acts.appendChild(forge);
+            } catch (e) { openBuild.href = "/build/#configure"; }
+            acts.appendChild(openBuild);
             var mail = el("a", "btn-2", "Email the specification to BlvkWare");
             mail.href = "mailto:russ@blvkware.dev?subject=" +
                 encodeURIComponent("Paid order " + (ref || "")) +
@@ -1904,7 +1904,7 @@ try {
         setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
     });
 
-    /* ---- a design handed over from SCRY ----
+    /* ---- a design handed over from Agent Designer ----
      * It travels in the URL fragment, which browsers never send to a server and
      * which stays out of access logs. A buyer arriving from a design should land
      * on their configuration already applied, not on an empty form asking them
@@ -1960,7 +1960,7 @@ try {
         render();
 
         var note = el("div", "notice brass");
-        note.innerHTML = "<b>Your design came through from SCRY.</b> Everything below " +
+        note.innerHTML = "<b>Your design came through from Agent Designer.</b> Everything below " +
             "is already set the way it was designed, change anything you like, " +
             "and the price moves with you.";
         var host = document.getElementById("role-detail");

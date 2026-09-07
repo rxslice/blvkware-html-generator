@@ -39,50 +39,50 @@ INDEXNOW_KEY = "444ff8a4e1c76e0935d7c8e40fa40ccd"
 # site. Adding a tool means adding a row here and a card to site/index.html.
 TOOLS = [
     {
-        "src": "app.html",
-        "slug": "sigil",
-        "name": "SIGIL",
+        "src": "builder.html",
+        "slug": "build",
+        "name": "App Builder",
         "role": "Build",
         "subcategory": "AI agent configuration",
         "features": ["Configures an ordered agent from the buyer's own words",
                      "Writes the triage labels, routing and chase cadence",
                      "Reports what is finished and what still needs a person",
                      "Runs entirely in the browser, no account"],
-        "title": "BlvkWare SIGIL: Describe it, and it gets built",
+        "title": "App Builder: Describe It and It Gets Built | BlvkWare",
         "desc": ("Write down what you want and watch it become real software: a complete, working, "
                  "single-file application streamed into the page, then run, audited and repaired. "
                  "The same builder configures ordered BlvkWare agents, writing the triage labels, "
                  "the routing table, the chase cadence and the words they will use."),
     },
     {
-        "src": "augur.html",
-        "slug": "augur",
-        "name": "AUGUR",
+        "src": "scan.html",
+        "slug": "scan",
+        "name": "Business Scan",
         "role": "Find",
         "subcategory": "AI agent opportunity analysis",
         "features": ["Reads a company's live public website",
                      "Finds the jobs quietly costing the most",
                      "Names the agent worth hiring for each one",
                      "Prices every one from the published catalog"],
-        "title": "BlvkWare AUGUR: Which jobs are costing you most",
-        "desc": ("Give AUGUR a website. It reads the live page the way a buyer would, works out "
+        "title": "Business Scan: Which Jobs Are Costing You Most | BlvkWare",
+        "desc": ("Give it a website. It reads the live page the way a buyer would, works out "
                  "which jobs are quietly costing that business the most: unstaffed, done after "
                  "hours, or done by somebody who should be doing something else, and names the "
                  "agent worth hiring for each, at its real catalog price. About a minute, free, "
                  "no sign-up."),
     },
     {
-        "src": "scry.html",
-        "slug": "scry",
-        "name": "SCRY",
+        "src": "designer.html",
+        "slug": "design",
+        "name": "Agent Designer",
         "role": "Design",
         "subcategory": "AI agent design and pricing",
         "features": ["Works out which agent is worth hiring first",
                      "Designs exactly what it has to be able to do",
                      "Shows what is ready on day one and what needs you",
                      "Prices it from the published catalog, then hands it to checkout"],
-        "title": "BlvkWare SCRY: Your agent, designed and priced",
-        "desc": ("Describe how your business actually operates. SCRY works out which AI agent is "
+        "title": "Agent Designer: Your Agent, Designed and Priced | BlvkWare",
+        "desc": ("Describe how your business actually operates. It works out which AI agent is "
                  "worth hiring first, exactly what it needs to be able to do, which of your "
                  "systems it has to operate, and what that costs, on the page, in about a "
                  "minute. Free, no sign-up."),
@@ -97,7 +97,7 @@ TOOLS = [
 # override, and doing that on a public page encourages users to paste a paid
 # key into someone else's website.
 #
-# Same tokenizer rule as app.html: no HTML open-comment sequence and no literal
+# Same tokenizer rule as builder.html: no HTML open-comment sequence and no literal
 # script open/close tag anywhere in this JS.
 SHIM = r"""
 (function () {
@@ -133,7 +133,7 @@ SHIM = r"""
   var SYSTEM = "You are a world-class front-end engineer and product designer. " +
     "You output complete, self-contained, single-file HTML documents and nothing else.";
 
-  // A tool that needs a different persona (SCRY asks for JSON, not HTML) sets
+  // A tool that needs a different persona (Agent Designer asks for JSON, not HTML) sets
   // window.__blvkSystem before calling and clears it afterwards.
   function system() { return window.__blvkSystem || SYSTEM; }
 
@@ -354,7 +354,13 @@ SHIM = r"""
 
 # old path -> current slug. Static hosting has no rewrite rules, so a renamed
 # tool keeps its previous address alive with a real page that forwards.
-REDIRECTS = [("html-generator", "sigil")]
+# Old URLs keep working. The three tools were called AUGUR, SCRY and SIGIL,
+# which told a visitor nothing about what they do; anything already linking to
+# those addresses still lands in the right place.
+REDIRECTS = [("html-generator", "build"),
+             ("sigil", "build"),
+             ("augur", "scan"),
+             ("scry", "design")]
 
 # Standalone pages copied verbatim to their own directory URL.
 MARKETING_PAGES = [
@@ -398,9 +404,9 @@ SITEMAP = [
     ("/", "1.0", "weekly"),
     ("/hire/", "0.95", "weekly"),
     ("/agents/", "0.95", "weekly"),
-    ("/augur/", "0.9", "monthly"),
-    ("/scry/", "0.9", "monthly"),
-    ("/sigil/", "0.9", "monthly"),
+    ("/scan/", "0.9", "monthly"),
+    ("/design/", "0.9", "monthly"),
+    ("/build/", "0.9", "monthly"),
     ("/what-is-an-ai-agent/", "0.9", "monthly"),
     ("/ai-agent-pricing/", "0.9", "monthly"),
     ("/ai-agent-permissions/", "0.85", "monthly"),
@@ -619,17 +625,17 @@ operations fee.
 All three run entirely in the visitor's browser. No account, no sign-up, no
 payment, no server. They exist as the work sample in place of client case studies.
 
-- [AUGUR](https://blvkware.dev/augur/) finds the work. Give it a company's public
+- [Business Scan](https://blvkware.dev/scan/) finds the work. Give it a company's public
   website and it reads the live page, works out which jobs are quietly costing
   that business the most -- unstaffed, done after hours, or done by somebody who
   should be doing something else -- and names the agent worth hiring for each,
   priced from the published catalog rather than estimated.
-- [SCRY](https://blvkware.dev/scry/) designs the agent. Describe how a business
+- [Agent Designer](https://blvkware.dev/design/) designs the agent. Describe how a business
   actually operates and it works out which agent is worth hiring first, exactly
   what it has to be able to do, which existing systems it must operate, what is
   ready on day one and what still needs a person -- then prices it and hands the
   finished design to checkout with every option already set.
-- [SIGIL](https://blvkware.dev/sigil/) builds it. Given a paid order it writes
+- [App Builder](https://blvkware.dev/build/) builds it. Given a paid order it writes
   the configuration that turns shared, tested machinery into one specific agent:
   the triage labels, the routing table, the chase cadence and the words it will
   use, followed by an honest account of what it finished and what was handed to a
@@ -718,7 +724,7 @@ payment, no server. They exist as the work sample in place of client case studie
 def redirect_page(slug):
     """A redirect that works without a server: header, meta refresh, and script.
 
-    The query string is carried across so SCRY's `?prompt=` hand-off still lands
+    The query string is carried across so Agent Designer's `?prompt=` hand-off still lands
     if anything is holding the old URL.
     """
     url = "/%s/" % slug
@@ -729,12 +735,12 @@ def redirect_page(slug):
         "<meta http-equiv=\"refresh\" content=\"0; url=" + url + "\">\n"
         "<link rel=\"canonical\" href=\"https://" + CUSTOM_DOMAIN + url + "\">\n"
         "<meta name=\"robots\" content=\"noindex\">\n"
-        "<title>Moved to SIGIL</title>\n"
+        "<title>Moved to App Builder</title>\n"
         "<script>location.replace('" + url + "' + location.search + location.hash);"
         + close_script + "\n"
         "</head>\n<body style=\"background:#0a0908;color:#a89d8b;font:15px/1.6 system-ui,sans-serif;"
         "display:grid;place-items:center;height:100vh;margin:0\">\n"
-        "<p>The HTML generator is now <a href=\"" + url + "\" style=\"color:#d4f24a\">SIGIL</a>.</p>\n"
+        "<p>The HTML generator is now <a href=\"" + url + "\" style=\"color:#d4f24a\">App Builder</a>.</p>\n"
         "</body>\n</html>\n"
     )
 
@@ -982,7 +988,7 @@ def compile_catalog(html, name=""):
 
     for marker, src in (("/*ENGINE_JS*/", "engine.js"),
                         ("/*DESIGN_JS*/", "design.js"),
-                        ("/*FORGE_JS*/", "forge.js")):
+                        ("/*CONFIGURE_JS*/", "configure.js")):
         if marker not in html:
             continue
         path = os.path.join(ROOT, "dev", src)
@@ -1046,13 +1052,13 @@ def main():
     try:
         import importlib.util
         _spec = importlib.util.spec_from_file_location(
-            "forge_coverage", os.path.join(os.path.dirname(__file__), "check-forge-coverage.py"))
+            "configure_coverage", os.path.join(os.path.dirname(__file__), "check-configure-coverage.py"))
         _mod = importlib.util.module_from_spec(_spec)
         _spec.loader.exec_module(_mod)
         if _mod.main() != 0:
             print("WARNING: the builder and agentcore have drifted - see above")
     except Exception as e:                       # never let a check break a build
-        print("note: forge coverage check skipped (%s)" % e)
+        print("note: configure coverage check skipped (%s)" % e)
 
     # The logo assets are a build input, not a build product — regenerate them
     # with dev/embed-logo.py whenever the master changes.
@@ -1079,7 +1085,7 @@ def main():
         print("Built docs/%s/index.html (%.1f KB)"
               % (tool["slug"], len(page.encode("utf-8")) / 1024.0))
 
-    # /html-generator/ was the tool's address before it was named SIGIL. Links to
+    # /html-generator/ was the tool's address before it was named App Builder. Links to
     # it are already out in the world, so it stays as a redirect rather than a 404.
     for old, new in REDIRECTS:
         d = os.path.join(OUT_DIR, old)

@@ -48,7 +48,7 @@ TEMPLATE_KEYS = {
 
 def web_schema() -> dict[str, set[str]]:
     """Capability id -> the keys the browser is allowed to write for it."""
-    src = (HERE / "forge.js").read_text(encoding="utf-8")
+    src = (HERE / "configure.js").read_text(encoding="utf-8")
     block = src.split("var SCHEMA = {", 1)[1].split("\n    };", 1)[0]
     out: dict[str, set[str]] = {}
     for m in re.finditer(r'"([a-z0-9_.]+)"\s*:\s*\{(.*?)\n\s*(?="|\})', block, re.S):
@@ -121,7 +121,7 @@ def main() -> int:
         problems += 1
 
     # Keys the browser consumes itself instead of passing through. knowledge.pack
-    # is the only one: forge.js lifts `documents` out and puts it in the agent's
+    # is the only one: configure.js lifts `documents` out and puts it in the agent's
     # knowledge pack, because it is content rather than a capability setting, so
     # agentcore is right never to read it as config.
     HANDLED_IN_BROWSER = {"knowledge.pack": {"documents"}}

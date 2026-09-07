@@ -179,7 +179,7 @@ module.exports = async function handler(req, res) {
       client_reference_id: ref,
       // The manifest is far larger than Stripe's metadata limits, so only the
       // reference travels. The buyer's browser keeps the specification and
-      // hands it to the forge on return.
+      // hands it to the builder on return.
       metadata: {
         ref,
         role: role.id,
