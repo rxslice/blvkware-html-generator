@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>How BlvkWare Agents Are Controlled — Permissions, Credentials, Data</title>
+    <title>How BlvkWare Agents Are Controlled: Permissions, Credentials, Data</title>
     <meta name="description" content="Where your credentials live, what leaves your systems and where it goes, what is logged, what needs a person, and how you stop the agent yourself in one press. Including what this page does not claim.">
     <link rel="canonical" href="https://blvkware.dev/how-agents-are-controlled/">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
@@ -40,7 +40,7 @@
         {"@type": "Question", "name": "Can the agent run without sending anything to an AI model?",
          "acceptedAnswer": {"@type": "Answer", "text": "Yes. Every reasoning operation has a deterministic version underneath that uses no model and no network, and the whole agent can run that way. Much more work lands on a person and nothing is guessed: on a purpose-built test set the no-model path is confidently wrong zero times and answers zero questions the documents do not cover, at the cost of escalating far more."}},
         {"@type": "Question", "name": "Is every action reversible?",
-         "acceptedAnswer": {"@type": "Answer", "text": "No, and any supplier saying otherwise is overstating it. Where the connected system can undo something — a booking, a reschedule, a record update, a payment request — the agent records how to undo it at the moment it acts. Sending is not reversible: a message somebody has read cannot be recalled. That is exactly why sending is what Draft holds for a person."}}
+         "acceptedAnswer": {"@type": "Answer", "text": "No, and any supplier saying otherwise is overstating it. Where the connected system can undo something (a booking, a reschedule, a record update, a payment request) the agent records how to undo it at the moment it acts. Sending is not reversible: a message somebody has read cannot be recalled. That is exactly why sending is what Draft holds for a person."}}
       ]
     }
   ]
@@ -123,9 +123,9 @@
 
     <p>Every agent comes with a page called <strong>What it may do</strong>. It is in the same place on every agent, and it has one button that stops it.</p>
 
-    <p>Stopping puts the agent on <strong>Watch</strong> immediately. On Watch it carries on reading what comes in and carries on writing down what it would have done, and it does none of it — nothing reaches a customer, nothing is booked, nothing is changed in your systems. It stays stopped until you start it again, including through a restart of the machine it runs on. Starting it again puts it back at the level it was at, not at the top.</p>
+    <p>Stopping puts the agent on <strong>Watch</strong> immediately. On Watch it carries on reading what comes in and carries on writing down what it would have done, and it does none of it. Nothing reaches a customer, nothing is booked, nothing is changed in your systems. It stays stopped until you start it again, including through a restart of the machine it runs on. Starting it again puts it back at the level it was at, not at the top.</p>
 
-    <p>Two things worth being straight about. The log of what it <em>would</em> have done keeps filling up while it is stopped, and that log is usually the reason you stopped it — it is the fastest way to see what it was about to get wrong. And nothing already sent can be unsent, by this or by any other system. Stopping stops what has not happened yet.</p>
+    <p>Two things worth being straight about. The log of what it <em>would</em> have done keeps filling up while it is stopped, and that log is usually the reason you stopped it. It is the fastest way to see what it was about to get wrong. And nothing already sent can be unsent, by this or by any other system. Stopping stops what has not happened yet.</p>
 
     <p>You do not need us to do it and there is no ticket. It is recorded against you with the time, and every change to what the agent may do is listed on that page with who made it.</p>
 
@@ -143,7 +143,7 @@
         </tbody>
     </table></div>
 
-    <p>Two things about this are structural rather than promised. There is exactly one route in the software from a decision to a side effect, and that route runs the level check first — a capability cannot send, book, charge or change anything without passing it. And <em>your</em> rules are checked before the level, not after: if you have said the agent must always ask before it updates a record, that binds at Operate as well as at Draft. Checked the other way round, a promotion would quietly cancel your own instruction.</p>
+    <p>Two things about this are structural rather than promised. There is exactly one route in the software from a decision to a side effect, and that route runs the level check first: a capability cannot send, book, charge or change anything without passing it. And <em>your</em> rules are checked before the level, not after: if you have said the agent must always ask before it updates a record, that binds at Operate as well as at Draft. Checked the other way round, a promotion would quietly cancel your own instruction.</p>
 
     <p>An agent is also only ever given the systems its job needs. A follow-up agent is not handed your accounting login because the same person happens to own both.</p>
 
@@ -161,9 +161,9 @@
 
     <p>There are exactly two destinations.</p>
 
-    <p><strong>Your own vendors.</strong> The systems you told the agent to operate — your mail host, your calendar, your CRM, your payment provider. It talks to them the same way you do.</p>
+    <p><strong>Your own vendors.</strong> The systems you told the agent to operate: your mail host, your calendar, your CRM, your payment provider. It talks to them the same way you do.</p>
 
-    <p><strong>The model provider, for the reasoning.</strong> When the agent classifies a message or drafts a reply, the text it is working on and the relevant passages from your own documents go to Anthropic's API and the answer comes back. Nothing else is sent there — not your credentials, not your customer list, not your record store. Their terms govern what they do with it; read them rather than taking our paraphrase, because it is their policy and not ours to promise.</p>
+    <p><strong>The model provider, for the reasoning.</strong> When the agent classifies a message or drafts a reply, the text it is working on and the relevant passages from your own documents go to Anthropic's API and the answer comes back. Nothing else is sent there: not your credentials, not your customer list, not your record store. Their terms govern what they do with it; read them rather than taking our paraphrase, because it is their policy and not ours to promise.</p>
 
     <p>There is no BlvkWare server in the middle. The agent runs on its own machine and talks directly to those two.</p>
 
@@ -173,7 +173,7 @@
 
     <p>Every reasoning operation in the agent has a deterministic version underneath it that uses no model and no network. You can run the whole agent that way. It still sorts, still records, still follows your sequences, still refuses to answer things your documents do not cover, and it tells you which of the two paths produced each decision.</p>
 
-    <p>The trade-off is real and here it is measured rather than described. Against a 29-message inbox and a 30-document knowledge pack built for the purpose: with no model the classifier reaches a confident answer on roughly a third of messages and sends the rest to a person, and the answering side declines seventeen questions it could technically have found in order to avoid inventing a single one. Its record on the two failures that actually cost you something — a confident wrong classification, and answering a question your documents do not cover — is zero and zero.</p>
+    <p>The trade-off is real and here it is measured rather than described. Against a 29-message inbox and a 30-document knowledge pack built for the purpose: with no model the classifier reaches a confident answer on roughly a third of messages and sends the rest to a person, and the answering side declines seventeen questions it could technically have found in order to avoid inventing a single one. Its record on the two failures that actually cost you something (a confident wrong classification, and answering a question your documents do not cover) is zero and zero.</p>
 
     <p>So: much more lands on your desk, and nothing is guessed. With a model far less lands on your desk. That is the actual choice, and it is yours.</p>
 
@@ -181,7 +181,7 @@
 
     <p>Every action the agent takes or wants to take is one entry: what it was looking at, what it decided, why, exactly what it would do, which level it was at, and who approved it if anybody did.</p>
 
-    <p>Two properties make that log worth having. The entry is written <em>before</em> the side effect is attempted, so a process that dies halfway through shows an attempt rather than showing nothing. And entries are never edited — if something is undone, that is a new entry pointing at the original. A log that can be tidied up afterwards is not evidence of anything.</p>
+    <p>Two properties make that log worth having. The entry is written <em>before</em> the side effect is attempted, so a process that dies halfway through shows an attempt rather than showing nothing. And entries are never edited, if something is undone, that is a new entry pointing at the original. A log that can be tidied up afterwards is not evidence of anything.</p>
 
     <p>If a person rewrites what the agent drafted before sending it, that is recorded as its own entry with the words that were there before. "The agent sent this" and "a person rewrote this and sent it" are different facts, and a log that cannot tell them apart is one that quietly takes credit.</p>
 
@@ -189,9 +189,9 @@
 
     <p>Some suppliers will tell you every action is reversible. It is not true and it is worth knowing where the line is.</p>
 
-    <p>When the agent does something the connected system can undo — a booking, a reschedule, a record update, a payment request, a step in a sequence — it records how to undo it <em>at the moment it acts</em>, so reversing it later is one instruction rather than a reconstruction. Where it did not record one, the software refuses to pretend and says so rather than doing something approximate.</p>
+    <p>When the agent does something the connected system can undo (a booking, a reschedule, a record update, a payment request, a step in a sequence) it records how to undo it <em>at the moment it acts</em>, so reversing it later is one instruction rather than a reconstruction. Where it did not record one, the software refuses to pretend and says so rather than doing something approximate.</p>
 
-    <p>Sending is not reversible. A message somebody has read cannot be recalled, whatever any software claims. Money that has moved may be refundable but the event still happened. <strong>This is exactly why sending is the thing Draft holds</strong> — the irreversible category is the one that waits for a person by default, rather than the one you are asked to trust.</p>
+    <p>Sending is not reversible. A message somebody has read cannot be recalled, whatever any software claims. Money that has moved may be refundable but the event still happened. <strong>This is exactly why sending is the thing Draft holds</strong>: the irreversible category is the one that waits for a person by default, rather than the one you are asked to trust.</p>
 
     <h2>When it does not know</h2>
 
@@ -219,14 +219,14 @@
 
     <div class="cta">
         <h2 style="margin-top:0">See exactly what one would be allowed to do</h2>
-        <p>Scope an agent, set the level you are working towards, and read the specification — what it would own, what it may touch, and what it must escalate. The price is on the screen. No call and no estimate.</p>
+        <p>Scope an agent, set the level you are working towards, and read the specification, what it would own, what it may touch, and what it must escalate. The price is on the screen. No call and no estimate.</p>
         <a class="btn" href="/hire/">Scope an agent</a>
         <a class="btn-2" href="/ai-agent-permissions/">How the autonomy ladder works</a>
     </div>
 
     <footer class="foot">
         <div class="foot-links"><a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/hire/">Hire an agent</a><a href="/what-is-an-ai-agent/">What is an agent</a><a href="/ai-agent-permissions/">Permissions</a><a href="/ai-agent-pricing/">Pricing</a><a href="/terms/">Terms</a></div>
-        <p style="margin-top:1rem">BlvkWare — <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> · Mississippi, serving the United States.</p>
+        <p style="margin-top:1rem">BlvkWare, <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> · Mississippi, serving the United States.</p>
     </footer>
 </div>
 </body>

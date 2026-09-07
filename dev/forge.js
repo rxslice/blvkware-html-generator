@@ -94,7 +94,7 @@
         "chan.webchat": { keys: {}, ask: "" },
         "knowledge.pack": { keys: { documents: "array" },
             ask: 'documents: [title, body] for facts stated in the order that the agent should answer from. ' +
-                 'Only what the customer actually told us — never invented policy or prices.'
+                 'Only what the customer actually told us, never invented policy or prices.'
         },
         "research.web": { keys: { fields: "object" }, ask: 'fields: {name: "what to find out"} for a useful brief here.' },
         "email.thread": { keys: { needed: "array", purpose: "string" }, ask: 'needed: facts to collect. purpose: the job.' },

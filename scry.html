@@ -375,7 +375,7 @@
         <div class="kicker">Agent design</div>
         <h1>There is a job in your business<br>that <em>costs you every week.</em></h1>
         <p class="lede">Describe how you actually operate. SCRY works out which agent is worth hiring first,
-           designs exactly what it needs to be able to do, and prices it — on this page, in about a minute.</p>
+           designs exactly what it needs to be able to do, and prices it: on this page, in about a minute.</p>
 
         <div class="composer" id="composer">
           <label class="sr" for="biz">Describe your business</label>
@@ -448,7 +448,7 @@
             </button>
           </form>
           <p class="keep-note" id="keepNote">
-            The full design, the price, and what it would own. No account, no list &mdash; one email, from a person.
+            The full design, the price, and what it would own. No account, no list: one email, from a person.
           </p>
         </div>
         <div class="side-title" style="margin-top:22px">Hire it</div>
@@ -797,7 +797,7 @@ catch (e) { window.BLVK_CATALOG = null; }
         '<span class="find-detail">' + esc(notes[i] || sig.evidence) + '</span></span>' +
         '<span class="tag' + (strong ? ' high' : '') + '">' +
         (strong ? 'this agent' : 'noted') + '</span></button>';
-    }).join('') || '<p class="keep-note">No specific signals were confirmed — ' +
+    }).join('') || '<p class="keep-note">No specific signals were confirmed, ' +
                    'the design below is the closest match to what you described.</p>';
 
     // What it will own. Core capabilities are what the job IS; the rest are
@@ -839,8 +839,8 @@ catch (e) { window.BLVK_CATALOG = null; }
     // Adjustments that change the price, so a buyer can see the shape of the
     // decision without leaving the page.
     var acts = [
-      { id: 'trial', label: 'Try it first — ' + money(C.pricing.trial) + ' for 14 days' },
-      { id: 'annual', label: 'Pay annually — two months free' },
+      { id: 'trial', label: 'Try it first: ' + money(C.pricing.trial) + ' for 14 days' },
+      { id: 'annual', label: 'Pay annually: two months free' },
       { id: 'lean', label: 'Strip it to the core job only' }
     ];
     el.acts.innerHTML = acts.map(function (a) {
@@ -1023,7 +1023,7 @@ catch (e) { window.BLVK_CATALOG = null; }
       if (sys.modules && sys.modules.length) L.push('      modules: ' + sys.modules.join(', '));
     });
     L.push('');
-    L.push('Mapped by SCRY — blvkware.dev/scry');
+    L.push('Mapped by SCRY: blvkware.dev/scry');
     return L.join('\n');
   }
 
@@ -1038,7 +1038,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     var email = el.keepEmail.value.trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
       el.keepEmail.classList.add('bad');
-      keepNote('That address does not look right — check it and try again.');
+      keepNote('That address does not look right. Check it and try again.');
       el.keepEmail.focus();
       return;
     }
@@ -1051,22 +1051,22 @@ catch (e) { window.BLVK_CATALOG = null; }
         var res = await fetch(CAPTURE_ENDPOINT, {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ email: email, subject: 'SCRY map — ' + S.model.osName, map: body })
+          body: JSON.stringify({ email: email, subject: 'SCRY map: ' + S.model.osName, map: body })
         });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         el.keepForm.classList.add('hidden');
         keepNote('Sent. Check your inbox in a minute.', true);
         return;
       } catch (err) {
-        keepNote('Could not send that — opening your mail app instead.');
+        keepNote('Could not send that, opening your mail app instead.');
       }
     }
     // No endpoint configured: hand it to their mail client, pre-written.
-    var sub = encodeURIComponent('SCRY map — ' + S.model.osName);
+    var sub = encodeURIComponent('SCRY map: ' + S.model.osName);
     var text = encodeURIComponent('Send this and I will email the full map back to ' + email +
       '.\n\n----------------------------------------\n\n' + body);
     window.location.href = 'mailto:' + CAPTURE_TO + '?subject=' + sub + '&body=' + text;
-    keepNote('Your mail app should open with the design in it — just hit send.', true);
+    keepNote('Your mail app should open with the design in it. Just hit send.', true);
     el.keepBtn.disabled = false;
   });
 
@@ -1125,7 +1125,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     el.keepBtn.disabled = false;
     el.keepEmail.value = '';
     el.keepEmail.classList.remove('bad');
-    keepNote('The whole map, plus the systems worth building. No account, no list — one email, from a person.');
+    keepNote('The whole map, plus the systems worth building. No account, no list: one email, from a person.');
   });
 
   // On the static build the shim exposes a BYOK dialog; locally the dev proxy

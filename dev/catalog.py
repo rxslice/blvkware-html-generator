@@ -155,7 +155,7 @@ CHANNELS = [
 
 GATES = {
     "10dlc": {
-        "short": "US carrier registration required — weeks, not days",
+        "short": "US carrier registration required: weeks, not days",
         "long": "Texting your customers from a US business number requires A2P "
                 "10DLC registration with the carriers. Part of it is a manual "
                 "review that no supplier can hurry, so budget weeks rather than "
@@ -163,7 +163,7 @@ GATES = {
                 "switches on when the registration clears, at no extra cost.",
     },
     "meta": {
-        "short": "Meta business verification required — usually days",
+        "short": "Meta business verification required: usually days",
         "long": "WhatsApp Business messaging needs Meta to verify the business. "
                 "It is normally days rather than weeks, but it is outside our "
                 "control and so is not promised inside the delivery window.",
@@ -315,7 +315,7 @@ CAPABILITIES = [
        1800, 4, judgment=True,
        accept="The documented process completes end to end on real data, in the right order, at least three times."),
     _c("workflow.exception", "Systems", "Exception handling",
-       "When something doesn't fit the process, it works it out or escalates — it doesn't just stall.",
+       "When something doesn't fit the process, it works it out or escalates. It doesn't just stall.",
        850, 3, needs=["workflow.multistep"], judgment=True,
        accept="Each exception listed in the job description is either resolved or escalated with the reason attached."),
     _c("browser.operate", "Systems", "Operates web apps with no API",
@@ -349,7 +349,7 @@ CAPABILITIES = [
        1200, 3, integ=["payments"],
        accept="A test transaction completes end to end and reconciles against the right record."),
     _c("pay.chase", "Money", "Chases what's unpaid",
-       "Reminds before due, on due, and after — escalating tone gradually, stopping the moment it's paid.",
+       "Reminds before due, on due, and after, escalating tone gradually, stopping the moment it's paid.",
        850, 2, needs=["pay.collect"], integ=["payments"], judgment=True,
        accept="The dunning sequence runs on schedule and halts within minutes of payment."),
     _c("recon.match", "Money", "Reconciliation",
@@ -379,7 +379,7 @@ CAPABILITIES = [
        450, 1, needs=["data.collect"],
        accept="Each configured threshold fires correctly, and does not fire when it shouldn't."),
     _c("research.web", "Data", "Research",
-       "Goes and finds out — about a prospect, a competitor, a supplier, a market.",
+       "Goes and finds out: about a prospect, a competitor, a supplier, a market.",
        850, 2, judgment=True,
        accept="Five research briefs are accurate, sourced, and clearly separate fact from inference."),
 
@@ -417,7 +417,7 @@ CAPABILITIES = [
        1400, 3,
        accept="Dashboard figures reconcile against the audit log for a full week."),
     _c("whitelabel", "Control", "White-label surfaces",
-       "Every page and message it touches carries your domain and your branding — including the two pages your team uses every day and the chat widget on your site.",
+       "Every page and message it touches carries your domain and your branding, including the two pages your team uses every day and the chat widget on your site.",
        1500, 2,
        accept="No BlvkWare branding appears on any customer-facing surface, and links resolve on the customer's domain."),
     _c("lang.extra", "Control", "Additional language",
@@ -567,7 +567,7 @@ ROLES = [
 
     _r("front-desk", "Communication", "Front Desk",
        "All inbound, every channel, one memory",
-       "The phone, the texts, the web form, the inbox — one worker owning all of it. A customer who called this morning and texts this afternoon isn't starting over.",
+       "The phone, the texts, the web form, the inbox: one worker owning all of it. A customer who called this morning and texts this afternoon isn't starting over.",
        core=["email.triage", "email.draft", "email.thread", "lead.capture", "appt.book", "knowledge.pack"],
        suggested=["voice.inbound", "chan.webchat", "lead.qualify", "appt.remind", "crm.logging"],
        minTier=2),
@@ -593,7 +593,7 @@ ROLES = [
 
     _r("follow-up", "Revenue", "Follow-Up Agent",
        "Nothing you quoted goes quiet",
-       "You sent the quote on Tuesday. Nobody rejected it — it just got buried. This chases every estimate until the customer actually answers.",
+       "You sent the quote on Tuesday. Nobody rejected it. It just got buried. This chases every estimate until the customer actually answers.",
        core=["quote.followup"],
        suggested=["crm.logging", "lead.nurture", "doc.generate", "appt.book"]),
 
@@ -625,7 +625,7 @@ ROLES = [
 
     _r("browser-operator", "Operations", "Browser Operator",
        "Works the systems that have no way in",
-       "The supplier portal, the insurer's site, the council system — the ones with no API and no export, where somebody logs in and copies things by hand. It does that instead.",
+       "The supplier portal, the insurer's site, the council system: the ones with no API and no export, where somebody logs in and copies things by hand. It does that instead.",
        core=["browser.operate"],
        suggested=["browser.extract", "data.collect", "files.watch", "doc.parse", "data.alert"]),
 
@@ -664,7 +664,7 @@ ROLES = [
 
     _r("research", "Intelligence", "Research Agent",
        "Finds out, before the meeting",
-       "Prospect research, competitor moves, supplier checks — all valuable, all skipped, because it's an hour nobody has.",
+       "Prospect research, competitor moves, supplier checks: all valuable, all skipped, because it's an hour nobody has.",
        core=["research.web"],
        suggested=["lead.enrich", "data.report", "crm.sync", "email.draft"]),
     # ---- Commerce -------------------------------------------------------
@@ -770,7 +770,7 @@ SETUP_NEEDS = {
     "crm.sync":         ["field mapping to their CRM"],
     "crm.hygiene":      ["a decision on what may be merged automatically"],
     "crm.pipeline":     ["their stages and what counts as stale"],
-    "chan.sms":         ["A2P 10DLC registration — weeks, outside our control"],
+    "chan.sms":         ["A2P 10DLC registration: weeks, outside our control"],
     "chan.whatsapp":    ["Meta business verification"],
     "voice.inbound":    ["a phone number and a call-flow walkthrough"],
     "voice.outbound":   ["a phone number and calling-hours rules"],

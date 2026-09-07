@@ -1,6 +1,6 @@
 $meta
   title =  SIGIL by BlvkWare
-  description = Describe a website, game, tool or app and watch it get built — complete, working, single-file. Live streaming preview, runtime console, AI error repair, refine loop, and version history.
+  description = Describe a website, game, tool or app and watch it get built: complete, working, single-file. Live streaming preview, runtime console, AI error repair, refine loop, and version history.
   tags = html, generator, website, game, app, code, ai, builder, ide, no-code
 
 generateText = {import:ai-text-plugin}
@@ -1035,7 +1035,7 @@ generateText = {import:ai-text-plugin}
         <div class="composer-full">
           <div class="prompt-zone">
             <label class="sr" for="prompt">Describe what to build</label>
-            <textarea id="prompt" spellcheck="false" placeholder="Describe what you want to build — a game, a landing page, a tool, a dashboard, anything.&#10;&#10;Be specific about features, style, and behaviour for the best results."></textarea>
+            <textarea id="prompt" spellcheck="false" placeholder="Describe what you want to build: a game, a landing page, a tool, a dashboard, anything.&#10;&#10;Be specific about features, style, and behaviour for the best results."></textarea>
           </div>
 
           <div class="composer-bar">
@@ -1073,14 +1073,14 @@ generateText = {import:ai-text-plugin}
                 <div class="opt-title">Aesthetic</div>
                 <div class="chips" id="styleChips">
                   <button class="chip on" data-style="">Auto</button>
-                  <button class="chip" data-style="a sleek dark product aesthetic — deep neutral surfaces, one vivid accent, generous whitespace, crisp typography">Dark product</button>
-                  <button class="chip" data-style="glassmorphism — frosted translucent panels, soft blurred gradients, subtle inner light">Glass</button>
-                  <button class="chip" data-style="neo-brutalist — thick black borders, hard offset shadows, saturated flat colours, chunky type">Brutalist</button>
-                  <button class="chip" data-style="refined minimalism — near-monochrome palette, lots of whitespace, precise typographic hierarchy, almost no ornament">Minimal</button>
-                  <button class="chip" data-style="retro terminal — CRT green/amber on black, monospace type, scanline texture, blinking cursor details">Terminal</button>
-                  <button class="chip" data-style="playful and colourful — rounded shapes, bouncy micro-animations, bright cheerful palette, friendly type">Playful</button>
-                  <button class="chip" data-style="editorial magazine layout — large serif display type, asymmetric grid, restrained palette, strong rhythm between blocks">Editorial</button>
-                  <button class="chip" data-style="warm analogue — cream and charcoal base, acid accent, grain texture, technical sans type">Analogue</button>
+                  <button class="chip" data-style="a sleek dark product aesthetic: deep neutral surfaces, one vivid accent, generous whitespace, crisp typography">Dark product</button>
+                  <button class="chip" data-style="glassmorphism: frosted translucent panels, soft blurred gradients, subtle inner light">Glass</button>
+                  <button class="chip" data-style="neo-brutalist: thick black borders, hard offset shadows, saturated flat colours, chunky type">Brutalist</button>
+                  <button class="chip" data-style="refined minimalism: near-monochrome palette, lots of whitespace, precise typographic hierarchy, almost no ornament">Minimal</button>
+                  <button class="chip" data-style="retro terminal: CRT green/amber on black, monospace type, scanline texture, blinking cursor details">Terminal</button>
+                  <button class="chip" data-style="playful and colourful: rounded shapes, bouncy micro-animations, bright cheerful palette, friendly type">Playful</button>
+                  <button class="chip" data-style="editorial magazine layout: large serif display type, asymmetric grid, restrained palette, strong rhythm between blocks">Editorial</button>
+                  <button class="chip" data-style="warm analogue: cream and charcoal base, acid accent, grain texture, technical sans type">Analogue</button>
                 </div>
               </div>
 
@@ -1206,7 +1206,7 @@ generateText = {import:ai-text-plugin}
                 <div class="empty-inner">
                   <div class="empty-ic"><svg class="ic ic-28"><use href="#i-console"/></svg></div>
                   <h3>Console is clear</h3>
-                  <p>Runtime logs, warnings and errors from your generated page appear here — captured live.</p>
+                  <p>Runtime logs, warnings and errors from your generated page appear here, captured live.</p>
                 </div>
               </div>
               <div id="logList"></div>
@@ -1226,7 +1226,7 @@ generateText = {import:ai-text-plugin}
                 <div class="empty-inner">
                   <div class="empty-ic"><svg class="ic ic-28"><use href="#i-shield"/></svg></div>
                   <h3>Nothing to audit yet</h3>
-                  <p>After a build, this checks the generated file for structural, accessibility and quality problems — before you ship it.</p>
+                  <p>After a build, this checks the generated file for structural, accessibility and quality problems, before you ship it.</p>
                 </div>
               </div>
               <div id="auditList"></div>
@@ -1236,7 +1236,7 @@ generateText = {import:ai-text-plugin}
 
         <div class="refine" id="refineBar">
           <svg class="ic ic-16" style="color:var(--accent-ink);flex:none"><use href="#i-wand"/></svg>
-          <input class="refine-input" id="refineInput" placeholder="Refine it — “add a dark mode toggle”, “make it feel more premium”, “add sound effects”…">
+          <input class="refine-input" id="refineInput" placeholder="Refine it: “add a dark mode toggle”, “make it feel more premium”, “add sound effects”…">
           <button class="btn sm primary" id="refineBtn">Refine <span class="kbd">⏎</span></button>
         </div>
       </section>
@@ -1483,7 +1483,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     var o = res.outcome, biz = spec.business || {};
     var h = '';
 
-    h += '<div class="fg-card"><h3>' + esc(spec.role.name) + ' &mdash; ' +
+    h += '<div class="fg-card"><h3>' + esc(spec.role.name) + ' — ' +
          esc(spec.ref || 'no ref') + '</h3>' +
          '<p>' + esc(biz.business || 'Unnamed business') +
          '. Goes live at L1 Draft, whatever the order targets.</p>' +
@@ -1516,7 +1516,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     }).join('');
     h += o.gated.map(function (c) {
       return '<li><span class="mk gate">&#9673;</span><span><b>' + esc(c.name) + '</b>' +
-        '<span class="n">waiting on ' + esc(c.gate) + ' &mdash; outside our control</span></span></li>';
+        '<span class="n">waiting on ' + esc(c.gate) + ' — outside our control</span></span></li>';
     }).join('');
     h += '</ul></div></div>';
 
@@ -1957,7 +1957,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     const inlineOn = (markup.match(/\son[a-z]+\s*=/gi) || []).length;
     if (buttons > 0 && listeners === 0 && inlineOn === 0) {
       add('error', 'function', buttons + ' button' + (buttons > 1 ? 's' : '') + ' with no handler',
-        'No addEventListener and no inline handlers anywhere — every control on the page is dead.');
+        'No addEventListener and no inline handlers anywhere. Every control on the page is dead.');
     }
 
     // --- unfinished work ---
@@ -1966,7 +1966,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     if (/coming soon/i.test(markup)) stubs.push('"coming soon"');
     if (/lorem ipsum/i.test(markup)) stubs.push('Lorem ipsum');
     if (/\bplaceholder text\b/i.test(markup)) stubs.push('placeholder text');
-    if (stubs.length) add('warn', 'quality', 'Unfinished content', 'Found ' + stubs.join(', ') + ' in the markup — real copy was requested.');
+    if (stubs.length) add('warn', 'quality', 'Unfinished content', 'Found ' + stubs.join(', ') + ' in the markup: real copy was requested.');
     if (/alert\s*\(/.test(js)) add('info', 'quality', 'Uses alert()', 'alert() blocks the page and reads as a stub. Prefer inline UI feedback.');
     if (/document\.write\s*\(/.test(js)) add('warn', 'quality', 'Uses document.write', 'It blocks parsing and wipes the document after load. Use DOM APIs.');
 
@@ -2119,7 +2119,7 @@ catch (e) { window.BLVK_CATALOG = null; }
       '- Every button, input, link, and control is wired to real behaviour. No dead controls.\n' +
       '- No placeholder text standing in for functionality. No "TODO", no "coming soon", no alert() stubs.\n' +
       '- Handle the unhappy paths: empty states, invalid input, zero results, first-run.\n' +
-      '- Seed it with realistic demo content so it looks alive the moment it opens — never Lorem ipsum.\n' +
+      '- Seed it with realistic demo content so it looks alive the moment it opens, never Lorem ipsum.\n' +
       '- The JavaScript must run clean: no reference errors, no undefined access, no console noise.');
 
     // Anti-slop. Models converge hard on a recognisable default look unless told not to.
@@ -2127,11 +2127,11 @@ catch (e) { window.BLVK_CATALOG = null; }
       '- NEVER use generic AI-generated aesthetics: overused font stacks (Inter, Roboto, Arial as the display face), cliched schemes (especially purple/indigo gradients on white or near-black), predictable card-grid-hero layouts, or cookie-cutter components with no point of view.\n' +
       '- Commit to a specific visual idea and carry it through every element. A distinctive, coherent choice beats a safe one.\n' +
       '- Build a real system: CSS custom properties for colour, a deliberate type scale with genuine size and weight contrast, one consistent spacing rhythm, considered radii and depth.\n' +
-      '- Typography does the heavy lifting — tight tracking on display text, comfortable measure on body copy, real hierarchy.\n' +
+      '- Typography does the heavy lifting: tight tracking on display text, comfortable measure on body copy, real hierarchy.\n' +
       '- Sweat one signature detail the user did not ask for but will notice.');
 
     const on = [];
-    if (opts.resp) on.push('Fully responsive — flawless from 360px to widescreen. Flexbox/grid, fluid units, no horizontal scroll at any width.');
+    if (opts.resp) on.push('Fully responsive: flawless from 360px to widescreen. Flexbox/grid, fluid units, no horizontal scroll at any width.');
     if (opts.anim) on.push('Tasteful micro-interactions: hover/active states, 150-250ms transitions, entrance animation. Wrap motion in @media (prefers-reduced-motion: reduce).');
     if (opts.a11y) on.push('Accessible: semantic elements, labelled inputs, alt text, visible :focus-visible rings, full keyboard operation, WCAG AA contrast.');
     if (opts.dark) on.push('Dark interface: deep neutral base, light text, one vivid accent.');
@@ -2152,7 +2152,7 @@ catch (e) { window.BLVK_CATALOG = null; }
       'Silently verify: every control does something real; no undefined variables or functions; ' +
       'the layout holds at 360px; the document is complete through </html>. Fix anything that fails, ' +
       'then output the file.\n\n' +
-      'Output the complete HTML now — nothing before <!DOCTYPE html>, nothing after </html>.');
+      'Output the complete HTML now. Nothing before <!DOCTYPE html>, nothing after </html>.');
 
     return out.join('\n');
   }
@@ -2201,7 +2201,7 @@ catch (e) { window.BLVK_CATALOG = null; }
 
   function callAI(instruction, seed, onText) {
     const req = {
-      instruction: instruction + (seed ? '\n\nYou already emitted the beginning of the file. Continue from exactly where it stopped. Do NOT repeat any of it, do not restart, do not apologise — just continue the raw HTML.' : ''),
+      instruction: instruction + (seed ? '\n\nYou already emitted the beginning of the file. Continue from exactly where it stopped. Do NOT repeat any of it, do not restart, do not apologise, just continue the raw HTML.' : ''),
       startWith: seed || '',
       onChunk: function (d) {
         if (S.cancelled) return;
@@ -2269,7 +2269,7 @@ catch (e) { window.BLVK_CATALOG = null; }
       S.streamText = h;
       renderCode(h);
       const t = now();
-      setStatus('Writing — ' + kb(h.length) + ' · ' + ((t - started) / 1000).toFixed(1) + 's', 'busy');
+      setStatus('Writing: ' + kb(h.length) + ' · ' + ((t - started) / 1000).toFixed(1) + 's', 'busy');
       // Only mount mid-stream when the preview is actually on screen. Generation
       // switches to the Code tab, so unconditional remounting re-parsed a growing
       // document dozens of times where nobody could see it.
@@ -2288,7 +2288,7 @@ catch (e) { window.BLVK_CATALOG = null; }
       let tries = 0;
       while (!S.cancelled && !stale() && tries < 6 && !isComplete(extractHTML(full))) {
         tries++;
-        setStatus('Continuing — part ' + (tries + 1) + '…', 'busy');
+        setStatus('Continuing: part ' + (tries + 1) + '…', 'busy');
         const seed = full;
         result = await callAI(instruction, seed, onText);
         if (S.cancelled || stale()) return null;
@@ -2310,7 +2310,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     } catch (err) {
       if (S.cancelled || stale()) return null;
       const msg = (err && err.message) ? err.message : String(err);
-      setStatus('Failed — ' + msg, 'err');
+      setStatus('Failed: ' + msg, 'err');
       toast(msg, 'err');
       const partial = extractHTML(text);
       return partial && partial.length > 200 ? partial : null;
@@ -2397,7 +2397,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     if (!html) return;
     commit(html, ask.length > 46 ? ask.slice(0, 46) + '…' : ask);
     setPane('preview');
-    toast('Refined — saved as v' + S.versions.length, 'ok');
+    toast('Refined: saved as v' + S.versions.length, 'ok');
   }
 
   async function repair() {
@@ -2407,7 +2407,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     if (!html) return;
     commit(html, 'Error repair');
     setPane('preview');
-    toast('Repaired — saved as v' + S.versions.length, 'ok');
+    toast('Repaired: saved as v' + S.versions.length, 'ok');
   }
 
   // Feed the audit findings back as a repair brief. Runtime errors and static
@@ -2432,7 +2432,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     setStatus('Stopped', 'err');
     if (S.streamText && S.streamText.length > 200) {
       commit(S.streamText, 'Partial (stopped)');
-      toast('Stopped — partial output kept', 'info');
+      toast('Stopped: partial output kept', 'info');
     }
   }
 
@@ -2478,7 +2478,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     const blob = new Blob([S.html], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const w = window.open(url, '_blank');
-    if (!w) toast('Popup blocked — allow popups to open in a new tab.', 'err');
+    if (!w) toast('Popup blocked: allow popups to open in a new tab.', 'err');
     setTimeout(() => URL.revokeObjectURL(url), 10000);
   }
 
@@ -2644,7 +2644,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     { icon: 'i-checksquare', name: 'Todo App', desc: 'Persistent task manager', type: 'app',
       prompt: 'A refined todo app: add, edit inline, complete, delete, reorder by drag and drop, filter by all/active/done, due dates, priority flags, a progress ring, keyboard shortcuts, and full localStorage persistence. Empty state illustration and undo toast on delete.' },
     { icon: 'i-music', name: 'Synth Piano', desc: 'Playable Web Audio keys', type: 'app',
-      prompt: 'An interactive piano built on the Web Audio API — three octaves, playable by mouse, touch and computer keyboard with correct key mapping and visible key labels. Waveform selector, ADSR envelope sliders, sustain pedal, octave shift, a recording/playback loop, and animated keypress feedback.' },
+      prompt: 'An interactive piano built on the Web Audio API: three octaves, playable by mouse, touch and computer keyboard with correct key mapping and visible key labels. Waveform selector, ADSR envelope sliders, sustain pedal, octave shift, a recording/playback loop, and animated keypress feedback.' },
     { icon: 'i-sparkles', name: 'Particle Field', desc: 'Interactive canvas physics', type: 'art',
       prompt: 'A full-screen canvas particle system running at 60fps: thousands of particles with gravity, mouse attraction and repulsion, trails, colour modes (rainbow, monochrome, fire, ocean), collision toggle, and a floating glassmorphic control panel with sliders. Click to burst.' },
     { icon: 'i-cloud', name: 'Weather Board', desc: 'Animated forecast UI', type: 'app',
@@ -2652,7 +2652,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     { icon: 'i-grid', name: 'Memory Match', desc: 'Card game with timer', type: 'game',
       prompt: 'A memory card matching game with hand-drawn SVG symbol cards (no emoji), 3D flip animations, three difficulty grids, a move counter and timer, a best-score record kept in localStorage, combo streak feedback, and a confetti win screen.' },
     { icon: 'i-chart', name: 'Analytics UI', desc: 'Dashboard with charts', type: 'app',
-      prompt: 'A SaaS analytics dashboard: sidebar navigation, KPI stat cards with sparklines and delta badges, a canvas-drawn revenue line chart with hover tooltips, a bar chart, a donut breakdown, a sortable and filterable data table with pagination, and a date-range selector. All charts drawn from scratch with canvas — no libraries.' }
+      prompt: 'A SaaS analytics dashboard: sidebar navigation, KPI stat cards with sparklines and delta badges, a canvas-drawn revenue line chart with hover tooltips, a bar chart, a donut breakdown, a sortable and filterable data table with pagination, and a date-range selector. All charts drawn from scratch with canvas: no libraries.' }
   ];
 
   function renderPresets() {
@@ -2805,7 +2805,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     const id = el.providerSel.value;
     applyProvider(id);
     toast(id ? 'Pinned to ' + el.providerSel.selectedOptions[0].textContent.replace(' · free', '')
-             : 'Auto — will fail over between providers', 'info');
+             : 'Auto: will fail over between providers', 'info');
   });
   el.clearLog.addEventListener('click', () => clearLogs());
   $('#dlBtn').addEventListener('click', download);
@@ -3007,7 +3007,7 @@ catch (e) { window.BLVK_CATALOG = null; }
   function closeSupport() {
     if (el.supNever.checked) {
       try { localStorage.setItem(SUP_KEY, '1'); } catch (e) {}
-      toast('Hidden — the heart icon in the sidebar reopens it', 'info');
+      toast('Hidden: the heart icon in the sidebar reopens it', 'info');
     }
     el.supBack.classList.add('hidden');
     if (supPrevFocus && supPrevFocus.focus) supPrevFocus.focus();
@@ -3074,7 +3074,7 @@ catch (e) { window.BLVK_CATALOG = null; }
       expandComposer();
       // Drop the query string so a reload does not silently refill the composer.
       try { history.replaceState(null, '', location.pathname); } catch (e) {}
-      setStatus('Brief received — ready to build');
+      setStatus('Brief received: ready to build');
     })();
 
     let supSkip = false;
@@ -3083,7 +3083,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     if (window.innerWidth <= 900) hideRail();
     if (!AI) {
       setStatus('AI runtime not detected', 'err');
-      el.docSub.textContent = 'Preview mode — generation needs the AI plugin';
+      el.docSub.textContent = 'Preview mode: generation needs the AI plugin';
     }
     setTimeout(() => el.prompt.focus(), 120);
   })();

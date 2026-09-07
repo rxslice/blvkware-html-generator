@@ -489,7 +489,7 @@
       <div class="aim">
         <div class="eyebrow"><svg class="ic ic-14"><use href="#i-augur"/></svg> Find the work</div>
         <h1>The jobs costing you most<br>are <em>visible from outside.</em></h1>
-        <p class="lede">Give AUGUR a website — yours, or a competitor's. It reads the live page the way a buyer would: what the business sells, how it captures enquiries, what it has automated and what it plainly hasn't. Then it names the jobs quietly costing the most, and the agent worth hiring for each, at its real catalog price.</p>
+        <p class="lede">Give AUGUR a website: yours, or a competitor's. It reads the live page the way a buyer would: what the business sells, how it captures enquiries, what it has automated and what it plainly hasn't. Then it names the jobs quietly costing the most, and the agent worth hiring for each, at its real catalog price.</p>
 
         <div class="form">
           <div class="field">
@@ -510,7 +510,7 @@
             <button class="btn primary lg" id="runBtn"><svg class="ic ic-16"><use href="#i-augur"/></svg> Read this business</button>
             <span class="status" id="hint"></span>
           </div>
-          <p class="aim-note">AUGUR fetches only what a visitor's browser can already see — the public page. It never signs in, never touches private data, and holds nothing after you close the tab.</p>
+          <p class="aim-note">AUGUR fetches only what a visitor's browser can already see, the public page. It never signs in, never touches private data, and holds nothing after you close the tab.</p>
         </div>
 
         <div class="samples" id="samples"></div>
@@ -534,7 +534,7 @@
     <div class="rep">
       <div class="shared-note hidden" id="sharedNote">
         <svg class="ic ic-16"><use href="#i-link"/></svg>
-        <span>You are looking at a report someone shared with you. It was generated from this company&rsquo;s public website &mdash; every dollar figure is a projection, not their real finances.</span>
+        <span>You are looking at a report someone shared with you. It was generated from this company&rsquo;s public website. Every dollar figure is a projection, not their real finances.</span>
         <a class="btn primary sm" href="/augur/">Run one yourself</a>
       </div>
 
@@ -568,7 +568,7 @@
       <div class="keep-card" id="keepCard">
         <div>
           <h3>Want this report in writing?</h3>
-          <p id="keepNote">The whole thing &mdash; every finding, every system, every number &mdash; sent to you. No account, no list, no follow-up sequence. One email, from a person.</p>
+          <p id="keepNote">The whole thing (every finding, every system, every number) sent to you. No account, no list, no follow-up sequence. One email, from a person.</p>
         </div>
         <form class="keep" id="keepForm" novalidate>
           <input class="keep-input" id="keepEmail" type="email" autocomplete="email"
@@ -960,7 +960,7 @@ catch (e) { window.BLVK_CATALOG = null; }
      ============================================================ */
   var SYS_JSON = 'You are a principal software engineer and business systems consultant performing ' +
     'competitive intelligence on a company from its public web presence. You are blunt, concrete and ' +
-    'commercially sharp. You reply with STRICT JSON only — no markdown, no code fences, no commentary.';
+    'commercially sharp. You reply with STRICT JSON only: no markdown, no code fences, no commentary.';
 
   var SYS_MD = 'You are a principal software engineer advising a business owner. You write tight, ' +
     'concrete Markdown prose. No filler, no generic consulting language, no HTML documents.';
@@ -1010,7 +1010,7 @@ catch (e) { window.BLVK_CATALOG = null; }
 
     /* how they sell */
     L.push('prices published anywhere on the pages read: ' +
-           (sig.prices && sig.prices.length ? sig.prices.join(', ') : 'NONE FOUND — no figure anywhere'));
+           (sig.prices && sig.prices.length ? sig.prices.join(', ') : 'NONE FOUND: no figure anywhere'));
     L.push('social proof on the page (testimonials/reviews/stars): ' + (sig.socialProof ? 'yes' : 'NOT DETECTED'));
     L.push('action buttons/links (book, call, quote, buy): ' + sig.ctas);
     L.push('business hours stated: ' + (sig.hours ? 'yes' : 'no'));
@@ -1307,7 +1307,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     if (!DES || !ENG || !rep.signals || !rep.signals.length) {
       el.opps.innerHTML = '<div class="opp"><h3>No agent recommended</h3>' +
         '<div class="opp-block"><div class="opp-v">Nothing on this page pointed clearly at a job ' +
-        'worth handing to an agent. That is a real answer, not a failure — ' +
+        'worth handing to an agent. That is a real answer, not a failure, ' +
         '<a href="/scry/">describe the business to SCRY</a> and it will design against what you say ' +
         'rather than what the website shows.</div></div></div>';
       return;
@@ -1407,7 +1407,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     renderCompare(ctx.sig, ctx.compSig, (ctx.sig && ctx.sig.host) || name,
                   (ctx.compSig && ctx.compSig.host) || 'competitor');
     renderDomains(rep);
-    el.oppNote.textContent = 'Agents this company could hire, best first. Every price here is real and published — ' +
+    el.oppNote.textContent = 'Agents this company could hire, best first. Every price here is real and published, ' +
       'computed from the catalog, not estimated. The read of the business is a projection; the price is not.';
     renderOpps(rep);
     el.shareBtn.classList.remove('hidden');
@@ -1558,7 +1558,7 @@ catch (e) { window.BLVK_CATALOG = null; }
         return '- A "' + L.name + '" section with working UI for: ' + L.nodes.map(function (n) { return n.name; }).join(', ');
       }).join('\n') +
       '\n\nInclude realistic sample data throughout, clearly labelled as sample. ' +
-      'Make every control actually work — filters filter, forms validate, states change. ' +
+      'Make every control actually work: filters filter, forms validate, states change. ' +
       'The pipeline it implements is: ' + opp.pipeline.join(' -> ') + '.';
     try { sessionStorage.setItem('blvkware.forge.prompt', spec); } catch (e) {}
     window.location.href = '/sigil/?prompt=' + encodeURIComponent(spec).slice(0, 1800);
@@ -1625,7 +1625,7 @@ catch (e) { window.BLVK_CATALOG = null; }
       } catch (e) {
         // A truncated or edited link surfaces here as a raw stream error.
         // Say something a person can act on instead.
-        throw new Error('That link looks incomplete — it was probably cut short in transit. Ask for it again.');
+        throw new Error('That link looks incomplete. It was probably cut short in transit. Ask for it again.');
       }
     } else if (mode !== 'u') {
       throw new Error('Unrecognised link format.');
@@ -1645,12 +1645,12 @@ catch (e) { window.BLVK_CATALOG = null; }
       var link = location.origin + location.pathname + '#r=' + frag;
       try {
         await navigator.clipboard.writeText(link);
-        toast('Link copied — ' + Math.round(link.length / 100) / 10 + ' KB, opens the full report', 'ok');
+        toast('Link copied: ' + Math.round(link.length / 100) / 10 + ' KB, opens the full report', 'ok');
       } catch (e) {
         // Clipboard is blocked in some contexts; put it in the URL bar instead
         // so it can still be copied by hand rather than lost.
         history.replaceState(null, '', '#r=' + frag);
-        toast('Copy the address bar — the report is in the link', 'info');
+        toast('Copy the address bar. The report is in the link', 'info');
       }
     } catch (err) {
       toast('Could not build a link: ' + ((err && err.message) || err), 'err');
@@ -1697,7 +1697,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     var r = S.report;
     if (!r) return '';
     var L = [];
-    L.push('AUGUR REPORT — ' + (r.company.name || S.target));
+    L.push('AUGUR REPORT: ' + (r.company.name || S.target));
     L.push(S.target);
     if (r.company.what) L.push(r.company.what);
     L.push('');
@@ -1734,9 +1734,9 @@ catch (e) { window.BLVK_CATALOG = null; }
       L.push('');
     });
     L.push('Every figure above is a projection modelled from public industry');
-    L.push('benchmarks — not a measurement of the real finances of this business.');
+    L.push('benchmarks: not a measurement of the real finances of this business.');
     L.push('');
-    L.push('Produced by AUGUR — blvkware.dev/augur');
+    L.push('Produced by AUGUR: blvkware.dev/augur');
     return L.join('\n');
   }
 
@@ -1751,7 +1751,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     var email = el.keepEmail.value.trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
       el.keepEmail.classList.add('bad');
-      keepNote('That address does not look right — check it and try again.');
+      keepNote('That address does not look right. Check it and try again.');
       el.keepEmail.focus();
       return;
     }
@@ -1763,21 +1763,21 @@ catch (e) { window.BLVK_CATALOG = null; }
       try {
         var res = await fetch(CAPTURE_ENDPOINT, {
           method: 'POST', headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ email: email, subject: 'AUGUR report — ' + S.target, report: body })
+          body: JSON.stringify({ email: email, subject: 'AUGUR report: ' + S.target, report: body })
         });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         el.keepForm.classList.add('hidden');
         keepNote('Sent. Check your inbox in a minute.', true);
         return;
       } catch (err) {
-        keepNote('Could not send that — opening your mail app instead.');
+        keepNote('Could not send that, opening your mail app instead.');
       }
     }
-    var sub = encodeURIComponent('AUGUR report — ' + S.target);
+    var sub = encodeURIComponent('AUGUR report: ' + S.target);
     var text = encodeURIComponent('Send this and I will email the full report back to ' + email +
       '.\n\n----------------------------------------\n\n' + body);
     window.location.href = 'mailto:' + CAPTURE_TO + '?subject=' + sub + '&body=' + text;
-    keepNote('Your mail app should open with the report in it — just hit send.', true);
+    keepNote('Your mail app should open with the report in it. Just hit send.', true);
     el.keepBtn.disabled = false;
   });
 
@@ -1845,13 +1845,13 @@ catch (e) { window.BLVK_CATALOG = null; }
       await ask(SYS_MD, {
         instruction: 'You are advising the owner of ' + (S.report.company.name || S.target) +
           ' (' + S.target + ').\n\n' +
-          'CONTEXT — what they do: ' + S.report.company.what + '\n' +
+          'CONTEXT: what they do: ' + S.report.company.what + '\n' +
           'OBSERVED EVIDENCE FROM THEIR LIVE SITE:\n' + (S.recon.evidence || 'none') + '\n\n' +
           'THE FINDING (' + domainTitle + '): ' + f.title + '\n' + f.detail + '\n' +
           (f.evidence ? 'It rests on this observation: ' + f.evidence + '\n' : '') + '\n' +
           'Go deeper. Use these four headings exactly: "What we can see", "Why it costs them", ' +
           '"What to build instead", "What it is worth".\n\n' +
-          'Hard limits: under 400 words. Markdown only — no HTML, no code fences, no full web page. ' +
+          'Hard limits: under 400 words. Markdown only: no HTML, no code fences, no full web page. ' +
           'Be specific to this company. Where you cite numbers, make clear they are projections from ' +
           'industry benchmarks, not their real figures. Start directly with the first heading.',
         onChunk: function (d) {
@@ -2015,7 +2015,7 @@ catch (e) { window.BLVK_CATALOG = null; }
       renderReport(rep, { url: url, sig: sig, compSig: compSig });
       show('rep');
       setStatus('');
-      toast('Report ready — dollar figures are projections', 'ok');
+      toast('Report ready: dollar figures are projections', 'ok');
     } catch (err) {
       var msg = (err && err.message) || String(err);
       if (steps.length) finish(steps.length - 1, 'fail', msg);
@@ -2045,7 +2045,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     el.fUrl.value = s.url;
     el.fInd.value = s.ind;
     el.fUrl.focus();
-    el.hint.textContent = 'Example address — swap in a real company you want read';
+    el.hint.textContent = 'Example address: swap in a real company you want read';
   });
 
   el.runBtn.addEventListener('click', run);
@@ -2089,7 +2089,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     el.keepBtn.disabled = false;
     el.keepEmail.value = '';
     el.keepEmail.classList.remove('bad');
-    keepNote('The whole thing — every finding, every system, every number — sent to you. '
+    keepNote('The whole thing (every finding, every system, every number) sent to you. '
       + 'No account, no list, no follow-up sequence. One email, from a person.');
   });
 

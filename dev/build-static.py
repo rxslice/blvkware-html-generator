@@ -48,7 +48,7 @@ TOOLS = [
                      "Writes the triage labels, routing and chase cadence",
                      "Reports what is finished and what still needs a person",
                      "Runs entirely in the browser, no account"],
-        "title": "BlvkWare SIGIL — Describe it, and it gets built",
+        "title": "BlvkWare SIGIL: Describe it, and it gets built",
         "desc": ("Write down what you want and watch it become real software: a complete, working, "
                  "single-file application streamed into the page, then run, audited and repaired. "
                  "The same builder configures ordered BlvkWare agents, writing the triage labels, "
@@ -64,10 +64,10 @@ TOOLS = [
                      "Finds the jobs quietly costing the most",
                      "Names the agent worth hiring for each one",
                      "Prices every one from the published catalog"],
-        "title": "BlvkWare AUGUR — Which jobs are costing you most",
+        "title": "BlvkWare AUGUR: Which jobs are costing you most",
         "desc": ("Give AUGUR a website. It reads the live page the way a buyer would, works out "
-                 "which jobs are quietly costing that business the most — unstaffed, done after "
-                 "hours, or done by somebody who should be doing something else — and names the "
+                 "which jobs are quietly costing that business the most: unstaffed, done after "
+                 "hours, or done by somebody who should be doing something else, and names the "
                  "agent worth hiring for each, at its real catalog price. About a minute, free, "
                  "no sign-up."),
     },
@@ -81,10 +81,10 @@ TOOLS = [
                      "Designs exactly what it has to be able to do",
                      "Shows what is ready on day one and what needs you",
                      "Prices it from the published catalog, then hands it to checkout"],
-        "title": "BlvkWare SCRY — Your agent, designed and priced",
+        "title": "BlvkWare SCRY: Your agent, designed and priced",
         "desc": ("Describe how your business actually operates. SCRY works out which AI agent is "
                  "worth hiring first, exactly what it needs to be able to do, which of your "
-                 "systems it has to operate, and what that costs — on the page, in about a "
+                 "systems it has to operate, and what that costs, on the page, in about a "
                  "minute. Free, no sign-up."),
     },
 ]
@@ -172,7 +172,7 @@ SHIM = r"""
         '<div class="modal-body">' +
           '<p style="margin:0 0 16px;font-size:13px;line-height:1.6;color:var(--ink-2)">' +
             "This is a static site with no server, so generation runs from your browser using your own key. " +
-            "It is stored only in this browser and sent only to the provider you pick — never to this site or anyone else." +
+            "It is stored only in this browser and sent only to the provider you pick, never to this site or anyone else." +
           "</p>" +
           '<div class="opt-title">Provider</div>' +
           '<select class="picker" id="byokProv" style="max-width:none;width:100%;height:36px;margin-bottom:14px">' + opts + "</select>" +
@@ -222,7 +222,7 @@ SHIM = r"""
         localStorage.setItem(LS_K, k);
       } catch (e) {}
       close();
-      if (window.__blvkToast) window.__blvkToast("Key saved — you're ready to generate", "ok");
+      if (window.__blvkToast) window.__blvkToast("Key saved, you're ready to generate", "ok");
     });
     back.querySelector("#byokClear").addEventListener("click", function () {
       try { localStorage.removeItem(LS_K); } catch (e) {}
@@ -238,7 +238,7 @@ SHIM = r"""
   /* ---------------- generation ---------------- */
   var CONTINUE = "\n\nYou have already written the beginning of this file. Here it is, " +
     "verbatim, between markers:\n\n<<<PARTIAL_FILE_START>>>\n{P}\n<<<PARTIAL_FILE_END>>>\n\n" +
-    "Continue the file from exactly where it stops. Output ONLY the continuation — do not " +
+    "Continue the file from exactly where it stops. Output ONLY the continuation. Do not " +
     "repeat any of the text above, do not restart the document, do not explain. Your first " +
     "character must be the character that comes next.";
 
@@ -254,7 +254,7 @@ SHIM = r"""
       if (!c.k) {
         keyDialog();
         var p0 = Promise.reject(new Error(
-          "No API key connected. Add a free key to generate — it stays in your browser."));
+          "No API key connected. Add a free key to generate. It stays in your browser."));
         p0.stop = function () {};
         return p0;
       }
@@ -900,7 +900,7 @@ def catalog_roles_html():
             out.append('<ul class="owns">')
             for cid in r["core"]:
                 c = catalog.CAP_BY_ID[cid]
-                out.append('<li><b>%s</b> — %s</li>' % (_esc(c["name"]), _esc(c["blurb"])))
+                out.append('<li><b>%s</b>: %s</li>' % (_esc(c["name"]), _esc(c["blurb"])))
             out.append('</ul>')
             if r["suggested"]:
                 names = ", ".join(catalog.CAP_BY_ID[c]["name"] for c in r["suggested"])
