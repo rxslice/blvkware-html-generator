@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Renewal Tracker: Free Deadline Calculator | BlvkWare</title>
+    <meta name="description" content="Free vendor renewal tracker and notice deadline calculator. Work out the real cancellation deadline behind any renewal date, find recurring charges in a bank export, and decide what to cancel, downgrade or renegotiate. No sign-up.">
+    <link rel="canonical" href="https://blvkware.dev/vendor-renewal-tracker/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta property="og:title" content="Vendor Renewal Tracker: Free Deadline Calculator">
+    <meta property="og:description" content="The renewal date is not your deadline. The notice date is, and it is usually 30 to 90 days earlier. Work out yours free.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://blvkware.dev/vendor-renewal-tracker/">
+    <meta property="og:image" content="https://blvkware.dev/assets/og.png">
+    <meta property="og:site_name" content="BlvkWare">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+    <link rel="apple-touch-icon" href="/assets/logo-192.png">
+    <meta name="theme-color" content="#0A0908">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "BlvkWare", "item": "https://blvkware.dev/"},
+        {"@type": "ListItem", "position": 2, "name": "Vendor Renewal Tracker", "item": "https://blvkware.dev/vendor-renewal-tracker/"}
+      ]
+    },
+    {
+      "@type": "WebApplication",
+      "name": "Renewal Deadline Calculator",
+      "url": "https://blvkware.dev/vendor-renewal-tracker/calculator/",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Any browser",
+      "description": "Works out the notice deadline behind a vendor renewal date, the days of leverage remaining, and whether the contract is worth cancelling, downgrading or renegotiating.",
+      "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+      "publisher": {"@id": "https://blvkware.dev/#org"}
+    },
+    {
+      "@type": "WebApplication",
+      "name": "Statement to Inventory Converter",
+      "url": "https://blvkware.dev/vendor-renewal-tracker/importer/",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Any browser",
+      "description": "Reads a bank or card export in the browser, groups charges by merchant, strips payment-processor noise from descriptors and infers each billing cycle.",
+      "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+      "publisher": {"@id": "https://blvkware.dev/#org"}
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is the difference between a renewal date and a notice deadline?",
+          "acceptedAnswer": {"@type": "Answer", "text": "The renewal date is when the next term begins and you are charged. The notice deadline is the last day you can tell the vendor you are not continuing, and it falls one notice period earlier. On a twelve-month contract with 60 days' notice, the real deadline is two months before the date most people have in their calendar."}
+        },
+        {
+          "@type": "Question",
+          "name": "How far ahead should a renewal negotiation start?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Between roughly 45 and 120 days before the notice deadline. Earlier than that and the vendor has no reason to engage, because your renewal is not yet in their quarter. Later and you have no credible ability to leave, which is the only thing that makes a discount conversation work."}
+        },
+        {
+          "@type": "Question",
+          "name": "What happens if the notice deadline is missed?",
+          "acceptedAnswer": {"@type": "Answer", "text": "In most cases the agreement renews for a further term and you are committed to it. It is still worth asking for a release, a shortened term or a reduction in scope, because vendors frequently grant one of the three to keep a customer who is clearly unhappy. You are asking for goodwill rather than exercising a right, so ask accordingly."}
+        },
+        {
+          "@type": "Question",
+          "name": "Is the renewal deadline calculator free?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Yes, and there is no sign-up. Both tools run entirely in your browser. Nothing you type or upload is transmitted anywhere, which is why a bank export can be pasted into the importer without a privacy problem."}
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need to buy anything to audit my subscriptions?",
+          "acceptedAnswer": {"@type": "Answer", "text": "No. For three or four subscriptions the free calculator and the method described on this page are genuinely all you need. Build the sheet yourself and keep your money. It stops being practical somewhere around fifteen vendors, when the work is no longer the arithmetic but holding the whole picture at once."}
+        }
+      ]
+    }
+  ]
+}
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Fira+Code:wght@500&display=swap');
+        :root {
+            --bg: #0A0908; --surface: #17140F; --accent: #D4F24A; --brass: #D9B65C;
+            --ink: #F5F0E6; --ink-2: #A89D8B; --line: rgba(245,240,230,0.1);
+            --font: 'Manrope', system-ui, -apple-system, sans-serif;
+            --mono: 'Fira Code', ui-monospace, monospace;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+        .wrap { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+        .top { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 3.5rem; text-decoration: none; color: inherit; }
+        .mark { width: 52px; height: 52px; border-radius: 14px; background: #060504; overflow: hidden; flex: none; }
+        .mark img { width: 100%; height: 100%; display: block; }
+        .wordmark { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; }
+        .wordmark span { color: var(--accent); }
+        .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--brass); margin-bottom: 1rem; }
+        h1 { font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 1rem; line-height: 1.12; }
+        .lede { font-size: 1.15rem; color: var(--ink-2); margin-bottom: 2.5rem; padding-bottom: 2.5rem; border-bottom: 1px solid var(--line); }
+        h2 { font-size: 1.5rem; font-weight: 700; margin: 3rem 0 1rem; letter-spacing: -0.01em; }
+        h3 { font-size: 1.05rem; font-weight: 700; margin: 1.75rem 0 0.6rem; color: var(--brass); }
+        p { color: var(--ink-2); margin-bottom: 1.1rem; }
+        ul, ol { margin: 0 0 1.1rem 1.2rem; color: var(--ink-2); }
+        li { margin-bottom: 0.6rem; }
+        strong { color: var(--ink); font-weight: 700; }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        code { font-family: var(--mono); font-size: 0.87em; background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; color: var(--brass); }
+        .box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem; margin: 1.75rem 0; }
+        .box p:last-child { margin-bottom: 0; }
+        .calc { font-family: var(--mono); font-size: 0.92rem; color: var(--ink); line-height: 2; }
+        .calc span { color: var(--brass); }
+        .tw { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1.5rem 0; }
+        .tw table { margin: 0; min-width: 30rem; }
+        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
+        th, td { text-align: left; padding: 0.7rem 0.6rem; border-bottom: 1px solid var(--line); color: var(--ink-2); }
+        th { color: var(--ink); font-weight: 700; }
+        .cta { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 2rem; margin: 3rem 0 0; }
+        .btn { display: inline-block; background: var(--accent); color: #14170A; font-weight: 700; padding: 0.85rem 1.5rem; border-radius: 10px; margin-top: 0.5rem; }
+        .btn:hover { text-decoration: none; opacity: 0.92; }
+        .btn-2 { display: inline-block; border: 1px solid var(--line); color: var(--ink); font-weight: 700; padding: 0.85rem 1.5rem; border-radius: 10px; margin-top: 0.5rem; }
+        .btn-2:hover { text-decoration: none; border-color: var(--brass); }
+        .tools { display: grid; gap: 1rem; margin: 2rem 0; }
+        @media (min-width: 640px) { .tools { grid-template-columns: 1fr 1fr; } }
+        .tool { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 1.4rem; }
+        .tool h3 { margin-top: 0; }
+        .tool p { font-size: 0.95rem; }
+        .tool a { font-weight: 700; }
+        .frame { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin: 1.5rem 0; background: #fff; }
+        .frame iframe { display: block; width: 100%; height: 780px; border: 0; }
+        .foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--ink-2); }
+        .foot-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+        .foot a { margin-right: 0; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <a class="top" href="/">
+        <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
+        <span class="wordmark">BlvkWare<span>.</span></span>
+    </a>
+
+    <div class="eyebrow">Free tools</div>
+    <h1>Vendor renewal tracker</h1>
+
+    <p class="lede">The renewal date is not your deadline. The notice date is, and it is usually 30 to 90 days earlier. Two free tools on this page work out the real one for any contract, and find the recurring charges you have stopped noticing. Both run entirely in your browser, with no sign-up and nothing uploaded.</p>
+
+    <div class="tools">
+        <div class="tool">
+            <h3>Renewal deadline calculator</h3>
+            <p>Give it a renewal date and a notice period. It returns the day you actually have to act by, how many days of leverage are left, and whether the line is worth cancelling, downgrading or renegotiating.</p>
+            <a href="/vendor-renewal-tracker/calculator/">Open the calculator &rarr;</a>
+        </div>
+        <div class="tool">
+            <h3>Statement to inventory</h3>
+            <p>Drop in a bank or card export. It groups charges by merchant, strips the payment-processor noise out of the descriptors, works out each billing cycle from the gaps, and hands back a clean vendor list.</p>
+            <a href="/vendor-renewal-tracker/importer/">Open the importer &rarr;</a>
+        </div>
+    </div>
+
+    <h2>Why the renewal date is the wrong date to track</h2>
+
+    <p>Almost every renewal tracker fails the same way. It has a column called <em>renewal date</em>, a reminder set for that date, and it tells you about a charge on the day the money leaves. By then the window closed a month or two ago and you are committed to another full term.</p>
+
+    <p>The date that decides whether you have a choice is the <strong>notice deadline</strong>, and it is derived rather than typed:</p>
+
+    <div class="box calc">
+        Notice deadline <span>=</span> renewal date <span>-</span> notice period<br>
+        Usable days left <span>=</span> notice deadline <span>-</span> today<br>
+        Act-by date <span>=</span> notice deadline <span>-</span> 7
+    </div>
+
+    <p>The act-by date exists because vendors take days to answer a cancellation. A request that arrives on the deadline and gets processed two days later is a request that missed the deadline.</p>
+
+    <div class="tw"><table>
+        <thead><tr><th>Notice period in the contract</th><th>Your real deadline on a 12 month term</th><th>When to start</th></tr></thead>
+        <tbody>
+            <tr><td>None</td><td>The renewal date itself</td><td>A week before</td></tr>
+            <tr><td>30 days</td><td>11 months in</td><td>37 days before renewal</td></tr>
+            <tr><td>60 days</td><td>10 months in</td><td>67 days before renewal</td></tr>
+            <tr><td>90 days</td><td>9 months in</td><td>97 days before renewal</td></tr>
+        </tbody>
+    </table></div>
+
+    <h2>Work out your own deadline</h2>
+
+    <p>The calculator below is the same one linked above, embedded so you can use it without leaving the page. Nothing you type is transmitted.</p>
+
+    <div class="frame">
+        <iframe src="/vendor-renewal-tracker/calculator/" title="Renewal deadline calculator" loading="lazy"></iframe>
+    </div>
+
+    <h2>Two things that move the deadline earlier than you expect</h2>
+
+    <h3>Anniversary anchoring</h3>
+    <p>Some contracts count the notice period from the anniversary of signature rather than the end of the current term. If you signed in March and the term runs to December, a 90 day notice clause may point at December minus 90 days, or it may point at March. Read the clause. Do not assume.</p>
+
+    <h3>The notice method</h3>
+    <p>A Notices clause that specifies registered post or a support portal means your email to the account manager has no contractual effect at all. Send it by the required method <em>and</em> by email, and keep proof of both. This is the single most common way a cancellation that was sent on time still fails.</p>
+
+    <h2>What the calculator decides, and how</h2>
+
+    <p>Once a line has a deadline, the question becomes what to do about it. The calculator scores three things out of 100 and shows every intermediate number, so you can argue with the answer instead of trusting it.</p>
+
+    <ul>
+        <li><strong>Value.</strong> How critical the tool is, how many of the seats you pay for are actually used, how recently anyone touched it, less a penalty if something else already does the job.</li>
+        <li><strong>Waste.</strong> Idle seats, staleness, duplication with a tool you already have.</li>
+        <li><strong>Leverage.</strong> Where you sit in the renewal window, whether alternatives exist, how much you spend, how flexible the contract is.</li>
+    </ul>
+
+    <p>Out of those come five verdicts, checked in that order so the cheaper action wins: <strong>cancel</strong>, <strong>downgrade</strong>, <strong>renegotiate</strong>, <strong>keep</strong>, or <strong>review</strong>. Review means the model does not have enough information and says so, rather than guessing.</p>
+
+    <p>Leverage is the one people get wrong. It peaks between roughly 46 and 120 usable days before the notice deadline. Earlier than that and the vendor will not engage, because your renewal is not in their quarter yet. Later and you have no credible ability to leave, which is the only thing that makes a discount conversation work at all.</p>
+
+    <h2>Finding the charges you have stopped noticing</h2>
+
+    <p>The arithmetic is the easy half. The hard half is that nobody has the full list. The <a href="/vendor-renewal-tracker/importer/">statement importer</a> takes a bank or card export and does the tedious part: it groups by merchant, turns <code>SQ *ACME CRM 8005551234 CA</code> back into <code>Acme CRM</code>, works out whether a charge is monthly, quarterly or annual from the spacing between them, and totals up the implied annual cost.</p>
+
+    <p>Two warnings that matter more than the tool does. Pull <strong>twelve months</strong>, not three: an annual subscription appears once and looks exactly like a one-off in a short export, which is precisely the charge you most want to find. And the export only contains what went through that account. Fees deducted from revenue before it reaches you, subscriptions on a personal card that get expensed, and app-store billing through a platform are all invisible to it.</p>
+
+    <h2>When you should not buy anything</h2>
+
+    <p>If you have three or four subscriptions, the calculator above and the arithmetic on this page are the whole job. Put the notice deadlines in a shared calendar with a 45 day warning and you are done. Building a system for that would cost you more attention than it saves.</p>
+
+    <p>It stops being practical somewhere around fifteen vendors, when the problem is no longer arithmetic but holding the whole picture at once: which deadlines are live, which lines are duplicated, which negotiation is worth an hour and which is worth none.</p>
+
+    <div class="cta">
+        <h3 style="margin-top:0">The full kit, for when the list gets long</h3>
+        <p><strong>Renewal Radar</strong> is the complete version: a workbook that runs in Excel or Google Sheets with no macros and nothing to install, a decision engine that scores every vendor, an action plan sorted by money recovered per minute of your time, 14 ready-to-send emails, a 24 point contract checklist and 10 AI prompts for reading contracts.</p>
+        <p>It also checks its own arithmetic. Open the Self Test tab and it recomputes eight worked examples live in whatever application you opened it in, then tells you PASSED or FAILED before you rely on a number in it. In that worked example it identifies $7,088 of recoverable cost across $26,148 of annual recurring spend, $3,709 of it inside the first 50 minutes.</p>
+        <p>From $29, one purchase, no subscription.</p>
+        <a class="btn" href="https://aiprodev.gumroad.com/l/vendor-renewal-tracker" rel="noopener">See what is in the kit &rarr;</a>
+        <a class="btn-2" href="/subscription-audit/">Read the method first</a>
+    </div>
+
+    <h2>Common questions</h2>
+
+    <h3>Is this really free?</h3>
+    <p>Both tools are free and there is no sign-up. They run in your browser, which is also why a bank export can go into the importer without a privacy problem: there is no server to send it to.</p>
+
+    <h3>Does it work on a phone?</h3>
+    <p>Yes. Both tools are built for a narrow screen, though pasting a statement export is considerably easier on a laptop.</p>
+
+    <h3>What if I already missed a deadline?</h3>
+    <p>The calculator will tell you so rather than pretending otherwise. A missed notice window usually means another full term, but it is still worth asking for a release, a shortened term or a reduced scope. Vendors grant one of the three more often than people expect, because a customer who is clearly unhappy is a renewal they may lose anyway.</p>
+
+    <h3>Who built this?</h3>
+    <p>BlvkWare builds AI automation and custom software for small businesses. We built this because vendor spend is the single most common thing we find going unmanaged when we <a href="/scan/">scan a business</a>, and because a notice deadline is the sort of dull, date-driven job that software should have been doing all along.</p>
+
+    <div class="cta">
+        <h3 style="margin-top:0">Where else is your money going quietly?</h3>
+        <p>Recurring spend is one of several jobs that runs unattended until somebody looks. Run <a href="/scan/">Business Scan</a> on your own website, free and about a minute, and it reports which revenue and follow-up systems you are missing. If vendor spend is not your biggest gap, it will say so.</p>
+        <a class="btn" href="/scan/">Scan my business &rarr;</a>
+    </div>
+
+    <div class="foot">
+        <div class="foot-links"><a href="/">Home</a><a href="/subscription-audit/">Subscription audit guide</a><a href="/scan/">Business Scan</a><a href="/design/">Agent Designer</a><a href="/build/">App Builder</a><a href="/#services">Pricing</a><a href="/privacy/">Privacy</a></div>
+        <p style="margin-top:1rem">These tools are planning aids, not legal or financial advice. Your contract governs your actual rights, so read the Term, Termination and Notices clauses before relying on any date. BlvkWare builds AI automation and custom software for small businesses. Mississippi, serving the United States remotely. <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a></p>
+    </div>
+</div>
+</body>
+</html>

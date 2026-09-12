@@ -189,6 +189,18 @@ payment, no server. They exist as the work sample in place of client case studie
   follow-up and review requests first; dispatch, pricing and emergency call
   answering last or never. Includes the review-gating compliance line and why
   replacing ServiceTitan or Jobber to gain follow-up is a bad trade.
+- [Vendor renewal tracker](https://blvkware.dev/vendor-renewal-tracker/): two free
+  browser tools plus the method. A renewal deadline calculator that derives the
+  notice deadline (renewal date minus notice period) and scores a vendor on
+  value, waste and leverage, and a statement importer that reads a bank or card
+  export in the browser and infers each billing cycle from the gaps between
+  charges. Nothing is uploaded; there is no server.
+- [Subscription audit](https://blvkware.dev/subscription-audit/): the method for
+  cutting recurring business cost. Pull twelve months not three because annual
+  charges hide in a short export; record seats paid against seats active; check
+  cancel, downgrade, renegotiate and keep in that order; and sort the result by
+  money recovered per minute rather than by size of saving, because sorting by
+  size buries the quick wins under the hard conversation and the audit stalls.
 - [Privacy policy](https://blvkware.dev/privacy/): no accounts, no analytics, no
   cookies, no tracking; tools keep data only in the visitor's own browser
 - [Terms of service](https://blvkware.dev/terms/)

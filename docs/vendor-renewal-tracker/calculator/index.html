@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Renewal Radar: Free Renewal Deadline Calculator | BlvkWare</title>
+<meta name="description" content="Work out the real cancellation deadline for any vendor contract, and see whether it is worth cancelling, downgrading or renegotiating. Free, no signup.">
+<style>
+:root{
+  --ink:#0F1724; --primary:#0E6E62; --accent:#D9B65C;
+  --danger:#C0392B; --success:#1E8E3E; --muted:#64748B;
+  --surface:#F4F7F8; --band:#E7EEF0; --border:#CBD5DC;
+  --paper:#FFFFFF;
+  --radius:10px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#E8EDF0; --surface:#151B21; --band:#1D262E; --border:#2C3944;
+    --paper:#0F1418; --muted:#93A2AE;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#E8EDF0; --surface:#151B21; --band:#1D262E; --border:#2C3944;
+  --paper:#0F1418; --muted:#93A2AE; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font);
+  font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:980px;margin:0 auto;padding:0 20px}
+header{border-bottom:1px solid var(--border);background:var(--surface)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:16px 0;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.01em}
+.mark{width:26px;height:26px;flex:none}
+.themebtn{background:none;border:1px solid var(--border);color:var(--muted);
+  border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer;font-family:inherit}
+.themebtn:hover{color:var(--ink);border-color:var(--muted)}
+h1{font-size:clamp(26px,4vw,38px);line-height:1.15;letter-spacing:-.02em;margin:36px 0 10px}
+.lede{font-size:18px;color:var(--muted);margin:0 0 8px;max-width:62ch}
+h2{font-size:20px;letter-spacing:-.01em;margin:40px 0 6px}
+h3{font-size:15px;margin:0 0 12px;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--muted);font-weight:700}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px;margin:18px 0}
+.grid{display:grid;gap:14px}
+@media(min-width:640px){.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr 1fr}}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:5px}
+.hint{font-size:12px;color:var(--muted);font-weight:400;margin-top:4px;display:block}
+input,select{width:100%;padding:10px 12px;border:1px solid var(--border);
+  border-radius:8px;background:var(--paper);color:var(--ink);font-family:inherit;
+  font-size:15px}
+input:focus,select:focus{outline:2px solid var(--primary);outline-offset:1px;border-color:var(--primary)}
+.out{border-radius:var(--radius);padding:20px;margin-top:18px;border:1px solid var(--border);
+  background:var(--band)}
+.big{font-size:clamp(22px,3.6vw,30px);font-weight:800;letter-spacing:-.02em;line-height:1.2}
+.kv{display:flex;justify-content:space-between;gap:16px;padding:9px 0;
+  border-bottom:1px solid var(--border);font-size:14px}
+.kv:last-child{border-bottom:none}
+.kv span:first-child{color:var(--muted)}
+.kv span:last-child{font-weight:650;text-align:right}
+.pill{display:inline-block;padding:4px 11px;border-radius:999px;font-size:12px;
+  font-weight:800;letter-spacing:.05em}
+.p-open,.p-CLEAR{background:#E4F3E8;color:#17632C}
+.p-CLOSING,.p-WATCH,.p-HIGH{background:#FBEFD8;color:#7A5308}
+.p-MISSED,.p-CRITICAL{background:#FBE2DE;color:#8B1A10}
+.d-CANCEL{background:#FBE2DE;color:#8B1A10}
+.d-DOWNGRADE{background:#FBEFD8;color:#7A5308}
+.d-RENEGOTIATE{background:#DCEEEA;color:#0B4F47}
+.d-KEEP{background:#E6EBEF;color:#3F515F}
+.d-REVIEW{background:#F2EBDA;color:#6B5A2A}
+.bars{margin-top:14px}
+.barrow{display:grid;grid-template-columns:88px 1fr 44px;gap:10px;align-items:center;
+  font-size:13px;margin-bottom:7px}
+.track{height:8px;background:var(--border);border-radius:99px;overflow:hidden}
+.fill{height:100%;border-radius:99px;transition:width .25s ease}
+.why{margin:14px 0 0;padding-left:18px;font-size:14px;color:var(--muted)}
+.why li{margin:5px 0}
+.cta{background:var(--primary);color:#fff;border:none;border-radius:8px;
+  padding:13px 22px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;
+  text-decoration:none;display:inline-block}
+.cta:hover{filter:brightness(1.08)}
+.ghost{background:none;border:1px solid var(--border);color:var(--ink);
+  padding:11px 18px;border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit;
+  font-weight:600}
+.ghost:hover{border-color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px}
+.small{font-size:13px;color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--border)}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+td:last-child,th:last-child{text-align:right}
+.scroll{overflow-x:auto}
+footer{border-top:1px solid var(--border);margin-top:56px;padding:28px 0 44px;
+  color:var(--muted);font-size:13px;background:var(--surface)}
+.offer{border:2px solid var(--primary);background:var(--surface)}
+.tiers{display:grid;gap:12px;margin-top:14px}
+@media(min-width:760px){.tiers{grid-template-columns:repeat(4,1fr)}}
+.tier{border:1px solid var(--border);border-radius:8px;padding:14px;background:var(--paper)}
+.tier b{display:block;font-size:19px;letter-spacing:-.02em}
+.tier em{font-style:normal;font-size:12px;color:var(--muted);display:block;margin:3px 0 8px;
+  text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.tier p{margin:0;font-size:13px;color:var(--muted)}
+.note{border-left:3px solid var(--accent);padding:10px 0 10px 14px;margin:18px 0;
+  font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap bar">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+        <circle cx="16" cy="16" r="14" fill="none" stroke="var(--primary)" stroke-width="2"/>
+        <circle cx="16" cy="16" r="8" fill="none" stroke="var(--primary)" stroke-width="1.4" opacity=".5"/>
+        <circle cx="16" cy="16" r="2.4" fill="var(--accent)"/>
+        <path d="M16 16 L27 9" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      Renewal Radar
+    </div>
+    <button class="themebtn" id="theme" type="button">Theme</button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <h1>Free renewal deadline calculator</h1>
+  <p class="lede">The renewal date is not your deadline. The notice date is, and it is usually
+  30 to 90 days earlier. Work out the real one below, then find out whether this vendor is
+  worth cancelling, downgrading or renegotiating.</p>
+  <p class="small">Nothing is sent anywhere. Everything runs in your browser.</p>
+
+  <div class="card">
+    <h3>Step 1: the deadline</h3>
+    <div class="grid g3">
+      <div>
+        <label for="renewal">Renewal date</label>
+        <input type="date" id="renewal">
+        <span class="hint">When the term ends and the next one starts.</span>
+      </div>
+      <div>
+        <label for="notice">Notice period required</label>
+        <input type="number" id="notice" min="0" max="365" value="30" step="1">
+        <span class="hint">Days. Check the Term and Termination clause.</span>
+      </div>
+      <div>
+        <label for="today">Today</label>
+        <input type="date" id="today">
+        <span class="hint">Change it to test a future date.</span>
+      </div>
+    </div>
+
+    <div class="out" id="deadlineOut" hidden>
+      <div class="big" id="deadlineHeadline">&nbsp;</div>
+      <div class="kv"><span>Your real deadline</span><span id="dlDate">&mdash;</span></div>
+      <div class="kv"><span>Days until that deadline</span><span id="dlDays">&mdash;</span></div>
+      <div class="kv"><span>Days until the renewal itself</span><span id="dlToRenew">&mdash;</span></div>
+      <div class="kv"><span>Window status</span><span id="dlStatus">&mdash;</span></div>
+      <div class="kv"><span>Start acting by</span><span id="dlActBy">&mdash;</span></div>
+      <div class="row">
+        <button class="ghost" id="icsBtn" type="button">Download calendar reminder</button>
+        <button class="ghost" id="copyBtn" type="button">Copy summary</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Step 2: cancel, downgrade, renegotiate or keep</h3>
+    <p class="small" style="margin-top:-6px">Optional. Fill this in and the same model that runs
+    inside the paid kit will give you a verdict for this one vendor.</p>
+
+    <div class="grid g3">
+      <div>
+        <label for="amount">Billing amount</label>
+        <input type="number" id="amount" min="0" step="0.01" value="250">
+      </div>
+      <div>
+        <label for="cycle">Billing cycle</label>
+        <select id="cycle"></select>
+      </div>
+      <div>
+        <label for="crit">If it stopped tomorrow</label>
+        <select id="crit"></select>
+      </div>
+    </div>
+
+    <div class="grid g3" style="margin-top:14px">
+      <div>
+        <label for="seatsPaid">Seats you pay for</label>
+        <input type="number" id="seatsPaid" min="0" step="1" value="20">
+        <span class="hint">Put 1 if it is not sold per seat.</span>
+      </div>
+      <div>
+        <label for="seatsActive">Seats actually used</label>
+        <input type="number" id="seatsActive" min="0" step="1" value="8">
+      </div>
+      <div>
+        <label for="lastUsed">Days since it was last used</label>
+        <input type="number" id="lastUsed" min="0" step="1" value="3">
+      </div>
+    </div>
+
+    <div class="grid g3" style="margin-top:14px">
+      <div>
+        <label for="alts">Realistic alternatives</label>
+        <select id="alts"></select>
+      </div>
+      <div>
+        <label for="contract">Contract type</label>
+        <select id="contract"></select>
+      </div>
+      <div>
+        <label for="overlap">Does another tool already do this?</label>
+        <select id="overlap">
+          <option value="0">No</option>
+          <option value="1">Yes, at least partly</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="out" id="decideOut">
+      <div class="big"><span class="pill" id="decPill">&mdash;</span> <span id="decMoney"></span></div>
+      <p class="small" id="decPlay" style="margin:10px 0 0"></p>
+      <ul class="why" id="decWhy"></ul>
+      <div class="bars">
+        <div class="barrow"><span>Value</span><div class="track"><div class="fill" id="barValue"></div></div><span id="numValue">0</span></div>
+        <div class="barrow"><span>Leverage</span><div class="track"><div class="fill" id="barLev"></div></div><span id="numLev">0</span></div>
+        <div class="barrow"><span>Waste</span><div class="track"><div class="fill" id="barWaste"></div></div><span id="numWaste">0</span></div>
+      </div>
+      <div class="kv" style="margin-top:14px"><span>Annual cost</span><span id="decAnnual">&mdash;</span></div>
+      <div class="kv"><span>Estimated recoverable, per year</span><span id="decRec">&mdash;</span></div>
+      <div class="kv"><span>Roughly how long it takes</span><span id="decEffort">&mdash;</span></div>
+      <div class="kv"><span>Confidence in this answer</span><span id="decConf">&mdash;</span></div>
+    </div>
+
+    <div class="note" id="assumptionNote"></div>
+  </div>
+
+  <h2>What the verdicts mean</h2>
+  <div class="card scroll">
+    <table>
+      <thead><tr><th>Verdict</th><th>What it means</th><th>Typical time</th></tr></thead>
+      <tbody id="verdictTable"></tbody>
+    </table>
+  </div>
+
+  <h2>One vendor is the free version</h2>
+  <div class="card offer">
+    <p style="margin-top:0">This page checks one line at a time. The kit does the whole book of
+    recurring spend: every vendor, every notice deadline, every verdict, ranked by how much
+    money each one returns per minute of your time. It works in Excel and in Google Sheets,
+    and it ships with a self test so you can confirm the formulas compute correctly on your
+    own machine before you trust a number in it.</p>
+    <p class="small"><strong>Find and eliminate at least one unnecessary recurring expense in 60 minutes.</strong></p>
+    <div class="tiers" id="tiers"></div>
+    <div class="row">
+      <a class="cta" href="https://aiprodev.gumroad.com/l/vendor-renewal-tracker">Get the kit</a>
+      <a class="ghost" href="/vendor-renewal-tracker/importer/" style="text-decoration:none;display:inline-block">Find them in a bank export</a>
+      <span class="small">Instant download. Works offline. No subscription, which would be ironic.</span>
+    </div>
+  </div>
+
+  <h2>How the deadline maths works</h2>
+  <div class="card">
+    <p style="margin-top:0">Three dates matter and most people only track one.</p>
+    <div class="kv"><span>Renewal date</span><span>When the new term begins and you are charged</span></div>
+    <div class="kv"><span>Notice deadline</span><span>Renewal date minus the notice period. Your actual deadline</span></div>
+    <div class="kv"><span>Act-by date</span><span>Notice deadline minus a week, because vendors are slow to reply</span></div>
+    <p class="small" style="margin-bottom:0">Two things catch people out. First, some contracts count
+    the notice period from the anniversary of signature rather than the end of the term, which moves
+    the deadline earlier. Second, some require notice by post or through a support portal, so an email
+    to your account manager is not notice at all. Read the Notices clause before you rely on any date
+    on this page.</p>
+  </div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><strong>Renewal Radar</strong>: The vendor cost recovery kit for small businesses</p>
+    <p>This calculator is a planning tool, not legal or financial advice. The recovery figures
+    are estimates from editable assumptions, not measured industry averages, and your contract
+    governs your actual rights. Check the contract before you rely on a date.</p>
+    <p>BlvkWare &middot; <a href="https://blvkware.dev" style="color:var(--primary)">blvkware.dev</a>
+       &middot; <a href="mailto:russ@blvkware.dev" style="color:var(--primary)">russ@blvkware.dev</a></p>
+  </div>
+</footer>
+
+<script>
+"use strict";
+// The model constants below are generated from the same config file that builds
+// the spreadsheet, so this page and the paid kit cannot drift apart.
+const A = {"version":"1.0.0","value_weights":{"criticality":0.45,"utilization":0.3,"recency":0.25,"overlap_penalty":20},"leverage_weights":{"timing":0.4,"alternatives":0.3,"spend_size":0.2,"contract_type":0.1},"waste_weights":{"unused_seats":0.45,"staleness":0.35,"overlap":0.2},"timing_bands":[{"max_usable_days":-1,"score":0,"label":"Window missed"},{"max_usable_days":14,"score":35,"label":"Rushed"},{"max_usable_days":45,"score":85,"label":"Strong"},{"max_usable_days":120,"score":100,"label":"Ideal"},{"max_usable_days":240,"score":70,"label":"Early"},{"max_usable_days":99999,"score":45,"label":"Too early"}],"alternatives_scores":{"None":10,"Some":60,"Many":100},"switching_cost_scores":{"Low":100,"Medium":55,"High":15},"contract_scores":{"Month-to-month":100,"Annual auto-renew":70,"Multi-year":25},"spend_bands":[{"max_annual":1000,"score":20},{"max_annual":5000,"score":50},{"max_annual":25000,"score":80},{"max_annual":99999999,"score":100}],"staleness_zero_at_days":90,"thresholds":{"cancel_value_below":35,"cancel_waste_atleast":45,"downgrade_unused_pct_atleast":0.25,"downgrade_min_dollars":120,"renegotiate_leverage_atleast":55,"keep_value_atleast":60,"closing_window_days":14},"recovery_rates":{"cancel_capture":0.95,"downgrade_capture":0.8,"renegotiate_discount_by_leverage":[{"min_leverage":85,"rate":0.2},{"min_leverage":70,"rate":0.15},{"min_leverage":55,"rate":0.1},{"min_leverage":0,"rate":0.04}]},"effort_minutes":{"CANCEL":20,"DOWNGRADE":30,"RENEGOTIATE":45,"KEEP":0,"REVIEW":15},"risk_bands":[{"max_days_to_deadline":0,"label":"MISSED","rank":5},{"max_days_to_deadline":14,"label":"CRITICAL","rank":4},{"max_days_to_deadline":30,"label":"HIGH","rank":3},{"max_days_to_deadline":90,"label":"WATCH","rank":2},{"max_days_to_deadline":99999,"label":"CLEAR","rank":1}]};
+const CYCLES = {"Monthly":12.0,"Quarterly":4.0,"Semi-annual":2.0,"Annual":1.0,"Biennial":0.5,"One-off":0.0};
+const PLAYS = {"CANCEL":"Send the cancellation email, get written confirmation, then kill the card on file.","DOWNGRADE":"Pull the seat report, right-size to active users, ask for a mid-term true-down.","RENEGOTIATE":"Open with a competitive quote and ask for the discount before notice day.","KEEP":"No action now. Diarise the next leverage window and revisit then.","REVIEW":"Not enough signal. Find the owner, confirm real usage, then rerun."};
+const CCY = "$";
+
+/* ---- model, mirroring model.py ---- */
+const clamp = (x, lo = 0, hi = 100) => Math.max(lo, Math.min(hi, x));
+
+function xlRound(x, d) {           // half away from zero, as Excel does
+  const f = Math.pow(10, d);
+  const v = x * f;
+  const r = v < 0 ? -Math.round(Math.abs(v)) : Math.round(v);
+  // Math.round(-0.5) is -0 in JS and rounds .5 up, so the sign is handled above
+  return r / f;
+}
+function band(bands, key, value, out) {
+  for (const b of bands) if (value <= b[key]) return b[out];
+  return bands[bands.length - 1][out];
+}
+function utilization(v) {
+  if (v.seatsPaid <= 0) return 1;
+  return clamp(v.seatsActive / v.seatsPaid, 0, 1);
+}
+function recency(v) {
+  return clamp(100 * (1 - v.daysSinceUsed / A.staleness_zero_at_days));
+}
+function annualCost(v) { return xlRound(v.amount * (CYCLES[v.cycle] ?? 0), 2); }
+function valueScore(v) {
+  const w = A.value_weights;
+  const crit = clamp((v.criticality - 1) / 4 * 100);
+  let raw = crit * w.criticality + utilization(v) * 100 * w.utilization
+          + recency(v) * w.recency;
+  if (v.overlaps) raw -= w.overlap_penalty;
+  return xlRound(clamp(raw), 1);
+}
+function leverageScore(v, usable, ann) {
+  const w = A.leverage_weights;
+  const t = band(A.timing_bands, "max_usable_days", usable, "score");
+  const alt = A.alternatives_scores[v.alternatives] ?? 60;
+  const spend = band(A.spend_bands, "max_annual", ann, "score");
+  const con = A.contract_scores[v.contract] ?? 70;
+  return xlRound(clamp(t * w.timing + alt * w.alternatives
+    + spend * w.spend_size + con * w.contract_type), 1);
+}
+function wasteScore(v) {
+  const w = A.waste_weights;
+  const unused = (1 - utilization(v)) * 100;
+  const stale = 100 - recency(v);
+  return xlRound(clamp(unused * w.unused_seats + stale * w.staleness
+    + (v.overlaps ? 100 : 0) * w.overlap), 1);
+}
+function discountFor(lev) {
+  for (const t of A.recovery_rates.renegotiate_discount_by_leverage)
+    if (lev >= t.min_leverage) return t.rate;
+  return 0;
+}
+function decide(v, val, lev, waste, unusedDollars) {
+  const t = A.thresholds, unusedPct = 1 - utilization(v);
+  if (val < t.cancel_value_below && waste >= t.cancel_waste_atleast) return "CANCEL";
+  if (unusedPct >= t.downgrade_unused_pct_atleast
+      && unusedDollars >= t.downgrade_min_dollars) return "DOWNGRADE";
+  if (lev >= t.renegotiate_leverage_atleast) return "RENEGOTIATE";
+  if (val >= t.keep_value_atleast) return "KEEP";
+  return "REVIEW";
+}
+function assess(v) {
+  const ann = annualCost(v);
+  const unusedPct = 1 - utilization(v);
+  const unusedDollars = xlRound(ann * unusedPct, 2);
+  const usable = v.daysToRenewal - v.noticeDays;
+  const val = valueScore(v), lev = leverageScore(v, usable, ann), waste = wasteScore(v);
+  const dec = decide(v, val, lev, waste, unusedDollars);
+  const r = A.recovery_rates;
+  let rec = 0, disc = 0;
+  if (dec === "CANCEL") rec = xlRound(ann * r.cancel_capture, 2);
+  else if (dec === "DOWNGRADE") rec = xlRound(unusedDollars * r.downgrade_capture, 2);
+  else if (dec === "RENEGOTIATE") { disc = discountFor(lev); rec = xlRound(ann * disc, 2); }
+  const eff = A.effort_minutes[dec] ?? 15;
+
+  const why = [];
+  if (v.overlaps) why.push("Another tool you already pay for does at least part of this job.");
+  if (unusedPct >= 0.25 && v.seatsPaid > 0)
+    why.push(Math.round(unusedPct * 100) + "% of the seats you pay for are idle ("
+      + (v.seatsPaid - v.seatsActive) + " of " + v.seatsPaid + ").");
+  if (v.daysSinceUsed >= A.staleness_zero_at_days)
+    why.push("No recorded use in " + v.daysSinceUsed + " days.");
+  if (usable < 0) why.push("The notice deadline for this term has already passed.");
+  else if (usable <= A.thresholds.closing_window_days)
+    why.push("Only " + usable + " days left to give notice.");
+  if (dec === "RENEGOTIATE")
+    why.push("Leverage of " + lev + " out of 100 supports asking for around "
+      + Math.round(disc * 100) + "%.");
+  if (!why.length) why.push("On what you have entered, this line is earning its cost.");
+
+  // Confidence tracks how much you actually told it, not how sure it sounds.
+  const signals = [v.amount > 0, v.seatsPaid > 0, v.seatsActive >= 0,
+    v.daysSinceUsed >= 0, v.criticality >= 1, !!v.alternatives, !!v.contract,
+    v.daysToRenewal !== null, v.noticeDays >= 0];
+  const complete = signals.filter(Boolean).length / signals.length;
+  const conf = complete >= 0.9 ? "High" : complete >= 0.7 ? "Medium" : "Low";
+
+  return { ann, unusedDollars, usable, val, lev, waste, dec, disc, rec, eff, why, conf };
+}
+
+/* ---- dates ---- */
+const DAY = 86400000;
+const iso = d => d.toISOString().slice(0, 10);
+const parse = s => { const p = (s || "").split("-").map(Number);
+  return p.length === 3 && p.every(n => !isNaN(n)) ? new Date(Date.UTC(p[0], p[1] - 1, p[2])) : null; };
+const fmt = d => d.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
+const money = n => CCY + Math.round(n).toLocaleString();
+
+/* ---- wiring ---- */
+const $ = id => document.getElementById(id);
+
+function fillSelect(el, values, selected, labels) {
+  el.innerHTML = "";
+  values.forEach((v, i) => {
+    const o = document.createElement("option");
+    o.value = v; o.textContent = labels ? labels[i] : v;
+    if (v === selected) o.selected = true;
+    el.appendChild(o);
+  });
+}
+
+fillSelect($("cycle"), Object.keys(CYCLES), "Monthly");
+fillSelect($("crit"), ["1", "2", "3", "4", "5"], "4",
+  ["1: nobody would notice", "2: mild inconvenience", "3: a workaround exists",
+   "4: real disruption", "5: the business stops"]);
+fillSelect($("alts"), Object.keys(A.alternatives_scores), "Many",
+  ["None that would do", "Some, with trade-offs", "Many, easily"]);
+fillSelect($("contract"), Object.keys(A.contract_scores), "Annual auto-renew");
+
+$("today").value = iso(new Date());
+const soon = new Date(Date.now() + 75 * DAY);
+$("renewal").value = iso(soon);
+
+function statusOf(usable) {
+  if (usable < 0) return "MISSED";
+  if (usable <= A.thresholds.closing_window_days) return "CLOSING";
+  return "OPEN";
+}
+
+function render() {
+  const rd = parse($("renewal").value), td = parse($("today").value);
+  const notice = Math.max(0, Number($("notice").value) || 0);
+  let usable = null, toRenew = null, deadline = null;
+
+  if (rd && td) {
+    deadline = new Date(rd.getTime() - notice * DAY);
+    usable = Math.round((deadline - td) / DAY);
+    toRenew = Math.round((rd - td) / DAY);
+    const status = statusOf(usable);
+    const riskBand = band(A.risk_bands, "max_days_to_deadline", usable, "label");
+    $("deadlineOut").hidden = false;
+    $("dlDate").textContent = fmt(deadline);
+    $("dlDays").textContent = usable + (Math.abs(usable) === 1 ? " day" : " days");
+    $("dlToRenew").textContent = toRenew + (Math.abs(toRenew) === 1 ? " day" : " days");
+    $("dlStatus").innerHTML = '<span class="pill p-' + riskBand + '">' + riskBand + "</span>";
+    const actBy = new Date(deadline.getTime() - 7 * DAY);
+    $("dlActBy").textContent = fmt(actBy);
+    const h = $("deadlineHeadline");
+    if (status === "MISSED")
+      h.textContent = "The notice window for this term closed " + Math.abs(usable) + " days ago.";
+    else if (status === "CLOSING")
+      h.textContent = "You have " + usable + " days left. Decide today.";
+    else
+      h.textContent = "You have " + usable + " days of room before you lose the choice.";
+  } else {
+    $("deadlineOut").hidden = true;
+  }
+
+  const v = {
+    amount: Number($("amount").value) || 0,
+    cycle: $("cycle").value,
+    seatsPaid: Number($("seatsPaid").value) || 0,
+    seatsActive: Number($("seatsActive").value) || 0,
+    daysSinceUsed: Math.max(0, Number($("lastUsed").value) || 0),
+    criticality: Number($("crit").value) || 3,
+    alternatives: $("alts").value,
+    contract: $("contract").value,
+    overlaps: $("overlap").value === "1",
+    daysToRenewal: toRenew === null ? 9999 : toRenew,
+    noticeDays: notice,
+  };
+  const a = assess(v);
+
+  $("decPill").textContent = a.dec;
+  $("decPill").className = "pill d-" + a.dec;
+  $("decMoney").textContent = a.rec > 0 ? money(a.rec) + " a year" : "";
+  $("decPlay").textContent = PLAYS[a.dec] || "";
+  $("decWhy").innerHTML = a.why.map(w => "<li>" + w + "</li>").join("");
+  $("decAnnual").textContent = money(a.ann);
+  $("decRec").textContent = a.rec > 0 ? money(a.rec) : "Nothing the model would act on";
+  $("decEffort").textContent = a.eff > 0 ? a.eff + " minutes" : "No action needed";
+  $("decConf").textContent = a.conf;
+
+  const paint = (bar, num, val, color) => {
+    $(bar).style.width = val + "%";
+    $(bar).style.background = color;
+    $(num).textContent = Math.round(val);
+  };
+  paint("barValue", "numValue", a.val, "var(--primary)");
+  paint("barLev", "numLev", a.lev, "var(--accent)");
+  paint("barWaste", "numWaste", a.waste, "var(--danger)");
+
+  const pct = n => Math.round(n * 100) + "%";
+  $("assumptionNote").textContent =
+    "How the estimate is built: cancelling is assumed to capture " + pct(A.recovery_rates.cancel_capture)
+    + " of the annual cost, downgrading " + pct(A.recovery_rates.downgrade_capture)
+    + " of the idle-seat value, and renegotiating between "
+    + pct(A.recovery_rates.renegotiate_discount_by_leverage.slice(-1)[0].rate) + " and "
+    + pct(A.recovery_rates.renegotiate_discount_by_leverage[0].rate)
+    + " depending on leverage. Those are planning assumptions, not measured industry averages. "
+    + "In the paid kit every one of them is an editable cell, and you are meant to replace them "
+    + "with your own results after a quarter.";
+}
+
+["renewal", "notice", "today", "amount", "cycle", "crit", "seatsPaid", "seatsActive",
+ "lastUsed", "alts", "contract", "overlap"].forEach(id =>
+  $(id).addEventListener("input", render));
+
+/* verdict reference table */
+$("verdictTable").innerHTML = Object.keys(PLAYS).map(k =>
+  '<tr><td><span class="pill d-' + k + '">' + k + "</span></td><td>" + PLAYS[k]
+  + "</td><td>" + (A.effort_minutes[k] || 0) + " min</td></tr>").join("");
+
+/* tiers */
+$("tiers").innerHTML = [{"price":29,"label":"Tracker","blurb":"Inventory, renewal deadlines, recovery log and the email pack."},{"price":79,"label":"Complete Kit","blurb":"Everything, including the decision engine, action plan, dashboard and AI prompts."},{"price":199,"label":"Team License","blurb":"The complete kit, licensed across your whole group, editable without restriction."},{"price":499,"label":"White Label","blurb":"Rebrandable for bookkeepers, fractional COOs and consultants delivering this to clients."}].map(t =>
+  '<div class="tier"><b>' + CCY + t.price + "</b><em>" + t.label + "</em><p>" + t.blurb + "</p></div>"
+).join("");
+
+/* calendar reminder */
+$("icsBtn").addEventListener("click", () => {
+  const rd = parse($("renewal").value);
+  if (!rd) return;
+  const notice = Math.max(0, Number($("notice").value) || 0);
+  const deadline = new Date(rd.getTime() - notice * DAY);
+  const actBy = new Date(deadline.getTime() - 7 * DAY);
+  const stamp = d => d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+  const day = d => iso(d).replace(/-/g, "");
+  const ics = [
+    "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Renewal Radar//Renewal deadline//EN",
+    "BEGIN:VEVENT",
+    "UID:" + Date.now() + "@renewal-deadline",
+    "DTSTAMP:" + stamp(new Date()),
+    "DTSTART;VALUE=DATE:" + day(actBy),
+    "DTEND;VALUE=DATE:" + day(new Date(actBy.getTime() + DAY)),
+    "SUMMARY:Vendor notice deadline approaching",
+    "DESCRIPTION:Notice must be given by " + iso(deadline)
+      + " to stop the renewal on " + iso(rd)
+      + ". Check the Notices clause for the required method.",
+    "BEGIN:VALARM", "TRIGGER:-P1D", "ACTION:DISPLAY",
+    "DESCRIPTION:Vendor notice deadline", "END:VALARM",
+    "END:VEVENT", "END:VCALENDAR",
+  ].join("\r\n");
+  const blob = new Blob([ics], { type: "text/calendar" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "vendor-notice-deadline.ics";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
+
+$("copyBtn").addEventListener("click", async () => {
+  const t = ["Renewal date: " + $("renewal").value,
+    "Notice period: " + $("notice").value + " days",
+    "Notice deadline: " + $("dlDate").textContent,
+    "Days remaining: " + $("dlDays").textContent,
+    "Start acting by: " + $("dlActBy").textContent].join("\n");
+  try { await navigator.clipboard.writeText(t); $("copyBtn").textContent = "Copied"; }
+  catch { $("copyBtn").textContent = "Select and copy manually"; }
+  setTimeout(() => { $("copyBtn").textContent = "Copy summary"; }, 1800);
+});
+
+/* theme toggle */
+$("theme").addEventListener("click", () => {
+  const cur = document.documentElement.getAttribute("data-theme");
+  const next = cur === "dark" ? "light" : cur === "light" ? "" : "dark";
+  if (next) document.documentElement.setAttribute("data-theme", next);
+  else document.documentElement.removeAttribute("data-theme");
+  try { localStorage.setItem("rr-theme", next); } catch {}
+});
+try {
+  const saved = localStorage.getItem("rr-theme");
+  if (saved) document.documentElement.setAttribute("data-theme", saved);
+} catch {}
+
+render();
+</script>
+</body>
+</html>

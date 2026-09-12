@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Audit: How to Cut Recurring Business Costs | BlvkWare</title>
+    <meta name="description" content="A method for auditing business subscriptions: how to find every recurring charge, the three numbers that expose waste, how to decide between cancelling, downgrading and renegotiating, and why you should sort the list by return per minute.">
+    <link rel="canonical" href="https://blvkware.dev/subscription-audit/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta property="og:title" content="Subscription Audit: How to Cut Recurring Business Costs">
+    <meta property="og:description" content="Find every recurring charge, work out which are waste, and decide what to cancel, downgrade or renegotiate. The method, with the arithmetic.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://blvkware.dev/subscription-audit/">
+    <meta property="og:image" content="https://blvkware.dev/assets/og.png">
+    <meta property="og:site_name" content="BlvkWare">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+    <link rel="apple-touch-icon" href="/assets/logo-192.png">
+    <meta name="theme-color" content="#0A0908">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "BlvkWare", "item": "https://blvkware.dev/"},
+        {"@type": "ListItem", "position": 2, "name": "Subscription Audit", "item": "https://blvkware.dev/subscription-audit/"}
+      ]
+    },
+    {
+      "@type": "Article",
+      "headline": "Subscription Audit: How to Cut Recurring Business Costs",
+      "description": "A method for auditing business subscriptions: finding every recurring charge, the three numbers that expose waste, and how to decide between cancelling, downgrading and renegotiating.",
+      "author": {"@type": "Person", "name": "William Russell Wheeler"},
+      "publisher": {"@id": "https://blvkware.dev/#org"},
+      "mainEntityOfPage": "https://blvkware.dev/subscription-audit/",
+      "about": ["Subscription audit", "Vendor management", "Cost reduction", "SaaS spend"]
+    },
+    {
+      "@type": "HowTo",
+      "name": "How to audit business subscriptions",
+      "description": "Find every recurring charge, date each renewal, judge each line, then act on the ones worth the most per minute of effort.",
+      "totalTime": "PT4H",
+      "step": [
+        {"@type": "HowToStep", "name": "Find it", "text": "Export twelve months from every bank account, card, payment processor and app store. List every recurring charge without judging any of them."},
+        {"@type": "HowToStep", "name": "Date it", "text": "Record the renewal date and the notice period for each line, then derive the notice deadline: renewal date minus notice period. That deadline, not the renewal date, is what decides whether you still have a choice."},
+        {"@type": "HowToStep", "name": "Judge it", "text": "For each line record seats paid, seats actually active, and days since last meaningful use. Score value, waste and leverage, then decide between cancel, downgrade, renegotiate and keep."},
+        {"@type": "HowToStep", "name": "Bank it", "text": "Send the cancellations and the negotiation emails, capture every agreement in writing, and log only confirmed savings."}
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How long does a subscription audit take?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Finding and listing everything takes one to two hours for a typical small business, and that is the bulk of the work. Judging the lines and sending the first round of emails takes about another hour. Spreading it across four weeks works better than trying to finish in a day, because most of the waiting is on vendors replying."}
+        },
+        {
+          "@type": "Question",
+          "name": "What counts as a recoverable saving?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Only a confirmed change to what you will be billed, evidenced in writing. A vendor agreeing verbally to a discount is not a saving until it appears on an invoice or in a written confirmation. Keeping those two separate is what makes the final number defensible to an accountant."}
+        },
+        {
+          "@type": "Question",
+          "name": "Should I cancel a subscription that is only used occasionally?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Not automatically. Compare the annual cost against what re-subscribing would cost if you turn out to need it, including any setup or data migration work. A cheap tool used twice a year is often worth keeping. An expensive one is usually worth cancelling and buying again on demand."}
+        },
+        {
+          "@type": "Question",
+          "name": "How often should a subscription audit be repeated?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Quarterly, at about 60 minutes a time once the inventory exists. The first pass is slow because you are building the list. After that most of the value comes from two habits: turning off auto-renewal on every vendor you keep, and checking the contract before signing anything new."}
+        },
+        {
+          "@type": "Question",
+          "name": "Why sort the list by return per minute instead of by size of saving?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Because the largest saving in a typical book is a 45 minute negotiation with an uncertain outcome, while the best first action is usually a 20 minute cancellation of something nobody has opened in six months. Sorting by size buries the quick wins under the hard conversation, the audit stalls there, and nothing gets cancelled at all."}
+        }
+      ]
+    }
+  ]
+}
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Fira+Code:wght@500&display=swap');
+        :root {
+            --bg: #0A0908; --surface: #17140F; --accent: #D4F24A; --brass: #D9B65C;
+            --ink: #F5F0E6; --ink-2: #A89D8B; --line: rgba(245,240,230,0.1);
+            --font: 'Manrope', system-ui, -apple-system, sans-serif;
+            --mono: 'Fira Code', ui-monospace, monospace;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+        .wrap { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+        .top { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 3.5rem; text-decoration: none; color: inherit; }
+        .mark { width: 52px; height: 52px; border-radius: 14px; background: #060504; overflow: hidden; flex: none; }
+        .mark img { width: 100%; height: 100%; display: block; }
+        .wordmark { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; }
+        .wordmark span { color: var(--accent); }
+        .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--brass); margin-bottom: 1rem; }
+        h1 { font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 1rem; line-height: 1.12; }
+        .lede { font-size: 1.15rem; color: var(--ink-2); margin-bottom: 2.5rem; padding-bottom: 2.5rem; border-bottom: 1px solid var(--line); }
+        h2 { font-size: 1.5rem; font-weight: 700; margin: 3rem 0 1rem; letter-spacing: -0.01em; }
+        h3 { font-size: 1.05rem; font-weight: 700; margin: 1.75rem 0 0.6rem; color: var(--brass); }
+        p { color: var(--ink-2); margin-bottom: 1.1rem; }
+        ul, ol { margin: 0 0 1.1rem 1.2rem; color: var(--ink-2); }
+        li { margin-bottom: 0.6rem; }
+        strong { color: var(--ink); font-weight: 700; }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        code { font-family: var(--mono); font-size: 0.87em; background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; color: var(--brass); }
+        .box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem; margin: 1.75rem 0; }
+        .box p:last-child { margin-bottom: 0; }
+        .calc { font-family: var(--mono); font-size: 0.92rem; color: var(--ink); line-height: 2; }
+        .calc span { color: var(--brass); }
+        .tw { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1.5rem 0; }
+        .tw table { margin: 0; min-width: 30rem; }
+        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
+        th, td { text-align: left; padding: 0.7rem 0.6rem; border-bottom: 1px solid var(--line); color: var(--ink-2); }
+        th { color: var(--ink); font-weight: 700; }
+        .cta { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 2rem; margin: 3rem 0 0; }
+        .btn { display: inline-block; background: var(--accent); color: #14170A; font-weight: 700; padding: 0.85rem 1.5rem; border-radius: 10px; margin-top: 0.5rem; }
+        .btn:hover { text-decoration: none; opacity: 0.92; }
+        .btn-2 { display: inline-block; border: 1px solid var(--line); color: var(--ink); font-weight: 700; padding: 0.85rem 1.5rem; border-radius: 10px; margin-top: 0.5rem; }
+        .btn-2:hover { text-decoration: none; border-color: var(--brass); }
+        .foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--ink-2); }
+        .foot-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+        .foot a { margin-right: 0; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <a class="top" href="/">
+        <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
+        <span class="wordmark">BlvkWare<span>.</span></span>
+    </a>
+
+    <div class="eyebrow">Cost recovery</div>
+    <h1>Subscription audit</h1>
+
+    <p class="lede">Every small business is paying for something it stopped using. That is not the expensive part. The expensive part is the tool it still uses, on a plan four times larger than it needs, which renewed last month because nobody was watching the date. This is the method for finding both, in the order that actually gets it finished.</p>
+
+    <h2>The number that starts the argument</h2>
+
+    <p>Before any of this is worth doing, work out one figure: your total annual recurring spend. Not the monthly software bill. Everything that repeats, annualised. Software, hosting, phones, insurance, dues, leases, payment processor fees, shipping platforms, the trade association nobody has attended in two years.</p>
+
+    <p>Most owners guess low by a factor of two or three. The reason is arithmetic rather than carelessness: a $49 monthly line does not feel like a $588 annual commitment, and there are usually twenty of them spread across three payment methods and two people's memories.</p>
+
+    <p>You can get that number in about twenty minutes with the <a href="/vendor-renewal-tracker/importer/">statement importer</a>, which reads a bank or card export in your browser and totals the recurring charges it finds. If the total does not make you uncomfortable, stop here. You do not have a problem worth four hours.</p>
+
+    <h2>Step one: find everything, judge nothing</h2>
+
+    <p>The single most common way this exercise fails is starting to evaluate while still listing. The moment you begin deciding, you stop collecting, and you finish with a confident opinion about a partial picture.</p>
+
+    <p>Pull <strong>twelve months</strong>, not three. Annual charges appear once a year and they are disproportionately the expensive ones, which means a quarterly export systematically hides your biggest line items. Cover every source:</p>
+
+    <ul>
+        <li>Business bank account and every business card</li>
+        <li>PayPal, Stripe, Square and any processor that deducts fees before the money reaches you</li>
+        <li>App store subscriptions on company devices, which never touch the bank statement as anything recognisable</li>
+        <li>Personal cards carrying business subscriptions that get expensed</li>
+        <li>Invoices paid by bank transfer, which look like every other payment</li>
+    </ul>
+
+    <p>Then add an owner to every line. A name, not a department. Lines with no owner are where the money is, because nobody has been in a position to notice them for years.</p>
+
+    <h2>Step two: the date that decides everything</h2>
+
+    <p>Record the renewal date and the notice period for each line, then derive the deadline that actually matters:</p>
+
+    <div class="box calc">
+        Notice deadline <span>=</span> renewal date <span>-</span> notice period
+    </div>
+
+    <p>Most contracts renew automatically unless you give 30, 60 or 90 days notice, which means your real deadline can be three months before the date in your calendar. A tracker that reminds you on the renewal date is telling you about a charge you can no longer prevent.</p>
+
+    <p>The <a href="/vendor-renewal-tracker/">renewal deadline calculator</a> does this for a single contract, including the two traps that move the date earlier than expected: notice periods anchored to the signature anniversary rather than the term end, and Notices clauses that require post or a portal ticket, which make an email to your account manager legally ineffective.</p>
+
+    <p>Anything already past its deadline goes on a separate list. You cannot cancel it this term, but it is still worth asking. More on that below.</p>
+
+    <h2>Step three: the three numbers that expose waste</h2>
+
+    <p>For every seated product, record three things:</p>
+
+    <ol>
+        <li><strong>Seats paid for.</strong> From the invoice.</li>
+        <li><strong>Seats actually active.</strong> From the vendor's own admin page, not from memory. Memory reliably understates how many seats belong to people who have left.</li>
+        <li><strong>Days since last meaningful use.</strong> Most tools show a last-login column.</li>
+    </ol>
+
+    <p>This is the highest-yield hour in the whole exercise, and it is the one people skip because it requires logging into twenty admin panels. The common failure is not paying for something useless. It is paying for four times as much of something genuinely useful as you need, which no amount of staring at the invoice reveals.</p>
+
+    <div class="box">
+        <p><strong>The arithmetic.</strong> A CRM at $480 a month with 25 seats and 11 active is not a $5,760 problem. It is a $3,226 problem, because 14 idle seats are 56 percent of the bill, and reclaiming them requires no negotiation at all. You are asking to stop paying for chairs nobody is sitting in.</p>
+    </div>
+
+    <h2>Step four: cancel, downgrade, renegotiate or keep</h2>
+
+    <p>Three judgements decide the action, and the order they are checked in matters because the cheaper action should win:</p>
+
+    <div class="tw"><table>
+        <thead><tr><th>Verdict</th><th>When it applies</th><th>Roughly</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Cancel</strong></td><td>Low value and high waste. Nobody uses it, or something else already does the job.</td><td>20 min</td></tr>
+            <tr><td><strong>Downgrade</strong></td><td>Worth keeping, but you are paying for more of it than you use.</td><td>30 min</td></tr>
+            <tr><td><strong>Renegotiate</strong></td><td>Worth keeping at the right price, and you have leverage today.</td><td>45 min</td></tr>
+            <tr><td><strong>Keep</strong></td><td>Earns its cost and there is no leverage to use. Diarise the next window.</td><td>0 min</td></tr>
+        </tbody>
+    </table></div>
+
+    <p>Leverage is the judgement people get wrong most often. It is not about how much you dislike the price. It peaks between roughly 46 and 120 usable days before the notice deadline, because that is the only window where you can credibly still leave. Earlier and your renewal is not in the vendor's quarter yet, so nobody engages. Later and the threat is empty, and account managers know it.</p>
+
+    <h2>Step five: sort by return per minute, not by size</h2>
+
+    <p>This is the step that turns an audit into recovered money, and almost nobody does it.</p>
+
+    <p>Rank the list by <strong>money recovered per minute of your time</strong>, not by total saving. The largest number on your sheet is usually a 45 minute negotiation with an uncertain outcome. The best <em>first</em> action is usually a 20 minute cancellation of something nobody has opened since last year.</p>
+
+    <p>Sorted by size, the quick wins sit underneath the hard conversation. The audit stalls on the hard conversation, the afternoon runs out, and nothing gets cancelled at all. Sorted by return per minute, your first hour is the highest-yield hour, which is the only hour many people will realistically ever spend on this.</p>
+
+    <h2>The four emails that do most of the work</h2>
+
+    <p>The mechanics are almost always simpler than the dread suggests.</p>
+
+    <h3>Cancelling</h3>
+    <p>Do not explain why. A reason is an opening for a retention offer, and you have already decided. Ask for three things in writing: that the subscription is cancelled, that no further charges will be made, and the date access ends. Keep the confirmation. It is your evidence when a charge appears anyway.</p>
+
+    <h3>Formal notice of non-renewal</h3>
+    <p>Where a notice period exists, send this the day you decide, not the day before the deadline. Name the agreement and its date, state the term end date, state the date you are giving notice, and say which clause it satisfies. Then add a line asking them to tell you immediately if another method is required, and to treat the email as a good faith attempt in the meantime.</p>
+
+    <h3>Right-sizing seats</h3>
+    <p>Ask two questions: can we true down at renewal, and can we true down now with a credit. Then add the line most people forget, which is to ask whether the reduced count keeps your current per seat rate. Dropping seats sometimes moves you into a worse pricing band and the saving evaporates.</p>
+
+    <h3>Asking for a discount</h3>
+    <p>Never open with an inability to pay, which invites a payment plan rather than a price. Open with the renewal having to be justified alongside the alternatives, which invites a number. Make one specific ask, offer something in return that costs you nothing (a decision this month rather than at the deadline), and give a date by which you need an answer.</p>
+
+    <div class="box">
+        <p><strong>The highest value email in the whole exercise</strong> is the one sent within an hour of any phone call: a short written summary of what you understood to be agreed, asking them to confirm. Verbal concessions evaporate when account managers change jobs, and a discount that was never confirmed in writing does not appear on the invoice.</p>
+    </div>
+
+    <h2>When the deadline has already gone</h2>
+
+    <p>You have no right to cancel, so you are asking for goodwill. Ask anyway, and make agreement easy by offering three options rather than one: release us from the renewed term, shorten it, or reduce the scope to what we actually use.</p>
+
+    <p>The third is the one vendors usually take, and it is still a real win. A flat refusal to all three is also fine. Diarise the next notice deadline, stop spending time on it, and move on.</p>
+
+    <h2>The habit that makes the second audit trivial</h2>
+
+    <p>Two things, done once, remove most of the future work.</p>
+
+    <p><strong>Turn off auto-renewal on every vendor you keep.</strong> You are not cancelling. You are taking back the decision, so each term is approved rather than assumed. Ask for confirmation in writing, and ask one question people forget: what happens to service if you do not respond in time. With some vendors, disabling auto-renewal means service simply stops on the end date, which is a different problem from the one you were solving.</p>
+
+    <p><strong>Read the Term, Termination and Notices clauses before signing anything new.</strong> Ten minutes at signature saves the entire exercise above, a year later.</p>
+
+    <h2>Correct your assumptions afterwards</h2>
+
+    <p>Record what you actually recovered, with evidence, and compare it against what you expected. If you asked for 20 percent and got 8, then 8 is your number, and the next forecast should use it.</p>
+
+    <p>Most published figures about software waste are vendor marketing for software that manages software. Your own realised results from one quarter are worth more than any of them, and they are the only figures you can defend to an accountant.</p>
+
+    <div class="cta">
+        <h3 style="margin-top:0">Do it for one vendor now, free</h3>
+        <p>The <a href="/vendor-renewal-tracker/">renewal deadline calculator</a> works out the real deadline behind any renewal date and gives a verdict for that line. The <a href="/vendor-renewal-tracker/importer/">statement importer</a> turns a bank export into a clean vendor list. Both run in your browser, nothing is uploaded, and there is no sign-up.</p>
+        <a class="btn" href="/vendor-renewal-tracker/">Open the free tools &rarr;</a>
+    </div>
+
+    <div class="cta">
+        <h3 style="margin-top:0">Or do it for all of them</h3>
+        <p><strong>Renewal Radar</strong> is this method as a working system: a workbook for Excel or Google Sheets with no macros and nothing to install, a decision engine that scores every vendor on value, waste and leverage, an action plan already sorted by return per minute, 14 ready-to-send emails, a 24 point contract checklist and 10 AI prompts for reading contracts.</p>
+        <p>It also checks its own arithmetic in front of you. The Self Test tab recomputes eight worked examples live in whatever application you opened the file in and reports PASSED or FAILED before you rely on a number in it. In that example it finds $7,088 across $26,148 of annual recurring spend, $3,709 of it inside the first 50 minutes.</p>
+        <p>From $29, one purchase, no subscription, which would have been an odd thing to sell here.</p>
+        <a class="btn" href="https://aiprodev.gumroad.com/l/vendor-renewal-tracker" rel="noopener">See the kit &rarr;</a>
+        <a class="btn-2" href="/scan/">Scan my business first</a>
+    </div>
+
+    <div class="foot">
+        <div class="foot-links"><a href="/">Home</a><a href="/vendor-renewal-tracker/">Renewal tracker tools</a><a href="/scan/">Business Scan</a><a href="/design/">Agent Designer</a><a href="/build/">App Builder</a><a href="/#services">Pricing</a><a href="/privacy/">Privacy</a></div>
+        <p style="margin-top:1rem">This is general commercial information, not legal, accounting or financial advice. Your contract governs your actual rights and obligations. BlvkWare builds AI automation and custom software for small businesses. Mississippi, serving the United States remotely. <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a></p>
+    </div>
+</div>
+</body>
+</html>

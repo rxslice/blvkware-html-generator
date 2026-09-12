@@ -397,6 +397,22 @@ MARKETING_PAGES = [
     # queries the definitional and pricing pages cannot, and it is the only
     # page here whose calculator can conclude against a sale.
     ("ai-employee.html", "ai-employee"),
+    # Vendor cost recovery. The hub carries the tool queries and embeds the
+    # calculator; the guide carries the informational ones. They are deliberately
+    # different documents rather than one idea split in two, because a pair of
+    # near-duplicates on the same topic competes with itself and reads as a
+    # doorway pair.
+    ("vendor-renewal-tracker.html", "vendor-renewal-tracker"),
+    ("subscription-audit.html", "subscription-audit"),
+]
+
+# Standalone browser tools copied verbatim into a sub-directory URL. Unlike
+# TOOLS these carry no catalog and no generation runtime, so they skip the
+# schema injection and key scanning that build_tool() performs. Each is a
+# complete self-contained document built from the renewalradar repository.
+STATIC_TOOLS = [
+    ("vendor-renewal-tracker/calculator", "renewal-calculator.html"),
+    ("vendor-renewal-tracker/importer", "renewal-importer.html"),
 ]
 
 # Every canonical URL on the site, with a crawl priority.
@@ -415,6 +431,10 @@ SITEMAP = [
     ("/ai-employee/", "0.9", "monthly"),
     ("/quote-follow-up-automation/", "0.8", "monthly"),
     ("/ai-automation-for-plumbers/", "0.8", "monthly"),
+    ("/vendor-renewal-tracker/", "0.9", "monthly"),
+    ("/subscription-audit/", "0.85", "monthly"),
+    ("/vendor-renewal-tracker/calculator/", "0.8", "monthly"),
+    ("/vendor-renewal-tracker/importer/", "0.8", "monthly"),
     ("/privacy/", "0.3", "yearly"),
     ("/terms/", "0.3", "yearly"),
 ]
@@ -704,6 +724,18 @@ payment, no server. They exist as the work sample in place of client case studie
   follow-up and review requests first; dispatch, pricing and emergency call
   answering last or never. Includes the review-gating compliance line and why
   replacing ServiceTitan or Jobber to gain follow-up is a bad trade.
+- [Vendor renewal tracker](https://blvkware.dev/vendor-renewal-tracker/): two free
+  browser tools plus the method. A renewal deadline calculator that derives the
+  notice deadline (renewal date minus notice period) and scores a vendor on
+  value, waste and leverage, and a statement importer that reads a bank or card
+  export in the browser and infers each billing cycle from the gaps between
+  charges. Nothing is uploaded; there is no server.
+- [Subscription audit](https://blvkware.dev/subscription-audit/): the method for
+  cutting recurring business cost. Pull twelve months not three because annual
+  charges hide in a short export; record seats paid against seats active; check
+  cancel, downgrade, renegotiate and keep in that order; and sort the result by
+  money recovered per minute rather than by size of saving, because sorting by
+  size buries the quick wins under the hard conversation and the audit stalls.
 - [Privacy policy](https://blvkware.dev/privacy/): no accounts, no analytics, no
   cookies, no tracking; tools keep data only in the visitor's own browser
 - [Terms of service](https://blvkware.dev/terms/)
@@ -1129,6 +1161,22 @@ def main():
         with io.open(os.path.join(d, "index.html"), "w", encoding="utf-8") as fh:
             fh.write(html)
         print("Built docs/%s/index.html (%.1f KB)" % (slug, len(html.encode("utf-8")) / 1024.0))
+
+    # Standalone browser tools, copied verbatim to their own directory URL.
+    for slug, src in STATIC_TOOLS:
+        path = os.path.join(ROOT, "site", src)
+        if not os.path.isfile(path):
+            print("WARNING: site/%s missing" % src)
+            continue
+        with io.open(path, encoding="utf-8") as fh:
+            html = fh.read()
+        d = os.path.join(OUT_DIR, *slug.split("/"))
+        if not os.path.isdir(d):
+            os.makedirs(d)
+        with io.open(os.path.join(d, "index.html"), "w", encoding="utf-8") as fh:
+            fh.write(html)
+        print("Built docs/%s/index.html (%.1f KB)  tool"
+              % (slug, len(html.encode("utf-8")) / 1024.0))
 
     # The fulfilment console is built OUTSIDE docs/ on purpose. It carries the
     # template library, the tier-derivation reasoning and the run-cost lines —

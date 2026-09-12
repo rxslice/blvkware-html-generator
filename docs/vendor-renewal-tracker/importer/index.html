@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Renewal Radar: Statement to Inventory Converter | BlvkWare</title>
+<meta name="description" content="Paste a bank or card statement export and get back a clean list of recurring vendors, ready to paste into a subscription tracker. Runs entirely in your browser.">
+<style>
+:root{
+  --ink:#0F1724; --primary:#0E6E62; --accent:#D9B65C;
+  --danger:#C0392B; --success:#1E8E3E; --muted:#64748B;
+  --surface:#F4F7F8; --band:#E7EEF0; --border:#CBD5DC;
+  --paper:#FFFFFF; --radius:10px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --ink:#E8EDF0;--surface:#151B21;--band:#1D262E;--border:#2C3944;
+  --paper:#0F1418;--muted:#93A2AE;color-scheme:dark;}}
+:root[data-theme="dark"]{--ink:#E8EDF0;--surface:#151B21;--band:#1D262E;
+  --border:#2C3944;--paper:#0F1418;--muted:#93A2AE;color-scheme:dark;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font);
+  font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+header{border-bottom:1px solid var(--border);background:var(--surface)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:16px 0;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.01em}
+.mark{width:26px;height:26px;flex:none}
+.themebtn{background:none;border:1px solid var(--border);color:var(--muted);
+  border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer;font-family:inherit}
+h1{font-size:clamp(25px,3.6vw,34px);line-height:1.15;letter-spacing:-.02em;margin:34px 0 10px}
+.lede{font-size:17px;color:var(--muted);margin:0 0 6px;max-width:64ch}
+h2{font-size:19px;letter-spacing:-.01em;margin:36px 0 6px}
+h3{font-size:14px;margin:0 0 12px;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--muted);font-weight:700}
+.card{background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:20px;margin:18px 0}
+textarea{width:100%;min-height:190px;padding:12px;border:1px solid var(--border);
+  border-radius:8px;background:var(--paper);color:var(--ink);font-family:var(--mono);
+  font-size:13px;line-height:1.5;resize:vertical}
+textarea:focus{outline:2px solid var(--primary);outline-offset:1px}
+.drop{border:2px dashed var(--border);border-radius:var(--radius);padding:26px;
+  text-align:center;color:var(--muted);font-size:14px;margin-bottom:14px;
+  transition:border-color .15s,background .15s}
+.drop.over{border-color:var(--primary);background:var(--band)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+button{font-family:inherit;cursor:pointer;font-weight:650}
+.cta{background:var(--primary);color:#fff;border:none;border-radius:8px;
+  padding:12px 20px;font-size:15px}
+.cta:hover{filter:brightness(1.08)}
+.cta[disabled]{opacity:.45;cursor:not-allowed;filter:none}
+.ghost{background:none;border:1px solid var(--border);color:var(--ink);
+  padding:10px 16px;border-radius:8px;font-size:14px}
+.ghost:hover{border-color:var(--muted)}
+.small{font-size:13px;color:var(--muted)}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:820px}
+th,td{text-align:left;padding:8px 9px;border-bottom:1px solid var(--border);
+  vertical-align:middle}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);
+  position:sticky;top:0;background:var(--surface);z-index:1}
+td input,td select{width:100%;padding:5px 7px;border:1px solid transparent;
+  border-radius:6px;background:transparent;color:var(--ink);font-family:inherit;
+  font-size:13.5px}
+td input:focus,td select:focus{border-color:var(--primary);background:var(--paper);
+  outline:none}
+td select{border-color:var(--border)}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;
+  font-weight:800;letter-spacing:.04em}
+.c-high{background:#E4F3E8;color:#17632C}
+.c-medium{background:#FBEFD8;color:#7A5308}
+.c-low{background:#F0E6E4;color:#7A4038}
+.stat{display:grid;gap:12px;margin:16px 0}
+@media(min-width:700px){.stat{grid-template-columns:repeat(4,1fr)}}
+.stat div{background:var(--band);border:1px solid var(--border);border-radius:8px;
+  padding:12px 14px}
+.stat b{display:block;font-size:22px;letter-spacing:-.02em;line-height:1.25}
+.stat span{font-size:11.5px;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.06em;font-weight:700}
+.note{border-left:3px solid var(--accent);padding:10px 0 10px 14px;margin:18px 0;
+  font-size:14px;color:var(--muted)}
+.err{border-left-color:var(--danger);color:var(--ink)}
+details{margin-top:10px}
+summary{cursor:pointer;font-size:14px;color:var(--primary);font-weight:600}
+code{background:var(--band);padding:1px 5px;border-radius:4px;font-size:.92em;
+  font-family:var(--mono)}
+footer{border-top:1px solid var(--border);margin-top:52px;padding:26px 0 42px;
+  color:var(--muted);font-size:13px;background:var(--surface)}
+a{color:var(--primary)}
+.hide{display:none}
+</style>
+</head>
+<body>
+
+<header><div class="wrap bar">
+  <div class="brand">
+    <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+      <circle cx="16" cy="16" r="14" fill="none" stroke="var(--primary)" stroke-width="2"/>
+      <circle cx="16" cy="16" r="8" fill="none" stroke="var(--primary)" stroke-width="1.4" opacity=".5"/>
+      <circle cx="16" cy="16" r="2.4" fill="var(--accent)"/>
+      <path d="M16 16 L27 9" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    Renewal Radar
+  </div>
+  <button class="themebtn" id="theme" type="button">Theme</button>
+</div></header>
+
+<main class="wrap">
+  <h1>Statement to inventory</h1>
+  <p class="lede">Paste a bank or card export. This finds the charges that repeat,
+  cleans up the merchant names, guesses the billing cycle, and gives you rows you
+  can paste straight into the tracker.</p>
+  <p class="small"><strong>Nothing is uploaded.</strong> The file never leaves your
+  browser. There is no server to send it to.</p>
+
+  <div class="card">
+    <h3>Step 1: your transactions</h3>
+    <div class="drop" id="drop">Drop a CSV here, or
+      <label style="color:var(--primary);cursor:pointer;font-weight:700">
+        choose a file<input type="file" id="file" accept=".csv,.txt,.tsv" class="hide">
+      </label>
+    </div>
+    <textarea id="raw" placeholder="...or paste rows directly. A header line helps but is not required.
+Example:
+Date,Description,Amount
+2026-01-04,SQ *ACME CRM 8005551234 CA,-480.00
+2026-02-04,SQ *ACME CRM 8005551234 CA,-480.00
+2026-03-04,SQ *ACME CRM 8005551234 CA,-480.00"></textarea>
+    <div class="row">
+      <button class="cta" id="go" type="button">Find recurring charges</button>
+      <button class="ghost" id="demo" type="button">Load an example</button>
+      <button class="ghost" id="clear" type="button">Clear</button>
+      <span class="small" id="parseInfo"></span>
+    </div>
+    <div class="note err hide" id="err"></div>
+  </div>
+
+  <div id="results" class="hide">
+    <h2>What repeats</h2>
+    <div class="stat">
+      <div><b id="sVendors">0</b><span>Recurring vendors</span></div>
+      <div><b id="sAnnual">&mdash;</b><span>Implied annual cost</span></div>
+      <div><b id="sRows">0</b><span>Transactions read</span></div>
+      <div><b id="sUnmatched">0</b><span>One-off or unclear</span></div>
+    </div>
+
+    <div class="card">
+      <p class="small" style="margin-top:0">Everything below is editable. The cycle
+      and category are guesses from the pattern of charges and the merchant name,
+      so correct them here before you paste. Untick anything that is not a vendor
+      subscription.</p>
+      <div class="scroll"><table>
+        <thead><tr>
+          <th style="width:34px"></th><th>Vendor</th><th>Category</th>
+          <th class="num">Amount</th><th>Cycle</th><th class="num">Annual</th>
+          <th class="num">Seen</th><th>Dates</th><th>Confidence</th>
+        </tr></thead>
+        <tbody id="tbody"></tbody>
+      </table></div>
+      <div class="row">
+        <button class="cta" id="copy" type="button">Copy rows for the Inventory tab</button>
+        <button class="ghost" id="csv" type="button">Download as CSV</button>
+        <span class="small">Paste into cell <code>B4</code> of the Inventory tab.
+        It fills Vendor, Category, What it does, Owner, Amount and Cycle.</span>
+      </div>
+    </div>
+
+    <details>
+      <summary id="unmatchedToggle">Show what was left out</summary>
+      <div class="card">
+        <p class="small" style="margin-top:0">These appeared once, or the gaps between
+        charges were too irregular to call a cycle. Annual subscriptions look exactly
+        like this in a short export, so read the list rather than dismissing it. If
+        you only pulled three months, pull twelve.</p>
+        <div class="scroll"><table>
+          <thead><tr><th>Merchant</th><th class="num">Amount</th>
+            <th class="num">Times seen</th><th>Dates</th></tr></thead>
+          <tbody id="ubody"></tbody>
+        </table></div>
+      </div>
+    </details>
+  </div>
+
+  <h2>What this can and cannot do</h2>
+  <div class="card">
+    <p style="margin-top:0"><strong>It can</strong> spot a merchant charging you on a
+    regular cadence, strip the payment-processor noise out of the descriptor, work out
+    monthly, quarterly, half-yearly or annual from the gaps, and total up what it
+    implies you are spending a year.</p>
+    <p><strong>It cannot</strong> see anything that is not in the file. Charges on a
+    personal card, fees deducted from revenue before it reaches your bank, invoices
+    paid by transfer that look like any other payment, and app-store subscriptions
+    billed through a platform are all invisible here. Pull every source you have.</p>
+    <p style="margin-bottom:0"><strong>It guesses.</strong> The category comes from
+    keywords in the merchant name and the cycle comes from the spacing of the charges.
+    Two charges 31 days apart might be a monthly subscription or a coincidence. That is
+    why every field is editable, and why the confidence column exists.</p>
+  </div>
+
+  <div class="card" style="border:2px solid var(--primary)">
+    <p style="margin-top:0">This is step one of four. Once the vendors are listed, the
+    kit works out the notice deadline behind every renewal date, decides which lines to
+    cancel, downgrade or renegotiate, and ranks them by how much money each returns per
+    minute of your time.</p>
+    <p class="small"><strong>Find and eliminate at least one unnecessary recurring expense in 60 minutes.</strong></p>
+    <div class="row">
+      <a class="cta" href="https://aiprodev.gumroad.com/l/vendor-renewal-tracker" style="text-decoration:none">Get the kit</a>
+      <a class="ghost" href="/vendor-renewal-tracker/calculator/" style="text-decoration:none;display:inline-block">
+        Free deadline calculator</a>
+    </div>
+  </div>
+</main>
+
+<footer><div class="wrap">
+  <p><strong>Renewal Radar</strong>: The vendor cost recovery kit for small businesses</p>
+  <p>Your transactions are processed in the page and are never transmitted. Reloading
+  discards everything.</p>
+  <p>BlvkWare &middot; <a href="https://blvkware.dev">blvkware.dev</a>
+     &middot; <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a></p>
+</div></footer>
+
+<script>
+"use strict";
+const CATEGORIES = ["Software / SaaS","Cloud & hosting","Marketing & ads","Telecom & internet","Insurance","Professional services","Payments & banking fees","Equipment lease","Facilities & utilities","Shipping & logistics","Memberships & dues","Training & content","Other"];
+const CYCLES = {"Monthly":12.0,"Quarterly":4.0,"Semi-annual":2.0,"Annual":1.0,"Biennial":0.5,"One-off":0.0};
+const CCY = "$";
+
+/* ------------------------------------------------------------------ *
+ * CSV parsing. Handles quoted fields, embedded commas and newlines,
+ * doubled quotes, and comma / semicolon / tab delimiters.
+ * ------------------------------------------------------------------ */
+function sniffDelimiter(text) {
+  const line = text.split(/\r?\n/).find(l => l.trim()) || "";
+  const counts = {",": 0, ";": 0, "\t": 0, "|": 0};
+  let q = false;
+  for (const ch of line) {
+    if (ch === '"') q = !q;
+    else if (!q && ch in counts) counts[ch]++;
+  }
+  return Object.keys(counts).reduce((a, b) => counts[b] > counts[a] ? b : a, ",");
+}
+
+function parseCSV(text, delim) {
+  const rows = [];
+  let row = [], field = "", inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; }
+        else inQuotes = false;
+      } else field += ch;
+    } else if (ch === '"') inQuotes = true;
+    else if (ch === delim) { row.push(field); field = ""; }
+    else if (ch === "\n") { row.push(field); rows.push(row); row = []; field = ""; }
+    else if (ch === "\r") { /* handled with \n */ }
+    else field += ch;
+  }
+  if (field !== "" || row.length) { row.push(field); rows.push(row); }
+  return rows.filter(r => r.some(c => String(c).trim() !== ""));
+}
+
+/* ---- value coercion ---- */
+const MONTHS = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+
+function toDate(s) {
+  s = String(s || "").trim();
+  if (!s) return null;
+  let m = s.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);      // 2026-01-04
+  if (m) return mk(+m[1], +m[2] - 1, +m[3]);
+  m = s.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{2,4})/);         // 01/04/2026
+  if (m) {
+    let [_, a, b, y] = m; a = +a; b = +b; y = +y;
+    if (y < 100) y += 2000;
+    // Ambiguous without a locale. Day-first only when it cannot be a month.
+    return a > 12 ? mk(y, b - 1, a) : mk(y, a - 1, b);
+  }
+  m = s.match(/^(\d{1,2})[ -]([A-Za-z]{3})[A-Za-z]*[ -](\d{2,4})/);  // 04 Jan 2026
+  if (m && MONTHS[m[2].toLowerCase()] !== undefined) {
+    let y = +m[3]; if (y < 100) y += 2000;
+    return mk(y, MONTHS[m[2].toLowerCase()], +m[1]);
+  }
+  m = s.match(/^([A-Za-z]{3})[A-Za-z]*[ -](\d{1,2}),?[ -](\d{2,4})/); // Jan 4, 2026
+  if (m && MONTHS[m[1].toLowerCase()] !== undefined) {
+    let y = +m[3]; if (y < 100) y += 2000;
+    return mk(y, MONTHS[m[1].toLowerCase()], +m[2]);
+  }
+  return null;
+}
+function mk(y, mo, d) {
+  if (mo < 0 || mo > 11 || d < 1 || d > 31) return null;
+  const dt = new Date(Date.UTC(y, mo, d));
+  return isNaN(dt) ? null : dt;
+}
+
+function toAmount(s) {
+  s = String(s || "").trim();
+  if (!s) return null;
+  const neg = /^\(.*\)$/.test(s) || s.includes("-");
+  // Strip currency symbols, spaces and thousands separators.
+  let t = s.replace(/[()\s]/g, "").replace(/[^0-9.,-]/g, "");
+  if (t.includes(",") && t.includes(".")) t = t.replace(/,/g, "");
+  else if ((t.match(/,/g) || []).length === 1 && !t.includes(".")
+           && /,\d{2}$/.test(t)) t = t.replace(",", ".");   // 1234,56
+  else t = t.replace(/,/g, "");
+  t = t.replace(/-/g, "");
+  const n = parseFloat(t);
+  if (isNaN(n)) return null;
+  return neg ? -n : n;
+}
+
+/* ---- merchant name cleanup ---- */
+const PREFIXES = [
+  /^SQ\s*\*+\s*/i, /^SP\s*\*+\s*/i, /^TST\*\s*/i, /^PP\s*\*+\s*/i,
+  /^PAYPAL\s*\*+\s*/i, /^IC\*\s*/i, /^IN\s*\*+\s*/i, /^WL\s*\*+\s*/i,
+  /^EIG\*\s*/i, /^DRI\*\s*/i, /^MSFT\s*\*\s*/i, /^AMZN\s+MKTP\s+/i,
+  /^POS\s+(DEBIT|PURCHASE)\s+/i, /^(RECURRING\s+)?(CARD\s+)?PAYMENT\s+TO\s+/i,
+  /^(DEBIT|CREDIT|ACH|EFT|PREAUTHORIZED)\s+(CARD\s+)?(PURCHASE|PAYMENT|DEBIT|WITHDRAWAL)?\s*/i,
+  /^CHECKCARD\s+\d*\s*/i, /^PURCHASE\s+AUTHORIZED\s+ON\s+\d{2}\/\d{2}\s*/i,
+  /^WWW\.?/i, /^HTTPS?:\/\//i,
+];
+const SUFFIXES = [
+  /\s+\d{3}[- ]?\d{3}[- ]?\d{4}\s*$/,          // phone number
+  /\s+[A-Z]{2}\s*$/,                            // trailing state code
+  /\s+#?\d{4,}\s*$/,                            // trailing long id
+  /\s*\*\d{2,}\s*$/,                            // *1234
+  /\s+CARD\s*\d+\s*$/i,
+  /\s+\d{2}\/\d{2}\s*$/,                        // trailing date
+  /\s+(USA?|US|GB|CA|AU)\s*$/i,
+  /\s*[,-]\s*$/,
+];
+const KEEP_UPPER = new Set(["AWS","IBM","SAP","ATT","UPS","USPS","API","AI","HR","IT","CRM","ERP","SEO","VPN","SMS","POS"]);
+// Corporate suffixes carry no information and make two spellings of one vendor
+// look like two vendors.
+const CORP_SUFFIX = /\s+(INC|INCORPORATED|LLC|L\.L\.C|LTD|LIMITED|CORP|CORPORATION|CO|PLC|GMBH|AG|SA|NV|BV|PTY|SRL)\.?\s*$/i;
+
+function cleanName(raw) {
+  let s = String(raw || "").trim().replace(/\s+/g, " ");
+  let changed = true, guard = 0;
+  while (changed && guard++ < 8) {
+    changed = false;
+    for (const re of PREFIXES) { const n = s.replace(re, ""); if (n !== s) { s = n; changed = true; } }
+    for (const re of SUFFIXES) { const n = s.replace(re, ""); if (n !== s) { s = n; changed = true; } }
+    const c = s.replace(CORP_SUFFIX, "");
+    if (c !== s && c.trim()) { s = c; changed = true; }
+    s = s.trim();
+  }
+  // A star is how a processor joins its own tag to the merchant name. Once the
+  // known prefixes are gone, any star still in there is just noise.
+  s = s.replace(/[*]+/g, " ").replace(/\.COM\b/i, "").replace(/\s+/g, " ").trim();
+  if (!s) return String(raw || "").trim();
+  // Title-case, but leave known acronyms and mixed-case brands alone.
+  return s.split(" ").map(w => {
+    const bare = w.replace(/[^A-Za-z]/g, "");
+    if (KEEP_UPPER.has(bare.toUpperCase()) && bare.length <= 4) return w.toUpperCase();
+    if (/[a-z]/.test(w) && /[A-Z]/.test(w)) return w;             // already MixedCase
+    return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+  }).join(" ");
+}
+
+const CATEGORY_HINTS = [
+  ["Cloud & hosting", ["aws","amazon web","digitalocean","linode","vultr","vercel","netlify","cloudflare","godaddy","namecheap","bluehost","hostgator","heroku","azure","rackspace","backblaze","hetzner","fastly","render"]],
+  ["Marketing & ads", ["google ads","adwords","facebook ad","meta plat","linkedin ad","mailchimp","klaviyo","constant contact","semrush","ahrefs","moz","hootsuite","buffer","canva","activecampaign","convertkit","sendgrid","hubspot"]],
+  ["Telecom & internet", ["verizon","at&t","att ","t-mobile","comcast","spectrum","xfinity","centurylink","ringcentral","twilio","vonage","dialpad","grasshopper","ooma","frontier"]],
+  ["Insurance", ["insurance","hiscox","next ins","thimble","state farm","geico","progressive","travelers","chubb","assurance"]],
+  ["Payments & banking fees", ["stripe","square fee","paypal fee","merchant fee","bank fee","service charge","wire fee","interchange","bill.com","gusto fee"]],
+  ["Shipping & logistics", ["ups","fedex","usps","dhl","shipstation","pirate ship","stamps.com","shippo","easypost","freightquote"]],
+  ["Professional services", ["quickbooks","xero","gusto","adp","paychex","rippling","legalzoom","rocket lawyer","payroll","bookkeep","accounting","clio"]],
+  ["Memberships & dues", ["chamber","association","membership","dues","society","guild","alliance","institute","rotary"]],
+  ["Training & content", ["udemy","coursera","masterclass","skillshare","pluralsight","linkedin learning","substack","medium","audible","kindle","nyt","wsj","bloomberg"]],
+  ["Facilities & utilities", ["electric","water","gas co","waste","janitorial","cleaning","wework","regus","storage","rent"]],
+  ["Equipment lease", ["lease","leasing","copier","ricoh","xerox","konica","de lage","canon fin"]],
+  ["Software / SaaS", ["adobe","slack","zoom","atlassian","jira","notion","figma","salesforce","microsoft","office 365","google workspace","dropbox","box.com","github","gitlab","openai","anthropic","asana","monday.com","clickup","airtable","calendly","docusign","1password","lastpass","zapier","typeform","intercom","zendesk","freshdesk","pipedrive","shopify","webflow","wix","squarespace","loom","miro","linear","sentry","datadog","twilio segment",
+   " crm"," erp","software","saas","helpdesk","analytics","subscription"]],
+];
+
+function guessCategory(name) {
+  const n = name.toLowerCase();
+  for (const [cat, keys] of CATEGORY_HINTS)
+    if (keys.some(k => n.includes(k))) return cat;
+  return "Other";
+}
+
+/* ---- recurrence detection ---- */
+const CYCLE_BANDS = [
+  {lo: 5,   hi: 9,   cycle: "Monthly",     note: "weekly, totalled as monthly"},
+  {lo: 10,  hi: 18,  cycle: "Monthly",     note: "fortnightly, totalled as monthly"},
+  {lo: 24,  hi: 38,  cycle: "Monthly",     note: ""},
+  {lo: 55,  hi: 70,  cycle: "Monthly",     note: "every two months"},
+  {lo: 80,  hi: 100, cycle: "Quarterly",   note: ""},
+  {lo: 165, hi: 200, cycle: "Semi-annual", note: ""},
+  {lo: 340, hi: 400, cycle: "Annual",      note: ""},
+  {lo: 700, hi: 800, cycle: "Biennial",    note: ""},
+];
+
+function median(xs) {
+  if (!xs.length) return 0;
+  const s = [...xs].sort((a, b) => a - b);
+  const m = Math.floor(s.length / 2);
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+}
+
+const DAY = 86400000;
+
+function classify(dates, amounts) {
+  if (dates.length < 2) return null;
+  const sorted = [...dates].sort((a, b) => a - b);
+  const gaps = [];
+  for (let i = 1; i < sorted.length; i++) gaps.push(Math.round((sorted[i] - sorted[i - 1]) / DAY));
+  const usable = gaps.filter(g => g > 0);
+  if (!usable.length) return null;
+  const med = median(usable);
+  const band = CYCLE_BANDS.find(b => med >= b.lo && med <= b.hi);
+  if (!band) return null;
+  // Consistency: how tightly the gaps cluster around the median.
+  const spread = usable.length > 1
+    ? Math.max(...usable.map(g => Math.abs(g - med))) / Math.max(med, 1) : 0;
+  // Amount stability matters too; a wildly varying amount is usage, not a subscription.
+  const amed = median(amounts);
+  const aspread = amed > 0
+    ? Math.max(...amounts.map(a => Math.abs(a - amed))) / amed : 1;
+  let confidence = "Low";
+  if (sorted.length >= 3 && spread <= 0.35 && aspread <= 0.12) confidence = "High";
+  else if (sorted.length >= 3 && spread <= 0.6) confidence = "Medium";
+  else if (sorted.length === 2 && spread <= 0.2 && aspread <= 0.05) confidence = "Medium";
+  return {cycle: band.cycle, note: band.note, medianGap: med, confidence, amount: amed};
+}
+
+/* ---- column detection ---- */
+function detectColumns(rows) {
+  const width = Math.max(...rows.map(r => r.length));
+  const header = rows[0].map(h => String(h).toLowerCase().trim());
+  const looksLikeHeader = header.some(h =>
+    /date|description|amount|debit|credit|payee|merchant|transaction|memo|details|withdraw/.test(h));
+  const body = looksLikeHeader ? rows.slice(1) : rows;
+  if (!body.length) return null;
+
+  const score = {date: [], amount: [], text: []};
+  for (let c = 0; c < width; c++) {
+    const vals = body.map(r => r[c] ?? "").filter(v => String(v).trim() !== "");
+    if (!vals.length) { score.date.push(0); score.amount.push(0); score.text.push(0); continue; }
+    score.date.push(vals.filter(v => toDate(v)).length / vals.length);
+    score.amount.push(vals.filter(v => toAmount(v) !== null && /\d/.test(v)).length / vals.length);
+    score.text.push(vals.reduce((a, v) => a + String(v).length, 0) / vals.length);
+  }
+
+  const byHeader = re => looksLikeHeader ? header.findIndex(h => re.test(h)) : -1;
+
+  let dateCol = byHeader(/date|posted/);
+  if (dateCol < 0) dateCol = score.date.indexOf(Math.max(...score.date));
+  if (score.date[dateCol] < 0.5) return null;
+
+  let descCol = byHeader(/description|payee|merchant|name|details|memo|narrative/);
+  if (descCol < 0) {
+    let best = -1, bestLen = 0;
+    for (let c = 0; c < width; c++) {
+      if (c === dateCol) continue;
+      if (score.amount[c] > 0.8) continue;           // that is a number column
+      if (score.text[c] > bestLen) { bestLen = score.text[c]; best = c; }
+    }
+    descCol = best;
+  }
+  if (descCol < 0) return null;
+
+  // Prefer an explicit debit column; otherwise the best numeric column.
+  let amtCol = byHeader(/^(debit|withdrawal|withdrawals|money out|paid out)/);
+  if (amtCol < 0) amtCol = byHeader(/amount|value/);
+  if (amtCol < 0) {
+    let best = -1, bestScore = 0;
+    for (let c = 0; c < width; c++) {
+      if (c === dateCol || c === descCol) continue;
+      if (score.amount[c] > bestScore) { bestScore = score.amount[c]; best = c; }
+    }
+    amtCol = best;
+  }
+  if (amtCol < 0) return null;
+
+  return {dateCol, descCol, amtCol, body, hadHeader: looksLikeHeader};
+}
+
+/* ---- the pipeline ---- */
+function analyse(text) {
+  const delim = sniffDelimiter(text);
+  const rows = parseCSV(text, delim);
+  if (rows.length < 2) throw new Error("Not enough rows to work with. Paste at least a few transactions.");
+  const cols = detectColumns(rows);
+  if (!cols) throw new Error(
+    "Could not find a date column, a description column and an amount column. " +
+    "Add a header row naming them, or paste the three columns in that order.");
+
+  const {dateCol, descCol, amtCol, body} = cols;
+  const txns = [];
+  for (const r of body) {
+    const d = toDate(r[dateCol]);
+    const a = toAmount(r[amtCol]);
+    const desc = String(r[descCol] ?? "").trim();
+    if (!d || a === null || !desc) continue;
+    txns.push({date: d, amount: a, desc});
+  }
+  if (!txns.length) throw new Error("Rows were found but none had a usable date, description and amount together.");
+
+  // Debits are what we care about. If the column carries both signs, negatives
+  // are the charges. If everything is positive, treat it as a debit column.
+  const hasNegative = txns.some(t => t.amount < 0);
+  const charges = txns
+    .filter(t => hasNegative ? t.amount < 0 : t.amount > 0)
+    .map(t => ({...t, amount: Math.abs(t.amount)}))
+    .filter(t => t.amount > 0);
+
+  const groups = new Map();
+  for (const t of charges) {
+    const name = cleanName(t.desc);
+    const key = name.toLowerCase().replace(/[^a-z0-9]/g, "");
+    if (!key) continue;
+    if (!groups.has(key)) groups.set(key, {name, items: []});
+    groups.get(key).items.push(t);
+  }
+
+  const recurring = [], unmatched = [];
+  for (const g of groups.values()) {
+    const dates = g.items.map(i => i.date);
+    const amounts = g.items.map(i => i.amount);
+    const c = classify(dates, amounts);
+    const seenDates = [...dates].sort((a, b) => a - b)
+      .map(d => d.toISOString().slice(0, 10));
+    if (c) {
+      recurring.push({
+        name: g.name, category: guessCategory(g.name), amount: c.amount,
+        cycle: c.cycle, note: c.note, confidence: c.confidence,
+        count: g.items.length, dates: seenDates, include: true,
+      });
+    } else {
+      unmatched.push({
+        name: g.name, amount: median(amounts), count: g.items.length, dates: seenDates,
+      });
+    }
+  }
+  recurring.sort((a, b) => (b.amount * CYCLES[b.cycle]) - (a.amount * CYCLES[a.cycle]));
+  unmatched.sort((a, b) => b.amount - a.amount);
+  return {recurring, unmatched, readCount: txns.length};
+}
+
+/* ---- UI ---- */
+const $ = id => document.getElementById(id);
+let STATE = {recurring: [], unmatched: [], readCount: 0};
+const money = n => CCY + (Math.round(n * 100) / 100).toLocaleString(undefined,
+  {minimumFractionDigits: 2, maximumFractionDigits: 2});
+const money0 = n => CCY + Math.round(n).toLocaleString();
+
+function annualOf(r) { return r.amount * (CYCLES[r.cycle] ?? 0); }
+
+function render() {
+  const tb = $("tbody");
+  tb.innerHTML = "";
+  STATE.recurring.forEach((r, i) => {
+    const tr = document.createElement("tr");
+    const cycleOpts = Object.keys(CYCLES).map(c =>
+      `<option value="${c}"${c === r.cycle ? " selected" : ""}>${c}</option>`).join("");
+    const catOpts = CATEGORIES.map(c =>
+      `<option value="${c}"${c === r.category ? " selected" : ""}>${c}</option>`).join("");
+    tr.innerHTML =
+      `<td><input type="checkbox" data-i="${i}" data-f="include"${r.include ? " checked" : ""}></td>` +
+      `<td><input type="text" data-i="${i}" data-f="name" value="${r.name.replace(/"/g, "&quot;")}"></td>` +
+      `<td><select data-i="${i}" data-f="category">${catOpts}</select></td>` +
+      `<td class="num"><input type="number" step="0.01" class="num" data-i="${i}" data-f="amount" value="${r.amount.toFixed(2)}"></td>` +
+      `<td><select data-i="${i}" data-f="cycle">${cycleOpts}</select></td>` +
+      `<td class="num">${money0(annualOf(r))}</td>` +
+      `<td class="num">${r.count}</td>` +
+      `<td class="small">${r.dates.length > 3
+        ? r.dates[0] + " … " + r.dates[r.dates.length - 1]
+        : r.dates.join(", ")}${r.note ? " · " + r.note : ""}</td>` +
+      `<td><span class="pill c-${r.confidence.toLowerCase()}">${r.confidence}</span></td>`;
+    tb.appendChild(tr);
+  });
+
+  const ub = $("ubody");
+  ub.innerHTML = STATE.unmatched.map(u =>
+    `<tr><td>${u.name}</td><td class="num">${money(u.amount)}</td>` +
+    `<td class="num">${u.count}</td><td class="small">${u.dates.slice(0, 4).join(", ")}` +
+    `${u.dates.length > 4 ? " …" : ""}</td></tr>`).join("");
+  $("unmatchedToggle").textContent =
+    `Show what was left out (${STATE.unmatched.length})`;
+
+  const on = STATE.recurring.filter(r => r.include);
+  $("sVendors").textContent = on.length;
+  $("sAnnual").textContent = money0(on.reduce((a, r) => a + annualOf(r), 0));
+  $("sRows").textContent = STATE.readCount;
+  $("sUnmatched").textContent = STATE.unmatched.length;
+  $("results").classList.remove("hide");
+}
+
+$("tbody").addEventListener("input", e => {
+  const t = e.target, i = +t.dataset.i, f = t.dataset.f;
+  if (i === undefined || !f) return;
+  STATE.recurring[i][f] = f === "include" ? t.checked
+    : f === "amount" ? (parseFloat(t.value) || 0) : t.value;
+  if (f === "amount" || f === "cycle" || f === "include") render();
+  else {
+    const on = STATE.recurring.filter(r => r.include);
+    $("sVendors").textContent = on.length;
+    $("sAnnual").textContent = money0(on.reduce((a, r) => a + annualOf(r), 0));
+  }
+});
+
+function run(text) {
+  $("err").classList.add("hide");
+  try {
+    const out = analyse(text);
+    STATE = out;
+    if (!out.recurring.length && !out.unmatched.length)
+      throw new Error("No charges were found. Check that the amount column holds debits.");
+    $("parseInfo").textContent =
+      `${out.readCount} transactions read, ${out.recurring.length} recurring vendors found.`;
+    render();
+  } catch (err) {
+    $("err").textContent = err.message;
+    $("err").classList.remove("hide");
+    $("results").classList.add("hide");
+    $("parseInfo").textContent = "";
+  }
+}
+
+$("go").addEventListener("click", () => {
+  const t = $("raw").value.trim();
+  if (!t) { $("err").textContent = "Paste some transactions first."; $("err").classList.remove("hide"); return; }
+  run(t);
+});
+$("clear").addEventListener("click", () => {
+  $("raw").value = ""; $("results").classList.add("hide");
+  $("err").classList.add("hide"); $("parseInfo").textContent = "";
+});
+
+/* rows for the Inventory tab: Vendor, Category, What it does, Owner, Amount, Cycle */
+function inventoryRows() {
+  return STATE.recurring.filter(r => r.include)
+    .map(r => [r.name, r.category, "", "", r.amount.toFixed(2), r.cycle].join("\t"))
+    .join("\n");
+}
+$("copy").addEventListener("click", async () => {
+  const text = inventoryRows();
+  if (!text) { $("copy").textContent = "Nothing ticked"; setTimeout(() => $("copy").textContent = "Copy rows for the Inventory tab", 1600); return; }
+  try { await navigator.clipboard.writeText(text); $("copy").textContent = "Copied. Paste into B4"; }
+  catch { $("raw").value = text; $("copy").textContent = "Clipboard blocked. Rows are in the box above"; }
+  setTimeout(() => { $("copy").textContent = "Copy rows for the Inventory tab"; }, 2400);
+});
+$("csv").addEventListener("click", () => {
+  const q = s => '"' + String(s).replace(/"/g, '""') + '"';
+  const rows = [["Vendor", "Category", "What it does", "Owner", "Billing amount", "Billing cycle"]]
+    .concat(STATE.recurring.filter(r => r.include)
+      .map(r => [r.name, r.category, "", "", r.amount.toFixed(2), r.cycle]));
+  const csv = rows.map(r => r.map(q).join(",")).join("\r\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([csv], {type: "text/csv"}));
+  a.download = "recurring-vendors.csv";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
+
+/* file input and drag-drop */
+function readFile(f) {
+  const fr = new FileReader();
+  fr.onload = () => { $("raw").value = fr.result; run(fr.result); };
+  fr.readAsText(f);
+}
+$("file").addEventListener("change", e => { if (e.target.files[0]) readFile(e.target.files[0]); });
+const drop = $("drop");
+["dragenter", "dragover"].forEach(ev => drop.addEventListener(ev, e => {
+  e.preventDefault(); drop.classList.add("over"); }));
+["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, e => {
+  e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", e => {
+  const f = e.dataTransfer.files[0]; if (f) readFile(f); });
+
+/* a realistic example, including the traps: an annual charge seen once,
+   a processor prefix, and a variable-amount line that is not a subscription */
+$("demo").addEventListener("click", () => {
+  const today = new Date();
+  const back = n => new Date(today.getTime() - n * DAY).toISOString().slice(0, 10);
+  const lines = ["Date,Description,Amount"];
+  for (let i = 0; i < 6; i++) lines.push(`${back(30 * i + 4)},SQ *ACME CRM 8005551234 CA,-480.00`);
+  for (let i = 0; i < 6; i++) lines.push(`${back(30 * i + 11)},ADOBE  *CREATIVE CLOUD 4085366000 CA,-119.99`);
+  for (let i = 0; i < 5; i++) lines.push(`${back(30 * i + 19)},AWS EMEA BILLING 8882804331 WA,-850.${10 + i}`);
+  for (let i = 0; i < 2; i++) lines.push(`${back(90 * i + 25)},RINGCENTRAL INC 8885281843 CA,-310.00`);
+  lines.push(`${back(61)},CHAMBER OF COMMERCE DUES 5550101 TX,-2400.00`);
+  lines.push(`${back(8)},SHELL OIL 12345678 TX,-72.41`);
+  lines.push(`${back(21)},SHELL OIL 12345678 TX,-58.90`);
+  lines.push(`${back(34)},SHELL OIL 12345678 TX,-91.02`);
+  for (let i = 0; i < 4; i++) lines.push(`${back(30 * i + 27)},PP *LEGACY ANALYTICS,-99.00`);
+  $("raw").value = lines.join("\n");
+  run($("raw").value);
+});
+
+/* theme */
+$("theme").addEventListener("click", () => {
+  const cur = document.documentElement.getAttribute("data-theme");
+  const next = cur === "dark" ? "light" : cur === "light" ? "" : "dark";
+  if (next) document.documentElement.setAttribute("data-theme", next);
+  else document.documentElement.removeAttribute("data-theme");
+  try { localStorage.setItem("rr-theme", next); } catch {}
+});
+try {
+  const saved = localStorage.getItem("rr-theme");
+  if (saved) document.documentElement.setAttribute("data-theme", saved);
+} catch {}
+</script>
+</body>
+</html>
