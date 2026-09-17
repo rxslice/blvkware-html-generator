@@ -404,6 +404,7 @@ MARKETING_PAGES = [
     # doorway pair.
     ("vendor-renewal-tracker.html", "vendor-renewal-tracker"),
     ("subscription-audit.html", "subscription-audit"),
+    ("pkgguard.html", "pkgguard"),
 ]
 
 # Standalone browser tools copied verbatim into a sub-directory URL. Unlike
@@ -433,6 +434,7 @@ SITEMAP = [
     ("/ai-automation-for-plumbers/", "0.8", "monthly"),
     ("/vendor-renewal-tracker/", "0.9", "monthly"),
     ("/subscription-audit/", "0.85", "monthly"),
+    ("/pkgguard/", "0.95", "weekly"),
     ("/vendor-renewal-tracker/calculator/", "0.8", "monthly"),
     ("/vendor-renewal-tracker/importer/", "0.8", "monthly"),
     ("/privacy/", "0.3", "yearly"),
