@@ -93,11 +93,12 @@ def _money(value):
 #: URLs can reach three different conclusions about whether the service is
 #: live, and the catalog would then say one thing while the page said another.
 #:
-#: This is the Hugging Face Space. `api.blvkware.dev` needs a custom domain,
-#: which Hugging Face only offers on PRO; when that exists, change this one
-#: value. The Space keeps answering at its own address afterwards, so anything
-#: that cached this URL keeps working.
-API_BASE = os.environ.get("HALLUX_API_BASE", "https://aimoneybags-hallux.hf.space")
+#: api.blvkware.dev is the BlvkWare edge in front of the Hugging Face Space
+#: (hallux/deploy/netlify-edge). It signs each caller's address, which is
+#: what lets the free tier be metered per client. The Space also answers at
+#: https://aimoneybags-hallux.hf.space, which is the fallback if the edge is
+#: ever down, and what anything that cached the old URL keeps reaching.
+API_BASE = os.environ.get("HALLUX_API_BASE", "https://api.blvkware.dev")
 
 #: Cached so the build does not probe the endpoint once per page.
 _LIVE = {}

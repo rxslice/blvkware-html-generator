@@ -24,8 +24,8 @@
       "id": "hallux",
       "name": "HALLUX",
       "type": "openapi",
-      "url": "https://aimoneybags-hallux.hf.space/hallux/openapi.json",
-      "endpoint": "https://aimoneybags-hallux.hf.space/hallux/v1",
+      "url": "https://api.blvkware.dev/hallux/openapi.json",
+      "endpoint": "https://api.blvkware.dev/hallux/v1",
       "description": "Checks whether an identifier actually exists before an agent acts on it. Returns exists / deprecated / absent / phantom / squat / unknown. Phantom means no registry record plus repeated model hallucination. Squat means a previously phantom name has since been registered, which is slopsquatting in progress.",
       "coverage": {
         "live": [
