@@ -92,22 +92,9 @@
 
     {{HALLUX_TRY_INTRO}}
 
-<pre><code><span class="c">curl</span> https://api.blvkware.dev/hallux/v1/check/pkg.pypi/requests-oauth2-helper</code></pre>
+<pre><code><span class="c">curl</span> {{HALLUX_API_BASE}}/check/pkg.pypi/requests-oauth2-helper</code></pre>
 
-<pre><code>{
-  "namespace": "pkg.pypi",
-  "value": "requests-oauth2-helper",
-  "verdict": <span class="s">"phantom"</span>,
-  "confidence": 0.97,
-  "evidence": {
-    "registryStatus": "not_found",
-    "attestations": 412,
-    "observedFrom": ["gpt-class", "claude-class", "llama-class"],
-    "nearestExisting": ["requests-oauthlib"]
-  },
-  "recommendation": "do_not_install",
-  "successor": <span class="c">"requests-oauthlib"</span>
-}</code></pre>
+{{HALLUX_TRY_RESPONSE}}
 
     <h2>Six verdicts</h2>
 
@@ -133,6 +120,23 @@
     <h2>Squat is the one nobody else sells</h2>
 
     <p>Every registry publishes what it contains. None publishes what it does not, because absence is unbounded. The useful part of absence, the names models actually reach for, can only be accumulated over time by sampling production models and confirming against the registry that the name is not there.</p>
+
+    <p>Once the ledger has recorded a name that models keep inventing, the same check carries that history. This is the example from the specification, not a live response:</p>
+
+<pre><code>{
+  "namespace": "pkg.pypi",
+  "value": "requests-oauth2-helper",
+  "verdict": <span class="s">"phantom"</span>,
+  "confidence": 0.97,
+  "evidence": {
+    "registryStatus": "not_found",
+    "attestations": 412,
+    "observedFrom": ["gpt-class", "claude-class", "llama-class"],
+    "nearestExisting": ["requests-oauthlib"]
+  },
+  "recommendation": "do_not_install",
+  "successor": <span class="c">"requests-oauthlib"</span>
+}</code></pre>
 
     <p>That record is what makes the fourth verdict possible. A name that models invent, that a stranger then registers, is a supply-chain attack visible before the first install. Every other tool looking at that package sees a real package in a real registry and says install it.</p>
 

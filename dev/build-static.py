@@ -1262,7 +1262,7 @@ def main():
     try:
         note = hallux.build_surface(OUT_DIR)
         if note:
-            print("Built docs/.well-known/ai-catalog.json and docs/openapi.json")
+            print("Built docs/.well-known/ai-catalog.json")
     except RuntimeError as e:
         print("WARNING: %s" % e)
 

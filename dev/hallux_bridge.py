@@ -152,6 +152,50 @@ _NOT_DEPLOYED = (
 _DEPLOYED_INTRO = "<p>No account, no key, no signup. One command:</p>"
 
 
+def _try_response(deployed):
+    """The response shown under "Try it now", as the endpoint really gives it.
+
+    Fetched from the live endpoint at build time rather than written into the
+    page. The first version showed the specification's illustrative answer --
+    a phantom with 412 attestations from three model families -- under a
+    heading telling the reader to try the command. Anyone who did got
+    `absent`, because the production ledger is new. Evidence a reader cannot
+    reproduce is fabricated evidence, whatever the intent. Rendering what the
+    endpoint actually returns makes the example true by construction, and it
+    updates itself the day the ledger records this name for real.
+
+    Volatile fields (timestamps) are dropped so a rebuild does not churn the
+    page for no reason.
+    """
+    import html
+    import json
+    import urllib.request
+
+    if not deployed:
+        return (
+            "<p>The public endpoint will answer this once it is open.</p>"
+        )
+    url = API_BASE.rstrip("/") + "/hallux/v1/check/pkg.pypi/requests-oauth2-helper"
+    request = urllib.request.Request(url, headers={"User-Agent": "blvkware-site-build"})
+    with urllib.request.urlopen(request, timeout=30) as response:
+        body = json.load(response)
+    body.pop("checkedAt", None)
+    (body.get("evidence") or {}).pop("registryCheckedAt", None)
+    text = html.escape(json.dumps(body, indent=2))
+    # The same two highlights the illustration uses: the verdict, and the
+    # name to use instead.
+    verdict = html.escape(json.dumps(body.get("verdict")))
+    text = text.replace(
+        "&quot;verdict&quot;: " + verdict,
+        '&quot;verdict&quot;: <span class="s">' + verdict + "</span>", 1)
+    if body.get("successor"):
+        successor = html.escape(json.dumps(body["successor"]))
+        text = text.replace(
+            "&quot;successor&quot;: " + successor,
+            '&quot;successor&quot;: <span class="c">' + successor + "</span>", 1)
+    return "<pre><code>%s</code></pre>" % text
+
+
 def tokens():
     """The `{{HALLUX_*}}` substitutions, or None when HALLUX is absent.
 
@@ -188,6 +232,12 @@ def tokens():
         "{{HALLUX_NAMESPACES}}": ", ".join(namespaces),
         "{{HALLUX_NAMESPACE_COUNT}}": str(len(namespaces)),
         "{{HALLUX_NEUTRALITY}}": payment.PRICE_NOTES["neutrality"],
+        # The example command on the page. It was hard-coded to
+        # api.blvkware.dev, which is not the host serving it, so the moment
+        # the not-deployed notice came down the page would have shown a
+        # "Try it now" command that fails. One base URL, everywhere.
+        "{{HALLUX_API_BASE}}": API_BASE.rstrip("/") + "/hallux/v1",
+        "{{HALLUX_TRY_RESPONSE}}": _try_response(deployed),
         "{{HALLUX_STATUS_NOTICE}}": "" if deployed else _NOT_DEPLOYED,
         # The heading was the most prominent untruth on the page: a section
         # called "Try it now" above a command that cannot work.
@@ -313,6 +363,73 @@ def fill(html, name=""):
     return html
 
 
+def publish_attestation_key(out_dir, api=None):
+    """Publish the receipt verification key, but only if it is the right one.
+
+    The key is copied to /.well-known/blvkware-attestation.pub, the URL the
+    specification and the catalog name. Before copying, when the endpoint is
+    live, its own reported key is compared with the file. Publishing a key
+    that does not match the one signing live receipts would make every
+    receipt fail verification for anyone who checked -- an audit artefact
+    that proves the opposite of what it claims -- so a mismatch stops the
+    build rather than publishing.
+
+    Returns True when the key was published. The catalog's attestation-key
+    entry is gated on this, so it can never name a key file that is absent.
+    """
+    import base64
+    import json
+    import shutil
+    import urllib.request
+
+    path = locate()
+    if path is None:
+        return False
+    source = os.path.join(path, "deploy", "attestation.pub")
+    if not os.path.isfile(source):
+        return False
+
+    deployed, _detail = endpoint_live(api)
+    if deployed:
+        base = (api or API_BASE).rstrip("/")
+        request = urllib.request.Request(
+            base + "/hallux/v1/health",
+            headers={"User-Agent": "blvkware-site-build"},
+        )
+        with urllib.request.urlopen(request, timeout=15) as response:
+            health = json.load(response)
+        live_key = (health.get("receipts") or {}).get("publicKey")
+        if not live_key:
+            raise RuntimeError(
+                "the endpoint is live but reports no receipt key; refusing to "
+                "publish a verification key for receipts it does not issue"
+            )
+        if path not in sys.path:
+            sys.path.insert(0, path)
+        from cryptography.hazmat.primitives import serialization
+
+        with io.open(source, encoding="ascii") as fh:
+            file_key = serialization.load_pem_public_key(
+                fh.read().encode("ascii")
+            ).public_bytes(
+                encoding=serialization.Encoding.Raw,
+                format=serialization.PublicFormat.Raw,
+            )
+        if base64.b64decode(live_key) != file_key:
+            raise RuntimeError(
+                "deploy/attestation.pub does not match the key the live "
+                "endpoint signs with. Publishing it would make every receipt "
+                "fail verification. Redeploy, or regenerate the .pub from the "
+                "key the Space actually holds."
+            )
+
+    target_dir = os.path.join(out_dir, ".well-known")
+    if not os.path.isdir(target_dir):
+        os.makedirs(target_dir)
+    shutil.copyfile(source, os.path.join(target_dir, "blvkware-attestation.pub"))
+    return True
+
+
 def build_surface(out_dir, site="https://blvkware.dev", api=None):
     """Publish HALLUX's agent catalog into the site.
 
@@ -345,10 +462,15 @@ def build_surface(out_dir, site="https://blvkware.dev", api=None):
     if not os.path.isfile(script):
         return None
 
+    key_published = publish_attestation_key(out_dir, api)
+
     with tempfile.TemporaryDirectory(prefix="hallux-surface-") as scratch:
+        command = [sys.executable, script, "--out", scratch, "--site", site,
+                   "--api", api or API_BASE]
+        if key_published:
+            command.append("--key-published")
         result = subprocess.run(
-            [sys.executable, script, "--out", scratch, "--site", site,
-             "--api", api or API_BASE],
+            command,
             capture_output=True,
             text=True,
             cwd=path,

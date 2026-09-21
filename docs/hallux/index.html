@@ -82,31 +82,33 @@
 
     <p class="lede">A registry of identifiers that do not exist, but that models confidently believe do. Check a package name against its registry before anything installs it, and find out whether the name is one that language models invent.</p>
 
-    <div class="notice"><strong>The public endpoint is not open yet.</strong> The service is built and tested, and everything below describes what it does. Until an endpoint is answering it is listed under <code>roadmap</code> in the agent catalog rather than as a capability, so an agent reading that catalog will not try to call it.</div>
+    
 
     <p>An agent writes <code>pip install requests-oauth2-helper</code>. The name is plausible, the agent is confident, and the package has never existed. Either the install fails and the agent burns a retry loop, or somebody has already registered that name because they watched a model emit it a thousand times.</p>
 
     <p>The second case is called slopsquatting. It is the only supply-chain attack where the attacker's target list is generated for them, for free, by the victims' own tooling.</p>
 
-    <h2>What it answers</h2>
+    <h2>Try it now</h2>
 
-    <p>Once deployed, checking a name is one command. Today this is what it will answer, not what it does answer:</p>
+    <p>No account, no key, no signup. One command:</p>
 
-<pre><code><span class="c">curl</span> https://api.blvkware.dev/hallux/v1/check/pkg.pypi/requests-oauth2-helper</code></pre>
+<pre><code><span class="c">curl</span> https://aimoneybags-hallux.hf.space/hallux/v1/check/pkg.pypi/requests-oauth2-helper</code></pre>
 
 <pre><code>{
-  "namespace": "pkg.pypi",
-  "value": "requests-oauth2-helper",
-  "verdict": <span class="s">"phantom"</span>,
-  "confidence": 0.97,
-  "evidence": {
-    "registryStatus": "not_found",
-    "attestations": 412,
-    "observedFrom": ["gpt-class", "claude-class", "llama-class"],
-    "nearestExisting": ["requests-oauthlib"]
+  &quot;namespace&quot;: &quot;pkg.pypi&quot;,
+  &quot;value&quot;: &quot;requests-oauth2-helper&quot;,
+  &quot;verdict&quot;: <span class="s">&quot;absent&quot;</span>,
+  &quot;confidence&quot;: 1.0,
+  &quot;evidence&quot;: {
+    &quot;registryStatus&quot;: &quot;not_found&quot;,
+    &quot;nearestExisting&quot;: [
+      &quot;requests-oauthlib&quot;,
+      &quot;requests&quot;,
+      &quot;requests-toolbelt&quot;
+    ]
   },
-  "recommendation": "do_not_install",
-  "successor": <span class="c">"requests-oauthlib"</span>
+  &quot;recommendation&quot;: &quot;do_not_install&quot;,
+  &quot;successor&quot;: <span class="c">&quot;requests-oauthlib&quot;</span>
 }</code></pre>
 
     <h2>Six verdicts</h2>
@@ -133,6 +135,23 @@
     <h2>Squat is the one nobody else sells</h2>
 
     <p>Every registry publishes what it contains. None publishes what it does not, because absence is unbounded. The useful part of absence, the names models actually reach for, can only be accumulated over time by sampling production models and confirming against the registry that the name is not there.</p>
+
+    <p>Once the ledger has recorded a name that models keep inventing, the same check carries that history. This is the example from the specification, not a live response:</p>
+
+<pre><code>{
+  "namespace": "pkg.pypi",
+  "value": "requests-oauth2-helper",
+  "verdict": <span class="s">"phantom"</span>,
+  "confidence": 0.97,
+  "evidence": {
+    "registryStatus": "not_found",
+    "attestations": 412,
+    "observedFrom": ["gpt-class", "claude-class", "llama-class"],
+    "nearestExisting": ["requests-oauthlib"]
+  },
+  "recommendation": "do_not_install",
+  "successor": <span class="c">"requests-oauthlib"</span>
+}</code></pre>
 
     <p>That record is what makes the fourth verdict possible. A name that models invent, that a stranger then registers, is a supply-chain attack visible before the first install. Every other tool looking at that package sees a real package in a real registry and says install it.</p>
 
