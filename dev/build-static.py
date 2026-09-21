@@ -405,6 +405,12 @@ MARKETING_PAGES = [
     ("vendor-renewal-tracker.html", "vendor-renewal-tracker"),
     ("subscription-audit.html", "subscription-audit"),
     ("pkgguard.html", "pkgguard"),
+    # Verification infrastructure. A separate business from the agent
+    # practice above and aimed at machines rather than at owners, so it
+    # carries its own vocabulary and does not link into the hire funnel.
+    # Every price on it is a token filled from the HALLUX repository at
+    # build time; there is no number in the source to go stale.
+    ("hallux.html", "hallux"),
 ]
 
 # Standalone browser tools copied verbatim into a sub-directory URL. Unlike
@@ -432,6 +438,10 @@ SITEMAP = [
     ("/ai-employee/", "0.9", "monthly"),
     ("/quote-follow-up-automation/", "0.8", "monthly"),
     ("/ai-automation-for-plumbers/", "0.8", "monthly"),
+    ("/hallux/", "0.9", "weekly"),
+    ("/docs/hallux-spec", "0.7", "monthly"),
+    ("/docs/limits", "0.4", "monthly"),
+    ("/legal/bsl-1.1", "0.3", "yearly"),
     ("/vendor-renewal-tracker/", "0.9", "monthly"),
     ("/subscription-audit/", "0.85", "monthly"),
     ("/pkgguard/", "0.95", "weekly"),
@@ -540,12 +550,12 @@ def write_seo_files():
 > Bespoke AI agents that do the work, built by one engineer, at published flat
 > prices. An agent reasons through a task, operates the business's existing
 > software, communicates with its customers, executes multi-step processes and
-> adapts when the situation changes — rather than being a dashboard someone has
+> adapts when the situation changes, rather than being a dashboard someone has
 > to click. Also publishes three free browser-based business analysis tools.
 
 BlvkWare is a solo software engineering practice run by William Russell Wheeler,
 based in Mississippi and working remotely with small businesses across the United
-States — home services, trades, clinics, professional practices and agencies. All
+States: home services, trades, clinics, professional practices and agencies. All
 work is delivered remotely; there is nothing requiring an on-site visit.
 Contact: russ@blvkware.dev
 
@@ -553,7 +563,7 @@ Contact: russ@blvkware.dev
 
 Traditional software gives a company's employees tools. BlvkWare builds the
 operator for those tools. Each agent is sold as a defined job at a flat build
-price, plus a required monthly **Agent Operations** fee that keeps it employed —
+price, plus a required monthly **Agent Operations** fee that keeps it employed:
 hosting, model costs, monitoring, unlimited tuning of the agent's logic and
 language, repairs when a vendor changes an API, business-hours support, a monthly
 performance report and a quarterly review. It is deliberately not described as
@@ -565,23 +575,23 @@ intentional.
 
 ## Tiers and prices
 
-- **Operator (Tier I)** — $3,500 build, then $349/month. An agent that owns one
+- **Operator (Tier I)**: $3,500 build, then $349/month. An agent that owns one
   job start to finish, across 3 connected systems (stretching to 5 at $750 each)
   and 2 channels. Live in 10 business days. Includes 2,000 agent actions per
-  month. Guarantee: 30 days — it does the job or the build fee is returned.
-- **Deputy (Tier II)** — $9,500 build, then $899/month. An agent that owns an
+  month. Guarantee: 30 days. It does the job or the build fee is returned.
+- **Deputy (Tier II)**: $9,500 build, then $899/month. An agent that owns an
   entire business function, across up to 8 connected systems and any channel,
   making judgment calls within set boundaries, handling exceptions and
   escalating. Live in 25 business days. Includes 10,000 agent actions per month.
   Guarantee: acceptance criteria written into the order before work starts, and
   work continues at no additional charge until they are met.
-  **The tier is derived from the configured scope, not chosen by the buyer** — a
+  **The tier is derived from the configured scope, not chosen by the buyer**: a
   scope that is really a Deputy cannot be bought at Operator money, and the
   configurator states which tier it landed in and why.
-- **Agent Trial** — $750 for 14 days, one job, on the business's real data, at
+- **Agent Trial**: $750 for 14 days, one job, on the business's real data, at
   Draft autonomy. Credited in full against the build price if the business
   continues.
-- **Custom Build** — from $2,500, one-off, no monthly fee. Software rather than an
+- **Custom Build**: from $2,500, one-off, no monthly fee. Software rather than an
   agent, for a job outside the catalog. Scope and price agreed in writing before
   work starts, delivered in 2-4 weeks, the client owns the code, 30 days of fixes
   included.
@@ -602,7 +612,7 @@ research, and customer support.
 
 Each role includes a core set of capabilities in its base price; everything else is
 a flat-rate addition priced from $450 to $2,900, which can be added years later at
-the same number. Dependencies resolve automatically — a capability that cannot
+the same number. Dependencies resolve automatically: a capability that cannot
 function without another has that other one added and priced up front rather than
 discovered mid-build.
 
@@ -616,12 +626,12 @@ configurable and orderable without a call at https://blvkware.dev/hire/.
 Every agent ships with four levels and **goes live at L1**. The customer raises
 the level themselves; it is never raised for them.
 
-- **L0 Watch** — observes and reports, takes no action.
-- **L1 Draft** — prepares the action, a human sends it. Nothing reaches a
+- **L0 Watch**: observes and reports, takes no action.
+- **L1 Draft**: prepares the action, a human sends it. Nothing reaches a
   customer without a person seeing it first. This is the default at go-live.
-- **L2 Approve** — acts on its own but pauses for a human above a threshold the
+- **L2 Approve**: acts on its own but pauses for a human above a threshold the
   customer sets.
-- **L3 Operate** — acts within its scope and escalates exceptions. Enabled only
+- **L3 Operate**: acts within its scope and escalates exceptions. Enabled only
   in writing by the customer.
 
 Every action is logged with what the agent saw, what it decided and why, and
@@ -746,6 +756,22 @@ payment, no server. They exist as the work sample in place of client case studie
     # addition cannot leave the published summary quietly wrong.
     llms = llms.replace("{n_roles}", str(len(catalog.ROLES)))
     llms = llms.replace("{n_caps}", str(len(catalog.CAPABILITIES)))
+
+    # The verification layer is appended rather than folded into the sections
+    # above, and it is appended rather than leading. Those are two separate
+    # decisions and both are deliberate.
+    #
+    # Appended, because the agent practice is the live business with published
+    # prices and paying customers, and a reader arriving from a search for an
+    # AI agent must not have to scroll past a package registry to find it.
+    #
+    # Generated rather than written, because an llms.txt that names an endpoint
+    # this build could not confirm exists is the aspirational-catalog failure
+    # in a different file. With no HALLUX checkout present, the block is empty
+    # and the site simply does not mention it.
+    import hallux_bridge
+
+    llms = llms.rstrip() + "\n" + hallux_bridge.llms_section(base)
     with io.open(os.path.join(OUT_DIR, "llms.txt"), "w", encoding="utf-8") as fh:
         fh.write(llms)
 
@@ -1077,6 +1103,16 @@ def main():
     if not os.path.isdir(OUT_DIR):
         os.makedirs(OUT_DIR)
 
+    # Named hallux_bridge, not hallux: dev/ is on sys.path when this runs,
+    # so a module called hallux.py here shadows the HALLUX package itself
+    # and the bridge ends up importing from its own file.
+    import hallux_bridge as hallux
+    print(hallux.status())
+    # Every rendered page, kept so the typed-price check can read the output
+    # rather than the source. The last time prices drifted on this site most
+    # of them were not in the HTML at all.
+    rendered = {}
+
     # A catalog edit that silently reprices every Tier I role as a Tier II is a
     # business bug that looks like nothing in a diff. It blocks the build.
     import thresholds
@@ -1156,7 +1192,17 @@ def main():
             continue
         with io.open(path, encoding="utf-8") as fh:
             html = fh.read()
+        # HALLUX prices live in a separate repository. The page carries tokens
+        # rather than numbers, and this fills them. It runs BEFORE
+        # compile_catalog, whose own unresolved-token guard would otherwise
+        # abort on a {{HALLUX_*}} it has never heard of.
+        try:
+            html = hallux.fill(html, "site/" + src)
+        except ValueError as e:
+            print("ABORTED: %s" % e)
+            return 1
         html = compile_catalog(html, "site/" + src)
+        rendered[slug] = html
         d = os.path.join(OUT_DIR, slug)
         if not os.path.isdir(d):
             os.makedirs(d)
@@ -1210,6 +1256,45 @@ def main():
             fh.write("/* GENERATED from dev/engine.js by dev/build-static.py.\n"
                      "   Do not edit: rebuild instead. */\n" + engine)
         print("Built api/_catalog.json and api/_engine.js  for the checkout function")
+
+    # The machine-readable surface, generated by HALLUX itself so the catalog
+    # this publishes is the catalog HALLUX's own tests check.
+    try:
+        note = hallux.build_surface(OUT_DIR)
+        if note:
+            print("Built docs/.well-known/ai-catalog.json and docs/openapi.json")
+    except RuntimeError as e:
+        print("WARNING: %s" % e)
+
+    # The specification, at the URL the page, llms.txt and the catalog all
+    # point at. Those links exist, so the page has to.
+    spec = hallux.build_spec_page(OUT_DIR)
+    if spec:
+        print("Built docs/docs/hallux-spec/index.html (%.1f KB)  specification"
+              % (os.path.getsize(spec) / 1024.0))
+
+    # The catalog names a licence URL and a limits URL. Both have to resolve,
+    # so both are generated: the licence from the LICENSE file, the limits
+    # from the constants the server actually enforces.
+    for builder, label in ((hallux.build_licence_page, "legal/bsl-1.1"),
+                           (hallux.build_limits_page, "docs/limits")):
+        built = builder(OUT_DIR)
+        if built:
+            print("Built docs/%s/index.html (%.1f KB)"
+                  % (label, os.path.getsize(built) / 1024.0))
+
+    # The human page and the agent catalog must quote the same prices, which
+    # is the one failure the deploy notes single out. Asserted positively
+    # against the pages we control rather than scanned for negatively across
+    # the whole site, because BlvkWare sells two things and their prices
+    # overlap; see the note in dev/hallux_bridge.py.
+    problems, notes = hallux.check_published_prices(rendered, OUT_DIR)
+    for note in notes:
+        print("note: %s" % note)
+    if problems:
+        for problem in problems:
+            print("ABORTED: %s" % problem)
+        return 1
 
     write_seo_files()
 

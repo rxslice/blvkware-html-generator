@@ -1,0 +1,58 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "name": "BlvkWare",
+    "domain": "blvkware.dev",
+    "description": "Verification infrastructure for the agentic web. BlvkWare publishes what agents cannot know about themselves: hallucinated identifiers, stale priors, poisoned inputs, and unverified tools.",
+    "url": "https://blvkware.dev",
+    "contact": "agents@blvkware.dev"
+  },
+  "trust": {
+    "verificationMethod": "domain",
+    "publicKeys": [],
+    "attestations": []
+  },
+  "entries": [],
+  "collections": [],
+  "roadmap": [
+    {
+      "id": "hallux",
+      "name": "HALLUX",
+      "summary": "Does this identifier actually exist? Built and tested, but no endpoint is serving it yet, so it is not listed as a capability.",
+      "status": "built-not-deployed",
+      "detail": "https://aimoneybags-hallux.hf.space/hallux/v1/health returned HTTP 404"
+    },
+    {
+      "id": "ward",
+      "name": "WARD",
+      "summary": "Pre-ingestion risk scoring for untrusted content. Call between fetch and context insertion.",
+      "status": "not-built"
+    },
+    {
+      "id": "drift",
+      "name": "DRIFT",
+      "summary": "Is what you believe about X still true, and when did it change.",
+      "status": "not-built"
+    },
+    {
+      "id": "veritas",
+      "name": "VERITAS",
+      "summary": "Independent probing of MCP servers and agent tools.",
+      "status": "not-built"
+    },
+    {
+      "id": "blvkware-mcp",
+      "name": "BlvkWare Verification MCP Server",
+      "summary": "MCP server exposing the verification tools to agent hosts.",
+      "status": "not-built"
+    }
+  ],
+  "policy": {
+    "licensing": "https://blvkware.dev/robots.txt",
+    "terms": "https://blvkware.dev/terms/",
+    "rateLimits": "https://blvkware.dev/docs/limits",
+    "attribution": "Cite as: BlvkWare (blvkware.dev), verification layer for the agentic web.",
+    "catalogRule": "Every entry under `entries` resolves. Capabilities under `roadmap` are not built and must not be called."
+  },
+  "updated": "2026-09-21T00:00:00Z"
+}

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HALLUX rate limits | BlvkWare</title>
+<meta name="description" content="The rate limits HALLUX enforces, generated from the constants the server runs on.">
+<link rel="canonical" href="https://blvkware.dev/docs/limits">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="HALLUX rate limits | BlvkWare">
+<meta property="og:description" content="The rate limits HALLUX enforces, generated from the constants the server runs on.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blvkware.dev/docs/limits">
+<meta property="og:image" content="https://blvkware.dev/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+<meta name="theme-color" content="#0A0908">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Fira+Code:wght@500&display=swap');
+:root { --bg:#0A0908; --surface:#17140F; --accent:#D4F24A; --brass:#D9B65C;
+  --ink:#F5F0E6; --ink-2:#A89D8B; --line:rgba(245,240,230,0.1);
+  --font:'Manrope',system-ui,-apple-system,sans-serif; --mono:'Fira Code',ui-monospace,monospace; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--ink); font-family:var(--font); line-height:1.7; -webkit-font-smoothing:antialiased; }
+.wrap { max-width:860px; margin:0 auto; padding:3rem 1.5rem 6rem; }
+.top { display:flex; align-items:center; gap:0.8rem; margin-bottom:2.5rem; text-decoration:none; color:inherit; }
+.mark { width:52px; height:52px; border-radius:14px; background:#060504; overflow:hidden; flex:none; }
+.mark img { width:100%; height:100%; display:block; }
+.wordmark { font-size:1.3rem; font-weight:800; letter-spacing:-0.01em; }
+.wordmark span { color:var(--accent); }
+.back { font-family:var(--mono); font-size:0.78rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--brass); display:inline-block; margin-bottom:2rem; text-decoration:none; }
+.back:hover { text-decoration:underline; }
+h1 { font-size:clamp(1.9rem,5vw,2.6rem); font-weight:800; letter-spacing:-0.02em; margin-bottom:0.8rem; line-height:1.2; }
+h2 { font-size:1.35rem; font-weight:700; margin:3rem 0 1rem; letter-spacing:-0.01em; padding-top:1.5rem; border-top:1px solid var(--line); }
+h3 { font-size:1.05rem; font-weight:700; margin:2rem 0 0.6rem; color:var(--brass); }
+p { color:var(--ink-2); margin-bottom:1.1rem; }
+ul, ol { margin:0 0 1.1rem 1.2rem; color:var(--ink-2); }
+li { margin-bottom:0.5rem; }
+strong { color:var(--ink); font-weight:700; }
+a { color:var(--accent); text-decoration:none; }
+a:hover { text-decoration:underline; }
+code { font-family:var(--mono); font-size:0.87em; background:var(--surface); padding:0.15rem 0.4rem; border-radius:4px; color:var(--brass); }
+pre { font-family:var(--mono); font-size:0.8rem; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:1.25rem; overflow-x:auto; margin:1.5rem 0; line-height:1.6; color:var(--ink-2); }
+pre code { background:none; padding:0; color:inherit; font-size:inherit; }
+hr { border:0; border-top:1px solid var(--line); margin:2.5rem 0; }
+.tw { overflow-x:auto; margin:1.5rem 0; -webkit-overflow-scrolling:touch; }
+table { border-collapse:collapse; width:100%; font-size:0.9rem; min-width:480px; }
+th, td { text-align:left; padding:0.65rem 0.85rem; border-bottom:1px solid var(--line); vertical-align:top; }
+th { font-family:var(--mono); font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--brass); font-weight:500; }
+td { color:var(--ink-2); }
+.foot { margin-top:4rem; padding-top:2rem; border-top:1px solid var(--line); font-size:0.9rem; color:var(--ink-2); }
+.foot-links { display:flex; flex-wrap:wrap; gap:0.5rem 1.25rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="top" href="/">
+  <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
+  <span class="wordmark">BlvkWare<span>.</span></span>
+</a>
+<a class="back" href="/hallux/">&larr; HALLUX</a>
+<h1>Rate limits</h1>
+<p>These are the limits the service enforces. They are generated from the same constants the server runs on, so this page cannot describe a limit that is not the real one.</p><div class="tw"><table><thead><tr><th>Limit</th><th>Value</th></tr></thead><tbody><tr><td>Identifiers per day, open tier</td><td><code>500</code></td></tr><tr><td>Identifiers per batch request</td><td><code>100</code></td></tr><tr><td>Identifiers per month before the metered cap</td><td><code>373,750</code></td></tr><tr><td>Watched identifiers per request</td><td><code>100</code></td></tr><tr><td>Authentication on the open tier</td><td><code>none</code></td></tr></tbody></table></div><h2>How limits are reported</h2><p>Every response carries <code>RateLimit-Limit</code>, <code>RateLimit-Remaining</code> and <code>RateLimit-Reset</code>. When the open allowance is spent the response is <code>402 Payment Required</code>, and its body names the price, the settlement rails and the flat tier that would remove the meter.</p><h2>Batching</h2><p>A batch is charged and served whole. Partially serving a batch and charging for the part served would make an agent's behaviour depend on where in its dependency list it ran out, which is a worse failure than a clean refusal.</p><h2>Abuse</h2><p>The open tier is generous on purpose and is expected to be abused. It is rate limited by client at the edge and some loss is accepted; the free tier is the advertisement. Clients are identified by a salted hash of their address, never by the address itself.</p><p>Prices and tiers are at <a href="/hallux/">/hallux/</a>, and in machine-readable form in the <a href="/.well-known/ai-catalog.json">agent catalog</a>.</p>
+<div class="foot">
+  <div class="foot-links">
+    <a href="/">BlvkWare</a>
+    <a href="/hallux/">HALLUX</a>
+    <a href="/.well-known/ai-catalog.json">Agent catalog</a>
+    <a href="/privacy/">Privacy</a>
+    <a href="/terms/">Terms</a>
+  </div>
+</div>
+</div>
+</body>
+</html>

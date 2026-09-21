@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HALLUX: the hallucination ledger | BlvkWare</title>
+    <meta name="description" content="Does this package actually exist? HALLUX checks a name against its registry before an agent installs it, and records the names models invent. Free tier, no account, one curl command.">
+    <link rel="canonical" href="https://blvkware.dev/hallux/">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="HALLUX: the hallucination ledger | BlvkWare">
+    <meta property="og:description" content="A registry of identifiers that do not exist but that models confidently believe do. Check a package name before you install it.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://blvkware.dev/hallux/">
+    <meta property="og:image" content="https://blvkware.dev/assets/og.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+    <link rel="apple-touch-icon" href="/assets/logo-192.png">
+    <meta name="theme-color" content="#0A0908">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Fira+Code:wght@500&display=swap');
+        :root {
+            --bg: #0A0908; --surface: #17140F; --accent: #D4F24A; --brass: #D9B65C;
+            --ink: #F5F0E6; --ink-2: #A89D8B; --line: rgba(245,240,230,0.1);
+            --stop: #E8654F;
+            --font: 'Manrope', system-ui, -apple-system, sans-serif;
+            --mono: 'Fira Code', ui-monospace, monospace;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+        .wrap { max-width: 820px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+        .top { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 3.5rem; text-decoration: none; color: inherit; }
+        .mark { width: 52px; height: 52px; border-radius: 14px; background: #060504; overflow: hidden; flex: none; }
+        .mark img { width: 100%; height: 100%; display: block; }
+        .wordmark { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; }
+        .wordmark span { color: var(--accent); }
+        .eyebrow { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--brass); margin-bottom: 0.9rem; }
+        h1 { font-size: clamp(2rem, 5vw, 2.9rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.8rem; line-height: 1.15; }
+        .lede { font-size: 1.15rem; color: var(--ink-2); margin-bottom: 2.5rem; padding-bottom: 2.5rem; border-bottom: 1px solid var(--line); }
+        h2 { font-size: 1.4rem; font-weight: 700; margin: 3rem 0 1rem; letter-spacing: -0.01em; }
+        h3 { font-size: 1.05rem; font-weight: 700; margin: 1.75rem 0 0.6rem; color: var(--brass); }
+        p { color: var(--ink-2); margin-bottom: 1.1rem; }
+        ul { margin: 0 0 1.1rem 1.2rem; color: var(--ink-2); }
+        li { margin-bottom: 0.6rem; }
+        strong { color: var(--ink); font-weight: 700; }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        code { font-family: var(--mono); font-size: 0.87em; background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; color: var(--brass); }
+        pre { font-family: var(--mono); font-size: 0.82rem; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.25rem; overflow-x: auto; margin: 1.5rem 0; line-height: 1.6; color: var(--ink-2); }
+        pre code { background: none; padding: 0; color: inherit; }
+        pre .c { color: var(--accent); }
+        pre .s { color: var(--stop); }
+        .box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem; margin: 1.75rem 0; }
+        .box p:last-child { margin-bottom: 0; }
+        .rule { border-left: 3px solid var(--accent); padding-left: 1.15rem; margin: 2rem 0; }
+        .rule strong { display: block; font-size: 1.05rem; margin-bottom: 0.35rem; }
+        .notice { background: rgba(232,101,79,0.08); border: 1px solid rgba(232,101,79,0.35); border-radius: 12px; padding: 1.15rem 1.35rem; margin: 0 0 2.5rem; color: var(--ink-2); font-size: 0.95rem; }
+        .notice strong { color: var(--stop); }
+        /* Wide tables cannot shrink below their content, so they get their own
+           scroll container rather than widening the page on a phone. */
+        .tw { overflow-x: auto; margin: 1.5rem 0; -webkit-overflow-scrolling: touch; }
+        table { border-collapse: collapse; width: 100%; font-size: 0.92rem; min-width: 480px; }
+        th, td { text-align: left; padding: 0.7rem 0.9rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+        th { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--brass); font-weight: 500; }
+        td { color: var(--ink-2); }
+        td strong, td code { white-space: nowrap; }
+        .v-stop { color: var(--stop); font-weight: 700; }
+        .v-go { color: var(--accent); font-weight: 700; }
+        .foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--ink-2); }
+        .foot-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+        .foot a { margin-right: 0; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <a class="top" href="/">
+        <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
+        <span class="wordmark">BlvkWare<span>.</span></span>
+    </a>
+
+    <div class="eyebrow">Verification infrastructure</div>
+    <h1>HALLUX</h1>
+
+    <p class="lede">A registry of identifiers that do not exist, but that models confidently believe do. Check a package name against its registry before anything installs it, and find out whether the name is one that language models invent.</p>
+
+    <div class="notice"><strong>The public endpoint is not open yet.</strong> The service is built and tested, and everything below describes what it does. Until an endpoint is answering it is listed under <code>roadmap</code> in the agent catalog rather than as a capability, so an agent reading that catalog will not try to call it.</div>
+
+    <p>An agent writes <code>pip install requests-oauth2-helper</code>. The name is plausible, the agent is confident, and the package has never existed. Either the install fails and the agent burns a retry loop, or somebody has already registered that name because they watched a model emit it a thousand times.</p>
+
+    <p>The second case is called slopsquatting. It is the only supply-chain attack where the attacker's target list is generated for them, for free, by the victims' own tooling.</p>
+
+    <h2>What it answers</h2>
+
+    <p>Once deployed, checking a name is one command. Today this is what it will answer, not what it does answer:</p>
+
+<pre><code><span class="c">curl</span> https://api.blvkware.dev/hallux/v1/check/pkg.pypi/requests-oauth2-helper</code></pre>
+
+<pre><code>{
+  "namespace": "pkg.pypi",
+  "value": "requests-oauth2-helper",
+  "verdict": <span class="s">"phantom"</span>,
+  "confidence": 0.97,
+  "evidence": {
+    "registryStatus": "not_found",
+    "attestations": 412,
+    "observedFrom": ["gpt-class", "claude-class", "llama-class"],
+    "nearestExisting": ["requests-oauthlib"]
+  },
+  "recommendation": "do_not_install",
+  "successor": <span class="c">"requests-oauthlib"</span>
+}</code></pre>
+
+    <h2>Six verdicts</h2>
+
+    <div class="tw">
+    <table>
+        <thead><tr><th>Verdict</th><th>Meaning</th><th>What to do</th></tr></thead>
+        <tbody>
+            <tr><td><strong class="v-go">exists</strong></td><td>Present in the authoritative registry now.</td><td>Proceed.</td></tr>
+            <tr><td><strong>deprecated</strong></td><td>Exists, but retired, yanked or superseded.</td><td>Proceed with the replacement given.</td></tr>
+            <tr><td><strong class="v-stop">absent</strong></td><td>Not present, and no record of a model inventing it.</td><td>Stop. Probably a typo or a private name.</td></tr>
+            <tr><td><strong class="v-stop">phantom</strong></td><td>Not present, and models emit it repeatedly.</td><td>Stop. A hallucination with a track record.</td></tr>
+            <tr><td><strong class="v-stop">squat</strong></td><td>Was a phantom, and somebody has since registered it.</td><td>Block. Treat as hostile until proven otherwise.</td></tr>
+            <tr><td><strong>unknown</strong></td><td>Registry unreachable, or outside coverage.</td><td>Your policy decides. Never read it as permission.</td></tr>
+        </tbody>
+    </table>
+    </div>
+
+    <div class="rule">
+        <strong>HALLUX never returns "exists" on uncertainty.</strong>
+        When a registry cannot be reached the answer is <code>unknown</code>, with a reason code. That is enforced in the code rather than promised in a document: a registry saying no and a registry not answering are different values of different types, so one cannot be mistaken for the other.
+    </div>
+
+    <h2>Squat is the one nobody else sells</h2>
+
+    <p>Every registry publishes what it contains. None publishes what it does not, because absence is unbounded. The useful part of absence, the names models actually reach for, can only be accumulated over time by sampling production models and confirming against the registry that the name is not there.</p>
+
+    <p>That record is what makes the fourth verdict possible. A name that models invent, that a stranger then registers, is a supply-chain attack visible before the first install. Every other tool looking at that package sees a real package in a real registry and says install it.</p>
+
+    <div class="box">
+        <p><strong>How a name becomes a phantom.</strong> One attestation is one model, on one prompt class, on one day. A name becomes a phantom at ten attestations from at least two model families, and only after its absence has been independently confirmed twice, at least 24 hours apart, against the authoritative registry. Phantoms with no attestation in 180 days are archived rather than deleted, and still answer.</p>
+    </div>
+
+    <p>The method is published in full, because credibility is the product here. The <a href="/docs/hallux-spec">specification</a> carries the verdict semantics, the namespaces, the receipt format and the corpus methodology.</p>
+
+    <h2>Coverage</h2>
+
+    <p>7 namespaces answer today: <code>cite.doi, pkg.crates, pkg.go, pkg.maven, pkg.npm, pkg.nuget, pkg.pypi</code>.</p>
+
+    <p>Namespaces named in the specification but not yet live return <code>unknown</code> with a reason, never an error. An agent's control flow does not break when HALLUX grows a namespace, and does not break when it meets one that has not been built.</p>
+
+    <h2>Call it from an agent</h2>
+
+    <p>The batch endpoint takes up to 100 identifiers in one round trip, which is the shape a CI pipeline or an agent framework wants. Responses on a paid tier carry an Ed25519 receipt over the result, so an operator can prove after an incident that the check happened and what it said.</p>
+
+    <p>There is also an MCP server exposing the same capability as tools, so a coding agent can check a command before running it without anyone wiring an integration.</p>
+
+    <h2>Pricing</h2>
+
+    <div class="rule">
+        <strong>HALLUX is never paid more because it blocked you.</strong>
+        HALLUX is never paid more because it blocked you. Billing is a function of identifiers submitted, not of the verdicts returned. A verification vendor paid per finding has a commercial reason to find more.
+    </div>
+
+    <p>That is not a promise, it is a property. The function that prices a request takes a count of identifiers and has no parameter through which a verdict could reach it, and the test suite resolves the same batch under four different registry states and asserts a single charge.</p>
+
+    <div class="tw">
+    <table>
+        <thead><tr><th>Tier</th><th>Who it is for</th><th>Price</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Open</strong></td><td>Any agent or developer, with no account</td><td>Free, 500 identifiers a day</td></tr>
+            <tr><td><strong>Metered</strong></td><td>An individual agent or a small team</td><td>$0.0008 per identifier</td></tr>
+            <tr><td><strong>Team</strong></td><td>A company putting it in CI</td><td>$299/month or $2,990/year</td></tr>
+            <tr><td><strong>Feed</strong></td><td>Registries, IDE vendors, CI platforms, security vendors</td><td>$1,500/month or $15,000/year</td></tr>
+            <tr><td><strong>Embedded</strong></td><td>A platform shipping it inside its own product</td><td>from $2,500/month</td></tr>
+        </tbody>
+    </table>
+    </div>
+
+    <p>Metered spend stops at the Team price. Above 373,750 identifiers in a calendar month the account moves to Team and is no longer metered. A build pipeline asks about the same few thousand established packages all day, those answers cost nothing to serve, and an invoice made of them would read as a tax on doing the right thing.</p>
+
+    <p>Watches are $0.02 per watched identifier per month, 100 included on Team and unlimited on Feed. They are priced on what you chose to watch, never on whether one fired. An annual commitment is twelve months charged as ten, the same as every other BlvkWare product.</p>
+
+    <p>Machine-readable prices, identical to the numbers above and generated from the same source, are at <a href="https://api.blvkware.dev/hallux/v1/pricing">/hallux/v1/pricing</a> and in the <a href="/.well-known/ai-catalog.json">agent catalog</a>.</p>
+
+    <h2>Where it came from</h2>
+
+    <p>HALLUX folds in <a href="https://github.com/rxslice/pkgguard-API">pkgguard</a>, an open-source package security gate, and takes its supply of observations from <a href="https://github.com/rxslice/slopbench">slopbench</a>, which measures how often a model names a dependency that no package answers to. Both are Apache 2.0 and free to use on their own.</p>
+
+    <div class="foot">
+        <div class="foot-links">
+            <a href="/">BlvkWare</a>
+            <a href="/docs/hallux-spec">Specification</a>
+            <a href="/.well-known/ai-catalog.json">Agent catalog</a>
+            <a href="/agents/">AI agents</a>
+            <a href="/privacy/">Privacy</a>
+            <a href="/terms/">Terms</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

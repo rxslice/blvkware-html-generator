@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HALLUX specification | BlvkWare</title>
+<meta name="description" content="The HALLUX specification: verdict semantics, namespaces, the API, receipt format and the corpus methodology behind the phantom ledger.">
+<link rel="canonical" href="https://blvkware.dev/docs/hallux-spec">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="HALLUX specification | BlvkWare">
+<meta property="og:description" content="Verdict semantics, namespaces, receipt format and corpus methodology.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blvkware.dev/docs/hallux-spec">
+<meta property="og:image" content="https://blvkware.dev/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+<meta name="theme-color" content="#0A0908">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Fira+Code:wght@500&display=swap');
+:root { --bg:#0A0908; --surface:#17140F; --accent:#D4F24A; --brass:#D9B65C;
+  --ink:#F5F0E6; --ink-2:#A89D8B; --line:rgba(245,240,230,0.1);
+  --font:'Manrope',system-ui,-apple-system,sans-serif; --mono:'Fira Code',ui-monospace,monospace; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--ink); font-family:var(--font); line-height:1.7; -webkit-font-smoothing:antialiased; }
+.wrap { max-width:860px; margin:0 auto; padding:3rem 1.5rem 6rem; }
+.top { display:flex; align-items:center; gap:0.8rem; margin-bottom:2.5rem; text-decoration:none; color:inherit; }
+.mark { width:52px; height:52px; border-radius:14px; background:#060504; overflow:hidden; flex:none; }
+.mark img { width:100%; height:100%; display:block; }
+.wordmark { font-size:1.3rem; font-weight:800; letter-spacing:-0.01em; }
+.wordmark span { color:var(--accent); }
+.back { font-family:var(--mono); font-size:0.78rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--brass); display:inline-block; margin-bottom:2rem; text-decoration:none; }
+.back:hover { text-decoration:underline; }
+h1 { font-size:clamp(1.9rem,5vw,2.6rem); font-weight:800; letter-spacing:-0.02em; margin-bottom:0.8rem; line-height:1.2; }
+h2 { font-size:1.35rem; font-weight:700; margin:3rem 0 1rem; letter-spacing:-0.01em; padding-top:1.5rem; border-top:1px solid var(--line); }
+h3 { font-size:1.05rem; font-weight:700; margin:2rem 0 0.6rem; color:var(--brass); }
+p { color:var(--ink-2); margin-bottom:1.1rem; }
+ul, ol { margin:0 0 1.1rem 1.2rem; color:var(--ink-2); }
+li { margin-bottom:0.5rem; }
+strong { color:var(--ink); font-weight:700; }
+a { color:var(--accent); text-decoration:none; }
+a:hover { text-decoration:underline; }
+code { font-family:var(--mono); font-size:0.87em; background:var(--surface); padding:0.15rem 0.4rem; border-radius:4px; color:var(--brass); }
+pre { font-family:var(--mono); font-size:0.8rem; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:1.25rem; overflow-x:auto; margin:1.5rem 0; line-height:1.6; color:var(--ink-2); }
+pre code { background:none; padding:0; color:inherit; font-size:inherit; }
+hr { border:0; border-top:1px solid var(--line); margin:2.5rem 0; }
+.tw { overflow-x:auto; margin:1.5rem 0; -webkit-overflow-scrolling:touch; }
+table { border-collapse:collapse; width:100%; font-size:0.9rem; min-width:480px; }
+th, td { text-align:left; padding:0.65rem 0.85rem; border-bottom:1px solid var(--line); vertical-align:top; }
+th { font-family:var(--mono); font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--brass); font-weight:500; }
+td { color:var(--ink-2); }
+.foot { margin-top:4rem; padding-top:2rem; border-top:1px solid var(--line); font-size:0.9rem; color:var(--ink-2); }
+.foot-links { display:flex; flex-wrap:wrap; gap:0.5rem 1.25rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="top" href="/">
+  <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
+  <span class="wordmark">BlvkWare<span>.</span></span>
+</a>
+<a class="back" href="/hallux/">&larr; HALLUX</a>
+<h1>HALLUX</h1>
+<p><strong>The hallucination ledger. A registry of identifiers that do not exist but that models confidently believe do.</strong></p>
+<p>Version 0.9 draft · BlvkWare · blvkware.dev</p>
+<hr>
+<h2>1. The problem</h2>
+<p>An agent writes <code>pip install requests-oauth2-helper</code>. The name is plausible, the agent is confident, and the package has never existed. One of three things happens next: the install fails and the agent burns a retry loop, the agent fabricates a workaround around a nonexistent API, or somebody has already registered that name because they watched a model emit it a thousand times.</p>
+<p>The third case is slopsquatting, and it is the only supply-chain attack in history where the attacker's target list is generated for them, for free, by the victims' own tooling.</p>
+<p>The same failure mode runs well past package names. Agents cite API endpoints that were never shipped, CLI flags that never existed, methods that were removed two majors ago, and legal citations with correct formatting and no underlying case.</p>
+<p>The common structure: <strong>the agent is acting on recall, and there is no verification step between recall and action.</strong></p>
+<p>HALLUX is that step.</p>
+<h2>2. What HALLUX is, and what makes it hard to copy</h2>
+<p>HALLUX is a <strong>negative dataset</strong>. It records what does not exist.</p>
+<p>Every registry on earth publishes what it contains. None publishes what it doesn't, because absence is unbounded. The useful subset of absence, the names models actually emit, can only be produced by adversarially sampling production models over time and confirming non-existence against an authoritative source. That corpus cannot be scraped. It can only be accumulated, and it compounds: every new model release adds its own hallucination fingerprint, and every day of history makes the phantom-to-squat transition data more valuable.</p>
+<p>This is the defensible asset. The API is the delivery mechanism.</p>
+<h2>3. Verdicts</h2>
+<p>Every identifier resolves to exactly one verdict.</p>
+<div class="tw"><table><thead><tr><th>Verdict</th><th>Meaning</th><th>Agent action</th></tr></thead><tbody><tr><td><code>exists</code></td><td>Present in the authoritative registry now.</td><td>Proceed.</td></tr><tr><td><code>deprecated</code></td><td>Exists but is retired, yanked, or superseded.</td><td>Proceed with the replacement in <code>successor</code>.</td></tr><tr><td><code>absent</code></td><td>Not present. No record of model emission.</td><td>Do not proceed. Likely a typo or a private name.</td></tr><tr><td><code>phantom</code></td><td>Not present, <strong>and</strong> emitted by production models at or above the attestation threshold.</td><td>Do not proceed. This is a hallucination with a track record.</td></tr><tr><td><code>squat</code></td><td>Was <code>phantom</code>, and has since been registered.</td><td><strong>Do not install. Treat as hostile until proven otherwise.</strong></td></tr><tr><td><code>unknown</code></td><td>Namespace supported but registry unreachable, or identifier outside coverage.</td><td>Fail open or closed per your own policy. Do not treat as <code>exists</code>.</td></tr></tbody></table></div>
+<p><code>squat</code> is the signal nobody else sells. A name that models invent, that a stranger then registers, is a supply-chain attack caught before the first install. The transition timestamp is in the response.</p>
+<h2>4. Namespaces</h2>
+<div class="tw"><table><thead><tr><th>Namespace</th><th>Covers</th><th>Authority</th></tr></thead><tbody><tr><td><code>pkg.npm</code></td><td>npm package names</td><td>registry.npmjs.org</td></tr><tr><td><code>pkg.pypi</code></td><td>PyPI distributions</td><td>pypi.org</td></tr><tr><td><code>pkg.crates</code></td><td>crates.io crates</td><td>crates.io</td></tr><tr><td><code>pkg.go</code></td><td>Go module paths</td><td>proxy.golang.org</td></tr><tr><td><code>pkg.maven</code></td><td>Maven coordinates</td><td>search.maven.org</td></tr><tr><td><code>pkg.nuget</code></td><td>NuGet packages</td><td>api.nuget.org</td></tr><tr><td><code>api.endpoint</code></td><td>HTTP routes on known vendor APIs</td><td>vendor OpenAPI documents</td></tr><tr><td><code>cli.flag</code></td><td>Command-line flags on common tools</td><td>shipped man pages, <code>--help</code> output</td></tr><tr><td><code>code.symbol</code></td><td>Functions, classes, methods in indexed libraries</td><td>parsed source at version</td></tr><tr><td><code>cite.doi</code></td><td>DOIs</td><td>doi.org</td></tr><tr><td><code>cite.legal</code></td><td>US case and statute citations</td><td>CourtListener, govinfo</td></tr><tr><td><code>model.id</code></td><td>Model identifiers and API model strings</td><td>vendor documentation</td></tr></tbody></table></div>
+<p>Namespaces are additive. Unsupported namespaces return <code>unknown</code> with <code>reason: "namespace_unsupported"</code> rather than an error, so an agent's control flow never breaks on a HALLUX upgrade.</p>
+<h2>5. API</h2>
+<h3><code>POST /v1/check</code></h3>
+<p>Batch up to 100 identifiers per request.</p>
+<pre><code>{
+  "identifiers": [
+    { "namespace": "pkg.pypi", "value": "requests-oauth2-helper" },
+    { "namespace": "pkg.npm",  "value": "react-dom" },
+    { "namespace": "pkg.npm",  "value": "openai-node-sdk" }
+  ],
+  "receipt": true
+}</code></pre>
+<p>Response:</p>
+<pre><code>{
+  "checkedAt": "2026-09-20T14:22:08Z",
+  "results": [
+    {
+      "namespace": "pkg.pypi",
+      "value": "requests-oauth2-helper",
+      "verdict": "phantom",
+      "confidence": 0.97,
+      "evidence": {
+        "registryCheckedAt": "2026-09-20T14:22:08Z",
+        "registryStatus": "not_found",
+        "attestations": 412,
+        "firstObserved": "2025-11-04",
+        "lastObserved": "2026-09-19",
+        "observedFrom": ["gpt-class", "claude-class", "llama-class"],
+        "nearestExisting": ["requests-oauthlib"]
+      },
+      "recommendation": "do_not_install",
+      "successor": "requests-oauthlib"
+    },
+    {
+      "namespace": "pkg.npm",
+      "value": "react-dom",
+      "verdict": "exists",
+      "confidence": 1.0,
+      "evidence": {
+        "registryCheckedAt": "2026-09-20T14:22:08Z",
+        "registryStatus": "found"
+      }
+    },
+    {
+      "namespace": "pkg.npm",
+      "value": "openai-node-sdk",
+      "verdict": "squat",
+      "confidence": 0.99,
+      "evidence": {
+        "registryCheckedAt": "2026-09-20T14:22:08Z",
+        "registryStatus": "found",
+        "phantomSince": "2026-01-18",
+        "registeredAt": "2026-06-02",
+        "attestationsBeforeRegistration": 1188,
+        "publisherAccountAge": "P14D",
+        "publisherPriorPackages": 0
+      },
+      "recommendation": "block",
+      "successor": "openai"
+    }
+  ],
+  "receipt": {
+    "alg": "Ed25519",
+    "keyId": "blvkware-attestation-2026",
+    "signature": "..."
+  }
+}</code></pre>
+<h3><code>GET /v1/check/{namespace}/{value}</code></h3>
+<p>Single lookup. Free tier, no auth, no receipt. This exists so the cost of trying HALLUX is one curl command.</p>
+<pre><code>curl https://api.blvkware.dev/hallux/v1/check/pkg.pypi/requests-oauth2-helper</code></pre>
+<h3><code>POST /v1/watch</code></h3>
+<p>Register identifiers for notification on verdict transition. The transition that matters is <code>phantom</code> → <code>squat</code>. Delivered by webhook.</p>
+<h3><code>GET /v1/corpus</code></h3>
+<p>Streaming JSONL of the phantom ledger. Rolling 30-day window free with attribution. Full history and live feed under commercial license.</p>
+<h3>MCP</h3>
+<p>The same capability is exposed as <code>hallux_check</code> and <code>hallux_watch</code> on the BlvkWare MCP server at <code>https://mcp.blvkware.dev/sse</code>. Tool descriptions are written so a host model calls them unprompted before install and import operations.</p>
+<h2>6. Corpus methodology</h2>
+<p>Credibility here is the product, so the method is public.</p>
+<ol><li><strong>Elicitation.</strong> A panel of production models is prompted daily with realistic development, research, and citation tasks designed to induce identifier emission. Prompts are drawn from a rotating bank derived from real task shapes, not from adversarial jailbreaks.</li><li><strong>Extraction.</strong> Identifiers are parsed from output by namespace-specific grammars.</li><li><strong>Confirmation of absence.</strong> Each candidate is checked against the authoritative registry. Absence must be confirmed on two separate checks at least 24 hours apart before a candidate is eligible.</li><li><strong>Attestation.</strong> Each confirmed absence records the model family, the date, and the prompt class. <strong>One attestation is one model, one prompt class, one day.</strong> The same model emitting the same name twenty times against the same prompt in one run is one attestation, not twenty. An identifier becomes <code>phantom</code> at <strong>10 attestations from at least 2 distinct model families</strong>.</li></ol>
+<p>The unit matters as much as the threshold. Counted per emission rather than per model-day, a sampler that runs one prompt twenty times promotes a name on its own, and "10 attestations" stops meaning what a reader assumes it means. Counted this way, ten attestations is a name that recurred across the panel and across days. The rule is enforced by a uniqueness constraint in the ledger, not by the discipline of whatever writes to it, so an ingest path cannot bypass it.</p>
+<ol><li><strong>Transition monitoring.</strong> Every phantom is re-checked against its registry daily, forever. Registration flips the verdict to <code>squat</code> and fires every registered watch.</li><li><strong>Decay.</strong> Phantoms with no attestation in 180 days are archived, not deleted. Archived entries still answer, with a staleness flag.</li></ol>
+<p>No model output is stored beyond the extracted identifier and its metadata. No prompts containing user data are used.</p>
+<h2>7. Receipts</h2>
+<p>Paid responses carry an Ed25519 signature over the canonical JSON of <code>checkedAt</code> and <code>results</code>. The public key lives at <code>https://blvkware.dev/.well-known/blvkware-attestation.pub</code>.</p>
+<p>A receipt lets an operator prove, after an incident, that the agent checked and what it was told. That turns HALLUX from a convenience into an audit artifact, which is the form enterprises and insurers will eventually require.</p>
+<h2>8. Pricing</h2>
+<h3>The constraint</h3>
+<p><strong>HALLUX is never paid more because it blocked you.</strong></p>
+<p>The obvious model here is to charge per stop verdict: you pay when we save you. It aligns with value, it tracks cost almost exactly, and it makes a beautiful invoice line.</p>
+<p>It is also disqualifying. A verification vendor paid per positive finding has the same structural flaw as a scanner paid per vulnerability: every marginal block is revenue, so the corpus has a commercial reason to grow, and no customer can ever fully rule out that the reason they were stopped was the invoice. This product is an argument about trustworthy verification. Being paid per block loses that argument before it starts.</p>
+<p>So billing is a function of <strong>questions asked</strong>, never of <strong>answers given</strong>. This is enforced in code rather than promised: the quoting function accepts a count of identifiers and has no parameter through which a verdict could reach it, and a test asserts that the charge for a batch is identical whatever the batch resolves to.</p>
+<p>The same rule governs watches. They are priced on what a customer chose to watch, never on whether it fired.</p>
+<h3>The ladder</h3>
+<div class="tw"><table><thead><tr><th>Tier</th><th>Who buys it</th><th>What it is</th><th>Price</th></tr></thead><tbody><tr><td><strong>Open</strong></td><td>Any agent or developer, no account</td><td>Single-lookup GET, 500 identifiers/day, every verdict, no receipt</td><td>Free</td></tr><tr><td><strong>Metered</strong></td><td>An individual agent or small team</td><td>Batch, receipts, watches. Capped, see below</td><td>$0.0008 per identifier</td></tr><tr><td><strong>Team</strong></td><td>A company putting HALLUX in CI</td><td>Unmetered, 100 watches, private-namespace exclusions</td><td>$299/month, $2,990/year</td></tr><tr><td><strong>Feed</strong></td><td>Registries, IDE vendors, CI platforms, security vendors, insurers</td><td>Full ledger, complete history, per-model attribution, live transition stream, unlimited watches, licence to surface findings in your product</td><td>$1,500/month, $15,000/year</td></tr><tr><td><strong>Embedded</strong></td><td>A platform shipping HALLUX inside its product</td><td>Self-hosted or white-labelled, BSL 1.1 commercial grant</td><td>From $2,500/month</td></tr></tbody></table></div>
+<p>Watches on Metered are $0.02 per watched identifier per month.</p>
+<p>An annual commitment is twelve months charged as ten, matching every other BlvkWare product.</p>
+<h3>Why these numbers</h3>
+<p><strong>Open is the advertisement.</strong> 500/day unauthenticated is generous on purpose and will be abused. Rate limit by client at the edge and accept the loss; the cost of trying HALLUX has to stay one curl command.</p>
+<p><strong>Metered is priced so that verification is never the reason not to verify.</strong> Resolving a forty-package dependency list costs about three cents, less than the model call that produced the list.</p>
+<p><strong>Metered is capped at the Team price.</strong> A pure per-identifier meter punishes the best channel: a CI pipeline asks about <code>react</code> and <code>lodash</code> a thousand times a day, those are cache hits that cost nothing to serve, and an invoice dominated by them reads as a tax on doing the right thing. Above 373,750 identifiers in a calendar month the account moves to Team and stops being metered. Volume becomes a subscription rather than a surprise. The cap is derived from the Team price in code, not typed, so the two cannot drift.</p>
+<p><strong>Team exists because metered billing is close to unbuyable in a company.</strong> It has no predictable number, so it has no purchase order, so it needs an exception. The draft ladder went straight from free to metered-forever and left the adopter we most want with nothing to buy. $299 sits under the line where an engineering manager needs approval, and adoption in CI is worth more than the margin above it. It is deliberately not $349, which is what Agent Operations costs: two unrelated BlvkWare products at the same monthly price reads as a copy-paste error.</p>
+<p><strong>Feed is the business.</strong> The per-call revenue will not pay the bills; it is the distribution channel. The feed and embedded tiers are bought by registries, IDE vendors, CI platforms, security vendors and insurers rather than by agents.</p>
+<p>The earlier draft put Feed at $400/month. That was not caution, it was a credibility problem: a security vendor evaluating a threat-intelligence feed reads $400 as "no company behind this, no SLA, gone within a year" and stops reading. $1,500 is the low end of where differentiated feeds are actually priced, and still inside a data budget that one person can approve.</p>
+<p><strong>Feed should go up, on evidence, not on ambition.</strong> Two events justify raising it: publishing the first confirmed <code>phantom</code> → <code>squat</code> catch, and the corpus carrying a year of history. The asset is the accumulation. Do not raise the price before that evidence exists.</p>
+<h3>Settlement</h3>
+<p>x402 on Base and Solana for per-call, Stripe MPP for fiat session billing. Both rails on every paid endpoint.</p>
+<h2>9. Failure posture</h2>
+<p>HALLUX never returns <code>exists</code> on uncertainty. When the upstream registry is unreachable, the verdict is <code>unknown</code> with a reason code. An agent that treats <code>unknown</code> as permission has made that choice itself, and the receipt records it.</p>
+<p><strong>One carve-out, in the safe direction.</strong> An identifier that has already met the phantom threshold stays <code>phantom</code> when its registry is unreachable. It does not degrade to <code>unknown</code>. Both are stop verdicts, so this cannot open a door that was closed; the evidence carries <code>registryStatus: "unreachable"</code> and confidence is reduced, so nothing is concealed. The alternative is worse in two ways: it downgrades a name we have independently confirmed absent to "we do not know" on the strength of one failed request, and it hands anyone who can cause a registry timeout a way to launder a phantom into <code>unknown</code>, which, for a caller whose policy fails open, is a way to launder it into permission. Degradation is only safe when it degrades toward caution.</p>
+<p>The same carve-out applies to <code>squat</code>, for the same reason and more strongly: registration is a recorded historical fact and does not stop being true because a registry stopped answering.</p>
+<p>Latency budget: p95 under 120ms for cached identifiers, under 400ms for a cold registry round trip. A verification step that costs more than the action it guards will not be called.</p>
+<p>Budgets are published as measurements, not as targets. <code>/v1/proof</code> computes them from the live call log, per namespace, because a blended figure hides the outlier that actually hurts: an uncached Go module path costs a fetch from the forge before the proxy will answer at all.</p>
+<h2>10. Build order</h2>
+<ol><li>Fold the existing pkgguard detection logic in as <code>pkg.npm</code>, <code>pkg.pypi</code>, <code>pkg.crates</code>.</li><li>Stand up <code>GET /v1/check/{namespace}/{value}</code> with no auth. Instrument every call.</li><li>Run the elicitation loop daily and publish the phantom counter publicly on the site. The counter is the marketing.</li><li>Add <code>POST /v1/check</code>, receipts, and x402.</li><li>Add transition monitoring and <code>squat</code>. Publish the first confirmed catch as a write-up. That single post is the credibility event the whole business rests on.</li><li>Add <code>api.endpoint</code> and <code>code.symbol</code>. Those namespaces are where IDE vendors start caring.</li></ol>
+<div class="foot">
+  <div class="foot-links">
+    <a href="/">BlvkWare</a>
+    <a href="/hallux/">HALLUX</a>
+    <a href="/.well-known/ai-catalog.json">Agent catalog</a>
+    <a href="/privacy/">Privacy</a>
+    <a href="/terms/">Terms</a>
+  </div>
+</div>
+</div>
+</body>
+</html>
