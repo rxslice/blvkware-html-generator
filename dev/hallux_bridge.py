@@ -218,6 +218,7 @@ def tokens():
 
     return {
         "{{HALLUX_FREE_DAILY}}": "{:,}".format(payment.FREE_DAILY_IDENTIFIERS),
+        "{{HALLUX_OPEN_POOL}}": "{:,}".format(payment.OPEN_POOL_DAILY_IDENTIFIERS),
         "{{HALLUX_PRICE_PER_IDENTIFIER}}": "$%s" % payment.PRICE_PER_IDENTIFIER_USD,
         "{{HALLUX_WATCH_MONTH}}": "$%s" % payment.PRICE_PER_WATCH_MONTH_USD,
         "{{HALLUX_TEAM_MONTH}}": _money(by_id[payment.TIER_TEAM].monthly_usd),
@@ -525,7 +526,8 @@ def llms_section(base="https://blvkware.dev"):
         "  A squat is a phantom somebody has since registered, which is a\n"
         "  supply-chain attack caught before the first install.\n"
         "  Live namespaces: %s.\n"
-        "  Free tier: %s identifiers a day, no account, no key.\n"
+        "  Free tier: %s identifiers a day per client, no account, no key,\n"
+        "  within a shared pool of %s a day for all free traffic.\n"
         "%s"
         "- [Agent catalog](%s/.well-known/ai-catalog.json): machine-readable\n"
         "  index of every capability that answers, with prices and payment\n"
@@ -536,6 +538,7 @@ def llms_section(base="https://blvkware.dev"):
             base,
             live,
             "{:,}".format(payment.FREE_DAILY_IDENTIFIERS),
+            "{:,}".format(payment.OPEN_POOL_DAILY_IDENTIFIERS),
             deployment_note,
             base,
             base,
@@ -628,6 +631,8 @@ pre { font-family:var(--mono); font-size:0.8rem; background:var(--surface); bord
 pre code { background:none; padding:0; color:inherit; font-size:inherit; }
 hr { border:0; border-top:1px solid var(--line); margin:2.5rem 0; }
 .tw { overflow-x:auto; margin:1.5rem 0; -webkit-overflow-scrolling:touch; }
+.live { background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--accent); border-radius:12px; padding:1rem 1.25rem; margin:0 0 2rem; }
+.live p { margin:0; }
 table { border-collapse:collapse; width:100%; font-size:0.9rem; min-width:480px; }
 th, td { text-align:left; padding:0.65rem 0.85rem; border-bottom:1px solid var(--line); vertical-align:top; }
 th { font-family:var(--mono); font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--brass); font-weight:500; }
@@ -783,6 +788,31 @@ def markdown_to_html(source):
     return "\n".join(out)
 
 
+#: The host the specification names for the API.
+SPEC_BASE = "https://api.blvkware.dev"
+
+
+def _where_it_answers():
+    """A note on the published spec when the live host is not the spec's.
+
+    The specification is the design and names api.blvkware.dev. Until that
+    host carries the caller's address, the service is advertised at its
+    Hugging Face Space, and a reader copying an example from the spec should
+    be told which address is live rather than find out. Generated from
+    API_BASE, so it disappears by itself the day the two agree.
+    """
+    if API_BASE.rstrip("/") == SPEC_BASE:
+        return ""
+    return (
+        '<div class="live"><p><strong>Where it answers today.</strong> This '
+        "specification names <code>%s/hallux/v1</code>. The live service is "
+        "at <code>%s/hallux/v1</code>; use that address in the examples "
+        'below. The <a href="/.well-known/ai-catalog.json">agent catalog</a> '
+        "always names the live address.</p></div>\n"
+        % (SPEC_BASE, _escape(API_BASE.rstrip("/")))
+    )
+
+
 def build_spec_page(out_dir):
     """Publish HALLUX-SPEC.md at /docs/hallux-spec/.
 
@@ -799,7 +829,7 @@ def build_spec_page(out_dir):
     with io.open(source_path, encoding="utf-8") as fh:
         source = fh.read()
 
-    html = _SPEC_SHELL.replace("__BODY__", markdown_to_html(source))
+    html = _SPEC_SHELL.replace("__BODY__", _where_it_answers() + markdown_to_html(source))
     target_dir = os.path.join(out_dir, "docs", "hallux-spec")
     if not os.path.isdir(target_dir):
         os.makedirs(target_dir)
@@ -905,7 +935,10 @@ def build_limits_page(out_dir):
     from hallux.engine import MAX_BATCH  # noqa: E402
 
     rows = [
-        ("Identifiers per day, open tier", "{:,}".format(payment.FREE_DAILY_IDENTIFIERS)),
+        ("Identifiers per day, per client, open tier",
+         "{:,}".format(payment.FREE_DAILY_IDENTIFIERS)),
+        ("Identifiers per day, all open-tier traffic combined",
+         "{:,}".format(payment.OPEN_POOL_DAILY_IDENTIFIERS)),
         ("Identifiers per batch request", str(MAX_BATCH)),
         ("Identifiers per month before the metered cap",
          "{:,}".format(payment.METERED_CAP_IDENTIFIERS)),
@@ -927,9 +960,18 @@ def build_limits_page(out_dir):
         + "<h2>How limits are reported</h2>"
         "<p>Every response carries <code>RateLimit-Limit</code>, "
         "<code>RateLimit-Remaining</code> and <code>RateLimit-Reset</code>. "
-        "When the open allowance is spent the response is "
-        "<code>402 Payment Required</code>, and its body names the price, the "
-        "settlement rails and the flat tier that would remove the meter.</p>"
+        "<code>RateLimit-Remaining</code> is what you can actually still use: "
+        "the smaller of your own allowance and what is left in the shared "
+        "pool, which is also reported on its own as "
+        "<code>X-HALLUX-Open-Pool-Remaining</code>. Pace from that header "
+        "and a refusal is never a surprise.</p>"
+        "<p>When an open allowance is spent the response is "
+        "<code>402 Payment Required</code>. Its body names the price, the "
+        "settlement rails and the flat tier that would remove the meter, and "
+        "its <code>reason</code> says which limit refused you: "
+        "<code>client_allowance_spent</code> or <code>open_pool_spent</code>. "
+        "A request refused by the pool is not charged to your own "
+        "allowance.</p>"
         "<h2>Batching</h2>"
         "<p>A batch is charged and served whole. Partially serving a batch and "
         "charging for the part served would make an agent's behaviour depend "
@@ -937,9 +979,12 @@ def build_limits_page(out_dir):
         "than a clean refusal.</p>"
         "<h2>Abuse</h2>"
         "<p>The open tier is generous on purpose and is expected to be "
-        "abused. It is rate limited by client at the edge and some loss is "
-        "accepted; the free tier is the advertisement. Clients are identified "
-        "by a salted hash of their address, never by the address itself.</p>"
+        "abused. It is rate limited per client, and all open-tier traffic "
+        "draws from one shared daily pool, so a caller who disguises their "
+        "address can use up the free tier for the day but can never make it "
+        "bigger. Paid traffic never draws from the pool. Clients are "
+        "identified by a salted hash of their address, never by the address "
+        "itself.</p>"
         '<p>Prices and tiers are at <a href="/hallux/">/hallux/</a>, and in '
         "machine-readable form in the "
         '<a href="/.well-known/ai-catalog.json">agent catalog</a>.</p>'

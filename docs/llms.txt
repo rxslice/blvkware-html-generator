@@ -218,7 +218,8 @@ than at businesses.
   A squat is a phantom somebody has since registered, which is a
   supply-chain attack caught before the first install.
   Live namespaces: cite.doi, pkg.crates, pkg.go, pkg.maven, pkg.npm, pkg.nuget, pkg.pypi.
-  Free tier: 500 identifiers a day, no account, no key.
+  Free tier: 500 identifiers a day per client, no account, no key,
+  within a shared pool of 50,000 a day for all free traffic.
 - [Agent catalog](https://blvkware.dev/.well-known/ai-catalog.json): machine-readable
   index of every capability that answers, with prices and payment
   rails. Capabilities listed under `roadmap` are not built.

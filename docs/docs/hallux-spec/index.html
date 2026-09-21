@@ -44,6 +44,8 @@ pre { font-family:var(--mono); font-size:0.8rem; background:var(--surface); bord
 pre code { background:none; padding:0; color:inherit; font-size:inherit; }
 hr { border:0; border-top:1px solid var(--line); margin:2.5rem 0; }
 .tw { overflow-x:auto; margin:1.5rem 0; -webkit-overflow-scrolling:touch; }
+.live { background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--accent); border-radius:12px; padding:1rem 1.25rem; margin:0 0 2rem; }
+.live p { margin:0; }
 table { border-collapse:collapse; width:100%; font-size:0.9rem; min-width:480px; }
 th, td { text-align:left; padding:0.65rem 0.85rem; border-bottom:1px solid var(--line); vertical-align:top; }
 th { font-family:var(--mono); font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--brass); font-weight:500; }
@@ -59,6 +61,7 @@ td { color:var(--ink-2); }
   <span class="wordmark">BlvkWare<span>.</span></span>
 </a>
 <a class="back" href="/hallux/">&larr; HALLUX</a>
+<div class="live"><p><strong>Where it answers today.</strong> This specification names <code>https://api.blvkware.dev/hallux/v1</code>. The live service is at <code>https://aimoneybags-hallux.hf.space/hallux/v1</code>; use that address in the examples below. The <a href="/.well-known/ai-catalog.json">agent catalog</a> always names the live address.</p></div>
 <h1>HALLUX</h1>
 <p><strong>The hallucination ledger. A registry of identifiers that do not exist but that models confidently believe do.</strong></p>
 <p>Version 0.9 draft · BlvkWare · blvkware.dev</p>
@@ -176,7 +179,7 @@ td { color:var(--ink-2); }
 <p>Watches on Metered are $0.02 per watched identifier per month.</p>
 <p>An annual commitment is twelve months charged as ten, matching every other BlvkWare product.</p>
 <h3>Why these numbers</h3>
-<p><strong>Open is the advertisement.</strong> 500/day unauthenticated is generous on purpose and will be abused. Rate limit by client at the edge and accept the loss; the cost of trying HALLUX has to stay one curl command.</p>
+<p><strong>Open is the advertisement.</strong> 500/day unauthenticated is generous on purpose and will be abused. Rate limit by client at the edge and accept the loss, but bound it: all open-tier traffic shares one daily pool (50,000 identifiers), so a caller who can disguise their address can use up the free tier for the day but never make it bigger. The cost of trying HALLUX has to stay one curl command.</p>
 <p><strong>Metered is priced so that verification is never the reason not to verify.</strong> Resolving a forty-package dependency list costs about three cents, less than the model call that produced the list.</p>
 <p><strong>Metered is capped at the Team price.</strong> A pure per-identifier meter punishes the best channel: a CI pipeline asks about <code>react</code> and <code>lodash</code> a thousand times a day, those are cache hits that cost nothing to serve, and an invoice dominated by them reads as a tax on doing the right thing. Above 373,750 identifiers in a calendar month the account moves to Team and stops being metered. Volume becomes a subscription rather than a surprise. The cap is derived from the Team price in code, not typed, so the two cannot drift.</p>
 <p><strong>Team exists because metered billing is close to unbuyable in a company.</strong> It has no predictable number, so it has no purchase order, so it needs an exception. The draft ladder went straight from free to metered-forever and left the adopter we most want with nothing to buy. $299 sits under the line where an engineering manager needs approval, and adoption in CI is worth more than the margin above it. It is deliberately not $349, which is what Agent Operations costs: two unrelated BlvkWare products at the same monthly price reads as a copy-paste error.</p>

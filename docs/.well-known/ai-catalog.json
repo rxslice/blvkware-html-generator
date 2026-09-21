@@ -58,7 +58,7 @@
         "unit": "identifier",
         "currency": "USD",
         "amount": "0.0008",
-        "freeTier": "500 identifiers per day, unauthenticated, no signed receipt",
+        "freeTier": "500 identifiers per day, unauthenticated, no signed receipt; all open-tier traffic shares a pool of 50,000 identifiers per day",
         "cap": {
           "identifiersPerMonth": 373750,
           "thenMonthlyUsd": "299"
@@ -78,7 +78,8 @@
             "monthlyUsd": "0",
             "perIdentifierUsd": "0",
             "dailyIdentifierLimit": 500,
-            "includedWatches": 0
+            "includedWatches": 0,
+            "sharedDailyPool": 50000
           },
           {
             "id": "metered",
