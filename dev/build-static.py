@@ -440,6 +440,10 @@ SITEMAP = [
     ("/hallux/", "0.9", "weekly"),
     ("/docs/hallux-spec", "0.7", "monthly"),
     ("/docs/limits", "0.4", "monthly"),
+    ("/docs/corpus-methodology", "0.5", "monthly"),
+    ("/docs/payment", "0.3", "monthly"),
+    ("/pricing", "0.5", "monthly"),
+    ("/legal/corpus-license", "0.3", "yearly"),
     ("/legal/bsl-1.1", "0.3", "yearly"),
     ("/vendor-renewal-tracker/", "0.9", "monthly"),
     ("/subscription-audit/", "0.85", "monthly"),
@@ -1302,6 +1306,19 @@ def main():
         if built:
             print("Built docs/%s/index.html (%.1f KB)"
                   % (label, os.path.getsize(built) / 1024.0))
+
+    # The four pages the API itself links to: /v1/stats names the corpus
+    # methodology, corpus responses a licence, and every 402 names payment
+    # docs and a price list. Generated from the specification and the
+    # running constants, like the two above.
+    try:
+        for built in hallux.build_reference_pages(OUT_DIR):
+            print("Built docs/%s (%.1f KB)"
+                  % (os.path.relpath(built, OUT_DIR).replace(os.sep, "/"),
+                     os.path.getsize(built) / 1024.0))
+    except ValueError as e:
+        print("ABORTED: %s" % e)
+        return 1
 
     # The human page and the agent catalog must quote the same prices, which
     # is the one failure the deploy notes single out. Asserted positively

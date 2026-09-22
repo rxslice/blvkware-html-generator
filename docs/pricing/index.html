@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HALLUX rate limits | BlvkWare</title>
-<meta name="description" content="The rate limits HALLUX enforces, generated from the constants the server runs on.">
-<link rel="canonical" href="https://blvkware.dev/docs/limits">
+<title>HALLUX pricing | BlvkWare</title>
+<meta name="description" content="HALLUX pricing: a free open tier, per-identifier metering capped at the Team price, and flat tiers. Billed on questions asked, never on answers given.">
+<link rel="canonical" href="https://blvkware.dev/pricing">
 <meta name="robots" content="index, follow">
-<meta property="og:title" content="HALLUX rate limits | BlvkWare">
-<meta property="og:description" content="The rate limits HALLUX enforces, generated from the constants the server runs on.">
+<meta property="og:title" content="HALLUX pricing | BlvkWare">
+<meta property="og:description" content="HALLUX pricing: a free open tier, per-identifier metering capped at the Team price, and flat tiers. Billed on questions asked, never on answers given.">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://blvkware.dev/docs/limits">
+<meta property="og:url" content="https://blvkware.dev/pricing">
 <meta property="og:image" content="https://blvkware.dev/assets/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
@@ -63,8 +63,14 @@ td { color:var(--ink-2); }
   <span class="wordmark">BlvkWare<span>.</span></span>
 </a>
 <a class="back" href="/hallux/">&larr; HALLUX</a>
-<h1>Rate limits</h1>
-<p>These are the limits the service enforces. They are generated from the same constants the server runs on, so this page cannot describe a limit that is not the real one.</p><div class="tw"><table><thead><tr><th>Limit</th><th>Value</th></tr></thead><tbody><tr><td>Identifiers per day, per client, open tier</td><td><code>500</code></td></tr><tr><td>Identifiers per day, all open-tier traffic combined</td><td><code>50,000</code></td></tr><tr><td>Identifiers per batch request</td><td><code>100</code></td></tr><tr><td>Identifiers per month before the metered cap</td><td><code>373,750</code></td></tr><tr><td>Watched identifiers per request</td><td><code>100</code></td></tr><tr><td>Authentication on the open tier</td><td><code>none</code></td></tr></tbody></table></div><h2>How limits are reported</h2><p>Every response carries <code>RateLimit-Limit</code>, <code>RateLimit-Remaining</code> and <code>RateLimit-Reset</code>. <code>RateLimit-Remaining</code> is what you can actually still use: the smaller of your own allowance and what is left in the shared pool, which is also reported on its own as <code>X-HALLUX-Open-Pool-Remaining</code>. Pace from that header and a refusal is never a surprise.</p><p>When an open allowance is spent the response is <code>402 Payment Required</code>. Its body names the price, the settlement rails and the flat tier that would remove the meter, and its <code>reason</code> says which limit refused you: <code>client_allowance_spent</code> or <code>open_pool_spent</code>. A request refused by the pool is not charged to your own allowance.</p><h2>Batching</h2><p>A batch is charged and served whole. Partially serving a batch and charging for the part served would make an agent's behaviour depend on where in its dependency list it ran out, which is a worse failure than a clean refusal.</p><h2>Abuse</h2><p>The open tier is generous on purpose and is expected to be abused. It is rate limited per client, and all open-tier traffic draws from one shared daily pool, so a caller who disguises their address can use up the free tier for the day but can never make it bigger. Paid traffic never draws from the pool. Clients are identified by a salted hash of their address, never by the address itself.</p><p>Prices and tiers are at <a href="/hallux/">/hallux/</a>, and in machine-readable form in the <a href="/.well-known/ai-catalog.json">agent catalog</a>.</p>
+<h1>HALLUX pricing</h1>
+<p>The price list for HALLUX, the identifier verification API. BlvkWare's agent kits are priced on the <a href="/#services">home page</a>.</p><div class="live"><p><strong>Only the open tier is available today.</strong> The paid tiers below are priced and documented, but no payment rail is connected yet, so none of them can be bought. The open tier needs no account and no key.</p></div><h2>The constraint</h2><p><strong>HALLUX is never paid more because it blocked you.</strong></p>
+<p>The obvious model here is to charge per stop verdict: you pay when we save you. It aligns with value, it tracks cost almost exactly, and it makes a beautiful invoice line.</p>
+<p>It is also disqualifying. A verification vendor paid per positive finding has the same structural flaw as a scanner paid per vulnerability: every marginal block is revenue, so the corpus has a commercial reason to grow, and no customer can ever fully rule out that the reason they were stopped was the invoice. This product is an argument about trustworthy verification. Being paid per block loses that argument before it starts.</p>
+<p>So billing is a function of <strong>questions asked</strong>, never of <strong>answers given</strong>. This is enforced in code rather than promised: the quoting function accepts a count of identifiers and has no parameter through which a verdict could reach it, and a test asserts that the charge for a batch is identical whatever the batch resolves to.</p>
+<p>The same rule governs watches. They are priced on what a customer chose to watch, never on whether it fired.</p><h2>The ladder</h2><div class="tw"><table><thead><tr><th>Tier</th><th>Who buys it</th><th>What it is</th><th>Price</th></tr></thead><tbody><tr><td><strong>Open</strong></td><td>Any agent or developer, no account</td><td>Single-lookup GET, 500 identifiers/day, every verdict, no receipt</td><td>Free</td></tr><tr><td><strong>Metered</strong></td><td>An individual agent or small team</td><td>Batch, receipts, watches. Capped, see below</td><td>$0.0008 per identifier</td></tr><tr><td><strong>Team</strong></td><td>A company putting HALLUX in CI</td><td>Unmetered, 100 watches, private-namespace exclusions</td><td>$299/month, $2,990/year</td></tr><tr><td><strong>Feed</strong></td><td>Registries, IDE vendors, CI platforms, security vendors, insurers</td><td>Full ledger, complete history, per-model attribution, live transition stream, unlimited watches, licence to surface findings in your product</td><td>$1,500/month, $15,000/year</td></tr><tr><td><strong>Embedded</strong></td><td>A platform shipping HALLUX inside its product</td><td>Self-hosted or white-labelled, BSL 1.1 commercial grant</td><td>From $2,500/month</td></tr></tbody></table></div>
+<p>Watches on Metered are $0.02 per watched identifier per month.</p>
+<p>An annual commitment is twelve months charged as ten.</p><p>The same list, machine-readable: <code>GET https://api.blvkware.dev/hallux/v1/pricing</code>. How a paid request is settled is at <a href="/docs/payment">/docs/payment</a>, and why the numbers are what they are is section 8 of the <a href="/docs/hallux-spec">specification</a>.</p>
 <div class="foot">
   <div class="foot-links">
     <a href="/">BlvkWare</a>

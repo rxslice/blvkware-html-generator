@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HALLUX corpus methodology | BlvkWare</title>
+<meta name="description" content="How names enter the HALLUX phantom ledger: elicitation, confirmation of absence, attestation, transition monitoring and decay.">
+<link rel="canonical" href="https://blvkware.dev/docs/corpus-methodology">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="HALLUX corpus methodology | BlvkWare">
+<meta property="og:description" content="How names enter the HALLUX phantom ledger: elicitation, confirmation of absence, attestation, transition monitoring and decay.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blvkware.dev/docs/corpus-methodology">
+<meta property="og:image" content="https://blvkware.dev/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+<meta name="theme-color" content="#0A0908">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Fira+Code:wght@500&display=swap');
+:root { --bg:#0A0908; --surface:#17140F; --accent:#D4F24A; --brass:#D9B65C;
+  --ink:#F5F0E6; --ink-2:#A89D8B; --line:rgba(245,240,230,0.1);
+  --font:'Manrope',system-ui,-apple-system,sans-serif; --mono:'Fira Code',ui-monospace,monospace; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--ink); font-family:var(--font); line-height:1.7; -webkit-font-smoothing:antialiased; }
+.wrap { max-width:860px; margin:0 auto; padding:3rem 1.5rem 6rem; }
+.top { display:flex; align-items:center; gap:0.8rem; margin-bottom:2.5rem; text-decoration:none; color:inherit; }
+.mark { width:52px; height:52px; border-radius:14px; background:#060504; overflow:hidden; flex:none; }
+.mark img { width:100%; height:100%; display:block; }
+.wordmark { font-size:1.3rem; font-weight:800; letter-spacing:-0.01em; }
+.wordmark span { color:var(--accent); }
+.back { font-family:var(--mono); font-size:0.78rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--brass); display:inline-block; margin-bottom:2rem; text-decoration:none; }
+.back:hover { text-decoration:underline; }
+h1 { font-size:clamp(1.9rem,5vw,2.6rem); font-weight:800; letter-spacing:-0.02em; margin-bottom:0.8rem; line-height:1.2; }
+h2 { font-size:1.35rem; font-weight:700; margin:3rem 0 1rem; letter-spacing:-0.01em; padding-top:1.5rem; border-top:1px solid var(--line); }
+h3 { font-size:1.05rem; font-weight:700; margin:2rem 0 0.6rem; color:var(--brass); }
+p { color:var(--ink-2); margin-bottom:1.1rem; }
+ul, ol { margin:0 0 1.1rem 1.2rem; color:var(--ink-2); }
+li { margin-bottom:0.5rem; }
+strong { color:var(--ink); font-weight:700; }
+a { color:var(--accent); text-decoration:none; }
+a:hover { text-decoration:underline; }
+code { font-family:var(--mono); font-size:0.87em; background:var(--surface); padding:0.15rem 0.4rem; border-radius:4px; color:var(--brass); }
+pre { font-family:var(--mono); font-size:0.8rem; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:1.25rem; overflow-x:auto; margin:1.5rem 0; line-height:1.6; color:var(--ink-2); }
+pre code { background:none; padding:0; color:inherit; font-size:inherit; overflow-wrap:normal; }
+p code, li code, td code { overflow-wrap:anywhere; }
+hr { border:0; border-top:1px solid var(--line); margin:2.5rem 0; }
+.tw { overflow-x:auto; margin:1.5rem 0; -webkit-overflow-scrolling:touch; }
+.live { background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--accent); border-radius:12px; padding:1rem 1.25rem; margin:0 0 2rem; }
+.live p { margin:0; }
+table { border-collapse:collapse; width:100%; font-size:0.9rem; min-width:480px; }
+th, td { text-align:left; padding:0.65rem 0.85rem; border-bottom:1px solid var(--line); vertical-align:top; }
+th { font-family:var(--mono); font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--brass); font-weight:500; }
+td { color:var(--ink-2); }
+.foot { margin-top:4rem; padding-top:2rem; border-top:1px solid var(--line); font-size:0.9rem; color:var(--ink-2); }
+.foot-links { display:flex; flex-wrap:wrap; gap:0.5rem 1.25rem; }
+</style>
+<style id="no-code-ligatures">*{font-variant-ligatures:no-contextual}</style>
+</head>
+<body>
+<div class="wrap">
+<a class="top" href="/">
+  <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
+  <span class="wordmark">BlvkWare<span>.</span></span>
+</a>
+<a class="back" href="/hallux/">&larr; HALLUX</a>
+<h1>Corpus methodology</h1>
+<p>How a name gets into the HALLUX ledger, and what it takes for HALLUX to call it a phantom. This is section 6 of the <a href="/docs/hallux-spec">specification</a>, published at the address every <code>/v1/stats</code> response links to.</p><p>Credibility here is the product, so the method is public.</p>
+<ol><li><strong>Elicitation.</strong> A panel of production models is prompted daily with realistic development, research, and citation tasks designed to induce identifier emission. Prompts are drawn from a rotating bank derived from real task shapes, not from adversarial jailbreaks.</li><li><strong>Extraction.</strong> Identifiers are parsed from output by namespace-specific grammars.</li><li><strong>Confirmation of absence.</strong> Each candidate is checked against the authoritative registry. Absence must be confirmed on two separate checks at least 24 hours apart before a candidate is eligible.</li><li><strong>Attestation.</strong> Each confirmed absence records the model family, the date, and the prompt class. <strong>One attestation is one model, one prompt class, one day.</strong> The same model emitting the same name twenty times against the same prompt in one run is one attestation, not twenty. An identifier becomes <code>phantom</code> at <strong>10 attestations from at least 2 distinct model families</strong>.</li></ol>
+<p>The unit matters as much as the threshold. Counted per emission rather than per model-day, a sampler that runs one prompt twenty times promotes a name on its own, and "10 attestations" stops meaning what a reader assumes it means. Counted this way, ten attestations is a name that recurred across the panel and across days. The rule is enforced by a uniqueness constraint in the ledger, not by the discipline of whatever writes to it, so an ingest path cannot bypass it.</p>
+<ol start="5"><li><strong>Transition monitoring.</strong> Every phantom is re-checked against its registry daily, forever. Registration flips the verdict to <code>squat</code> and fires every registered watch.</li><li><strong>Decay.</strong> Phantoms with no attestation in 180 days are archived, not deleted. Archived entries still answer, with a staleness flag.</li></ol>
+<p>No model output is stored beyond the extracted identifier and its metadata. No prompts containing user data are used.</p><h2>The thresholds in force</h2><p>Generated from the constants the ledger runs on, so this table cannot describe a rule the service does not apply.</p><div class="tw"><table><thead><tr><th>Rule</th><th>In force</th></tr></thead><tbody><tr><td>Attestations for a name to become a phantom</td><td><code>10</code></td></tr><tr><td>Distinct model families among them</td><td><code>2</code></td></tr><tr><td>Registry checks confirming absence</td><td><code>2, at least 24 hours apart</code></td></tr><tr><td>A phantom is archived after</td><td><code>180 days with no attestation</code></td></tr><tr><td>Free public window of the corpus</td><td><code>30 days</code></td></tr></tbody></table></div><h2>The ledger today</h2><p>At the last build of this page the public ledger held no phantoms, no squats and no candidates. Names enter it only from the elicitation panel, and are promoted only by the rules above; the panel has not fed the live ledger yet, so there is nothing to show, and nothing has been put there to fill the space. Until there is, a name no registry has is answered <code>absent</code>, which is a stop verdict in its own right.</p><p>The live counts are one request away, with no key: <code>GET https://api.blvkware.dev/hallux/v1/stats</code>. The rolling window itself is <code>GET https://api.blvkware.dev/hallux/v1/corpus</code>, as JSON lines.</p><p>The terms the corpus is published under are at <a href="/legal/corpus-license">/legal/corpus-license</a>.</p>
+<div class="foot">
+  <div class="foot-links">
+    <a href="/">BlvkWare</a>
+    <a href="/hallux/">HALLUX</a>
+    <a href="/.well-known/ai-catalog.json">Agent catalog</a>
+    <a href="/privacy/">Privacy</a>
+    <a href="/terms/">Terms</a>
+  </div>
+</div>
+</div>
+</body>
+</html>

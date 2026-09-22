@@ -33,6 +33,7 @@ able to publish the site, so everything here degrades to a warning.
 from __future__ import annotations
 
 import io
+import json
 import os
 import re
 import subprocess
@@ -344,6 +345,20 @@ def check_published_prices(pages, out_dir=None):
                 "the HALLUX page does not show the %s price %s. "
                 "Add the matching {{HALLUX_*}} token." % (label, value)
             )
+
+    # /pricing is rendered from the specification's ladder, which is prose a
+    # person edits, so it is held to payment.py the same way.
+    if out_dir:
+        pricing_path = os.path.join(out_dir, "pricing", "index.html")
+        if os.path.isfile(pricing_path):
+            with io.open(pricing_path, encoding="utf-8") as fh:
+                ladder = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", fh.read()))
+            for label, value in required.items():
+                if value not in ladder:
+                    problems.append(
+                        "/pricing (from HALLUX-SPEC.md section 8) does not show "
+                        "the %s price %s that payment.py charges." % (label, value)
+                    )
 
     # The other half of the rule: the machine surface has to agree with the
     # page a human reads, because an agent quoting one and being billed the
@@ -709,7 +724,8 @@ a { color:var(--accent); text-decoration:none; }
 a:hover { text-decoration:underline; }
 code { font-family:var(--mono); font-size:0.87em; background:var(--surface); padding:0.15rem 0.4rem; border-radius:4px; color:var(--brass); }
 pre { font-family:var(--mono); font-size:0.8rem; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:1.25rem; overflow-x:auto; margin:1.5rem 0; line-height:1.6; color:var(--ink-2); }
-pre code { background:none; padding:0; color:inherit; font-size:inherit; }
+pre code { background:none; padding:0; color:inherit; font-size:inherit; overflow-wrap:normal; }
+p code, li code, td code { overflow-wrap:anywhere; }
 hr { border:0; border-top:1px solid var(--line); margin:2.5rem 0; }
 .tw { overflow-x:auto; margin:1.5rem 0; -webkit-overflow-scrolling:touch; }
 .live { background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--accent); border-radius:12px; padding:1rem 1.25rem; margin:0 0 2rem; }
@@ -839,6 +855,10 @@ def markdown_to_html(source):
         if re.match(r"^(\d+\.|[-*])\s+", stripped):
             ordered = bool(re.match(r"^\d+\.", stripped))
             tag = "ol" if ordered else "ul"
+            # A list interrupted by an indented paragraph resumes as a new
+            # list; without `start` its item 5 is drawn as 1.
+            first = int(re.match(r"^(\d+)", stripped).group(1)) if ordered else 1
+            opening = '<ol start="%d">' % first if ordered and first != 1 else "<%s>" % tag
             items = []
             while index < total and re.match(r"^(\d+\.|[-*])\s+", lines[index].strip()):
                 item = re.sub(r"^(\d+\.|[-*])\s+", "", lines[index].strip())
@@ -854,7 +874,7 @@ def markdown_to_html(source):
                     item += " " + lines[index].strip()
                     index += 1
                 items.append("<li>%s</li>" % _inline(item))
-            out.append("<%s>%s</%s>" % (tag, "".join(items), tag))
+            out.append("%s%s</%s>" % (opening, "".join(items), tag))
             continue
 
         paragraph = [stripped]
@@ -1092,3 +1112,295 @@ def _write_page(out_dir, parts, html):
     with io.open(target, "w", encoding="utf-8") as fh:
         fh.write(html)
     return target
+
+
+# ---------------------------------------------------------------------------
+# the four pages the API itself links to
+# ---------------------------------------------------------------------------
+#
+# Every /v1/stats response names /docs/corpus-methodology, every corpus
+# response carries a Link header to /legal/corpus-license, and every 402
+# names /docs/payment and /pricing. All four were 404s: the API was built
+# against a site that did not have them yet. An agent that follows a link it
+# was handed and gets a 404 learns the service is not maintained, so these
+# are built from the specification and the running constants rather than
+# written by hand, the same way as the limits page.
+
+
+def _spec_section(source, title, level):
+    """The markdown under one heading, up to the next heading at its level or above."""
+    out = []
+    inside = False
+    fenced = False
+    for line in source.split("\n"):
+        if line.strip().startswith("```"):
+            fenced = not fenced
+        heading = None if fenced else re.match(r"^(#{1,6})\s+(.*)$", line)
+        if heading:
+            depth = len(heading.group(1))
+            if inside and depth <= level:
+                break
+            if depth == level and heading.group(2).strip().startswith(title):
+                inside = True
+                continue
+        if inside:
+            out.append(line)
+    if not out:
+        raise ValueError("the HALLUX specification has no section %r" % title)
+    return "\n".join(out).strip()
+
+
+def _live_stats():
+    """/v1/stats from the live service, or None. Only asked when it answers."""
+    if not endpoint_live()[0]:
+        return None
+    import urllib.request
+
+    request = urllib.request.Request(
+        API_BASE.rstrip("/") + "/hallux/v1/stats",
+        headers={"User-Agent": "blvkware-site-build/1.0", "Accept": "application/json"},
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=10) as response:
+            return json.loads(response.read().decode("utf-8"))
+    except Exception:
+        return None
+
+
+def _methodology_page(source, ledger):
+    thresholds = [
+        ("Attestations for a name to become a phantom",
+         str(ledger.PHANTOM_MIN_ATTESTATIONS)),
+        ("Distinct model families among them", str(ledger.PHANTOM_MIN_FAMILIES)),
+        ("Registry checks confirming absence",
+         "%d, at least %d hours apart" % (ledger.ABSENCE_MIN_CHECKS,
+                                          ledger.ABSENCE_MIN_SPAN_HOURS)),
+        ("A phantom is archived after", "%d days with no attestation" % ledger.DECAY_DAYS),
+        ("Free public window of the corpus", "%d days" % ledger.PUBLIC_WINDOW_DAYS),
+    ]
+    table = ['<div class="tw"><table><thead><tr><th>Rule</th><th>In force</th>'
+             "</tr></thead><tbody>"]
+    for label, value in thresholds:
+        table.append("<tr><td>%s</td><td><code>%s</code></td></tr>"
+                     % (_escape(label), _escape(value)))
+    table.append("</tbody></table></div>")
+
+    stats = _live_stats()
+    api = API_BASE.rstrip("/") + "/hallux/v1"
+    if stats is None:
+        today = ""
+    else:
+        counts = [(stats.get(k) or 0) for k in
+                  ("phantoms", "squats", "archived", "candidates", "attestations")]
+        if not any(counts):
+            summary = (
+                "<p>At the last build of this page the public ledger held no "
+                "phantoms, no squats and no candidates. Names enter it only "
+                "from the elicitation panel, and are promoted only by the "
+                "rules above; the panel has not fed the live ledger yet, so "
+                "there is nothing to show, and nothing has been put there to "
+                "fill the space. Until there is, a name no registry has is "
+                "answered <code>absent</code>, which is a stop verdict in its "
+                "own right.</p>"
+            )
+        else:
+            summary = (
+                "<p>At the last build of this page the public ledger held "
+                "%s phantoms, %s squats, %s archived and %s candidates, from "
+                "%s attestations across %s model families.</p>"
+                % tuple("{:,}".format(stats.get(k) or 0) for k in (
+                    "phantoms", "squats", "archived", "candidates",
+                    "attestations", "modelFamilies"))
+            )
+        today = (
+            "<h2>The ledger today</h2>" + summary
+            + "<p>The live counts are one request away, with no key: "
+            "<code>GET %s/stats</code>. The rolling window itself is "
+            "<code>GET %s/corpus</code>, as JSON lines.</p>" % (api, api)
+        )
+
+    body = (
+        "<p>How a name gets into the HALLUX ledger, and what it takes for "
+        "HALLUX to call it a phantom. This is section 6 of the "
+        '<a href="/docs/hallux-spec">specification</a>, published at the '
+        "address every <code>/v1/stats</code> response links to.</p>"
+        + markdown_to_html(_spec_section(source, "6.", 2))
+        + "<h2>The thresholds in force</h2>"
+        "<p>Generated from the constants the ledger runs on, so this table "
+        "cannot describe a rule the service does not apply.</p>"
+        + "".join(table)
+        + today
+        + '<p>The terms the corpus is published under are at '
+        '<a href="/legal/corpus-license">/legal/corpus-license</a>.</p>'
+    )
+    return _plain_page(
+        "HALLUX corpus methodology",
+        "How names enter the HALLUX phantom ledger: elicitation, confirmation "
+        "of absence, attestation, transition monitoring and decay.",
+        "https://blvkware.dev/docs/corpus-methodology",
+        "Corpus methodology",
+        body,
+    )
+
+
+def _licence_page(payment, ledger, attribution):
+    feed = payment.TIERS_BY_ID[payment.TIER_FEED]
+    on_sale = payment.settlement().configured()
+    body = (
+        "<p>The terms the HALLUX phantom ledger is published under. Corpus "
+        "responses carry this address in a <code>Link: rel=\"license\"</code> "
+        "header. The HALLUX software is a separate matter, under the "
+        '<a href="/legal/bsl-1.1">Business Source License 1.1</a>.</p>'
+        "<h2>The open window</h2>"
+        "<p>The rolling %d-day window of the ledger, as served by "
+        "<code>GET /v1/corpus</code>, is free to use with attribution. The "
+        "attribution is:</p>"
+        "<pre><code>%s</code></pre>"
+        "<p>Every corpus response carries it in the "
+        "<code>X-HALLUX-Attribution</code> header, so a consumer never has to "
+        "copy it by hand. The open window does not include which model "
+        "families emitted a name.</p>"
+        "<h2>The full corpus</h2>"
+        "<p>Complete history, per-model attribution and the live transition "
+        "stream are the Feed tier, at %s a month or %s a year, with a licence "
+        "to surface findings inside your own product.%s</p>"
+        "<p>How names enter the ledger is published in full at "
+        '<a href="/docs/corpus-methodology">/docs/corpus-methodology</a>. '
+        "Questions: russ@blvkware.dev.</p>"
+        % (
+            ledger.PUBLIC_WINDOW_DAYS,
+            _escape(attribution),
+            _money(feed.monthly_usd),
+            _money(feed.annual_usd),
+            "" if on_sale else (
+                " It is not on sale yet: no payment rail is connected, so a "
+                "request for <code>?full=1</code> answers <code>402</code> "
+                "with these terms rather than a way to pay."
+            ),
+        )
+    )
+    return _plain_page(
+        "HALLUX corpus licence",
+        "The terms the HALLUX phantom ledger is published under: a free "
+        "rolling window with attribution, and the licensed full corpus.",
+        "https://blvkware.dev/legal/corpus-license",
+        "Corpus licence",
+        body,
+    )
+
+
+def _payment_page(source, payment):
+    challenge = payment.Challenge(units=40, resource="/v1/check")
+    example = json.dumps(challenge.to_wire(), indent=2)
+    headers = "\n".join("%s: %s" % item for item in
+                        sorted(payment.challenge_headers(challenge).items()))
+    configured = payment.settlement().configured()
+    state = (
+        "<p>Settlement is connected on this deployment.</p>" if configured else
+        '<div class="live"><p><strong>No payment rail is connected yet.</strong> '
+        "The service issues these challenges, but nothing can settle one "
+        "today: every entry in <code>accepts</code> says "
+        "<code>settlementConfigured: false</code>, and a proof sent in "
+        "<code>X-Payment</code> is refused rather than waved through. Paid "
+        "features are unreachable, never free. The open tier resets daily at "
+        "00:00 UTC.</p></div>"
+    )
+    body = (
+        "<p>What a caller receives when the open tier is spent, and how it is "
+        "meant to be paid. Every <code>402</code> the API returns links here.</p>"
+        + state
+        + "<h2>The challenge</h2>"
+        "<p>When a request would exceed what the caller may use for free, the "
+        "answer is <code>402 Payment Required</code> with a body an agent can "
+        "act on without a human: the price for exactly this request, the "
+        "flat tier that would remove the meter, and the rails it accepts. "
+        "This example is generated by the service's own code, for a batch "
+        "of 40 identifiers:</p>"
+        "<pre><code>%s</code></pre>"
+        "<p>With these headers:</p>"
+        "<pre><code>%s</code></pre>"
+        "<p><code>reason</code> says which limit refused the request: "
+        "<code>%s</code> for this caller's own allowance, <code>%s</code> "
+        "for the shared pool every free caller draws from. A request the "
+        "pool refused is not charged to the caller's allowance. The limits "
+        'themselves are at <a href="/docs/limits">/docs/limits</a>.</p>'
+        "<h2>Rails</h2>"
+        "%s"
+        '<p>Prices are at <a href="/pricing">/pricing</a>. They are a '
+        "function of how many identifiers a request asks about and never of "
+        "what the answers are.</p>"
+        % (
+            _escape(example),
+            _escape(headers),
+            payment.REFUSED_CLIENT_ALLOWANCE,
+            payment.REFUSED_OPEN_POOL,
+            markdown_to_html(_spec_section(
+                _spec_section(source, "8.", 2), "Settlement", 3)),
+        )
+    )
+    return _plain_page(
+        "Paying for HALLUX",
+        "The HALLUX 402 challenge, field by field, and the settlement rails "
+        "it names.",
+        "https://blvkware.dev/docs/payment",
+        "Paying for HALLUX",
+        body,
+    )
+
+
+def _pricing_page(source, payment):
+    pricing = _spec_section(source, "8.", 2)
+    notice = "" if payment.settlement().configured() else (
+        '<div class="live"><p><strong>Only the open tier is available today.'
+        "</strong> The paid tiers below are priced and documented, but no "
+        "payment rail is connected yet, so none of them can be bought. The "
+        "open tier needs no account and no key.</p></div>"
+    )
+    body = (
+        "<p>The price list for HALLUX, the identifier verification API. "
+        "BlvkWare's agent kits are priced on the "
+        '<a href="/#services">home page</a>.</p>'
+        + notice
+        + "<h2>The constraint</h2>"
+        + markdown_to_html(_spec_section(pricing, "The constraint", 3))
+        + "<h2>The ladder</h2>"
+        + markdown_to_html(_spec_section(pricing, "The ladder", 3))
+        + "<p>The same list, machine-readable: <code>GET %s/hallux/v1/pricing"
+        "</code>. How a paid request is settled is at "
+        '<a href="/docs/payment">/docs/payment</a>, and why the numbers are '
+        'what they are is section 8 of the <a href="/docs/hallux-spec">'
+        "specification</a>.</p>" % _escape(API_BASE.rstrip("/"))
+    )
+    return _plain_page(
+        "HALLUX pricing",
+        "HALLUX pricing: a free open tier, per-identifier metering capped at "
+        "the Team price, and flat tiers. Billed on questions asked, never on "
+        "answers given.",
+        "https://blvkware.dev/pricing",
+        "HALLUX pricing",
+        body,
+    )
+
+
+def build_reference_pages(out_dir):
+    """Publish the four pages the API links to. Returns the paths written."""
+    path = locate()
+    if path is None:
+        return []
+    source_path = os.path.join(path, "HALLUX-SPEC.md")
+    if not os.path.isfile(source_path):
+        return []
+    with io.open(source_path, encoding="utf-8") as fh:
+        source = fh.read()
+    payment, _ = _load(path)
+    from hallux import ledger  # noqa: E402  (_load put the checkout on sys.path)
+    from hallux.api import _ATTRIBUTION as ATTRIBUTION  # noqa: E402
+
+    return [
+        _write_page(out_dir, ("docs", "corpus-methodology"),
+                    _methodology_page(source, ledger)),
+        _write_page(out_dir, ("legal", "corpus-license"),
+                    _licence_page(payment, ledger, ATTRIBUTION)),
+        _write_page(out_dir, ("docs", "payment"), _payment_page(source, payment)),
+        _write_page(out_dir, ("pricing",), _pricing_page(source, payment)),
+    ]

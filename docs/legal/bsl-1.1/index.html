@@ -41,7 +41,8 @@ a { color:var(--accent); text-decoration:none; }
 a:hover { text-decoration:underline; }
 code { font-family:var(--mono); font-size:0.87em; background:var(--surface); padding:0.15rem 0.4rem; border-radius:4px; color:var(--brass); }
 pre { font-family:var(--mono); font-size:0.8rem; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:1.25rem; overflow-x:auto; margin:1.5rem 0; line-height:1.6; color:var(--ink-2); }
-pre code { background:none; padding:0; color:inherit; font-size:inherit; }
+pre code { background:none; padding:0; color:inherit; font-size:inherit; overflow-wrap:normal; }
+p code, li code, td code { overflow-wrap:anywhere; }
 hr { border:0; border-top:1px solid var(--line); margin:2.5rem 0; }
 .tw { overflow-x:auto; margin:1.5rem 0; -webkit-overflow-scrolling:touch; }
 .live { background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--accent); border-radius:12px; padding:1rem 1.25rem; margin:0 0 2rem; }
