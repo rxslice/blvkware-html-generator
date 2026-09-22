@@ -102,6 +102,42 @@ API_BASE = os.environ.get("HALLUX_API_BASE", "https://api.blvkware.dev")
 
 #: Cached so the build does not probe the endpoint once per page.
 _LIVE = {}
+_MCP_LIVE = {}
+
+
+def _surface_module(path):
+    """HALLUX's dev/build-surface.py, loaded once, for its probes."""
+    if path not in sys.path:
+        sys.path.insert(0, path)
+    sys.path.insert(0, os.path.join(path, "dev"))
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "hallux_build_surface", os.path.join(path, "dev", "build-surface.py")
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def mcp_live(api_base=None):
+    """Whether the MCP endpoint completes an initialize. (bool, detail).
+
+    HALLUX's own probe again, so the page only tells a reader to connect an
+    agent host to an address that answers as an MCP server.
+    """
+    api_base = api_base or API_BASE
+    if api_base in _MCP_LIVE:
+        return _MCP_LIVE[api_base]
+    path = locate()
+    if path is None:
+        _MCP_LIVE[api_base] = (False, "hallux checkout not found")
+        return _MCP_LIVE[api_base]
+    try:
+        _MCP_LIVE[api_base] = _surface_module(path).mcp_answers(api_base)
+    except Exception as error:
+        _MCP_LIVE[api_base] = (False, "probe failed: %s" % error)
+    return _MCP_LIVE[api_base]
 
 
 def endpoint_live(api_base=None):
@@ -119,18 +155,8 @@ def endpoint_live(api_base=None):
     if path is None:
         _LIVE[api_base] = (False, "hallux checkout not found")
         return _LIVE[api_base]
-    if path not in sys.path:
-        sys.path.insert(0, path)
-    sys.path.insert(0, os.path.join(path, "dev"))
     try:
-        import importlib.util
-
-        spec = importlib.util.spec_from_file_location(
-            "hallux_build_surface", os.path.join(path, "dev", "build-surface.py")
-        )
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-        _LIVE[api_base] = module.endpoint_answers(api_base)
+        _LIVE[api_base] = _surface_module(path).endpoint_answers(api_base)
     except Exception as error:
         _LIVE[api_base] = (False, "probe failed: %s" % error)
     return _LIVE[api_base]
@@ -235,6 +261,7 @@ def tokens():
         "{{HALLUX_NAMESPACES}}": ", ".join(namespaces),
         "{{HALLUX_NAMESPACE_COUNT}}": str(len(namespaces)),
         "{{HALLUX_NEUTRALITY}}": payment.PRICE_NOTES["neutrality"],
+        "{{HALLUX_MCP}}": _mcp_paragraph(deployed),
         # Priced is not the same as purchasable. With no settlement backend
         # connected, every paid tier on the table is documentation, and the
         # page says so above the fold of the table rather than letting a
@@ -507,6 +534,32 @@ def build_surface(out_dir, site="https://blvkware.dev", api=None):
     return result.stdout.strip()
 
 
+def _mcp_paragraph(deployed):
+    """The page's MCP paragraph: how to connect, but only when it answers."""
+    url = API_BASE.rstrip("/") + "/hallux/mcp"
+    if not (deployed and mcp_live()[0]):
+        return (
+            "<p>The same capability is built as an MCP server, so a coding "
+            "agent can check a command before running it without anyone "
+            "wiring an integration. Its endpoint is not answering right "
+            "now.</p>"
+        )
+    return (
+        "<p>There is also an MCP server exposing the same capability as "
+        "tools, so a coding agent can check a command before running it "
+        "without anyone wiring an integration. It answers at <code>%s</code> "
+        "over Streamable HTTP, with no account and no key:</p>\n"
+        '<pre><code><span class="c">claude</span> mcp add --transport http hallux %s</code></pre>\n'
+        "<p>Any other MCP host takes the same address. The tools are "
+        "<code>hallux_check_command</code>, to call before an install, "
+        "<code>hallux_check_manifest</code>, after editing a dependency file, "
+        "and <code>hallux_check</code> for identifiers; <code>hallux_watch</code> "
+        "is refused until durable storage is configured. Every identifier a "
+        "tool resolves counts against the open tier, like any other check.</p>"
+        % (url, url)
+    )
+
+
 def llms_section(base="https://blvkware.dev"):
     """The HALLUX block for llms.txt, generated from live coverage.
 
@@ -519,6 +572,14 @@ def llms_section(base="https://blvkware.dev"):
     payment, authorities = _load(path)
     live = ", ".join(authorities.supported())
     deployed, _detail = endpoint_live()
+    mcp_note = (
+        "  MCP server: %s/hallux/mcp (Streamable HTTP, no account, no key).\n"
+        "  Tools: hallux_check_command before an install, hallux_check_manifest\n"
+        "  after editing a dependency file, hallux_check for identifiers.\n"
+        % API_BASE.rstrip("/")
+        if deployed and mcp_live()[0]
+        else ""
+    )
     # Named `deployment_note`, not `status`: this module already has a
     # module-level `status()` function, and a local called `status` that fails
     # to be assigned falls back to it silently. The first version of this
@@ -547,6 +608,7 @@ def llms_section(base="https://blvkware.dev"):
         "  Free tier: %s identifiers a day per client, no account, no key,\n"
         "  within a shared pool of %s a day for all free traffic.\n"
         "%s"
+        "%s"
         "- [Agent catalog](%s/.well-known/ai-catalog.json): machine-readable\n"
         "  index of every capability that answers, with prices and payment\n"
         "  rails. Capabilities listed under `roadmap` are not built.\n"
@@ -558,6 +620,7 @@ def llms_section(base="https://blvkware.dev"):
             "{:,}".format(payment.FREE_DAILY_IDENTIFIERS),
             "{:,}".format(payment.OPEN_POOL_DAILY_IDENTIFIERS),
             deployment_note,
+            mcp_note,
             base,
             base,
         )

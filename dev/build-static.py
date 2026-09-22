@@ -1111,6 +1111,40 @@ def compile_catalog(html, name=""):
     return html
 
 
+#: Fira Code draws `--` as one long bar and `->` as an arrow, through its
+#: contextual alternates. In a command a reader copies, `--transport` then
+#: looks like an em dash in front of a word, which is neither what they will
+#: paste nor what the copy rules allow. Standard ligatures in the text faces
+#: are left alone; only the contextual ones go.
+CODE_LIGATURES_OFF = ('<style id="no-code-ligatures">*{font-variant-ligatures:'
+                      'no-contextual}</style>\n')
+
+
+def disable_code_ligatures():
+    """Add CODE_LIGATURES_OFF to every built page that loads Fira Code.
+
+    A pass over the output rather than an edit to each source, because
+    pages reach docs/ by five different routes (tools, the root, marketing
+    pages, verbatim tools, and the pages HALLUX's bridge generates).
+    """
+    count = 0
+    for dirpath, _dirs, files in os.walk(OUT_DIR):
+        for name in files:
+            if not name.endswith(".html"):
+                continue
+            path = os.path.join(dirpath, name)
+            with io.open(path, encoding="utf-8") as fh:
+                html = fh.read()
+            if ("Fira Code" not in html or 'id="no-code-ligatures"' in html
+                    or "</head>" not in html):
+                continue
+            html = html.replace("</head>", CODE_LIGATURES_OFF + "</head>", 1)
+            with io.open(path, "w", encoding="utf-8") as fh:
+                fh.write(html)
+            count += 1
+    return count
+
+
 def main():
     if not os.path.isdir(OUT_DIR):
         os.makedirs(OUT_DIR)
@@ -1283,6 +1317,8 @@ def main():
         return 1
 
     write_seo_files()
+
+    print("Turned off code ligatures on %d pages" % disable_code_ligatures())
 
     # Pages would otherwise run the output through Jekyll.
     with io.open(os.path.join(OUT_DIR, ".nojekyll"), "w", encoding="utf-8") as fh:

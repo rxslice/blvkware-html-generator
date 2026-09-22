@@ -70,6 +70,7 @@
         .foot-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
         .foot a { margin-right: 0; }
     </style>
+<style id="no-code-ligatures">*{font-variant-ligatures:no-contextual}</style>
 </head>
 <body>
 <div class="wrap">
@@ -172,7 +173,9 @@
 
     <p>The batch endpoint takes up to 100 identifiers in one round trip, which is the shape a CI pipeline or an agent framework wants. Responses on a paid tier carry an Ed25519 receipt over the result, so an operator can prove after an incident that the check happened and what it said.</p>
 
-    <p>There is also an MCP server exposing the same capability as tools, so a coding agent can check a command before running it without anyone wiring an integration.</p>
+    <p>There is also an MCP server exposing the same capability as tools, so a coding agent can check a command before running it without anyone wiring an integration. It answers at <code>https://api.blvkware.dev/hallux/mcp</code> over Streamable HTTP, with no account and no key:</p>
+<pre><code><span class="c">claude</span> mcp add --transport http hallux https://api.blvkware.dev/hallux/mcp</code></pre>
+<p>Any other MCP host takes the same address. The tools are <code>hallux_check_command</code>, to call before an install, <code>hallux_check_manifest</code>, after editing a dependency file, and <code>hallux_check</code> for identifiers; <code>hallux_watch</code> is refused until durable storage is configured. Every identifier a tool resolves counts against the open tier, like any other check.</p>
 
     <h2>Pricing</h2>
 

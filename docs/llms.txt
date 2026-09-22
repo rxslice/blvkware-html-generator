@@ -226,6 +226,9 @@ than at businesses.
   Live namespaces: cite.doi, pkg.crates, pkg.go, pkg.maven, pkg.npm, pkg.nuget, pkg.pypi.
   Free tier: 500 identifiers a day per client, no account, no key,
   within a shared pool of 50,000 a day for all free traffic.
+  MCP server: https://api.blvkware.dev/hallux/mcp (Streamable HTTP, no account, no key).
+  Tools: hallux_check_command before an install, hallux_check_manifest
+  after editing a dependency file, hallux_check for identifiers.
 - [Agent catalog](https://blvkware.dev/.well-known/ai-catalog.json): machine-readable
   index of every capability that answers, with prices and payment
   rails. Capabilities listed under `roadmap` are not built.

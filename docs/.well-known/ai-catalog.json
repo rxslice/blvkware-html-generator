@@ -158,6 +158,21 @@
       },
       "license": "https://blvkware.dev/legal/bsl-1.1",
       "status": "live"
+    },
+    {
+      "id": "hallux-mcp",
+      "name": "HALLUX MCP server",
+      "type": "mcp",
+      "url": "https://api.blvkware.dev/hallux/mcp",
+      "transport": "streamable-http",
+      "description": "The same checks as MCP tools for agent hosts: hallux_check_command before running an install, hallux_check_manifest after editing a dependency file, hallux_check for identifiers. Read-only lookups, no account and no key; each identifier resolved counts against the open tier like any other check.",
+      "tools": [
+        "hallux_check_command",
+        "hallux_check",
+        "hallux_check_manifest",
+        "hallux_watch"
+      ],
+      "status": "live"
     }
   ],
   "collections": [],
@@ -178,12 +193,6 @@
       "id": "veritas",
       "name": "VERITAS",
       "summary": "Independent probing of MCP servers and agent tools.",
-      "status": "not-built"
-    },
-    {
-      "id": "blvkware-mcp",
-      "name": "BlvkWare Verification MCP Server",
-      "summary": "MCP server exposing the verification tools to agent hosts.",
       "status": "not-built"
     }
   ],
