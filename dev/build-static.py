@@ -1226,6 +1226,13 @@ def main():
         with io.open(SITE, encoding="utf-8") as fh:
             site_html = fh.read()
         site_html = sync_faq_schema(site_html)
+        # The Developers menu and section quote HALLUX's live coverage, so the
+        # root page takes the same token pass as the HALLUX page.
+        try:
+            site_html = hallux.fill(site_html, "site/index.html")
+        except ValueError as e:
+            print("ABORTED: %s" % e)
+            return 1
         site_html = compile_catalog(site_html, "site/index.html")
         with io.open(os.path.join(OUT_DIR, "index.html"), "w", encoding="utf-8") as fh:
             fh.write(site_html)

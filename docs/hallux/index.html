@@ -205,18 +205,21 @@
 
     <p>Metered spend stops at the Team price. Above 373,750 identifiers in a calendar month the account moves to Team and is no longer metered. A build pipeline asks about the same few thousand established packages all day, those answers cost nothing to serve, and an invoice made of them would read as a tax on doing the right thing.</p>
 
-    <p>Watches are $0.02 per watched identifier per month, 100 included on Team and unlimited on Feed. They are priced on what you chose to watch, never on whether one fired. An annual commitment is twelve months charged as ten, the same as every other BlvkWare product.</p>
+    <p>Watches are $0.02 per watched identifier per month, 100 included on Team and unlimited on Feed. They are priced on what you chose to watch, never on whether one fired. An annual commitment is twelve months charged as ten.</p>
 
     <p>Machine-readable prices, identical to the numbers above and generated from the same source, are at <a href="https://api.blvkware.dev/hallux/v1/pricing">/hallux/v1/pricing</a> and in the <a href="/.well-known/ai-catalog.json">agent catalog</a>.</p>
 
     <h2>Where it came from</h2>
 
-    <p>HALLUX folds in <a href="https://github.com/rxslice/pkgguard-API">pkgguard</a>, an open-source package security gate, and takes its supply of observations from <a href="https://github.com/rxslice/slopbench">slopbench</a>, which measures how often a model names a dependency that no package answers to. Both are Apache 2.0 and free to use on their own.</p>
+    <p>HALLUX folds in <a href="/pkgguard/">pkgguard</a>, an open-source package security gate you can run in front of your own package manager, and takes its supply of observations from <a href="https://github.com/rxslice/slopbench">slopbench</a>, which measures how often a model names a dependency that no package answers to. Both are Apache 2.0 and free to use on their own.</p>
 
     <div class="foot">
         <div class="foot-links">
             <a href="/">BlvkWare</a>
             <a href="/docs/hallux-spec">Specification</a>
+            <a href="/docs/corpus-methodology">Corpus methodology</a>
+            <a href="/pricing">Pricing</a>
+            <a href="/pkgguard/">pkgguard</a>
             <a href="/.well-known/ai-catalog.json">Agent catalog</a>
             <a href="/agents/">AI agents</a>
             <a href="/privacy/">Privacy</a>

@@ -1176,11 +1176,16 @@ def _panel_section(panel):
     if not panel:
         return ""
     rows = ['<div class="tw"><table><thead><tr><th>Model</th><th>Served by</th>'
-            "</tr></thead><tbody>"]
+            "<th>Per day</th></tr></thead><tbody>"]
     for member in panel["members"]:
-        rows.append("<tr><td><code>%s</code></td><td>%s</td></tr>" % (
+        budget = member.get("budget")
+        per_day = "every prompt of the day" if not budget else (
+            "a rotating %d prompts, the most its free tier's %d requests "
+            "allow" % (budget // panel["samples"], budget))
+        rows.append("<tr><td><code>%s</code></td><td>%s</td><td>%s</td></tr>" % (
             _escape(member["model"]),
-            _escape(_HOST_NAMES.get(member["host"], member["host"]))))
+            _escape(_HOST_NAMES.get(member["host"], member["host"])),
+            _escape(per_day)))
     rows.append("</tbody></table></div>")
     return (
         "<h2>The panel</h2>"
