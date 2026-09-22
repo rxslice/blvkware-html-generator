@@ -90,7 +90,7 @@
 
     <p>The second case is called slopsquatting. It is the only supply-chain attack where the attacker's target list is generated for them, for free, by the victims' own tooling.</p>
 
-    <h2>Try it now</h2>
+    <h2 id="try">Try it now</h2>
 
     <p>No account, no key, no signup. One command:</p>
 
@@ -113,7 +113,7 @@
   &quot;successor&quot;: <span class="c">&quot;requests-oauthlib&quot;</span>
 }</code></pre>
 
-    <h2>Six verdicts</h2>
+    <h2 id="verdicts">Six verdicts</h2>
 
     <div class="tw">
     <table>
@@ -163,13 +163,13 @@
 
     <p>The method is published in full, because credibility is the product here. The <a href="/docs/hallux-spec">specification</a> carries the verdict semantics, the namespaces, the receipt format and the corpus methodology.</p>
 
-    <h2>Coverage</h2>
+    <h2 id="coverage">Coverage</h2>
 
     <p>7 namespaces answer today: <code>cite.doi, pkg.crates, pkg.go, pkg.maven, pkg.npm, pkg.nuget, pkg.pypi</code>.</p>
 
     <p>Namespaces named in the specification but not yet live return <code>unknown</code> with a reason, never an error. An agent's control flow does not break when HALLUX grows a namespace, and does not break when it meets one that has not been built.</p>
 
-    <h2>Call it from an agent</h2>
+    <h2 id="connect">Call it from an agent</h2>
 
     <p>The batch endpoint takes up to 100 identifiers in one round trip, which is the shape a CI pipeline or an agent framework wants. Responses on a paid tier carry an Ed25519 receipt over the result, so an operator can prove after an incident that the check happened and what it said.</p>
 
@@ -177,7 +177,7 @@
 <pre><code><span class="c">claude</span> mcp add --transport http hallux https://api.blvkware.dev/hallux/mcp</code></pre>
 <p>Any other MCP host takes the same address. The tools are <code>hallux_check_command</code>, to call before an install, <code>hallux_check_manifest</code>, after editing a dependency file, and <code>hallux_check</code> for identifiers; <code>hallux_watch</code> is refused until durable storage is configured. Every identifier a tool resolves counts against the open tier, like any other check.</p>
 
-    <h2>Pricing</h2>
+    <h2 id="pricing">Pricing</h2>
 
     <div class="rule">
         <strong>HALLUX is never paid more because it blocked you.</strong>

@@ -89,7 +89,7 @@
 
     <p>The second case is called slopsquatting. It is the only supply-chain attack where the attacker's target list is generated for them, for free, by the victims' own tooling.</p>
 
-    <h2>{{HALLUX_TRY_HEADING}}</h2>
+    <h2 id="try">{{HALLUX_TRY_HEADING}}</h2>
 
     {{HALLUX_TRY_INTRO}}
 
@@ -97,7 +97,7 @@
 
 {{HALLUX_TRY_RESPONSE}}
 
-    <h2>Six verdicts</h2>
+    <h2 id="verdicts">Six verdicts</h2>
 
     <div class="tw">
     <table>
@@ -147,19 +147,19 @@
 
     <p>The method is published in full, because credibility is the product here. The <a href="/docs/hallux-spec">specification</a> carries the verdict semantics, the namespaces, the receipt format and the corpus methodology.</p>
 
-    <h2>Coverage</h2>
+    <h2 id="coverage">Coverage</h2>
 
     <p>{{HALLUX_NAMESPACE_COUNT}} namespaces answer today: <code>{{HALLUX_NAMESPACES}}</code>.</p>
 
     <p>Namespaces named in the specification but not yet live return <code>unknown</code> with a reason, never an error. An agent's control flow does not break when HALLUX grows a namespace, and does not break when it meets one that has not been built.</p>
 
-    <h2>Call it from an agent</h2>
+    <h2 id="connect">Call it from an agent</h2>
 
     <p>The batch endpoint takes up to 100 identifiers in one round trip, which is the shape a CI pipeline or an agent framework wants. Responses on a paid tier carry an Ed25519 receipt over the result, so an operator can prove after an incident that the check happened and what it said.</p>
 
     {{HALLUX_MCP}}
 
-    <h2>Pricing</h2>
+    <h2 id="pricing">Pricing</h2>
 
     <div class="rule">
         <strong>HALLUX is never paid more because it blocked you.</strong>
