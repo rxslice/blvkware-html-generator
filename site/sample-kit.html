@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Free Sample AI Agent Kit: Read Every File | BlvkWare</title>
+    <meta name="description" content="A complete BlvkWare agent kit, free to read and download: a Follow-Up Agent generated for a sample plumbing business, by the same code that builds a paid kit. Instructions, tools, workflows, records, guardrails and tests.">
+    <link rel="canonical" href="https://blvkware.dev/sample-kit/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta property="og:title" content="A complete AI agent kit, every file, free to read">
+    <meta property="og:description" content="A real Follow-Up Agent kit for a sample plumbing business: its instructions, tools, workflows, records, guardrails and acceptance tests. Read it, then design yours.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://blvkware.dev/sample-kit/">
+    <meta property="og:image" content="https://blvkware.dev/assets/og.png">
+    <meta property="og:site_name" content="BlvkWare">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+    <link rel="apple-touch-icon" href="/assets/logo-192.png">
+    <meta name="theme-color" content="#0A0908">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "BlvkWare", "item": "https://blvkware.dev/"},
+        {"@type": "ListItem", "position": 2, "name": "Sample kit", "item": "https://blvkware.dev/sample-kit/"}
+      ]
+    },
+    {
+      "@type": "Product",
+      "name": "BlvkWare Operator kit",
+      "description": "The complete specification of one AI agent that owns one job: instructions, tools in OpenAI, Anthropic and MCP formats, workflows, record schemas, guardrails and acceptance tests, generated from your answers.",
+      "brand": {"@type": "Brand", "name": "BlvkWare"},
+      "url": "https://blvkware.dev/hire/",
+      "offers": {"@type": "Offer", "price": "{{KIT1_PRICE_NUM}}", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "url": "https://blvkware.dev/hire/"}
+    }
+  ]
+}
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap');
+        :root {
+            --bg: #0A0908; --surface: #17140F; --accent: #D4F24A; --brass: #D9B65C;
+            --ink: #F5F0E6; --ink-2: #A89D8B; --line: rgba(245,240,230,0.1);
+            --font: 'Manrope', system-ui, -apple-system, sans-serif;
+            --mono: 'Fira Code', ui-monospace, monospace;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+        .wrap { max-width: 860px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+        .top { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 3.5rem; text-decoration: none; color: inherit; }
+        .mark { width: 52px; height: 52px; border-radius: 14px; background: #060504; overflow: hidden; flex: none; }
+        .mark img { width: 100%; height: 100%; display: block; }
+        .wordmark { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; }
+        .wordmark span { color: var(--accent); }
+        .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--brass); margin-bottom: 1rem; }
+        h1 { font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 1rem; line-height: 1.12; }
+        .lede { font-size: 1.15rem; color: var(--ink-2); margin-bottom: 2rem; }
+        h2 { font-size: 1.5rem; font-weight: 700; margin: 3rem 0 1rem; letter-spacing: -0.01em; }
+        p { color: var(--ink-2); margin-bottom: 1.1rem; }
+        ol, ul { margin: 0 0 1.1rem 1.2rem; color: var(--ink-2); }
+        li { margin-bottom: 0.5rem; }
+        strong { color: var(--ink); font-weight: 700; }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        code { font-family: var(--mono); font-size: 0.85em; color: var(--brass); overflow-wrap: anywhere; }
+        .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.75rem; margin: 0 0 2rem; }
+        .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 0.9rem 1rem; }
+        .fact b { display: block; font-size: 1.6rem; font-weight: 800; color: var(--ink); line-height: 1.1; }
+        .fact span { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brass); }
+        .actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 0 0 1rem; }
+        .btn { display: inline-block; background: var(--accent); color: #14170A; font-weight: 700; padding: 0.85rem 1.5rem; border-radius: 10px; }
+        .btn:hover { text-decoration: none; opacity: 0.92; }
+        .btn-2 { display: inline-block; color: var(--ink); font-weight: 600; padding: 0.85rem 1.2rem; border: 1px solid rgba(245,240,230,0.2); border-radius: 10px; }
+        .btn-2:hover { text-decoration: none; border-color: var(--accent); }
+        .small { font-size: 0.9rem; }
+        .tree { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1rem 1.25rem; margin: 1rem 0 2rem;
+                font-family: var(--mono); font-size: 0.82rem; line-height: 1.85; }
+        .tree a { color: var(--ink); display: flex; justify-content: space-between; gap: 1rem; }
+        .tree a:hover { color: var(--accent); text-decoration: none; }
+        .tree a span { color: var(--ink-2); white-space: nowrap; }
+        .tree .dir { color: var(--brass); margin-top: 0.35rem; }
+        .tree .in { padding-left: 1.2rem; }
+        details { border: 1px solid var(--line); border-radius: 12px; margin: 0 0 0.75rem; background: var(--surface); scroll-margin-top: 1rem; }
+        summary { cursor: pointer; padding: 0.8rem 1.1rem; font-family: var(--mono); font-size: 0.86rem; color: var(--ink);
+                  display: flex; justify-content: space-between; gap: 1rem; list-style: none; }
+        summary::-webkit-details-marker { display: none; }
+        summary::before { content: "+"; color: var(--accent); margin-right: 0.6rem; }
+        details[open] summary::before { content: "\2212"; }
+        summary span { color: var(--ink-2); margin-left: auto; white-space: nowrap; }
+        summary b { font-weight: 500; overflow-wrap: anywhere; }
+        pre { font-family: var(--mono); font-size: 0.78rem; line-height: 1.6; color: var(--ink-2); padding: 1rem 1.1rem 1.2rem;
+              border-top: 1px solid var(--line); overflow: auto; max-height: 34rem; white-space: pre; }
+        .note { font-size: 0.8rem; color: var(--ink-2); padding: 0 1.1rem 0.9rem; margin: 0; }
+        .cta { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 2rem; margin: 3rem 0 0; }
+        .foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--ink-2); }
+        .foot-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <a class="top" href="/">
+        <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
+        <span class="wordmark">BlvkWare<span>.</span></span>
+    </a>
+
+    <div class="eyebrow">Sample kit · free</div>
+    <h1>A complete agent kit.<br>Every file, free to read.</h1>
+
+    <p class="lede">This is a real Follow-Up Agent kit, generated by the same code that builds a paid one, for a plumbing business that does not exist. Read any file below, or download the whole folder. Then design the one for your own business: yours is generated from your answers, not from Harbor's.</p>
+
+    <div class="facts">{{SAMPLE_FACTS}}</div>
+
+    <div class="actions">
+        <a class="btn" href="{{SAMPLE_ZIP}}" download>Download the sample (.zip, {{SAMPLE_SIZE}})</a>
+        <a class="btn-2" href="/hire/">Design yours, from {{KIT1_PRICE}}</a>
+    </div>
+    <p class="small">Free to read and share. It is not licensed for use in a business: its instructions, rules and systems are Harbor's. A kit designed for yours comes with a licence to use it.</p>
+
+    <h2>Read it in this order</h2>
+    <ol>
+        <li><a href="#f-README-md">README.md</a>: what the kit is, what it is not, and how to load it into OpenAI, Anthropic, an MCP client, n8n, Make or Zapier.</li>
+        <li><a href="#f-prompts-system-md">prompts/system.md</a>: the agent's instructions, with the owner's own words and the rules it must never break.</li>
+        <li><a href="#f-policies-autonomy-json">policies/autonomy.json</a>: what it may do on its own at each level. It starts at Draft.</li>
+        <li><a href="#f-workflows-quote-followup-json">workflows/quote.followup.json</a>: the job itself, step by step, with the steps that wait for a person.</li>
+        <li><a href="#f-tests-acceptance-md">tests/acceptance.md</a>: what it has to pass before it touches a real customer.</li>
+    </ol>
+
+    <h2>Every file</h2>
+    <div class="tree">{{SAMPLE_TREE}}</div>
+
+    {{SAMPLE_FILES}}
+
+    <h2>What changes in yours</h2>
+    <ul>
+        <li><strong>The job, in your words.</strong> What you type about the work is what the agent is told, word for word.</li>
+        <li><strong>Your never list.</strong> Every line becomes a hard rule in its instructions and its guardrails.</li>
+        <li><strong>Your systems and channels.</strong> An integration note for each system it operates, and only the tools those systems need.</li>
+        <li><strong>What it can do.</strong> One workflow, one set of instructions and one acceptance test per capability you choose, from {{N_CAPS}}.</li>
+        <li><strong>How much it may do alone.</strong> The autonomy level you are working towards, enforced tool by tool.</li>
+    </ul>
+
+    <div class="cta">
+        <h2 style="margin-top:0">Design the one for your business</h2>
+        <p>Pick the job, answer the questions, and the kit page shows every file your kit will contain, with its price, before you pay. {{KIT1_PRICE}} for an agent that owns one job, {{KIT2_PRICE}} for one that runs a whole function. One-off.</p>
+        <div class="actions">
+            <a class="btn" href="/hire/">Design an agent</a>
+            <a class="btn-2" href="/agents/">Browse the {{N_ROLES}} jobs</a>
+        </div>
+    </div>
+
+    <footer class="foot">
+        <div class="foot-links"><a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/hire/">Design an agent</a><a href="/how-agents-are-controlled/">How agents are controlled</a><a href="/ai-agent-pricing/">Pricing</a><a href="/terms/">Terms</a></div>
+        <p style="margin-top:1rem">BlvkWare, <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> · Mississippi, serving the United States.</p>
+    </footer>
+</div>
+</body>
+</html>

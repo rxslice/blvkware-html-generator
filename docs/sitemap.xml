@@ -121,6 +121,12 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://blvkware.dev/sample-kit/</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://blvkware.dev/legal/corpus-license</loc>
     <lastmod>2026-09-22</lastmod>
     <changefreq>yearly</changefreq>
