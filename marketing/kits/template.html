@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BlvkWare kit graphic</title>
+<!-- Rendered to PNG by render.py (headless Edge). ?kit=operator|deputy&fmt=... -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500;600&family=Manrope:wght@500;600;700;800&display=block" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0908; --surface: #15120E; --surface-2: #1C1813; --line: rgba(245,240,230,.11);
+  --ink: #F5F0E6; --ink-2: #B3A894; --ink-3: #7F7565;
+  --lime: #D4F24A; --brass: #D9B65C; --warm: #E8734A;
+  --accent: var(--lime);
+  --sans: 'Manrope', system-ui, sans-serif; --mono: 'Fira Code', ui-monospace, monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100vw; height: 100vh; overflow: hidden; background: var(--bg); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+body.deputy { --accent: var(--brass); }
+.frame { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+/* Blueprint grid, fading out from the top left, and one soft glow in the kit's colour. */
+.frame::before { content: ""; position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(245,240,230,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(245,240,230,.045) 1px, transparent 1px);
+  background-size: 40px 40px; -webkit-mask-image: radial-gradient(ellipse at 20% 15%, #000 0%, transparent 70%); mask-image: radial-gradient(ellipse at 20% 15%, #000 0%, transparent 70%); }
+.frame::after { content: ""; position: absolute; width: 70vmax; height: 70vmax; right: -22vmax; bottom: -30vmax; border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 22%, transparent) 0%, transparent 62%); }
+.content { position: relative; z-index: 1; width: 100%; height: 100%; }
+
+.brand { display: flex; align-items: center; gap: .55em; font-weight: 800; letter-spacing: -.01em; }
+.brand .mark { width: 1.9em; height: 1.9em; border-radius: .42em; background: #060504; overflow: hidden; flex: none; box-shadow: 0 0 0 1px rgba(217,182,92,.18); }
+.brand .mark img { width: 100%; height: 100%; display: block; }
+.brand b { font-weight: 800; }
+.brand b i { font-style: normal; color: var(--lime); }
+.eyebrow { font-family: var(--mono); font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+h1 { font-weight: 800; letter-spacing: -.045em; line-height: .92; }
+.tag { color: var(--ink); font-weight: 700; letter-spacing: -.02em; line-height: 1.15; }
+.sub { color: var(--ink-2); font-weight: 500; line-height: 1.4; }
+.tag, .sub, h1, h2 { text-wrap: balance; }
+.price { display: inline-flex; align-items: baseline; gap: .35em; white-space: nowrap; background: var(--accent); color: #15170A; font-weight: 800; border-radius: .35em; padding: .18em .5em .22em; letter-spacing: -.02em; }
+.price small { font-weight: 700; font-size: .42em; letter-spacing: 0; opacity: .8; }
+.cta { display: inline-block; background: var(--lime); color: #15170A; font-weight: 800; border-radius: .45em; padding: .55em .9em; letter-spacing: -.01em; }
+.url { font-family: var(--mono); color: var(--ink-2); font-weight: 500; }
+.url b { color: var(--ink); font-weight: 600; }
+ul.ticks { list-style: none; display: grid; gap: .55em; }
+ul.ticks li { display: flex; gap: .6em; align-items: baseline; color: var(--ink-2); font-weight: 600; line-height: 1.25; }
+ul.ticks li::before { content: ""; flex: none; width: .5em; height: .5em; border-radius: 2px; background: var(--accent); transform: translateY(-.08em); }
+ul.ticks li b { color: var(--ink); font-weight: 700; }
+
+.tree { font-family: var(--mono); background: linear-gradient(180deg, var(--surface-2), var(--surface)); border: 1px solid var(--line); border-radius: 18px; line-height: 1.62; white-space: pre; color: var(--ink-2); box-shadow: 0 30px 80px -30px rgba(0,0,0,.9); }
+.tree .bar { display: flex; gap: .45em; padding: .9em 1.1em .7em; border-bottom: 1px solid var(--line); }
+.tree .bar span { width: .62em; height: .62em; border-radius: 50%; background: rgba(245,240,230,.14); }
+.tree .body { padding: .9em 1.2em 1.1em; }
+.tree .dir { color: var(--brass); }
+.tree .hot { color: var(--ink); }
+.tree .g { color: var(--ink-3); }
+.tree .more { color: var(--accent); }
+.tree .foot { border-top: 1px solid var(--line); padding: .75em 1.2em; color: var(--ink-2); font-size: .92em; }
+.tree .foot b { color: var(--accent); font-weight: 600; }
+
+.chips { display: flex; flex-wrap: wrap; gap: .45em; }
+.chips span { border: 1px solid var(--line); background: rgba(245,240,230,.04); border-radius: 999px; padding: .32em .75em; color: var(--ink-2); font-weight: 600; }
+.chips span.more { border-color: transparent; background: none; color: var(--ink-3); }
+
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.tile { background: linear-gradient(180deg, var(--surface-2), var(--surface)); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px 17px; }
+.tile .k { font-family: var(--mono); color: var(--accent); font-size: 15px; font-weight: 600; margin-bottom: 9px; }
+.tile .t { font-size: 23px; font-weight: 800; letter-spacing: -.02em; margin-bottom: 6px; }
+.tile .d { color: var(--ink-2); font-size: 16.5px; font-weight: 500; line-height: 1.38; }
+
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+.step { position: relative; background: linear-gradient(180deg, var(--surface-2), var(--surface)); border: 1px solid var(--line); border-radius: 16px; padding: 24px 22px; }
+.step .n { font-family: var(--mono); font-size: 16px; color: var(--accent); font-weight: 600; margin-bottom: 18px; }
+.step .t { font-size: 28px; font-weight: 800; letter-spacing: -.025em; line-height: 1.05; margin-bottom: 10px; }
+.step .d { color: var(--ink-2); font-size: 18px; line-height: 1.42; font-weight: 500; }
+.step:not(:last-child)::after { content: ""; position: absolute; right: -14px; top: 50%; width: 10px; height: 10px; border-top: 2px solid var(--ink-3); border-right: 2px solid var(--ink-3); transform: translateY(-50%) rotate(45deg); }
+
+/* ---- per-format layouts ---- */
+.cover { padding: 50px 64px 44px; display: grid; grid-template-rows: auto 1fr auto; }
+.cover .mid { align-self: center; min-width: 0; margin-top: 22px; }
+.cover .brand { font-size: 26px; }
+.cover.hero .main { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; align-items: center; align-self: center; }
+.cover.hero .main > * { min-width: 0; }
+.cover.hero h1 { font-size: 116px; margin: 14px 0 18px; }
+.cover.hero .eyebrow { font-size: 18px; }
+.cover.hero .tag { font-size: 31px; max-width: 16em; }
+.cover.hero .sub { font-size: 20px; margin-top: 12px; max-width: 26em; }
+.cover.hero .row { display: flex; align-items: center; gap: 18px; margin-top: 26px; }
+.cover.hero .price { font-size: 46px; }
+.cover.hero .row .sub { margin: 0; font-size: 17px; }
+.cover.hero .tree { font-size: 14px; }
+.cover .bottom { margin-top: 18px; display: flex; justify-content: space-between; align-items: center; color: var(--ink-3); font-family: var(--mono); font-size: 16px; }
+.cover .bottom b { color: var(--ink-2); font-weight: 500; }
+.cover.section h2 { font-size: 52px; font-weight: 800; letter-spacing: -.04em; line-height: 1.02; margin: 12px 0 22px; }
+.cover.section h2 em { font-style: normal; color: var(--accent); }
+.cover.section .eyebrow { font-size: 16px; }
+
+.thumb { display: grid; place-items: center; text-align: center; padding: 44px; }
+.thumb .mark-big { width: 150px; height: 150px; border-radius: 34px; background: #060504; overflow: hidden; margin: 0 auto 26px; box-shadow: 0 0 0 1px rgba(217,182,92,.2), 0 24px 60px -20px rgba(0,0,0,.9); }
+.thumb .mark-big img { width: 100%; height: 100%; display: block; }
+.thumb .eyebrow { font-size: 19px; margin-bottom: 10px; }
+.thumb h1 { font-size: 108px; margin-bottom: 18px; }
+.thumb .tag { font-size: 25px; color: var(--ink-2); font-weight: 600; max-width: 15em; margin: 0 auto 26px; }
+.thumb .price { font-size: 56px; }
+
+.ad { display: flex; flex-direction: column; }
+.ad .brand { font-size: 30px; }
+.ad h1 em { font-style: normal; color: var(--accent); }
+.ad.square { padding: 70px 72px 64px; justify-content: space-between; }
+.ad.square h1 { font-size: 74px; letter-spacing: -.05em; margin-top: 40px; }
+.ad.square .sub { font-size: 27px; margin-top: 18px; max-width: 30em; }
+.ad.square .tree { font-size: 18px; margin-top: 30px; }
+.ad.square .end { display: flex; align-items: center; justify-content: space-between; margin-top: 30px; }
+.ad.square .price { font-size: 56px; }
+.ad.square .cta { font-size: 30px; }
+.ad.landscape { padding: 46px 54px; display: grid; grid-template-columns: 1.1fr .9fr; gap: 36px; align-items: center; }
+.ad.landscape .brand { font-size: 22px; }
+.ad.landscape h1 { font-size: 58px; letter-spacing: -.045em; margin: 22px 0 14px; }
+.ad.landscape .sub { font-size: 21px; }
+.ad.landscape .end { display: flex; align-items: center; gap: 16px; margin-top: 24px; }
+.ad.landscape .price { font-size: 40px; }
+.ad.landscape .cta { font-size: 22px; }
+.ad.landscape .tree { font-size: 15px; }
+.ad.story { padding: 96px 80px 90px; justify-content: space-between; }
+.ad.story .brand { font-size: 36px; }
+.ad.story h1 { font-size: 104px; letter-spacing: -.05em; margin-top: 60px; }
+.ad.story .sub { font-size: 36px; margin-top: 26px; }
+.ad.story .tree { font-size: 22px; margin-top: 46px; }
+.ad.story .end { display: grid; gap: 26px; justify-items: start; margin-top: 46px; }
+.ad.story .chips { font-size: 22px; }
+.ad.story .price { font-size: 76px; }
+.ad.story .cta { font-size: 40px; }
+.ad.story .url { font-size: 30px; }
+</style>
+</head>
+<body>
+<div class="frame"><div class="content" id="root"></div></div>
+<script>
+const LOGO = "../../docs/assets/logo-512.png";
+
+// Figures are real: kit previews from the live kit service at each role's
+// recommended scope (core plus suggested capabilities), 2026-09-22.
+const KITS = {
+  operator: {
+    name: "Operator", price: "$79", folder: "blvkware-agent-kit-follow-up",
+    tagline: "An AI agent that owns one job, start to finish.",
+    sub: "Every file it needs, generated from your answers about your business.",
+    hook: ["Every file your AI agent needs.", "Designed from <em>your</em> answers."],
+    adSub: "An AI agent that owns one job, start to finish.",
+    roles: ["Follow-Up Agent", "Email Manager", "Appointment Setter", "Lead Qualifier", "Support Agent", "Collections Agent", "Research Agent"],
+    rolesMore: "+12 more roles",
+    example: { role: "Follow-Up Agent", files: 39, workflows: 7, schemas: 8 },
+    tree: [
+      ["README.md", "hot"], ["SETUP.md", "hot"], ["agent.json", ""],
+      ["prompts/", "dir"], ["  system.md", "hot"], ["  capabilities/quote.followup.md", ""],
+      ["tools/", "dir"], ["  openai.json", ""], ["  anthropic.json", ""], ["  mcp.json", ""],
+      ["workflows/", "dir"], ["  quote.followup.json", "hot", "+6"],
+      ["schemas/records/", "dir"], ["  approval.schema.json", "", "+7"],
+      ["policies/autonomy.json", ""], ["tests/acceptance.md", ""],
+    ],
+  },
+  deputy: {
+    name: "Deputy", price: "$199", folder: "blvkware-agent-kit-front-desk",
+    tagline: "An AI agent that runs a whole function.",
+    sub: "More systems and channels, making judgment calls and escalating the exceptions.",
+    hook: ["One AI agent for a whole function.", "Every file, from <em>your</em> answers."],
+    adSub: "Front desk, revenue, back office or e‑commerce, with judgment and escalation built in.",
+    roles: ["Front Desk", "Revenue Deputy", "Back Office", "E-commerce Deputy"],
+    rolesMore: "+ any Operator-sized design",
+    example: { role: "Front Desk", files: 53, workflows: 12, schemas: 9 },
+    tree: [
+      ["README.md", "hot"], ["SETUP.md", "hot"], ["agent.json", ""],
+      ["prompts/", "dir"], ["  system.md", "hot"], ["  capabilities/voice.inbound.md", "", "+11"],
+      ["tools/", "dir"], ["  openai.json", ""], ["  anthropic.json", ""], ["  mcp.json", ""],
+      ["integrations/", "dir"], ["  telephony.md", "", "+3"],
+      ["workflows/", "dir"], ["  email.triage.json", "hot", "+11"],
+      ["schemas/records/", "dir"], ["  approval.schema.json", "", "+8"],
+      ["policies/autonomy.json", ""],
+    ],
+  },
+};
+
+const params = new URLSearchParams(location.search);
+const kitId = params.get("kit") || "operator";
+const fmt = params.get("fmt") || "hero";
+const K = KITS[kitId];
+document.body.classList.add(kitId);
+
+const brand = () => `<div class="brand"><div class="mark"><img src="${LOGO}" alt=""></div><b>BlvkWare<i>.</i></b></div>`;
+const price = (small = "one-off") => `<span class="price">${K.price}${small ? `<small>${small}</small>` : ""}</span>`;
+
+function tree(limit) {
+  const rows = limit ? K.tree.slice(0, limit) : K.tree;
+  const lines = rows.map(([text, cls, more], i) => {
+    const last = i === rows.length - 1;
+    const nested = text.startsWith("  ");
+    const name = text.trim();
+    const nextNested = !last && rows[i + 1][0].startsWith("  ");
+    let prefix;
+    if (nested) {
+      const parentIsLast = !rows.slice(i + 1).some(([t]) => !t.startsWith("  "));
+      prefix = (parentIsLast ? "   " : "│  ") + (nextNested ? "├─ " : "└─ ");
+    } else {
+      const lastTop = !rows.slice(i + 1).some(([t]) => !t.startsWith("  "));
+      prefix = lastTop ? "└─ " : "├─ ";
+    }
+    const tail = more ? `  <span class="more">${more}</span>` : "";
+    return `<span class="g">${prefix}</span><span class="${cls}">${name}</span>${tail}`;
+  });
+  const e = K.example;
+  return `<div class="tree"><div class="bar"><span></span><span></span><span></span></div>` +
+    `<div class="body"><span class="dir">${K.folder}/</span>\n${lines.join("\n")}</div>` +
+    `<div class="foot">${e.role} kit: <b>${e.files} files</b> · ${e.workflows} workflows · ${e.schemas} record schemas</div></div>`;
+}
+
+const LAYOUTS = {
+  hero: () => `
+    <div class="cover hero" style="height:100%">
+      ${brand()}
+      <div class="main">
+        <div>
+          <div class="eyebrow">BlvkWare Agent Kit</div>
+          <h1>${K.name}</h1>
+          <div class="tag">${K.tagline}</div>
+          <div class="sub">${K.sub}</div>
+          <div class="row">${price()}<div class="sub">No subscription. No call.<br>Downloads the moment you pay.</div></div>
+        </div>
+        ${tree()}
+      </div>
+      <div class="bottom"><span>Instructions · Tools · Workflows · Schemas · Policies · Tests</span><span><b>blvkware.dev/hire</b></span></div>
+    </div>`,
+
+  inside: () => `
+    <div class="cover section" style="height:100%">
+      ${brand()}
+      <div class="mid">
+        <div class="eyebrow">${K.name} kit · what is inside</div>
+        <h2>Everything an agent needs,<br><em>generated from your answers.</em></h2>
+        <div class="tiles">
+          <div class="tile"><div class="k">prompts/system.md</div><div class="t">Instructions</div><div class="d">Written for your business, with your own "never do" rules built in word for word.</div></div>
+          <div class="tile"><div class="k">tools/*.json</div><div class="t">Tools</div><div class="d">Every action it can take, for OpenAI, Anthropic and MCP, each marked read, internal or external.</div></div>
+          <div class="tile"><div class="k">workflows/*.json</div><div class="t">Workflows</div><div class="d">What starts each job, the steps in order, and which steps wait for your approval.</div></div>
+          <div class="tile"><div class="k">schemas/records/</div><div class="t">Record schemas</div><div class="d">JSON Schema for everything it keeps, always with an approval queue and an audit log.</div></div>
+          <div class="tile"><div class="k">policies/autonomy.json</div><div class="t">Autonomy policy</div><div class="d">Four levels from Watch to Operate. It starts at Draft: nothing reaches a customer unapproved.</div></div>
+          <div class="tile"><div class="k">tests/acceptance.md</div><div class="t">Setup and tests</div><div class="d">The facts only you can supply, and a test that proves each capability works.</div></div>
+        </div>
+      </div>
+      <div class="bottom"><span>Plain JSON and Markdown. Works with the tools you already use.</span><span><b>${K.price}</b> one-off</span></div>
+    </div>`,
+
+  how: () => `
+    <div class="cover section" style="height:100%">
+      ${brand()}
+      <div class="mid">
+        <div class="eyebrow">${K.name} kit · how it works</div>
+        <h2>From your answers to your agent,<br><em>with nobody in between.</em></h2>
+        <div class="steps">
+          <div class="step"><div class="n">01</div><div class="t">Design it</div><div class="d">Pick the job, the systems it works with, and your rules at blvkware.dev/hire.</div></div>
+          <div class="step"><div class="n">02</div><div class="t">See every file</div><div class="d">The full file list and the price are on the page before you pay.</div></div>
+          <div class="step"><div class="n">03</div><div class="t">Buy it here</div><div class="d">${K.price}, one-off. Your licence key is on the receipt.</div></div>
+          <div class="step"><div class="n">04</div><div class="t">Download and build</div><div class="d">Paste the key, get the zip, build with OpenAI, Anthropic, MCP, n8n, Make or Zapier.</div></div>
+        </div>
+      </div>
+      <div class="bottom"><span>Change the design and download again, up to 20 times.</span><span><b>blvkware.dev/hire</b></span></div>
+    </div>`,
+
+  thumb: () => `
+    <div class="thumb" style="height:100%">
+      <div>
+        <div class="mark-big"><img src="${LOGO}" alt=""></div>
+        <div class="eyebrow">BlvkWare Agent Kit</div>
+        <h1>${K.name}</h1>
+        <div class="tag">${K.tagline}</div>
+        ${price("")}
+      </div>
+    </div>`,
+
+  square: () => `
+    <div class="ad square" style="height:100%">
+      <div>${brand()}
+        <h1>${K.hook[0]}<br>${K.hook[1]}</h1>
+        <div class="sub">${K.adSub}</div>
+      </div>
+      ${tree(6)}
+      <div class="end">${price()}<span class="cta">Design yours →</span></div>
+    </div>`,
+
+  landscape: () => `
+    <div class="ad landscape" style="height:100%">
+      <div>${brand()}
+        <h1>${K.hook[0]}<br>${K.hook[1]}</h1>
+        <div class="sub">${K.adSub} Downloads the moment you pay.</div>
+        <div class="end">${price()}<span class="cta">Design yours →</span></div>
+      </div>
+      ${tree(10)}
+    </div>`,
+
+  story: () => `
+    <div class="ad story" style="height:100%">
+      <div>${brand()}
+        <h1>${K.hook[0]}<br>${K.hook[1]}</h1>
+        <div class="sub">${K.adSub}</div>
+      </div>
+      ${tree(12)}
+      <div class="end">${price()}<span class="cta">Design yours at blvkware.dev/hire</span><div class="chips">${K.roles.slice(0, 4).map((r) => `<span>${r}</span>`).join("")}<span class="more">${K.rolesMore}</span></div></div>
+    </div>`,
+};
+
+document.getElementById("root").innerHTML = LAYOUTS[fmt]();
+document.fonts.ready.then(() => document.body.setAttribute("data-ready", "1"));
+</script>
+</body>
+</html>
