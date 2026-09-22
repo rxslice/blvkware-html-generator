@@ -3,12 +3,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>How BlvkWare Agents Are Controlled: Permissions, Credentials, Data</title>
-    <meta name="description" content="Where your credentials live, what leaves your systems and where it goes, what is logged, what needs a person, and how you stop the agent yourself in one press. Including what this page does not claim.">
+    <title>How BlvkWare Agent Kits Are Controlled: Autonomy, Credentials, Data</title>
+    <meta name="description" content="What every BlvkWare kit specifies about control: the four autonomy levels, which tools may change what, the approval queue, the append-only log, the stop, and where your credentials and data go. Including what a kit cannot do for you.">
     <link rel="canonical" href="https://blvkware.dev/how-agents-are-controlled/">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
     <meta property="og:title" content="What the agent can reach, and how you take it back">
-    <meta property="og:description" content="Credentials, what leaves your systems, the log, the human gates, and the stop button. Including what is not claimed.">
+    <meta property="og:description" content="The autonomy policy, the approval queue, the log, the stop, and where your credentials and data go. Including what a kit cannot promise.">
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://blvkware.dev/how-agents-are-controlled/">
     <meta property="og:image" content="https://blvkware.dev/assets/og.png">
@@ -32,15 +32,15 @@
       "@type": "FAQPage",
       "mainEntity": [
         {"@type": "Question", "name": "Can I stop the agent myself?",
-         "acceptedAnswer": {"@type": "Answer", "text": "Yes, in one press, from a page that comes with every agent. Stopping puts it on Watch immediately: it carries on reading and recording what it would have done, and does none of it. It stays stopped through a restart until you start it again, and starting it again returns it to the level it was at. Nothing already sent can be unsent, by this or any other system."}},
+         "acceptedAnswer": {"@type": "Answer", "text": "Yes. Every kit sets the agent's autonomy level in one file, policies/autonomy.json. Setting it to L0, Watch, stops everything that changes anything: the agent may still read and report, and no tool that changes a record or reaches a customer may run. That holds when the level is enforced in the tool handler, which the kit tells whoever builds it to do. Nothing already sent can be unsent, by this or by any other system."}},
         {"@type": "Question", "name": "Where are my credentials stored?",
-         "acceptedAnswer": {"@type": "Answer", "text": "In a single file in the agent's own directory on the machine it runs on, protected by that machine's file permissions and excluded from version control. The software itself never holds a secret: each system declares the names of the credentials it needs, and the values live only in that file. It is not separately encrypted at rest. If you need managed secret storage with rotation and an access log, that is a different arrangement and worth raising before buying."}},
-        {"@type": "Question", "name": "What data leaves my systems?",
-         "acceptedAnswer": {"@type": "Answer", "text": "Two destinations only. Your own vendors, which the agent operates the same way you do. And the model provider for the reasoning: the text being worked on plus the relevant passages from your own documents. Credentials, customer lists and the record store are not sent there. There is no BlvkWare server in the middle."}},
-        {"@type": "Question", "name": "Can the agent run without sending anything to an AI model?",
-         "acceptedAnswer": {"@type": "Answer", "text": "Yes. Every reasoning operation has a deterministic version underneath that uses no model and no network, and the whole agent can run that way. Much more work lands on a person and nothing is guessed: on a purpose-built test set the no-model path is confidently wrong zero times and answers zero questions the documents do not cover, at the cost of escalating far more."}},
+         "acceptedAnswer": {"@type": "Answer", "text": "Not with BlvkWare, and not in the kit. A kit contains no credentials and nothing on the site asks for one. Access is granted in your own systems, to the agent's own login or API key rather than a person's, with the smallest access that covers what its tools do. The kit's notes for each system list exactly what that is."}},
+        {"@type": "Question", "name": "What data does BlvkWare see?",
+         "acceptedAnswer": {"@type": "Answer", "text": "The answers you give while designing an agent, which are sent to generate its kit and are not kept, and a one-way fingerprint of your licence key with the role it unlocked and a download count. Gumroad handles the payment. Once built, the agent runs on your own tools and talks to your vendors and the model provider you choose. None of its traffic passes through BlvkWare."}},
+        {"@type": "Question", "name": "What does the agent hold for approval?",
+         "acceptedAnswer": {"@type": "Answer", "text": "At the level every kit starts at, L1 Draft, anything that reaches a customer, a supplier or money. The agent keeps your own records up to date, and each external action becomes an approval record with the exact tool and input it would run. It runs only after a person approves, edits or rejects it."}},
         {"@type": "Question", "name": "Is every action reversible?",
-         "acceptedAnswer": {"@type": "Answer", "text": "No, and any supplier saying otherwise is overstating it. Where the connected system can undo something (a booking, a reschedule, a record update, a payment request) the agent records how to undo it at the moment it acts. Sending is not reversible: a message somebody has read cannot be recalled. That is exactly why sending is what Draft holds for a person."}}
+         "acceptedAnswer": {"@type": "Answer", "text": "No, and any supplier saying otherwise is overstating it. A booking or a record update can usually be reversed in the system it happened in. A message somebody has read cannot be recalled, and money that has moved still moved. That is why external actions are the ones held for a person by default."}}
       ]
     }
   ]
@@ -105,6 +105,7 @@
         .fig { margin: 2.2rem 0; }
         .fig svg { width: 100%; height: auto; display: block; }
         .fig-cap { font-family: var(--mono); font-size: 0.74rem; color: var(--ink-2); text-align: center; margin-top: 0.7rem; }
+        code { font-family: var(--mono); font-size: 0.85em; color: var(--brass); }
     </style>
 </head>
 <body>
@@ -117,95 +118,95 @@
     <div class="eyebrow">Control · Credentials · Data</div>
     <h1>What the agent can reach,<br>and how you take it back</h1>
 
-    <p class="lede">You are considering giving a piece of software your inbox, your calendar and your customers. That deserves specifics rather than reassurance. This page is the specifics: where your credentials live, what leaves your systems and where it goes, what is written down, what needs a person, and how you stop it yourself at two in the morning without ringing anybody. Everything here describes what the software actually does. Where something is a limitation rather than a feature, it says so.</p>
+    <p class="lede">You are considering giving a piece of software your inbox, your calendar and your customers. That deserves specifics rather than reassurance. A BlvkWare kit is the complete specification of an agent, which you, or a developer you choose, turn into a running one. This page is exactly what that specification says about control: what the agent may do at each level, what waits for a person, what is written down, how you stop it, and where your credentials and data go. And, because it matters as much, what a kit cannot do for you.</p>
 
-    <h2>You can stop it yourself, in one press</h2>
+    <h2>Who is in control</h2>
 
-    <p>Every agent comes with a page called <strong>What it may do</strong>. It is in the same place on every agent, and it has one button that stops it.</p>
+    <p>You are, completely, and that is the point of a kit rather than a service. BlvkWare does not run your agent, does not host it, and never has access to your systems. The agent is built on your tools, with access you grant and can take back, and it talks to your vendors directly.</p>
 
-    <p>Stopping puts the agent on <strong>Watch</strong> immediately. On Watch it carries on reading what comes in and carries on writing down what it would have done, and it does none of it. Nothing reaches a customer, nothing is booked, nothing is changed in your systems. It stays stopped until you start it again, including through a restart of the machine it runs on. Starting it again puts it back at the level it was at, not at the top.</p>
+    <p>The honest consequence: the controls below are specified by us and enforced by your build. The kit writes each one down precisely, in files a developer can wire straight into code, and it says where each rule has to live. Whether it is wired in is up to the build, and the acceptance tests exist so you can check.</p>
 
-    <p>Two things worth being straight about. The log of what it <em>would</em> have done keeps filling up while it is stopped, and that log is usually the reason you stopped it. It is the fastest way to see what it was about to get wrong. And nothing already sent can be unsent, by this or by any other system. Stopping stops what has not happened yet.</p>
+    <h2>It starts unable to act on its own</h2>
 
-    <p>You do not need us to do it and there is no ticket. It is recorded against you with the time, and every change to what the agent may do is listed on that page with who made it.</p>
-
-    <h2>What it is allowed to do</h2>
-
-    <p>Every agent runs at one of four levels, and it is bought at a level rather than arriving with one.</p>
+    <p>Every tool in a kit is marked with its effect, and the agent's level decides what each effect may do.</p>
 
     <div class="tw"><table>
-        <thead><tr><th style="width:9rem">Level</th><th>What it may do</th></tr></thead>
+        <thead><tr><th>Effect</th><th>What it covers</th></tr></thead>
         <tbody>
-            <tr><td><strong>Watch</strong></td><td>Nothing. It reads and records what it would have done. This is also what the stop button does.</td></tr>
-            <tr><td><strong>Draft</strong></td><td>It does the work and keeps your own records straight. Anything a customer would see waits for you to send it. <strong>Every agent goes live here</strong>, whatever was ordered.</td></tr>
-            <tr><td><strong>Approve</strong></td><td>It acts within limits you set, and stops to ask above them. Anything it cannot undo waits for a person unless you have said otherwise in writing.</td></tr>
-            <tr><td><strong>Operate</strong></td><td>It acts on its own inside the job it was given. Your own rules still bind.</td></tr>
+            <tr><td><strong>Read</strong></td><td>Looks something up. Changes nothing.</td></tr>
+            <tr><td><strong>Internal</strong></td><td>Changes your own records: tags a message, updates a contact, adds a note.</td></tr>
+            <tr><td><strong>External</strong></td><td>Reaches a customer, a supplier or money: sends, books, charges, refunds.</td></tr>
         </tbody>
     </table></div>
 
-    <p>Two things about this are structural rather than promised. There is exactly one route in the software from a decision to a side effect, and that route runs the level check first: a capability cannot send, book, charge or change anything without passing it. And <em>your</em> rules are checked before the level, not after: if you have said the agent must always ask before it updates a record, that binds at Operate as well as at Draft. Checked the other way round, a promotion would quietly cancel your own instruction.</p>
+    <p>The four levels, as the kit's <code>policies/autonomy.json</code> sets them out:</p>
 
-    <p>An agent is also only ever given the systems its job needs. A follow-up agent is not handed your accounting login because the same person happens to own both.</p>
+    <div class="tw"><table>
+        <thead><tr><th>Level</th><th>Reads</th><th>Your records</th><th>Customers, suppliers, money</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Watch</strong></td><td>Yes</td><td>No</td><td>No</td></tr>
+            <tr><td><strong>Draft</strong></td><td>Yes</td><td>Yes</td><td>Held for a person</td></tr>
+            <tr><td><strong>Approve</strong></td><td>Yes</td><td>Yes</td><td>Below limits you set; held above them</td></tr>
+            <tr><td><strong>Operate</strong></td><td>Yes</td><td>Yes</td><td>Within its job; exceptions escalated</td></tr>
+        </tbody>
+    </table></div>
 
-    <h2>Where your credentials live</h2>
+    <p>Every kit starts at Draft, whatever level you design towards. The policy file itself says the level must be enforced in the tool handler and not only in the prompt, because a prompt is advice and a handler is a rule. Operate is for after a supervised period at Approve, with the owner's written sign-off, and that condition is written into the policy too.</p>
 
-    <p><strong>The software never holds a secret.</strong> Each system the agent operates declares the names of the credentials it needs and where you get each one. The values themselves go into a single file on the machine the agent runs on, in the agent's own directory. That directory is created outside our source code, the file is generated empty for you to fill in, and it is excluded from version control so that committing one by accident is awkward on purpose.</p>
+    <p>An agent is also only given the tools its job needs. A follow-up agent's kit does not contain tools for your accounting system because the same person happens to own both.</p>
 
-    <p>To be precise about what that is and is not: it is an ordinary file protected by that machine's own permissions. <strong>It is not separately encrypted at rest, and we are not going to tell you it is.</strong> If your business needs managed secret storage with rotation and an access log, that is a real requirement, it is a different arrangement, and it is worth saying so before you buy rather than after.</p>
+    <h2>You can stop it yourself</h2>
 
-    <p>One detail that exists because of how this goes wrong: the agent's own file takes precedence over anything set in the surrounding environment. A leftover setting in an operator's terminal silently pointing an agent at a different customer's account is a mistake worth making impossible rather than unlikely.</p>
+    <p>The stop is a setting, not a support ticket. Set the level to Watch and nothing that changes anything may run. The agent can still read what comes in and report what it would have done, and it does none of it.</p>
 
-    <p>Nothing about an integration is reported as working because a credential was typed in. Before delivery every credential is actually used against the real system and the result recorded. A build sheet that says "connected" on the strength of a filled-in field is how you find out on day nine.</p>
+    <p>Two things worth being straight about. The record of what it would have done is usually the reason you stopped it: it is the fastest way to see what it was about to get wrong. And nothing already sent can be unsent, by this or by any other system. Stopping stops what has not happened yet.</p>
 
-    <h2>What leaves your systems, and where it goes</h2>
+    <h2>What waits for a person</h2>
 
-    <p>There are exactly two destinations.</p>
+    <p>At Draft, every external action becomes an approval instead of an action: a record of the exact tool it would run, exactly what it would run it with, why the agent proposed it, and what it concerns. It runs only after a person approves it, edits it or rejects it, and who decided and when stay on the record. The schema for that queue is in every kit, whatever else the kit contains.</p>
 
-    <p><strong>Your own vendors.</strong> The systems you told the agent to operate: your mail host, your calendar, your CRM, your payment provider. It talks to them the same way you do.</p>
-
-    <p><strong>The model provider, for the reasoning.</strong> When the agent classifies a message or drafts a reply, the text it is working on and the relevant passages from your own documents go to Anthropic's API and the answer comes back. Nothing else is sent there: not your credentials, not your customer list, not your record store. Their terms govern what they do with it; read them rather than taking our paraphrase, because it is their policy and not ours to promise.</p>
-
-    <p>There is no BlvkWare server in the middle. The agent runs on its own machine and talks directly to those two.</p>
-
-    <h3>And it will run with no model at all</h3>
-
-    <p>This is unusual and it is worth understanding, because it is the strongest answer available to "what if I do not want a model seeing this."</p>
-
-    <p>Every reasoning operation in the agent has a deterministic version underneath it that uses no model and no network. You can run the whole agent that way. It still sorts, still records, still follows your sequences, still refuses to answer things your documents do not cover, and it tells you which of the two paths produced each decision.</p>
-
-    <p>The trade-off is real and here it is measured rather than described. Against a 29-message inbox and a 30-document knowledge pack built for the purpose: with no model the classifier reaches a confident answer on roughly a third of messages and sends the rest to a person, and the answering side declines seventeen questions it could technically have found in order to avoid inventing a single one. Its record on the two failures that actually cost you something (a confident wrong classification, and answering a question your documents do not cover) is zero and zero.</p>
-
-    <p>So: much more lands on your desk, and nothing is guessed. With a model far less lands on your desk. That is the actual choice, and it is yours.</p>
+    <p>Some limits no level lifts. The rules you give while designing the agent, in your own words, are written into its instructions and its guardrails word for word, and they bind at every level. So do the kit's own: nothing is sent to a customer in quiet hours, an opt-out is permanent until the person opts back in, and the agent says it is automated whenever it is asked.</p>
 
     <h2>What is written down</h2>
 
-    <p>Every action the agent takes or wants to take is one entry: what it was looking at, what it decided, why, exactly what it would do, which level it was at, and who approved it if anybody did.</p>
+    <p>Every kit specifies an append-only log. Each entry records when, which capability acted, what happened, what it concerned, the level in force, what decided (the model, a fixed rule or a person) and the result: done, held, refused or failed.</p>
 
-    <p>Two properties make that log worth having. The entry is written <em>before</em> the side effect is attempted, so a process that dies halfway through shows an attempt rather than showing nothing. And entries are never edited, if something is undone, that is a new entry pointing at the original. A log that can be tidied up afterwards is not evidence of anything.</p>
+    <p>Two rules make that log worth having, and both are in the kit's guardrails. The entry is written before the action it records, so a process that dies halfway shows an attempt rather than showing nothing. And records are never deleted, only archived or marked. A log that can be tidied up afterwards is not a log.</p>
 
-    <p>If a person rewrites what the agent drafted before sending it, that is recorded as its own entry with the words that were there before. "The agent sent this" and "a person rewrote this and sent it" are different facts, and a log that cannot tell them apart is one that quietly takes credit.</p>
+    <h2>Where your credentials live</h2>
+
+    <p>Not with us, and not in the kit. A kit contains no credentials, and nothing on this site asks for one. Access is granted in your own systems, and the kit's notes for each system list exactly what the agent's tools read and change there, so you can grant the smallest access that covers it.</p>
+
+    <p>The kit asks for one discipline that is worth keeping even if you ignore the rest: give the agent its own login or API key, never a person's. Then everything it does is attributable to it, and it can be switched off without locking anyone out.</p>
+
+    <h2>What leaves your systems, and where it goes</h2>
+
+    <p>Once it is built, the agent talks to two kinds of destination, and you choose both.</p>
+
+    <ul>
+        <li><strong>Your own vendors.</strong> The mail host, calendar, CRM or payment provider it operates, the same way you do.</li>
+        <li><strong>The model provider you build on,</strong> for the reasoning: the text being worked on, and whichever passages of your own material your build gives it.</li>
+    </ul>
+
+    <p>None of its traffic passes through BlvkWare. We never see a message it reads or sends.</p>
+
+    <p>What BlvkWare does see is limited to the purchase: the answers you give while designing the agent, sent to generate the kit and not kept afterwards, and a one-way fingerprint of your licence key with the role it unlocked and how many times it has been downloaded. Gumroad handles the payment. The detail is in the <a href="/privacy/">privacy notice</a>.</p>
 
     <h2>What can be undone, and what genuinely cannot</h2>
 
     <p>Some suppliers will tell you every action is reversible. It is not true and it is worth knowing where the line is.</p>
 
-    <p>When the agent does something the connected system can undo (a booking, a reschedule, a record update, a payment request, a step in a sequence) it records how to undo it <em>at the moment it acts</em>, so reversing it later is one instruction rather than a reconstruction. Where it did not record one, the software refuses to pretend and says so rather than doing something approximate.</p>
-
-    <p>Sending is not reversible. A message somebody has read cannot be recalled, whatever any software claims. Money that has moved may be refundable but the event still happened. <strong>This is exactly why sending is the thing Draft holds</strong>: the irreversible category is the one that waits for a person by default, rather than the one you are asked to trust.</p>
+    <p>A booking, a record update or a step in a sequence can usually be reversed in the system it happened in. Sending cannot. A message somebody has read cannot be recalled, and money that has moved may be refundable but the event still happened. This is exactly why external actions are the ones held for a person by default: the irreversible category waits, rather than being the one you hear about afterwards.</p>
 
     <h2>When it does not know</h2>
 
     <p>The failure that actually damages a business is not an agent that stops too often. It is one that answers a question about your prices or your terms with something plausible that nobody at your company ever said.</p>
 
-    <p>So the answering side works only from material you gave it, and when your documents do not cover a question it says which passage came closest and hands the question to a person rather than filling the gap. That is deliberately tuned to decline things it could probably have answered, because a question that reaches you costs a minute and a confident wrong answer about your own terms costs considerably more.</p>
-
-    <p>The same principle governs sorting. When the agent is not sure which pile a message belongs in, it escalates instead of picking. Escalation is the system working, not the system failing.</p>
+    <p>So the first guardrail in every kit is that facts come only from your records, the conversation or your knowledge base: no invented price, date, policy, phone number or promise. When that material does not cover a question, the agent's instructions are to say so and hand it to a person rather than fill the gap. A step of a written process that fails stops the process for a person; steps are never skipped. Escalation is the system working, not the system failing.</p>
 
     <h2>Your data, and getting it back</h2>
 
-    <p>It is yours. It stays yours. If you stop paying, the agent pauses and everything it holds is exported to you within five business days, all of it, in a format you can use.</p>
-
-    <p>If you would rather keep running it yourself, the source is available at twelve times the monthly fee. That is published on purpose: "you will never get your business back out" is the fair objection to every managed service and it deserves an answer in writing rather than a reassurance on a call.</p>
+    <p>There is nothing to get back. The agent's records live in your own systems from the first day, in schemas you hold, so there is no export to request and nobody to request it from. The kit is yours to keep and build on for as long as you like, and your licence key downloads it again, including after you change the design.</p>
 
     <h2>What this page does not claim</h2>
 
@@ -213,19 +214,19 @@
 
     <ul>
         <li><strong>No formal certification.</strong> There is no SOC 2 report and no ISO certificate. This is a one-person company and pretending otherwise would be the first thing you found out was untrue.</li>
-        <li><strong>Credentials are not separately encrypted at rest.</strong> Stated above, repeated here so it is not something you find in a paragraph.</li>
-        <li><strong>The agent can be wrong.</strong> Every provider telling you theirs cannot is either inexperienced or not being straight with you. What is offered instead is that it goes live unable to act on its own, that you can see everything it does, that you can stop it yourself, and that the commercial position is written down: liability is capped at fees paid, in the <a href="/terms/">terms</a>, where you can read it before you buy rather than after something happens.</li>
+        <li><strong>A kit enforces nothing by itself.</strong> It is a specification. The controls on this page are as strong as the build that implements them, which is why every capability comes with an acceptance test and the kit says to keep the agent at Draft until they pass.</li>
+        <li><strong>The agent can be wrong.</strong> Every provider telling you theirs cannot is either inexperienced or not being straight with you. What a kit offers instead is an agent specified to start unable to act on its own, to write down everything it does, and to stop when you say so. The commercial position is in the <a href="/terms/">terms</a>.</li>
     </ul>
 
     <div class="cta">
-        <h2 style="margin-top:0">See exactly what one would be allowed to do</h2>
-        <p>Scope an agent, set the level you are working towards, and read the specification, what it would own, what it may touch, and what it must escalate. The price is on the screen. No call and no estimate.</p>
-        <a class="btn" href="/hire/">Scope an agent</a>
+        <h2 style="margin-top:0">See what one would be allowed to do</h2>
+        <p>Design an agent, set the level you are working towards, and see what it would own, what it may touch, and every file its kit contains, with the price, before you pay. No call and no estimate.</p>
+        <a class="btn" href="/hire/">Design an agent</a>
         <a class="btn-2" href="/ai-agent-permissions/">How the autonomy ladder works</a>
     </div>
 
     <footer class="foot">
-        <div class="foot-links"><a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/hire/">Hire an agent</a><a href="/what-is-an-ai-agent/">What is an agent</a><a href="/ai-agent-permissions/">Permissions</a><a href="/ai-agent-pricing/">Pricing</a><a href="/terms/">Terms</a></div>
+        <div class="foot-links"><a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/hire/">Design an agent</a><a href="/what-is-an-ai-agent/">What is an agent</a><a href="/ai-agent-permissions/">Permissions</a><a href="/ai-agent-pricing/">Pricing</a><a href="/terms/">Terms</a></div>
         <p style="margin-top:1rem">BlvkWare, <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> · Mississippi, serving the United States.</p>
     </footer>
 </div>

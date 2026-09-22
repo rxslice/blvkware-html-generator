@@ -1,11 +1,11 @@
-/* The agent pricing and specification engine.
+/* The agent kit engine: tier, price and the design a kit is generated from.
  *
- * Injected verbatim into BOTH the buyer's configurator at /hire/ and the
- * internal fulfilment console. That is deliberate: the console recomputes the
- * price from the submitted specification and compares it against what the buyer
- * was actually charged. If those ever disagree, the order is held rather than
- * built — which is the only reliable defence against a configurator bug quietly
- * selling a Deputy's workload at Operator money.
+ * Runs in three places, as this exact file: the configurator at /hire/, the
+ * Lab tools that design agents, and the kit service that generates and
+ * delivers the download (blvkware-agentcore/kits). The service re-derives the
+ * tier from the buyer's answers with this code rather than trusting what the
+ * page sent, so a configurator bug can never sell a Deputy-sized kit at the
+ * Operator price, and a hand-edited request cannot either.
  *
  * Reads window.BLVK_CATALOG (compiled from dev/catalog.py at build time).
  * Exposes window.BlvkEngine.
@@ -66,7 +66,7 @@
 
     /* ---- tier derivation -------------------------------------------------
      * The buyer never picks the tier. A scope that is really a Deputy cannot be
-     * bought at Operator money, and a buyer who genuinely needs less is not
+     * bought at the Operator price, and a buyer who genuinely needs less is not
      * upsold into a tier they will not use. */
     /* No single signal separates the tiers. Measured across the catalog, a
      * Tier I role loaded with everything it suggests reaches 18 weight and 5
@@ -75,9 +75,8 @@
      * fully-suggested Tier I configuration reaches, and the role's own declared
      * minimum carries the cases that breadth cannot see.
      *
-     * Systems and channels escalate only past the tier's *maximum*, not past
-     * what the base includes. The span between the two is sold at the published
-     * per-connection price, so a fourth system costs $750 rather than $6,000. */
+     * Systems and channels escalate only past the tier's *maximum*, so a
+     * genuinely one-job agent that touches a fourth system stays one job. */
     function deriveTier(state, resolved) {
         var role = roleById(state.roleId);
         var systems = keysOf(state.systems).length;
@@ -112,12 +111,10 @@
 
         var tier = reasons.length ? 2 : 1;
 
-        /* Crossing into Tier II costs the difference between the two base
-         * prices in a single click. That difference is real — it is 10 delivery
-         * days against 25 — but a buyer who meets it without warning reads it as
-         * a trap rather than a tier. So the engine reports when a configuration
-         * is one step away, and the page says so before the click rather than
-         * after it. */
+        /* Crossing into Tier II changes the kit price in a single click. A
+         * buyer who meets that without warning reads it as a trap rather than a
+         * tier, so the engine reports when a configuration is one step away,
+         * and the page says so before the click rather than after it. */
         var near = tier === 1 && (
             weight > C.pricing.tier2Weight - 4 ||
             groupCount >= C.pricing.tier2Groups - 1 ||
@@ -130,12 +127,15 @@
             weight: weight, groups: groupCount, reasons: reasons,
             systems: systems, channels: channels,
             nearTier2: near,
-            tier2Delta: C.tiers[2].build - C.tiers[1].build,
+            tier2Delta: C.kits[2].price - C.kits[1].price,
             oversized: weight > C.pricing.splitWeight
         };
     }
 
     /* ---- pricing --------------------------------------------------------- */
+    /* A kit is priced by its tier and nothing else. Capabilities, systems and
+     * channels change what is in the kit and can change the tier; they are
+     * never charged one by one. */
     function price(state) {
         var role = roleById(state.roleId);
         if (!role) return null;
@@ -151,71 +151,23 @@
 
         var resolved = resolve(unique);
         var t = deriveTier(state, resolved);
-        var def = t.def;
+        var kit = C.kits[t.tier];
 
-        var coreSet = {};
-        role.core.forEach(function (id) { coreSet[id] = true; });
-
-        var lines = [];
-        var addedBuild = 0, capOps = 0;
         var gates = {};
-
         resolved.ids.forEach(function (id) {
             var cap = capById(id);
-            if (!cap) return;
-            if (cap.gate) gates[cap.gate] = true;
-            capOps += cap.ops || 0;
-            if (!coreSet[id]) {
-                addedBuild += cap.price;
-                lines.push({ kind: "cap", id: id, name: cap.name, amount: cap.price, group: cap.group });
-            }
+            if (cap && cap.gate) gates[cap.gate] = true;
         });
-        lines.sort(function (a, b) { return a.group === b.group ? b.amount - a.amount : a.group < b.group ? -1 : 1; });
-
-        var extraSystems = Math.max(0, t.systems - def.systems);
-        var systemsCost = extraSystems * C.pricing.extraSystem;
-
-        var subtotal = def.build + addedBuild + systemsCost;
-
-        var rush = state.modifiers && state.modifiers.rush;
-        var rushCost = rush ? Math.round(subtotal * C.pricing.rushPct) : 0;
-        var build = subtotal + rushCost;
-
-        var band = bandById(state.volumeId);
-        var extraActions = Math.max(0, band.actions - def.actions);
-        var volumeOps = Math.ceil(extraActions / 1000) * C.pricing.prebuyPer1000;
-
-        var monthly = def.ops + capOps + volumeOps;
-        var annual = monthly * C.pricing.annualMonths;
-        var recurring = state.billing === "annual" ? annual : monthly;
-
-        var trial = !!state.trial;
-        var credit = trial ? C.pricing.trial : 0;
-        var dueNow = trial ? C.pricing.trial : build + recurring;
-
-        var days = def.buildDays;
-        if (rush) days = Math.ceil(days / 2);
 
         return {
-            role: role, tier: t, def: def,
+            role: role, tier: t, def: t.def,
             resolved: resolved, autoAdded: resolved.added,
-            lines: lines,
-            base: def.build, addedBuild: addedBuild,
-            extraSystems: extraSystems, systemsCost: systemsCost,
-            rush: !!rush, rushCost: rushCost,
-            subtotal: subtotal, build: build,
-            capOps: capOps, volumeOps: volumeOps, band: band,
-            includedActions: band.actions > def.actions ? band.actions : def.actions,
-            monthly: monthly, annual: annual, recurring: recurring,
-            trial: trial, credit: credit, dueNow: dueNow,
-            buildAfterCredit: build - credit,
-            gates: Object.keys(gates),
-            days: days,
-            billing: state.billing === "annual" ? "annual" : "monthly"
+            kit: kit, price: kit.price, currency: kit.currency,
+            gates: Object.keys(gates)
         };
     }
 
-    /* ---- the specification the operator actually builds from ------------- */
+    /* ---- the design a kit is generated from --------------------------------- */
     function spec(state, q) {
         q = q || price(state);
         if (!q) return null;
@@ -225,13 +177,11 @@
             return { id: c.id, name: c.name, group: c.group, tpl: c.tpl, accept: c.accept, gate: c.gate };
         }).sort(function (a, b) { return a.group < b.group ? -1 : a.group > b.group ? 1 : 0; });
 
-        /* Two different things end up on this list and the operator must be able
-         * to tell them apart. A "declared" system is one the buyer ticked and
-         * paid a connection fee for beyond the tier's allowance. An "implied"
-         * one comes with a capability they bought — the voice capability already
-         * covers wiring the phone system — so it is in scope and already paid
-         * for, but it is not what the connection count was charged on. Merging
-         * them silently is how a build ends up wiring more than was sold. */
+        /* Two different things end up on this list and the kit tells them apart.
+         * A "declared" system is one the buyer said the agent works with. An
+         * "implied" one comes with a capability they chose (the voice
+         * capability needs a phone system), and its integration notes say which
+         * capability needs it, so nobody wires a system for no reason. */
         var integ = {};
         keysOf(state.systems).forEach(function (i) { integ[i] = "declared"; });
         q.resolved.ids.forEach(function (id) {
@@ -257,69 +207,68 @@
             };
         });
 
+        var config = {};
+        Object.keys(state.config || {}).forEach(function (id) {
+            if (q.resolved.ids.indexOf(id) !== -1 && state.config[id]) config[id] = state.config[id];
+        });
+
         return {
-            schema: "blvkware.agent-order/1",
+            schema: "blvkware.agent-design/1",
             ref: state.ref || null,
             role: { id: q.role.id, name: q.role.name, family: q.role.family },
             tier: { key: q.tier.key, name: q.def.name, derivedBecause: q.tier.reasons, weight: q.tier.weight },
+            kit: { name: q.kit.name, price: q.kit.price, currency: q.kit.currency },
             autonomy: state.autonomy || "L1",
             channels: keysOf(state.channels).map(function (id) {
                 var c = chanById(id);
                 return { id: id, name: c ? c.name : id, gate: c ? c.gate : null };
             }),
             integrations: integrations,
-            volume: { id: q.band.id, label: q.band.label, includedActions: q.includedActions },
             capabilities: caps,
-            templates: caps.map(function (c) { return c.tpl; }),
             acceptance: caps.filter(function (c) { return c.accept; })
                             .map(function (c) { return { cap: c.id, name: c.name, test: c.accept }; }),
             gates: q.gates,
-            delivery: { businessDays: q.days, rush: q.rush },
-            commercial: {
-                build: q.build, subtotal: q.subtotal, rushCost: q.rushCost,
-                monthly: q.monthly, annual: q.annual, billing: q.billing,
-                trial: q.trial, credit: q.credit, dueNow: q.dueNow
-            },
-            business: state.answers || {}
+            business: state.answers || {},
+            config: config
         };
     }
 
-    /* Recompute a submitted spec from scratch and compare. Used by the
-     * fulfilment console before any build work starts. */
+    /* Recompute a submitted design from scratch and compare. The kit service
+     * does this before it generates anything: the tier and the price are
+     * always the ones these answers derive, never the ones a request claims. */
     function verify(submitted) {
-        if (!submitted || submitted.schema !== "blvkware.agent-order/1") {
-            return { ok: false, fatal: "Not a BlvkWare agent order." };
+        if (!submitted || submitted.schema !== "blvkware.agent-design/1") {
+            return { ok: false, fatal: "Not a BlvkWare agent design." };
         }
-        var state = {
-            roleId: submitted.role && submitted.role.id,
-            caps: {}, systems: {}, channels: {},
-            volumeId: submitted.volume && submitted.volume.id,
-            autonomy: submitted.autonomy,
-            billing: submitted.commercial && submitted.commercial.billing,
-            trial: !!(submitted.commercial && submitted.commercial.trial),
-            modifiers: { rush: !!(submitted.delivery && submitted.delivery.rush) }
-        };
-        (submitted.capabilities || []).forEach(function (c) { state.caps[c.id] = true; });
-        (submitted.integrations || []).forEach(function (i) { state.systems[i.id] = true; });
-        (submitted.channels || []).forEach(function (c) { state.channels[c.id] = true; });
-
+        var state = stateOf(submitted);
         var q = price(state);
         if (!q) return { ok: false, fatal: "Unknown role: " + state.roleId };
 
-        var was = submitted.commercial || {};
         var diffs = [];
-        function cmp(label, got, expect) {
-            if (Number(got) !== Number(expect)) {
-                diffs.push({ label: label, charged: Number(got), recomputed: Number(expect) });
-            }
-        }
-        cmp("Build", was.build, q.build);
-        cmp("Monthly", was.monthly, q.monthly);
-        cmp("Due at order", was.dueNow, q.dueNow);
         if (submitted.tier && Number(submitted.tier.key) !== q.tier.key) {
-            diffs.push({ label: "Tier", charged: "Tier " + submitted.tier.key, recomputed: "Tier " + q.tier.key });
+            diffs.push({ label: "Tier", claimed: "Tier " + submitted.tier.key, recomputed: "Tier " + q.tier.key });
+        }
+        if (submitted.kit && Number(submitted.kit.price) !== q.price) {
+            diffs.push({ label: "Kit price", claimed: Number(submitted.kit.price), recomputed: q.price });
         }
         return { ok: diffs.length === 0, diffs: diffs, quote: q, spec: spec(state, q) };
+    }
+
+    /* The configurator state a design came from. */
+    function stateOf(design) {
+        var state = {
+            roleId: design.role && design.role.id,
+            caps: {}, systems: {}, channels: {},
+            autonomy: design.autonomy,
+            answers: design.business || {},
+            config: design.config || {}
+        };
+        (design.capabilities || []).forEach(function (c) { state.caps[c.id] = true; });
+        (design.integrations || []).forEach(function (i) {
+            if (i.source === "declared") state.systems[i.id] = true;
+        });
+        (design.channels || []).forEach(function (c) { state.channels[c.id] = true; });
+        return state;
     }
 
     function money(n) {
@@ -327,12 +276,12 @@
     }
 
     global.BlvkEngine = {
-        price: price, spec: spec, verify: verify, resolve: resolve,
+        price: price, spec: spec, verify: verify, stateOf: stateOf, resolve: resolve,
         deriveTier: deriveTier, capById: capById, roleById: roleById,
         bandById: bandById, chanById: chanById, keysOf: keysOf, money: money,
         catalog: C
     };
-    // Also usable outside a browser. The checkout function re-prices every
-    // order server-side from this exact file, because a price the client sends
-    // is a price anyone can edit.
+    // Also usable outside a browser. The kit service re-derives every tier
+    // server-side from this exact file, because a price the client sends is a
+    // price anyone can edit.
 })(typeof window !== "undefined" ? window : globalThis);

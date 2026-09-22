@@ -139,9 +139,10 @@ def endpoint_live(api_base=None):
 #: Shown on the page while nothing is serving the API. Deliberately loud and
 #: deliberately above the curl command it replaces.
 _NOT_DEPLOYED = (
-    '<div class="notice"><strong>The public endpoint is not open yet.</strong> '
+    '<div class="notice"><strong>The public endpoint is not answering right '
+    'now.</strong> '
     "The service is built and tested, and everything below describes what it "
-    "does. Until an endpoint is answering it is listed under "
+    "does. While no endpoint is answering it is listed under "
     "<code>roadmap</code> in the agent catalog rather than as a capability, "
     "so an agent reading that catalog will not try to call it.</div>"
     # An earlier version ended "Run it yourself from the source in the
@@ -174,7 +175,7 @@ def _try_response(deployed):
 
     if not deployed:
         return (
-            "<p>The public endpoint will answer this once it is open.</p>"
+            "<p>The public endpoint will answer this when it is back.</p>"
         )
     url = API_BASE.rstrip("/") + "/hallux/v1/check/pkg.pypi/requests-oauth2-helper"
     request = urllib.request.Request(url, headers={"User-Agent": "blvkware-site-build"})
@@ -245,8 +246,9 @@ def tokens():
         # called "Try it now" above a command that cannot work.
         "{{HALLUX_TRY_HEADING}}": "Try it now" if deployed else "What it answers",
         "{{HALLUX_TRY_INTRO}}": _DEPLOYED_INTRO if deployed else (
-            "<p>Once deployed, checking a name is one command. "
-            "Today this is what it will answer, not what it does answer:</p>"
+            "<p>When the endpoint is answering, checking a name is one "
+            "command. Right now this is what it will answer, not what it does "
+            "answer:</p>"
         ),
     }
 

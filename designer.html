@@ -374,8 +374,8 @@
       <div class="ask">
         <div class="kicker">Agent design</div>
         <h1>There is a job in your business<br>that <em>costs you every week.</em></h1>
-        <p class="lede">Describe how you actually operate. It works out which agent is worth hiring first,
-           designs exactly what it needs to be able to do, and prices it: on this page, in about a minute.</p>
+        <p class="lede">Describe how you actually operate. It works out which agent is worth building first,
+           designs exactly what it needs to be able to do, and prices its kit: on this page, in about a minute.</p>
 
         <div class="composer" id="composer">
           <label class="sr" for="biz">Describe your business</label>
@@ -439,28 +439,26 @@
 
         <div class="side-title" style="margin-top:22px">Keep it</div>
         <div class="keep-card">
-          <form class="keep" id="keepForm" novalidate>
-            <input class="keep-input" id="keepEmail" type="email" autocomplete="email"
-                   spellcheck="false" placeholder="you@company.com" aria-label="Your email">
-            <button class="act keep-go" type="submit" id="keepBtn">
+          <div class="keep" id="keepForm">
+            <button class="act keep-go" type="button" id="keepBtn">
               <svg class="ic ic-16" style="color:var(--on-accent)"><use href="#i-mail"/></svg>
-              Email me this design
+              Download this design
             </button>
-          </form>
+          </div>
           <p class="keep-note" id="keepNote">
-            The full design, the price, and what it would own. No account, no list: one email, from a person.
+            The full design, the price, and what it would own, saved as a file on your device. Nothing is sent anywhere.
           </p>
         </div>
-        <div class="side-title" style="margin-top:22px">Hire it</div>
+        <div class="side-title" style="margin-top:22px">Get its kit</div>
         <div class="acts">
           <button class="act" id="configureBtn" style="color:var(--on-accent);background:var(--accent);box-shadow:none;font-weight:680">
             <svg class="ic ic-16" style="color:var(--on-accent)"><use href="#i-hammer"/></svg>
-            Take this design to checkout
+            Take this design to the kit page
           </button>
         </div>
         <p style="font-size:11.5px;color:var(--ink-3);margin:10px 2px 0;line-height:1.5">
-          Opens the configurator with this design already loaded. Change anything,
-          then order. The price moves with you.
+          Opens the kit page with this design already loaded. Change anything, see
+          every file in the kit, then buy. The price moves with you.
         </p>
 
       </div>
@@ -497,7 +495,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     metrics: $('#metrics'), finds: $('#finds'), systems: $('#systems'),
     alts: $('#alts'), acts: $('#acts'),
     configureBtn: $('#configureBtn'), toasts: $('#toasts'),
-    keepForm: $('#keepForm'), keepEmail: $('#keepEmail'), keepBtn: $('#keepBtn'), keepNote: $('#keepNote')
+    keepForm: $('#keepForm'), keepBtn: $('#keepBtn'), keepNote: $('#keepNote')
   };
 
   var S = { model: null, brief: '', busy: false, adopted: null,
@@ -767,12 +765,13 @@ catch (e) { window.BLVK_CATALOG = null; }
 
     // Price tiles. Every one of these is computed, never written by a model.
     var tiles = [
-      { label: 'To build', value: money(q.build), note: q.def.label },
-      { label: 'Then monthly', value: money(q.monthly),
-        note: q.includedActions.toLocaleString('en-US') + ' actions included' },
-      { label: 'Live in', value: q.days + ' days', note: 'business days, from signing' },
-      { label: 'Standing on day one', value: ready.percent + '%',
-        note: ready.auto.length + ' of ' + ready.total + ' need nothing from you',
+      { label: 'Its kit', value: money(q.price), note: q.kit.name + ', one-off' },
+      { label: 'Capabilities', value: String((d.spec.capabilities || []).length),
+        note: 'each with a workflow and a test' },
+      { label: 'Systems it works with', value: String((d.spec.integrations || []).length),
+        note: 'tools written for each one' },
+      { label: 'Needs nothing from you', value: ready.percent + '%',
+        note: ready.auto.length + ' of ' + ready.total + (ready.total === 1 ? ' capability' : ' capabilities'),
         pct: ready.percent }
     ];
     el.metrics.innerHTML = tiles.map(function (x) {
@@ -800,8 +799,8 @@ catch (e) { window.BLVK_CATALOG = null; }
     }).join('') || '<p class="keep-note">No specific signals were confirmed, ' +
                    'the design below is the closest match to what you described.</p>';
 
-    // What it will own. Core capabilities are what the job IS; the rest are
-    // priced individually and can be dropped at checkout.
+    // What it will own. Core capabilities are what the job IS; the rest can
+    // be dropped on the kit page.
     var core = {};
     d.role.core.forEach(function (c) { core[c] = true; });
     el.systems.innerHTML = (d.spec.capabilities || []).map(function (c) {
@@ -811,7 +810,7 @@ catch (e) { window.BLVK_CATALOG = null; }
       var needs = (C.setupNeeds && C.setupNeeds[c.id]) || [];
       return '<div class="system"><h4>' + esc(cap.name) +
         ' <span class="mod" style="vertical-align:middle">' +
-        (isCore ? 'included' : '+' + money(cap.price)) + '</span></h4>' +
+        (isCore ? 'core' : 'added') + '</span></h4>' +
         '<p>' + esc(cap.blurb) + '</p>' +
         '<div class="mods">' +
         '<span class="mod">' + esc(cap.group) + '</span>' +
@@ -829,7 +828,7 @@ catch (e) { window.BLVK_CATALOG = null; }
       if (!alt) return '';
       return '<div class="system" style="cursor:pointer" data-role="' + esc(r.roleId) + '">' +
         '<h4>' + esc(r.role.name) + ' <span class="mod" style="vertical-align:middle">' +
-        money(alt.quote.build) + ' + ' + money(alt.quote.monthly) + '/mo</span></h4>' +
+        money(alt.quote.price) + ' kit</span></h4>' +
         '<p>' + esc(r.role.oneLine) + '</p>' +
         '<div class="mods"><span class="mod">' +
         esc(r.reasons[0] || 'a job worth filling') + '</span>' +
@@ -839,8 +838,6 @@ catch (e) { window.BLVK_CATALOG = null; }
     // Adjustments that change the price, so a buyer can see the shape of the
     // decision without leaving the page.
     var acts = [
-      { id: 'trial', label: 'Try it first: ' + money(C.pricing.trial) + ' for 14 days' },
-      { id: 'annual', label: 'Pay annually: two months free' },
       { id: 'lean', label: 'Strip it to the core job only' }
     ];
     el.acts.innerHTML = acts.map(function (a) {
@@ -985,16 +982,9 @@ catch (e) { window.BLVK_CATALOG = null; }
   });
 
   /* ---------------- keep it ----------------
-     Somebody who scries their business has just described their bottlenecks and
-     their intent. Losing them at this exact moment is the whole leak.
-
-     This is a static site with no backend. Set CAPTURE_ENDPOINT to a form
-     endpoint (Web3Forms, Formspree, a Worker — anything that accepts a JSON
-     POST) and the field becomes a true inline capture. Left empty, it falls
-     back to opening the visitor's mail client with the map already written,
-     which still delivers the map and still puts their address in your inbox. */
-  var CAPTURE_ENDPOINT = '';
-  var CAPTURE_TO = 'russ@blvkware.dev';
+     Somebody who has just described how their business runs should be able
+     to keep the result without handing over an address. The design saves as
+     a file on their own device; nothing is sent anywhere. */
 
   function mapAsText() {
     var m = S.model;
@@ -1032,45 +1022,23 @@ catch (e) { window.BLVK_CATALOG = null; }
     el.keepNote.classList.toggle('ok', !!ok);
   }
 
-  el.keepForm.addEventListener('submit', async function (e) {
-    e.preventDefault();
+  el.keepBtn.addEventListener('click', function () {
     if (!S.model) return;
-    var email = el.keepEmail.value.trim();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
-      el.keepEmail.classList.add('bad');
-      keepNote('That address does not look right. Check it and try again.');
-      el.keepEmail.focus();
-      return;
-    }
-    el.keepEmail.classList.remove('bad');
-    el.keepBtn.disabled = true;
-
-    var body = mapAsText();
-    if (CAPTURE_ENDPOINT) {
-      try {
-        var res = await fetch(CAPTURE_ENDPOINT, {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ email: email, subject: 'Agent Designer map: ' + S.model.osName, map: body })
-        });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        el.keepForm.classList.add('hidden');
-        keepNote('Sent. Check your inbox in a minute.', true);
-        return;
-      } catch (err) {
-        keepNote('Could not send that, opening your mail app instead.');
-      }
-    }
-    // No endpoint configured: hand it to their mail client, pre-written.
-    var sub = encodeURIComponent('Agent Designer map: ' + S.model.osName);
-    var text = encodeURIComponent('Send this and I will email the full map back to ' + email +
-      '.\n\n----------------------------------------\n\n' + body);
-    window.location.href = 'mailto:' + CAPTURE_TO + '?subject=' + sub + '&body=' + text;
-    keepNote('Your mail app should open with the design in it. Just hit send.', true);
-    el.keepBtn.disabled = false;
+    var name = String(S.model.osName || 'agent-design').toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'agent-design';
+    var blob = new Blob([mapAsText()], { type: 'text/plain;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = name + '.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+    keepNote('Saved to your downloads. Nothing was sent anywhere.', true);
   });
 
-  /* ---------------- hand off to checkout ---------------- */
+  /* ---------------- hand off to the kit page ---------------- */
   // The design travels in the URL fragment rather than a query string so it is
   // never sent to a server or written to a log. /hire/ reads it, applies it, and
   // the buyer carries on configuring from exactly here.
@@ -1082,9 +1050,7 @@ catch (e) { window.BLVK_CATALOG = null; }
       caps: Object.keys(d.state.caps),
       systems: Object.keys(d.state.systems),
       channels: Object.keys(d.state.channels),
-      volume: d.state.volumeId,
-      billing: d.state.billing,
-      trial: !!d.state.trial,
+      autonomy: d.state.autonomy || 'L1',
       answers: d.state.answers
     };
     var hash;
@@ -1110,10 +1076,6 @@ catch (e) { window.BLVK_CATALOG = null; }
     var adj = ev.target.closest && ev.target.closest('[data-adjust]');
     if (adj && S.design) {
       var what = adj.getAttribute('data-adjust');
-      if (what === 'trial') redesign({ trial: !S.design.state.trial });
-      if (what === 'annual') {
-        redesign({ billing: S.design.state.billing === 'annual' ? 'monthly' : 'annual' });
-      }
       if (what === 'lean') redesign({ lean: true });
     }
   });
@@ -1121,11 +1083,7 @@ catch (e) { window.BLVK_CATALOG = null; }
   el.designBtn.addEventListener('click', run);
   el.restartBtn.addEventListener('click', function () {
     S.model = null; show('ask'); setStatus(''); el.biz.focus();
-    el.keepForm.classList.remove('hidden');
-    el.keepBtn.disabled = false;
-    el.keepEmail.value = '';
-    el.keepEmail.classList.remove('bad');
-    keepNote('The whole map, plus the systems worth building. No account, no list: one email, from a person.');
+    keepNote('The full design, the price, and what it would own, saved as a file on your device. Nothing is sent anywhere.');
   });
 
   // On the static build the shim exposes a BYOK dialog; locally the dev proxy

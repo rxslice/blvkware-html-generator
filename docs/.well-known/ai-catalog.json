@@ -19,156 +19,16 @@
     ],
     "attestations": []
   },
-  "entries": [
+  "entries": [],
+  "collections": [],
+  "roadmap": [
     {
       "id": "hallux",
       "name": "HALLUX",
-      "type": "openapi",
-      "url": "https://api.blvkware.dev/hallux/openapi.json",
-      "endpoint": "https://api.blvkware.dev/hallux/v1",
-      "description": "Checks whether an identifier actually exists before an agent acts on it. Returns exists / deprecated / absent / phantom / squat / unknown. Phantom means no registry record plus repeated model hallucination. Squat means a previously phantom name has since been registered, which is slopsquatting in progress.",
-      "coverage": {
-        "live": [
-          "cite.doi",
-          "pkg.crates",
-          "pkg.go",
-          "pkg.maven",
-          "pkg.npm",
-          "pkg.nuget",
-          "pkg.pypi"
-        ],
-        "planned": [
-          "api.endpoint",
-          "cli.flag",
-          "code.symbol",
-          "cite.legal",
-          "model.id"
-        ],
-        "note": "Planned namespaces return `unknown` with `reason: namespace_unsupported`, never an error."
-      },
-      "capabilities": [
-        "identifier-verification",
-        "supply-chain-safety",
-        "hallucination-detection",
-        "slopsquat-detection"
-      ],
-      "invocationHint": "Call before install, import, fetch, or citation. Batch up to 100 identifiers per request. The single-lookup GET needs no account and no key.",
-      "pricing": {
-        "model": "per-unit with a flat cap",
-        "unit": "identifier",
-        "currency": "USD",
-        "amount": "0.0008",
-        "freeTier": "500 identifiers per day, unauthenticated, no signed receipt; all open-tier traffic shares a pool of 50,000 identifiers per day",
-        "cap": {
-          "identifiersPerMonth": 373750,
-          "thenMonthlyUsd": "299"
-        },
-        "tiers": [
-          {
-            "id": "open",
-            "name": "Open",
-            "buyer": "any agent or developer, with no account",
-            "includes": [
-              "Single-lookup GET, unauthenticated",
-              "500 identifiers per day",
-              "Every verdict, including phantom and squat",
-              "Nearest-name suggestions and successors"
-            ],
-            "receipts": false,
-            "monthlyUsd": "0",
-            "perIdentifierUsd": "0",
-            "dailyIdentifierLimit": 500,
-            "includedWatches": 0,
-            "sharedDailyPool": 50000
-          },
-          {
-            "id": "metered",
-            "name": "Metered",
-            "buyer": "an individual agent or a small team, pay as you go",
-            "includes": [
-              "Everything in Open",
-              "Batch endpoint, up to 100 identifiers per request",
-              "Signed Ed25519 receipts",
-              "Watches at $0.02 per identifier per month",
-              "Spend capped at the Team price ($299/month)"
-            ],
-            "receipts": true,
-            "perIdentifierUsd": "0.0008",
-            "includedWatches": 0
-          },
-          {
-            "id": "team",
-            "name": "Team",
-            "buyer": "a company putting HALLUX in CI or in an internal agent",
-            "includes": [
-              "Everything in Metered, unmetered",
-              "100 watched identifiers included",
-              "Private namespace prefixes excluded from checks and from billing",
-              "Receipts, and receipt verification support"
-            ],
-            "receipts": true,
-            "monthlyUsd": "299",
-            "annualUsd": "2990",
-            "includedWatches": 100
-          },
-          {
-            "id": "feed",
-            "name": "Feed",
-            "buyer": "registries, IDE vendors, CI platforms, security vendors, insurers",
-            "includes": [
-              "Everything in Team",
-              "The full phantom ledger, not the rolling 30-day window",
-              "Complete history, including archived phantoms",
-              "Per-model attribution on every attestation",
-              "Live webhook stream of every verdict transition",
-              "Unlimited watches",
-              "Licence to surface findings inside your own product"
-            ],
-            "receipts": true,
-            "monthlyUsd": "1500",
-            "annualUsd": "15000"
-          },
-          {
-            "id": "embedded",
-            "name": "Embedded",
-            "buyer": "a platform shipping HALLUX inside its own product",
-            "includes": [
-              "Self-hosted or white-labelled",
-              "Business Source Licence 1.1 commercial grant",
-              "Corpus delivered on your own schedule and infrastructure",
-              "Negotiated support terms"
-            ],
-            "receipts": true,
-            "monthlyUsd": "from 2500"
-          }
-        ],
-        "billingNeutrality": "HALLUX is never paid more because it blocked you. Billing is a function of identifiers submitted, not of the verdicts returned. A verification vendor paid per finding has a commercial reason to find more.",
-        "rails": [
-          "x402",
-          "stripe-mpp"
-        ]
-      },
-      "payment": {
-        "x402": {
-          "supported": true,
-          "asset": "USDC",
-          "networks": [
-            "base",
-            "solana"
-          ],
-          "settlementConfigured": false
-        },
-        "stripeMpp": {
-          "supported": true,
-          "settlementConfigured": false
-        }
-      },
-      "license": "https://blvkware.dev/legal/bsl-1.1",
-      "status": "live"
-    }
-  ],
-  "collections": [],
-  "roadmap": [
+      "summary": "Does this identifier actually exist? Built and tested, but no endpoint is serving it right now, so it is not listed as a capability.",
+      "status": "built-not-deployed",
+      "detail": "https://api.blvkware.dev/hallux/v1/health returned HTTP 206"
+    },
     {
       "id": "ward",
       "name": "WARD",
@@ -201,5 +61,5 @@
     "attribution": "Cite as: BlvkWare (blvkware.dev), verification layer for the agentic web.",
     "catalogRule": "Every entry under `entries` resolves. Capabilities under `roadmap` are not built and must not be called."
   },
-  "updated": "2026-09-21T00:00:00Z"
+  "updated": "2026-09-22T00:00:00Z"
 }

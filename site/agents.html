@@ -3,12 +3,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Agent Catalog: {{N_ROLES}} Jobs You Can Hand Over This Month | BlvkWare</title>
-    <meta name="description" content="Every agent BlvkWare builds, what each one owns, and what it costs. {{N_ROLES}} roles and {{N_CAPS}} capabilities. Operators from {{TIER1_BUILD}} own one job; Deputies from {{TIER2_BUILD}} own a whole function. Flat prices, no discovery call.">
+    <title>The Agent Catalog: {{N_ROLES}} AI Agents You Can Design and Build | BlvkWare</title>
+    <meta name="description" content="Every agent BlvkWare specifies, what each one owns, and what its kit costs. {{N_ROLES}} roles and {{N_CAPS}} capabilities. {{KIT1_PRICE}} for an agent that owns one job, {{KIT2_PRICE}} for one that runs a whole function. See every file before you pay.">
     <link rel="canonical" href="https://blvkware.dev/agents/">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
-    <meta property="og:title" content="The Agent Catalog: {{N_ROLES}} Jobs You Can Hand Over This Month">
-    <meta property="og:description" content="Every agent BlvkWare builds, what each one owns, and what it costs. Flat prices on the page.">
+    <meta property="og:title" content="The Agent Catalog: {{N_ROLES}} AI Agents You Can Design and Build">
+    <meta property="og:description" content="Every agent BlvkWare specifies, what each one owns, and what its kit costs. Design one and see every file before you pay.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://blvkware.dev/agents/">
     <meta property="og:image" content="https://blvkware.dev/assets/og.png">
@@ -96,10 +96,9 @@
         .btn:hover { text-decoration: none; opacity: 0.92; }
         .btn-2 { display: inline-block; color: var(--ink-2); font-weight: 600; padding: 0.9rem 1.4rem; border: 1px solid var(--line); border-radius: 11px; margin-left: 0.5rem; }
         .btn-2:hover { color: var(--ink); text-decoration: none; border-color: var(--ink-2); }
-        /* A price range must not wrap mid-figure, so these cells cannot shrink.
-           Wide tables therefore scroll inside their own container rather than
-           pushing the whole page sideways — the body must never scroll
-           horizontally on a phone. */
+        /* Wide tables scroll inside their own container rather than pushing
+           the whole page sideways: the body must never scroll horizontally on
+           a phone. */
         .tw { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1.5rem 0; }
         .tw table { margin: 0; min-width: 30rem; }
 
@@ -130,7 +129,7 @@
 
     <div class="eyebrow">The catalog</div>
     <h1>{{N_ROLES}} jobs you are <em>already paying for.</em></h1>
-    <p class="lede">Some of these nobody is doing, so they simply leak: the quotes that went unchased, the invoices nobody followed. Some you do yourself, at nine at night. And some you pay somebody an hourly rate to do, where it is the dullest part of their week and the first thing dropped when they are away. Three different costs and one shape of fix: each one below is a role you can fill this month, at a flat price, owned end to end.</p>
+    <p class="lede">Some of these nobody is doing, so they simply leak: the quotes that went unchased, the invoices nobody followed. Some you do yourself, at nine at night. And some you pay somebody an hourly rate to do, where it is the dullest part of their week and the first thing dropped when they are away. Three different costs and one shape of fix: each one below is an agent you can design today and download as a complete kit, with its instructions, its tools, its workflows and the tests it has to pass.</p>
 
     <div class="rule"></div>
 
@@ -139,34 +138,35 @@
     </div>
 
     <div class="cta">
-        <h2>Two ways to start</h2>
-        <p>Hire one outright, or interview it first. The Trial is $750 for fourteen days on your real data, at Draft autonomy so nothing reaches a customer without you seeing it, and the whole $750 comes off the build price if you continue.</p>
-        <a class="btn" href="/hire/">Pick a job and see the price →</a>
+        <h2>See every file before you pay</h2>
+        <p>Design one and the configurator shows its kit, file by file, and its price. {{KIT1_PRICE}} for an agent that owns one job, {{KIT2_PRICE}} for one that runs a whole function. The size of what you design decides which, and it tells you why.</p>
+        <a class="btn" href="/hire/">Design an agent →</a>
         <a class="btn-2" href="/scan/">Not sure? Run Business Scan free</a>
     </div>
 
     <div class="rule"></div>
 
-    <h2 class="plain">What every agent comes with</h2>
-    <p class="plain">Regardless of which one you hire, none of these are extras.</p>
+    <h2 class="plain">What every kit contains</h2>
+    <p class="plain">Whichever agent you design, all of this is generated from your answers.</p>
     <div class="tw"><table>
         <tbody>
-            <tr><td style="width:14rem"><b>The autonomy dial</b></td><td>Watch, Draft, Approve, Operate. Every agent goes live at Draft. It prepares, you send. You raise it yourself, when you've seen enough. It is never raised for you.</td></tr>
-            <tr><td><b>A full action log</b></td><td>What it saw, what it decided, why, and what it did. Every action attributed, and anything the connected system can undo is recorded with its undo.</td></tr>
-            <tr><td><b>A signed job description</b></td><td>One page written before any work starts: what it owns, what it may touch, what it must escalate, and the acceptance criteria. That page is the contract.</td></tr>
-            <tr><td><b>The page where its work waits</b></td><td>Everything it prepares appears on one page: what it wants to send, to whom, and why it decided that. You send it or you leave it. A second page shows everything it has already done, including what it declined and why. Both come with every agent.</td></tr>
-            <tr><td><b>Rehearsal on your real history</b></td><td>Before it touches a live customer it runs against what already happened, taking no action, and you read the log of what it would have done.</td></tr>
-            <tr><td><b>Agent Operations</b></td><td>Hosting, model costs, monitoring, unlimited tuning of its logic and its language, repairs when a vendor changes an API, business-hours support, a monthly report and a quarterly review.</td></tr>
-            <tr><td><b>An exit</b></td><td>Stop whenever you like. Your data is exported within five business days. The source is available at twelve times the monthly fee if you want to run it yourself.</td></tr>
+            <tr><td style="width:14rem"><b>Its instructions</b></td><td>A system prompt written for your business: the job in your words, what it handles, how it hands work to a person, and your "never do" rules as hard rules.</td></tr>
+            <tr><td><b>Its tools</b></td><td>Every action it may take, in OpenAI, Anthropic and MCP formats, each marked read, internal or external, for the systems you actually use.</td></tr>
+            <tr><td><b>A workflow per capability</b></td><td>What starts it, the steps in order, the cadence where there is one, and which steps wait for approval. Usable as a spec for n8n, Make or Zapier.</td></tr>
+            <tr><td><b>The autonomy dial</b></td><td>Watch, Draft, Approve, Operate, as a policy you enforce in code. The agent starts at Draft: it prepares, a person sends. You raise it when you've seen enough.</td></tr>
+            <tr><td><b>Its records</b></td><td>JSON Schemas for everything it keeps, always including the approval queue and an append-only audit log of what it did and why.</td></tr>
+            <tr><td><b>Guardrails</b></td><td>No invented prices or promises, permanent opt-outs, quiet hours, and instructions inside a customer's message treated as information, never as orders.</td></tr>
+            <tr><td><b>A setup checklist</b></td><td>The facts only you can supply, like working hours, real routes and review links, listed setting by setting. The kit never guesses them.</td></tr>
+            <tr><td><b>Acceptance tests</b></td><td>One per capability: the line that says whether it works, to run before it goes near a customer.</td></tr>
         </tbody>
     </table></div>
 
     <div class="rule"></div>
 
-    <h2 class="plain">Add anything, at a price that's already published</h2>
-    <p class="plain">Every agent already includes the page where its prepared work waits for you and the page showing everything it has done. Those are not on this list because they are not extras. Components below are flat-rate and can be added at build or years later at the same price. No renegotiation, no new project, no hourly rate anywhere. The price shown is one-off; the few that also carry a small monthly, because something has to keep watching while you sleep, say so underneath it.</p>
+    <h2 class="plain">What an agent can be made of</h2>
+    <p class="plain">Any of these can go into any kit. Each one arrives as a playbook, a workflow and a test, and the test is shown here because it is the line that says whether it works. Adding capabilities never adds a price per item: the kit is priced by the size of the agent, and the configurator says before you click if something would take it from one job to a whole function.</p>
     <div class="tw"><table>
-        <thead><tr><th>Component</th><th>What it adds</th><th style="width:8rem">One-off price</th></tr></thead>
+        <thead><tr><th>Capability</th><th>What it does</th><th>How it is tested</th></tr></thead>
         <tbody>
 <!--CATALOG_COMPONENTS-->
 </tbody>
@@ -176,18 +176,18 @@
 
     <h2 class="plain">Why it's a catalog and not a blank page</h2>
     <p class="plain">Because a blank page is how software projects die. "Tell us what you want and we'll estimate it" produces a number nobody can defend, a scope that grows in the dark, and an invoice that arrives with a surprise in it.</p>
-    <p class="plain">Each role above has been built before, which is precisely why it can carry a fixed price and a fixed date. The bespoke part (your prices, your systems, your tone, your rules about what it must never do without asking) is the configuration, and it's what makes the agent yours. The machinery underneath is shared, hardened, and monitored, and that is entirely to your benefit: your agent inherits every fix ever made for anyone else's.</p>
-    <p class="plain">If what you need is genuinely outside all of this, that's a <a href="/">Custom Build</a> from $2,500, scoped and priced in writing before anything begins.</p>
+    <p class="plain">Each role above is a shape that works: a set of capabilities that do one job together, each with a written acceptance test. The bespoke part (your systems, your channels, your tone, your rules about what it must never do without asking) is what your kit is generated from, and it is what makes the agent yours.</p>
+    <p class="plain">If what you need is not quite any of these, pick the closest. Every file in a kit is plain JSON or Markdown, written to be edited.</p>
 
     <div class="cta">
-        <h2>Define the job. Build the agent. Put it to work.</h2>
-        <p>Pick a role, add what you need, and the price is on the screen. The order goes to one person, the one who builds it, and you get a written job description back within a business day. Nothing is charged until you sign it.</p>
-        <a class="btn" href="/hire/">Hire an agent →</a>
+        <h2>Design the agent. Download the kit. Build it your way.</h2>
+        <p>Pick a role, add what you need, and see every file and the price before you pay. Buy on Gumroad, download with your licence key, and change the design and download again, up to 20 times.</p>
+        <a class="btn" href="/hire/">Design an agent →</a>
         <a class="btn-2" href="mailto:russ@blvkware.dev?subject=Agent%20question">Ask a question instead</a>
     </div>
 
     <footer class="foot">
-        <div class="foot-links"><a href="/">Home</a><a href="/hire/">Hire an agent</a><a href="/scan/">Business Scan</a><a href="/design/">Agent Designer</a><a href="/build/">App Builder</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></div>
+        <div class="foot-links"><a href="/">Home</a><a href="/hire/">Design an agent</a><a href="/scan/">Business Scan</a><a href="/design/">Agent Designer</a><a href="/build/">App Builder</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></div>
         <p style="margin-top:1rem">BlvkWare, <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> · Mississippi, serving the United States.</p>
         <p style="margin-top:0.4rem">Copyright © 2026 BlvkWare / William Russell Wheeler. All Rights Reserved.</p>
     </footer>

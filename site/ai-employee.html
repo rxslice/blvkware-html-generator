@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Employee vs Hiring Someone: Do the Arithmetic First | BlvkWare</title>
-    <meta name="description" content="What an AI employee actually costs against a real hire, using BLS employer-cost data and published agent prices. Includes a calculator that will tell you not to buy one, and corrects the MIT statistic everybody misquotes.">
+    <meta name="description" content="What an AI employee actually costs against a real hire, using BLS employer-cost data and published prices. Includes a calculator that will tell you not to buy one, and corrects the MIT statistic everybody misquotes.">
     <link rel="canonical" href="https://blvkware.dev/ai-employee/">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
     <meta property="og:title" content="AI Employee vs Hiring Someone: Do the Arithmetic First">
@@ -45,7 +45,7 @@
         {
           "@type": "Question",
           "name": "How much does an AI employee cost compared to hiring a person?",
-          "acceptedAnswer": { "@type": "Answer", "text": "A US private-industry employee costs roughly 1.43 times their salary once benefits are included, because Bureau of Labor Statistics data for March 2026 puts wages at 69.9 percent of total employer cost. A scoped agent is commonly a build fee plus a monthly operations fee, for example 3,500 dollars to build plus 349 dollars a month. The comparison only means something once you multiply by the share of the job the agent actually handles, which is never 100 percent." }
+          "acceptedAnswer": { "@type": "Answer", "text": "A US private-industry employee costs roughly 1.43 times their salary once benefits are included, because Bureau of Labor Statistics data for March 2026 puts wages at 69.9 percent of total employer cost. A scoped agent costs a one-off build plus what the model and automation providers charge each month to run it. Built from a BlvkWare kit, the build is the kit, {{KIT1_PRICE_NUM}} dollars for one job, plus the building. The comparison only means something once you multiply by the share of the job the agent actually handles, which is never 100 percent." }
         },
         {
           "@type": "Question",
@@ -157,8 +157,9 @@
 
     <div class="box key">
         <p><strong>The short answer.</strong> A US private-industry employee costs about
-        <strong>1.43 times their salary</strong> once benefits are counted. A scoped agent is
-        typically a build fee plus a monthly fee, in our case <strong>$3,500 plus $349 a month</strong>.
+        <strong>1.43 times their salary</strong> once benefits are counted. An agent costs a one-off
+        build plus what it takes to run. Built from one of our kits, that is <strong>{{KIT1_PRICE}} plus
+        the building</strong>, then whatever your model and automation providers charge, paid to them.
         The agent wins when the work is high volume, rule-shaped and already written down. The person
         wins when volume is low, judgment is constant, or nobody has ever written the process down.
         Most jobs are a mix, which is why the useful question is never "person or agent" but
@@ -179,13 +180,13 @@
     <div class="tw"><table>
         <thead><tr><th></th><th>A person</th><th>An agent</th></tr></thead>
         <tbody>
-        <tr><td><strong>Cost shape</strong></td><td>Salary plus roughly 43% on top</td><td>One build fee, then a flat monthly fee</td></tr>
+        <tr><td><strong>Cost shape</strong></td><td>Salary plus roughly 43% on top</td><td>One build, then what the model and platform charge to run it</td></tr>
         <tr><td><strong>Ramp</strong></td><td>Weeks to months</td><td>Days to weeks, then it is either right or it is not</td></tr>
         <tr><td><strong>Hours</strong></td><td>About 2,000 a year, minus leave and sickness</td><td>Every hour, including the ones nobody wants</td></tr>
         <tr><td><strong>Unusual cases</strong></td><td>Handles them, often without being asked</td><td>Should escalate them, and must be built to</td></tr>
         <tr><td><strong>Getting it wrong</strong></td><td>Notices, and tells you</td><td>Repeats the mistake at volume until somebody looks</td></tr>
         <tr><td><strong>Leaving</strong></td><td>Takes the knowledge with them</td><td>The configuration is the knowledge, and it stays</td></tr>
-        <tr><td><strong>Scaling up</strong></td><td>Another salary</td><td>Usually the same monthly fee</td></tr>
+        <tr><td><strong>Scaling up</strong></td><td>Another salary</td><td>Mostly more model usage, not another salary</td></tr>
         </tbody>
     </table></div>
 
@@ -258,9 +259,14 @@
                     </select>
                 </div>
                 <div class="field">
-                    <label for="build">Build fee</label>
-                    <input type="number" id="build" value="3500" min="0" step="250">
-                    <div class="hint">Monthly fee assumed at $349</div>
+                    <label for="build">Build, one-off</label>
+                    <input type="number" id="build" value="1000" min="0" step="100">
+                    <div class="hint">The kit, plus a developer's fee or your own time</div>
+                </div>
+                <div class="field">
+                    <label for="running">Running cost a month</label>
+                    <input type="number" id="running" value="60" min="0" step="10">
+                    <div class="hint">Model usage plus your automation platform</div>
                 </div>
             </div>
             <div class="verdict" id="verdict"></div>
@@ -301,8 +307,8 @@
     call in six weeks:</p>
 
     <ul>
-        <li><strong>Low volume.</strong> If the task happens a few times a week, the build fee will
-        never amortise. Ten minutes of somebody's day is not a business case.</li>
+        <li><strong>Low volume.</strong> If the task happens a few times a week, the build will
+        never pay for itself. Ten minutes of somebody's day is not a business case.</li>
         <li><strong>Judgment every time.</strong> If no two cases are alike, there is no rule to
         encode and you are buying a very expensive way to generate exceptions.</li>
         <li><strong>The process is not written down.</strong> Software cannot enforce a process
@@ -335,8 +341,8 @@
         <li><strong>What exactly does it own, and what does it escalate?</strong> A defined job
         description, not "handles your email".</li>
         <li><strong>What is it allowed to do without asking?</strong> Read, draft, or send. Those are
-        three very different purchases. Ours are set per action and are covered in
-        <a href="/ai-agent-permissions/">permissions</a>.</li>
+        three very different purchases. Every tool in our kits is marked with which of them it is, and
+        the levels are covered in <a href="/ai-agent-permissions/">permissions</a>.</li>
         <li><strong>How do I see what it did, and what it refused to do?</strong> If the answer is a
         log file, that is not an answer. See <a href="/how-agents-are-controlled/">how one is kept
         under control</a>.</li>
@@ -345,19 +351,21 @@
         <li><strong>What is the acceptance test?</strong> The specific, checkable thing that proves it
         works before you pay for it working.</li>
         <li><strong>What is the total first-year cost?</strong> Build, monthly, and anything metered.
-        Ours is <a href="/ai-agent-pricing/">printed</a> and totalled at
-        <a href="/hire/">the configurator</a> before you decide.</li>
+        A kit's price is <a href="/ai-agent-pricing/">printed</a> and shown on
+        <a href="/hire/">the kit page</a> before you decide, and the running costs are your providers'
+        own prices, paid to them directly.</li>
     </ol>
 
     <h2>How we price it, since we are asking you to compare</h2>
 
-    <p>It would be poor form to publish a cost comparison and hide our own half of it. An agent is a
-    build fee plus a flat monthly operations fee, and every capability is listed with its own price so
-    the total is arithmetic rather than a quote. A <a href="/recovery-os/">dashboard</a> to watch it
-    is priced the same way, per thing it does.</p>
+    <p>It would be poor form to publish a cost comparison and hide our own half of it. We sell the
+    agent's complete specification as a kit: <strong>{{KIT1_PRICE}}</strong> for an agent that owns one
+    job, <strong>{{KIT2_PRICE}}</strong> for one that owns a whole function. One-off, no subscription.
+    You, or whoever builds for you, build it with the tools you already use, and you pay the model and
+    platform providers directly, with nothing added by us.</p>
 
-    <p>There is no discovery call and no proposal. You describe the job, the price is on the page, you
-    pay, and you receive it built. If you would rather see the diagnosis first,
+    <p>There is no discovery call and no proposal. You describe the job, the kit and its price are on
+    the page, you pay, and you download it. If you would rather see the diagnosis first,
     <a href="/scan/">Business Scan</a> reads your public website and works out which jobs are costing you
     most, and <a href="/design/">Agent Designer</a> designs the agent for a business you describe. Both are free
     and neither asks for an account.</p>
@@ -367,7 +375,7 @@
         <p>Free, about a minute, no sign-up. If the arithmetic says no, it says no, and that costs us
         nothing to tell you.</p>
         <a class="btn" href="/scan/">Read my business, free</a>
-        <a class="btn-2" href="/hire/">Or price one yourself</a>
+        <a class="btn-2" href="/hire/">Or design one yourself</a>
     </div>
 
     <h2>Sources</h2>
@@ -388,7 +396,7 @@
     from.</p>
 
     <footer class="foot">
-        <div class="foot-links"><a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/hire/">Hire an agent</a><a href="/ai-agent-pricing/">Pricing</a><a href="/what-is-an-ai-agent/">What is an agent</a><a href="/ai-agent-permissions/">Permissions</a><a href="/privacy/">Privacy</a></div>
+        <div class="foot-links"><a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/hire/">Design an agent</a><a href="/ai-agent-pricing/">Pricing</a><a href="/what-is-an-ai-agent/">What is an agent</a><a href="/ai-agent-permissions/">Permissions</a><a href="/privacy/">Privacy</a></div>
         <p style="margin-top:1rem">BlvkWare &middot; <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> &middot; Mississippi, serving the United States.</p>
     </footer>
 </div>
@@ -400,7 +408,6 @@
 (function () {
     "use strict";
     var WAGE_SHARE = 0.699;      // BLS, private industry, March 2026
-    var MONTHLY = 349;
     var HOURS_YEAR = 2000;
 
     var $ = function (id) { return document.getElementById(id); };
@@ -415,14 +422,22 @@
         var nature = $("nature").value;
         var written = $("written").value;
         var build = Math.max(0, +$("build").value || 0);
+        var running = Math.max(0, +$("running").value || 0);
 
         var loaded = salary / WAGE_SHARE;
         var taskCost = loaded * (hours / 40);
         var recovered = taskCost * share;
-        var yearOne = build + MONTHLY * 12;
-        var yearTwo = MONTHLY * 12;
+        var yearOne = build + running * 12;
+        var yearTwo = running * 12;
         var netYearOne = recovered - yearOne;
-        var payback = recovered > 0 ? (yearOne / (recovered / 12)) : Infinity;
+        // Months until the monthly saving, after the running cost, has paid
+        // for the build. Never, if running it costs more than it saves.
+        var monthlyNet = recovered / 12 - running;
+        var payback = monthlyNet > 0 ? build / monthlyNet : Infinity;
+        var months = function (n) {
+            var r = Math.round(n);
+            return r <= 1 ? "about a month" : "about " + r + " months";
+        };
 
         $("sums").innerHTML = [
             ["Loaded cost of that person", money(loaded) + " a year"],
@@ -454,21 +469,27 @@
                    "still has to handle. Hire, or leave it alone.";
         } else if (hours < 4) {
             cls = "no"; head = "Too little of it to be worth automating";
-            body = "At " + hours + " hour" + (hours === 1 ? "" : "s") + " a week the build fee " +
-                   "will not amortise in any sensible period. Wait until the volume is real.";
+            body = "At " + hours + " hour" + (hours === 1 ? "" : "s") + " a week there is too " +
+                   "little of it for an agent to earn its keep, and the time spent building and " +
+                   "supervising one will not come back. Wait until the volume is real.";
+        } else if (!isFinite(payback)) {
+            cls = "no"; head = "It never pays back";
+            body = "On these numbers it costs more each month to run than the time it saves is " +
+                   "worth. More volume, or a cheaper way of running it, changes that. Until then, " +
+                   "leave it.";
         } else if (payback > 18) {
             cls = "no"; head = "The payback is too long";
-            body = "On these numbers it takes about " + Math.round(payback) + " months to get " +
-                   "the build fee back. Anything past a year and a half is a bet on nothing " +
+            body = "On these numbers it takes " + months(payback) + " to get " +
+                   "the build back. Anything past a year and a half is a bet on nothing " +
                    "changing, and something always changes.";
         } else if (payback > 12) {
             cls = ""; head = "Marginal, and worth waiting on";
-            body = "About " + Math.round(payback) + " months to pay back. That is not a bad " +
+            body = "It takes " + months(payback) + " to pay back. That is not a bad " +
                    "deal, but it is not an obvious one either. If the volume is growing, revisit " +
                    "in a quarter and it will be.";
         } else {
             cls = "buy"; head = "The arithmetic works";
-            body = "About " + Math.round(payback) + " months to pay back the build, then " +
+            body = "It takes " + months(payback) + " to pay back the build, then " +
                    money(recovered - yearTwo) + " a year in your favour. " +
                    (nature === "mixed"
                      ? "Budget for the exceptions: a person still handles the cases that do not fit."
@@ -484,7 +505,7 @@
         v.innerHTML = '<div class="v">' + head + "</div><p>" + body + "</p>";
     }
 
-    ["salary", "hours", "share", "nature", "written", "build"].forEach(function (id) {
+    ["salary", "hours", "share", "nature", "written", "build", "running"].forEach(function (id) {
         $(id).addEventListener("input", calc);
         $(id).addEventListener("change", calc);
     });

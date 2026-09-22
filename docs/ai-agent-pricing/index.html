@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>What Should an AI Agent Cost? Real Numbers, and How to Judge a Quote | BlvkWare</title>
+    <title>AI Agent Cost: Real Numbers, and How to Judge a Quote | BlvkWare</title>
     <meta name="description" content="The three ways AI agents get priced, why build plus operations is the honest shape, the arithmetic for deciding, and the five warning signs in a quote. Includes BlvkWare's published prices.">
     <link rel="canonical" href="https://blvkware.dev/ai-agent-pricing/">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
@@ -43,7 +43,7 @@
         {
           "@type": "Question",
           "name": "How much does an AI agent cost for a small business?",
-          "acceptedAnswer": {"@type": "Answer", "text": "Expect two numbers, not one: a build price and an ongoing fee. For a single-job agent a defensible range is roughly $2,500 to $6,000 to build, plus $200 to $600 a month to run. An agent that owns a whole function across many systems is $8,000 to $20,000 plus $700 to $1,500 a month. BlvkWare publishes $3,500 plus $349 a month for a single-job Operator and $9,500 plus $899 a month for a Deputy. Anything quoted as one number with no ongoing fee is either front-loading the running costs or has not thought about them."}
+          "acceptedAnswer": {"@type": "Answer", "text": "Expect two numbers, not one: a build price and an ongoing fee. For a single-job agent a defensible range is roughly $2,500 to $6,000 to build, plus $200 to $600 a month to run. An agent that owns a whole function across many systems is $8,000 to $20,000 plus $700 to $1,500 a month. If you would rather build it yourself, BlvkWare sells the complete specification of an agent as a kit: $79 for a single-job Operator and $199 for a Deputy, with the running costs paid directly to the model and service providers. Anything quoted as one number with no ongoing fee is either front-loading the running costs or has not thought about them."}
         },
         {
           "@type": "Question",
@@ -210,7 +210,7 @@
     <p>This is where most buyers go wrong, in both directions.</p>
 
     <div class="fig">
-        <svg viewBox="0 0 700 230" role="img" aria-label="Monthly cost comparison: a SaaS subscription around fifty dollars, an agent around three hundred and forty-nine dollars, a loaded part-time hire around three thousand dollars, and the cost of the job not being done at all, which is unbounded.">
+        <svg viewBox="0 0 700 230" role="img" aria-label="Monthly cost comparison: a SaaS subscription around fifty dollars, a managed agent around three hundred and fifty dollars, a loaded part-time hire around three thousand dollars, and the cost of the job not being done at all, which is unbounded.">
             <rect x="0" y="0" width="700" height="230" fill="#17140F" rx="12"/>
             <g font-family="Fira Code, monospace" font-size="11">
                 <text x="28" y="26" fill="#D9B65C" font-size="10.5" letter-spacing="1.6">MONTHLY, ROUGHLY</text>
@@ -219,7 +219,7 @@
                 <text x="66" y="62" fill="#A89D8B">a SaaS subscription, $50</text>
 
                 <rect x="28" y="82" width="150" height="18" rx="3" fill="#D4F24A"/>
-                <text x="190" y="96" fill="#F5F0E6">an Operator agent, $349</text>
+                <text x="190" y="96" fill="#F5F0E6">a managed agent, ~$350</text>
 
                 <rect x="28" y="116" width="480" height="18" rx="3" fill="#D9B65C" opacity=".75"/>
                 <text x="520" y="130" fill="#A89D8B">a part-time hire, ~$3,000 loaded</text>
@@ -266,30 +266,29 @@
 
     <h2>Our numbers</h2>
 
-    <p>Published so you can hold them against anything else you are quoted. These are the real prices, not a starting point.</p>
+    <p>BlvkWare sells the other route: the agent's complete specification, as a kit you build yourself or hand to whoever builds for you. That changes both numbers above. The build is your time, or a developer's, with the thinking already done: the instructions, the tools and what each may change, the workflows, the records, the approval rules and the acceptance tests. The monthly is only what the models and services you choose cost you directly, with nothing added by us.</p>
 
     <div class="tw"><table>
-        <thead><tr><th>&nbsp;</th><th class="n">Build</th><th class="n">Monthly</th><th>Live in</th></tr></thead>
+        <thead><tr><th>&nbsp;</th><th class="n">Kit</th><th>For an agent that</th></tr></thead>
         <tbody>
-            <tr><td><strong>Operator</strong><br>One job, start to finish. 3 systems, 2 channels.</td><td class="n">$3,500</td><td class="n">$349</td><td>10 business days</td></tr>
-            <tr><td><strong>Deputy</strong><br>A whole function. 8 systems, any channel, judgment and escalation.</td><td class="n">$9,500</td><td class="n">$899</td><td>25 business days</td></tr>
-            <tr><td><strong>Trial</strong><br>14 days on your real data, credited in full against the build.</td><td class="n">$750</td><td class="n">—</td><td>immediately</td></tr>
+            <tr><td><strong>Operator kit</strong></td><td class="n">$79</td><td>owns one job, start to finish</td></tr>
+            <tr><td><strong>Deputy kit</strong></td><td class="n">$199</td><td>owns a whole function, across more systems and channels, with judgment and escalation</td></tr>
         </tbody>
     </table></div>
 
-    <p>The monthly covers hosting, model usage, monitoring, unlimited tuning, repairs when a vendor changes an API, business-hours support and a monthly report. Annual billing is twelve months for the price of ten. If you stop, the agent pauses, your data is exported within five business days, and the source is available at twelve times the monthly if you would rather run it yourself.</p>
+    <p>One-off, not a subscription. Which kit a design needs is worked out from the scope rather than chosen, so a job that is really a Deputy cannot be bought at the Operator price, and a smaller scope genuinely costs less. The <a href="/hire/">kit page</a> shows every file in the kit and its price before you pay, without talking to anyone.</p>
 
-    <p>The tier is worked out from the scope you configure rather than chosen, so a job that is really a Deputy cannot be bought at Operator money, and a smaller scope genuinely costs less. You can watch that happen on the <a href="/hire/">configurator</a> without talking to anyone.</p>
+    <p>A kit is the right choice when someone can build with tools like n8n, Make, Zapier or a model's tool calling. If nobody can, the ranges above are what a managed agent costs, and the five warning signs still apply to whoever quotes you.</p>
 
     <div class="cta">
-        <h2 style="margin-top:0">Price one against your own job</h2>
-        <p>Pick the job, tick what it has to operate, and the total is on the screen. No estimate, no discovery call, no hourly rate anywhere in it.</p>
-        <a class="btn" href="/hire/">Scope and price an agent</a>
+        <h2 style="margin-top:0">Design one against your own job</h2>
+        <p>Pick the job, tick what it has to operate, and the kit and its price are on the screen. No estimate, no discovery call, no hourly rate anywhere in it.</p>
+        <a class="btn" href="/hire/">Design an agent</a>
         <a class="btn-2" href="/what-is-an-ai-agent/">First, what is an agent?</a>
     </div>
 
     <footer class="foot">
-        <div class="foot-links"><a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/hire/">Hire an agent</a><a href="/what-is-an-ai-agent/">What is an agent</a><a href="/ai-agent-permissions/">Permissions</a><a href="/terms/">Terms</a></div>
+        <div class="foot-links"><a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/hire/">Design an agent</a><a href="/what-is-an-ai-agent/">What is an agent</a><a href="/ai-agent-permissions/">Permissions</a><a href="/terms/">Terms</a></div>
         <p style="margin-top:1rem">BlvkWare, <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> · Mississippi, serving the United States.</p>
     </footer>
 </div>

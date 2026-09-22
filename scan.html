@@ -489,7 +489,7 @@
       <div class="aim">
         <div class="eyebrow"><svg class="ic ic-14"><use href="#i-scan"/></svg> Find the work</div>
         <h1>The jobs costing you most<br>are <em>visible from outside.</em></h1>
-        <p class="lede">Give it a website: yours, or a competitor's. It reads the live page the way a buyer would: what the business sells, how it captures enquiries, what it has automated and what it plainly hasn't. Then it names the jobs quietly costing the most, and the agent worth hiring for each, at its real catalog price.</p>
+        <p class="lede">Give it a website: yours, or a competitor's. It reads the live page the way a buyer would: what the business sells, how it captures enquiries, what it has automated and what it plainly hasn't. Then it names the jobs quietly costing the most, and the agent worth building for each, at its real kit price.</p>
 
         <div class="form">
           <div class="field">
@@ -540,7 +540,7 @@
 
       <div class="rep-head">
         <div style="min-width:0;flex:1">
-          <h1 class="rep-title" id="repTitle">—</h1>
+          <h2 class="rep-title" id="repTitle">—</h2>
           <a class="rep-url" id="repUrl" target="_blank" rel="noopener noreferrer"></a>
           <p class="rep-sub" id="repSub"></p>
         </div>
@@ -567,16 +567,14 @@
 
       <div class="keep-card" id="keepCard">
         <div>
-          <h3>Want this report in writing?</h3>
-          <p id="keepNote">The whole thing (every finding, every system, every number) sent to you. No account, no list, no follow-up sequence. One email, from a person.</p>
+          <h3>Want to keep this report?</h3>
+          <p id="keepNote">The whole thing (every finding, every system, every number) saved as a file on your device. Nothing is sent anywhere.</p>
         </div>
-        <form class="keep" id="keepForm" novalidate>
-          <input class="keep-input" id="keepEmail" type="email" autocomplete="email"
-                 spellcheck="false" placeholder="you@company.com" aria-label="Your email">
-          <button class="btn primary lg" type="submit" id="keepBtn">
-            <svg class="ic ic-16"><use href="#i-mail"/></svg> Email me this report
+        <div class="keep" id="keepForm">
+          <button class="btn primary lg" type="button" id="keepBtn">
+            <svg class="ic ic-16"><use href="#i-mail"/></svg> Download this report
           </button>
-        </form>
+        </div>
       </div>
     </div>
   </div>
@@ -612,7 +610,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     sigs: $('#sigs'), domains: $('#domains'), opps: $('#opps'), oppNote: $('#oppNote'), samples: $('#samples'),
     compareWrap: $('#compareWrap'), compare: $('#compare'), compareNote: $('#compareNote'),
     shareBtn: $('#shareBtn'), printBtn: $('#printBtn'), sharedNote: $('#sharedNote'),
-    keepCard: $('#keepCard'), keepForm: $('#keepForm'), keepEmail: $('#keepEmail'),
+    keepCard: $('#keepCard'), keepForm: $('#keepForm'),
     keepBtn: $('#keepBtn'), keepNote: $('#keepNote')
   };
 
@@ -1300,7 +1298,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     el.domains.innerHTML = h;
   }
 
-  /* The agents this company could hire, ranked from the signals Business Scan observed
+  /* The agents this company could build, ranked from the signals Business Scan observed
    * and priced from the live catalog. Nothing here is invented: the read is
    * Business Scan's, the product and the number are the catalog's. */
   function renderOpps(rep) {
@@ -1331,11 +1329,11 @@ catch (e) { window.BLVK_CATALOG = null; }
       });
 
       h += '<div class="opp">' +
-        '<div class="opp-n">' + (i === 0 ? 'Hire this first' : 'Then this') + '</div>' +
+        '<div class="opp-n">' + (i === 0 ? 'Build this first' : 'Then this') + '</div>' +
         '<h3>The ' + esc(r.role.name) + '</h3>' +
-        '<div class="opp-money"><b>' + money(q.build) + ' + ' + money(q.monthly) + '/mo</b>' +
-        '<span>' + esc(q.def.label) + ' · live in ' + q.days + ' business days · ' +
-        'a real catalog price, not an estimate</span></div>' +
+        '<div class="opp-money"><b>' + money(q.price) + ' kit</b>' +
+        '<span>' + esc(q.kit.name) + ' · every file shown before you pay · ' +
+        'a real kit price, not an estimate</span></div>' +
         '<div class="opp-block"><div class="opp-k">Why this one</div><div class="opp-v">' +
           esc(r.reasons[0] || r.role.problem) + '</div></div>' +
         '<div class="opp-block"><div class="opp-k">What it would own</div><div class="pipe">' +
@@ -1346,20 +1344,20 @@ catch (e) { window.BLVK_CATALOG = null; }
           }).join('') +
         '</div></div>' +
         '<div class="opp-meta">' +
-          '<div><div class="meta-k">Standing on day one</div><div class="meta-v">' +
+          '<div><div class="meta-k">Needs nothing from you</div><div class="meta-v">' +
             ready.percent + '%</div></div>' +
           '<div><div class="meta-k">Spans</div><div class="meta-v">' +
             groups.length + ' area' + (groups.length === 1 ? '' : 's') + ' of the business</div></div>' +
         '</div>' +
         '<button class="btn primary lg" data-hire="' + esc(r.roleId) + '">' +
-          '<svg class="ic ic-16"><use href="#i-blueprint"/></svg> CONFIGURE AND PRICE THIS</button>' +
+          '<svg class="ic ic-16"><use href="#i-blueprint"/></svg> DESIGN THIS AND SEE ITS KIT</button>' +
       '</div>';
     });
     el.opps.innerHTML = h || '';
   }
 
-  /* Carry a design to checkout the same way Agent Designer does — in the fragment, so it
-   * never reaches a server or a log. */
+  /* Carry a design to the kit page the same way Agent Designer does: in the fragment,
+   * so it never reaches a server or a log. */
   function hireHandover(roleId, rep) {
     var d = DES.design(roleId, {
       signals: rep.signals || [],
@@ -1374,7 +1372,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     var payload = {
       role: roleId, caps: Object.keys(d.state.caps),
       systems: Object.keys(d.state.systems), channels: Object.keys(d.state.channels),
-      volume: d.state.volumeId, billing: d.state.billing, trial: false,
+      autonomy: 'L1',
       answers: d.state.answers
     };
     try {
@@ -1407,7 +1405,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     renderCompare(ctx.sig, ctx.compSig, (ctx.sig && ctx.sig.host) || name,
                   (ctx.compSig && ctx.compSig.host) || 'competitor');
     renderDomains(rep);
-    el.oppNote.textContent = 'Agents this company could hire, best first. Every price here is real and published, ' +
+    el.oppNote.textContent = 'Agents this company could build, best first. Every price here is real and published, ' +
       'computed from the catalog, not estimated. The read of the business is a projection; the price is not.';
     renderOpps(rep);
     el.shareBtn.classList.remove('hidden');
@@ -1525,7 +1523,6 @@ catch (e) { window.BLVK_CATALOG = null; }
         '<div class="modal-head">' +
           '<svg class="ic ic-20" style="color:var(--accent-ink)"><use href="#i-blueprint"/></svg>' +
           '<h3>' + esc(opp.name) + '</h3><div class="spacer"></div>' +
-          '<a class="btn ghost sm" href="https://cal.com/blvkware/30min" target="_blank" rel="noopener noreferrer"><svg class="ic ic-14"><use href="#i-mail"/></svg> Talk to me about building this</a>' +
           '<button class="btn ghost sm" data-configure><svg class="ic ic-14"><use href="#i-bolt"/></svg> Prototype it in App Builder</button>' +
           '<button class="btn ghost sm icon" data-x aria-label="Close"><svg class="ic ic-16"><use href="#i-close"/></svg></button>' +
         '</div>' +
@@ -1684,14 +1681,9 @@ catch (e) { window.BLVK_CATALOG = null; }
   }
 
   /* ---------------- keep it ----------------
-     Someone who has just read a costed plan for their own company is at the
-     highest intent this page produces. Losing them here is the whole leak.
-
-     Static site, no backend: POSTs to CAPTURE_ENDPOINT when one is configured,
-     otherwise opens the visitor's own mail client with the report already
-     written, which still delivers it and still puts their address in the inbox. */
-  var CAPTURE_ENDPOINT = '';
-  var CAPTURE_TO = 'russ@blvkware.dev';
+     Someone who has just read a plan for their own company should be able to
+     keep it without handing over an address. It saves as a file on their own
+     device; nothing is sent anywhere. */
 
   function reportAsText() {
     var r = S.report;
@@ -1745,40 +1737,20 @@ catch (e) { window.BLVK_CATALOG = null; }
     el.keepNote.classList.toggle('ok', !!ok);
   }
 
-  el.keepForm.addEventListener('submit', async function (e) {
-    e.preventDefault();
+  el.keepBtn.addEventListener('click', function () {
     if (!S.report) return;
-    var email = el.keepEmail.value.trim();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
-      el.keepEmail.classList.add('bad');
-      keepNote('That address does not look right. Check it and try again.');
-      el.keepEmail.focus();
-      return;
-    }
-    el.keepEmail.classList.remove('bad');
-    el.keepBtn.disabled = true;
-    var body = reportAsText();
-
-    if (CAPTURE_ENDPOINT) {
-      try {
-        var res = await fetch(CAPTURE_ENDPOINT, {
-          method: 'POST', headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ email: email, subject: 'Business Scan report: ' + S.target, report: body })
-        });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        el.keepForm.classList.add('hidden');
-        keepNote('Sent. Check your inbox in a minute.', true);
-        return;
-      } catch (err) {
-        keepNote('Could not send that, opening your mail app instead.');
-      }
-    }
-    var sub = encodeURIComponent('Business Scan report: ' + S.target);
-    var text = encodeURIComponent('Send this and I will email the full report back to ' + email +
-      '.\n\n----------------------------------------\n\n' + body);
-    window.location.href = 'mailto:' + CAPTURE_TO + '?subject=' + sub + '&body=' + text;
-    keepNote('Your mail app should open with the report in it. Just hit send.', true);
-    el.keepBtn.disabled = false;
+    var name = 'business-scan-' + String(S.target || 'report').toLowerCase()
+      .replace(/^https?:\/\//, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    var blob = new Blob([reportAsText()], { type: 'text/plain;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = name + '.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+    keepNote('Saved to your downloads. Nothing was sent anywhere.', true);
   });
 
   /* ---------- markdown for drill-downs ---------- */
@@ -2064,7 +2036,7 @@ catch (e) { window.BLVK_CATALOG = null; }
   });
 
   el.opps.addEventListener('click', function (e) {
-    // The agent cards hand a configured design to checkout. The old
+    // The agent cards hand a configured design to the kit page. The old
     // architecture drawer stays for any legacy shared report that still
     // carries model-authored opportunities.
     var hire = e.target.closest('[data-hire]');
@@ -2085,12 +2057,8 @@ catch (e) { window.BLVK_CATALOG = null; }
     el.printBtn.classList.add('hidden');
     el.sharedNote.classList.add('hidden');
     if (location.hash) history.replaceState(null, '', location.pathname);
-    el.keepForm.classList.remove('hidden');
-    el.keepBtn.disabled = false;
-    el.keepEmail.value = '';
-    el.keepEmail.classList.remove('bad');
-    keepNote('The whole thing (every finding, every system, every number) sent to you. '
-      + 'No account, no list, no follow-up sequence. One email, from a person.');
+    keepNote('The whole thing (every finding, every system, every number) saved as a file '
+      + 'on your device. Nothing is sent anywhere.');
   });
 
   // On the static build the shim exposes a BYOK dialog; locally the dev proxy

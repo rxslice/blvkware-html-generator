@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 """The agent catalog: the single source of truth for what BlvkWare sells.
 
-Everything downstream is generated from this file — the buyer-facing configurator
-at /hire/, the public catalog page at /agents/, and the internal fulfilment
-console. Nothing else is allowed to hold a price or a capability list.
+BlvkWare sells agent kits. A buyer designs one agent at /hire/ (or arrives there
+from the Agent Designer or Business Scan), pays for the kit on Gumroad, and
+downloads it: the agent's instructions, tools, workflows, records, autonomy
+policy and acceptance tests, generated from their answers. They build it
+themselves, with whatever they already use. Nothing about a sale needs a person.
 
-The reason is not tidiness. The configurator quotes a fixed price the buyer pays
-before any work starts, and the fulfilment console tells the operator what to
-assemble for that money. If those two could drift by so much as one component,
-the difference comes straight out of margin on a real order. Generating both from
-here makes drift impossible rather than merely unlikely.
+Everything downstream is generated from this file: the configurator, the public
+catalog at /agents/, the Lab tools, and the kit service that generates and
+delivers the download (blvkware-agentcore/kits, which runs this file's payload
+through the site's own engine). Nothing else is allowed to hold a price or a
+capability list, because a buyer pays the price the page shows and the service
+charges nothing twice: it re-derives the tier from the same answers.
 
 Vocabulary
 ----------
@@ -21,14 +24,49 @@ role        a named job, defined as a bundle of core capabilities plus a set of
             suggested ones. This is what a buyer chooses first.
 tier        Operator or Deputy. DERIVED from the configured scope, never picked
             by the buyer, so a scope that is really a Deputy cannot be bought at
-            Operator money.
+            Operator money. The tier sets the kit's price.
+kit         what is sold: one agent's complete specification, priced by tier.
+
+Retired
+-------
+Until 2026-09-21 BlvkWare also built and operated agents itself (a build fee
+plus a monthly operations fee). That was stopped because every sale needed a
+person to deliver it. The done-for-you figures below (tier build/ops prices,
+TRIAL, the PRICING extras, VOLUME, MODIFIERS and each capability's price/ops)
+are kept ONLY because the private runtime, blvkware-agentcore, still imports
+them. payload() strips every one of them, so no page can show a price that is
+no longer offered.
 """
 
 import json
 
 # --------------------------------------------------------------------------
-# Tiers. Prices approved 2026-08-28. Included counts are what the base buys;
-# anything past them is charged as a component.
+# What is sold. One kit per agent, priced by the tier its configuration derives.
+# Prices approved 2026-09-21. `product` is the Gumroad product id the kit
+# service verifies licence keys against and `buy` is its checkout URL; both
+# stay None until the product exists, and while they are None the site shows
+# no Buy button and the service sells nothing. A button that cannot take a
+# payment, or a download that cannot be unlocked, is the aspirational-page
+# failure in a different place.
+# --------------------------------------------------------------------------
+
+KITS = {
+    1: {"tier": 1, "name": "Operator kit", "price": 79, "currency": "USD",
+        "product": "DDLpy5F9fDrGF3c0kc0A5g==",
+        "buy": "https://aiprodev.gumroad.com/l/blvkware-operator-kit"},
+    2: {"tier": 2, "name": "Deputy kit", "price": 199, "currency": "USD",
+        "product": "X4Kpm8CUn0u7p80L4DsZnA==",
+        "buy": "https://aiprodev.gumroad.com/l/blvkware-deputy-kit"},
+}
+
+#: Where the kit service answers (blvkware-agentcore/kits, on Netlify). The
+#: configurator previews and downloads kits through it.
+KIT_SERVICE = "https://blvkware-kits.netlify.app"
+
+# --------------------------------------------------------------------------
+# Tiers. The names, blurbs and scope limits drive tier derivation and are
+# live. The build/ops/opsAnnual/days/buildDays/actions keys are RETIRED (see
+# the module docstring) and never leave this file.
 # --------------------------------------------------------------------------
 
 TIERS = {
@@ -158,15 +196,15 @@ GATES = {
         "short": "US carrier registration required: weeks, not days",
         "long": "Texting your customers from a US business number requires A2P "
                 "10DLC registration with the carriers. Part of it is a manual "
-                "review that no supplier can hurry, so budget weeks rather than "
-                "days. Everything else in your agent goes live on schedule; SMS "
-                "switches on when the registration clears, at no extra cost.",
+                "review that nobody can hurry, so budget weeks rather than days. "
+                "Build and test everything else meanwhile, and switch SMS on "
+                "when the registration clears.",
     },
     "meta": {
         "short": "Meta business verification required: usually days",
         "long": "WhatsApp Business messaging needs Meta to verify the business. "
-                "It is normally days rather than weeks, but it is outside our "
-                "control and so is not promised inside the delivery window.",
+                "It is normally days rather than weeks, but it is outside "
+                "anyone's control, so plan the rest of the build around it.",
     },
 }
 
@@ -738,66 +776,65 @@ AUTONOMY = [
 
 
 # --------------------------------------------------------------------------
-# What a capability needs from the customer before it can run for real.
+# What a capability needs from the buyer before it can run for real.
 #
-# This is what separates "the builder configured it" from "it is ready". Anything
-# listed here that a design cannot supply becomes operator work, and saying so
-# up front is what stops "live in 10 business days" from being a guess. It lives
-# in the catalog rather than in the tools so the buyer-facing readiness estimate
-# and the operator's handoff sheet can never disagree.
+# This is what separates "the kit specifies it" from "it is ready". Nothing
+# here can be generated, because every item is a fact about the buyer's
+# business or access to their systems. It lives in the catalog so the
+# configurator's readiness estimate and the kit's SETUP.md can never disagree.
 # --------------------------------------------------------------------------
 
 SETUP_NEEDS = {
-    "knowledge.pack":   ["their documents, prices and policies"],
+    "knowledge.pack":   ["your documents, prices and policies"],
     "dash.source":      ["credentials for the extra source"],
     "dash.share":       ["who is allowed to see it"],
     "email.triage":     ["a sample of real inbox traffic to calibrate against"],
-    "email.draft":      ["examples of how they already write to customers"],
+    "email.draft":      ["examples of how you already write to customers"],
     "email.cleanup":    ["access to the existing backlog"],
-    "lead.qualify":     ["what a good customer looks like to them"],
-    "lead.enrich":      ["which sources they consider acceptable"],
+    "lead.qualify":     ["what a good customer looks like to you"],
+    "lead.enrich":      ["which sources you consider acceptable"],
     "appt.book":        ["job durations, travel buffers and working hours"],
     "appt.setting":     ["the list to work, and calling-hours rules"],
-    "doc.generate":     ["their document template and branding"],
+    "doc.generate":     ["your document template and branding"],
     "doc.parse":        ["ten real documents to check extraction against"],
     "pay.collect":      ["a payment provider account"],
-    "pay.chase":        ["their escalation tone and terms"],
+    "pay.chase":        ["your escalation tone and terms"],
     "recon.match":      ["a month of real transactions to reconcile against"],
     "browser.operate":  ["portal credentials and a recorded walkthrough"],
     "browser.extract":  ["portal credentials and the page layout"],
     "api.custom":       ["API documentation and a credential"],
     "files.watch":      ["the folder to watch and what should happen"],
-    "crm.sync":         ["field mapping to their CRM"],
+    "crm.sync":         ["field mapping to your CRM"],
     "crm.hygiene":      ["a decision on what may be merged automatically"],
-    "crm.pipeline":     ["their stages and what counts as stale"],
-    "chan.sms":         ["A2P 10DLC registration: weeks, outside our control"],
+    "crm.pipeline":     ["your stages and what counts as stale"],
+    "chan.sms":         ["A2P 10DLC registration, which takes weeks and is outside anyone's control"],
     "chan.whatsapp":    ["Meta business verification"],
     "voice.inbound":    ["a phone number and a call-flow walkthrough"],
     "voice.outbound":   ["a phone number and calling-hours rules"],
-    "whitelabel":       ["their domain and brand assets"],
+    "whitelabel":       ["your domain and brand assets"],
     "lang.extra":       ["which languages, and a native reviewer"],
     "workflow.multistep": ["the process written down, step by step"],
-    "workflow.exception": ["the exceptions they already know about"],
-    "support.answer":   ["their documentation or help centre"],
-    "support.ticket":   ["their help desk and priority rules"],
-    "onboard.run":      ["their onboarding checklist"],
+    "workflow.exception": ["the exceptions you already know about"],
+    "support.answer":   ["your documentation or help centre"],
+    "support.ticket":   ["your help desk and priority rules"],
+    "onboard.run":      ["your onboarding checklist"],
     "data.collect":     ["credentials for each source"],
-    "data.analyze":     ["the questions they actually want answered"],
+    "data.analyze":     ["the questions you actually want answered"],
     "data.report":      ["who receives it, and when"],
-    "data.alert":       ["the thresholds that matter to them"],
-    "research.web":     ["what a useful brief looks like to them"],
+    "data.alert":       ["the thresholds that matter to you"],
+    "research.web":     ["what a useful brief looks like to you"],
     "training":         ["a date and the attendee list"],
-    "order.status":     ["a read connection to their store and their order fields"],
-    "order.track":      ["carrier accounts, or the tracking data already in their store"],
-    "order.returns":    ["their returns policy, and who may approve an exception"],
-    "order.recover":    ["their checkout data and what they are willing to offer"],
+    "order.status":     ["a read connection to your store and your order fields"],
+    "order.track":      ["carrier accounts, or the tracking data already in your store"],
+    "order.returns":    ["your returns policy, and who may approve an exception"],
+    "order.recover":    ["your checkout data and what you are willing to offer"],
     "stock.watch":      ["reorder points and supplier lead times"],
     "stock.reconcile":  ["which system is authoritative when two disagree"],
     "supplier.chase":   ["supplier contacts and the agreed cadence"],
     "ship.eta":         ["which milestones the customer should hear about"],
     "ship.claims":      ["carrier accounts and the documents each claim needs"],
-    "review.request":   ["their public review link, and when a job counts as finished"],
-    "renewal.watch":    ["the contracts, their dates and their notice periods"],
+    "review.request":   ["your public review link, and when a job counts as finished"],
+    "renewal.watch":    ["the contracts, your dates and your notice periods"],
     "cert.expiry":      ["the certificates to track and how early to warn"],
 }
 
@@ -805,20 +842,33 @@ for _cid in SETUP_NEEDS:
     assert _cid in CAP_BY_ID, "SETUP_NEEDS references unknown capability %s" % _cid
 
 
+#: Tier keys that are live. Everything else on a tier is retired.
+_TIER_LIVE = ("key", "name", "label", "systems", "channels", "maxSystems", "maxChannels", "blurb")
+
+
 def payload():
-    """The catalog as the browser sees it."""
+    """The catalog as the browser and the kit service see it.
+
+    Only what is sold today. The retired done-for-you figures are stripped
+    here, at the one exit, so no page and no service can show or charge them.
+    """
     return {
-        "tiers": TIERS,
-        "pricing": PRICING,
-        "volume": VOLUME,
+        "kits": KITS,
+        "kitService": KIT_SERVICE,
+        "tiers": dict((k, dict((f, t[f]) for f in _TIER_LIVE)) for k, t in TIERS.items()),
+        "pricing": {
+            "tier2Weight": TIER2_WEIGHT,
+            "tier2Groups": TIER2_GROUPS,
+            "splitWeight": SPLIT_WEIGHT,
+        },
         "integrations": INTEGRATIONS,
         "channels": CHANNELS,
         "gates": GATES,
-        "capabilities": CAPABILITIES,
+        "capabilities": [dict((k, v) for k, v in c.items() if k not in ("price", "ops"))
+                         for c in CAPABILITIES],
         "capGroups": CAP_GROUPS,
         "roles": ROLES,
         "roleFamilies": ROLE_FAMILIES,
-        "modifiers": MODIFIERS,
         "autonomy": AUTONOMY,
         "setupNeeds": SETUP_NEEDS,
     }

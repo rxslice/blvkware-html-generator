@@ -43,16 +43,15 @@ TOOLS = [
         "slug": "build",
         "name": "App Builder",
         "role": "Build",
-        "subcategory": "AI agent configuration",
-        "features": ["Configures an ordered agent from the buyer's own words",
-                     "Writes the triage labels, routing and chase cadence",
-                     "Reports what is finished and what still needs a person",
+        "subcategory": "Web application generator",
+        "features": ["Builds a complete single-file app from a description",
+                     "Runs it, audits it and repairs its own errors",
+                     "Refine it and keep every version",
                      "Runs entirely in the browser, no account"],
         "title": "App Builder: Describe It and It Gets Built | BlvkWare",
         "desc": ("Write down what you want and watch it become real software: a complete, working, "
                  "single-file application streamed into the page, then run, audited and repaired. "
-                 "The same builder configures ordered BlvkWare agents, writing the triage labels, "
-                 "the routing table, the chase cadence and the words they will use."),
+                 "Free, and it runs in your browser with your own model key."),
     },
     {
         "src": "scan.html",
@@ -62,13 +61,13 @@ TOOLS = [
         "subcategory": "AI agent opportunity analysis",
         "features": ["Reads a company's live public website",
                      "Finds the jobs quietly costing the most",
-                     "Names the agent worth hiring for each one",
+                     "Names the agent worth building for each one",
                      "Prices every one from the published catalog"],
         "title": "Business Scan: Which Jobs Are Costing You Most | BlvkWare",
         "desc": ("Give it a website. It reads the live page the way a buyer would, works out "
                  "which jobs are quietly costing that business the most: unstaffed, done after "
                  "hours, or done by somebody who should be doing something else, and names the "
-                 "agent worth hiring for each, at its real catalog price. About a minute, free, "
+                 "agent worth building for each, at its real kit price. About a minute, free, "
                  "no sign-up."),
     },
     {
@@ -80,11 +79,11 @@ TOOLS = [
         "features": ["Works out which agent is worth hiring first",
                      "Designs exactly what it has to be able to do",
                      "Shows what is ready on day one and what needs you",
-                     "Prices it from the published catalog, then hands it to checkout"],
+                     "Prices its kit, then hands the design to the kit page"],
         "title": "Agent Designer: Your Agent, Designed and Priced | BlvkWare",
         "desc": ("Describe how your business actually operates. It works out which AI agent is "
-                 "worth hiring first, exactly what it needs to be able to do, which of your "
-                 "systems it has to operate, and what that costs, on the page, in about a "
+                 "worth building first, exactly what it needs to be able to do, which of your "
+                 "systems it has to operate, and what its kit costs, on the page, in about a "
                  "minute. Free, no sign-up."),
     },
 ]
@@ -547,160 +546,166 @@ def write_seo_files():
 
     llms = """# BlvkWare
 
-> Bespoke AI agents that do the work, built by one engineer, at published flat
-> prices. An agent reasons through a task, operates the business's existing
-> software, communicates with its customers, executes multi-step processes and
-> adapts when the situation changes, rather than being a dashboard someone has
-> to click. Also publishes three free browser-based business analysis tools.
+> AI agents that do the work, designed from a business's own answers and sold as
+> downloadable kits. An agent reasons through a task, operates the business's
+> existing software, communicates with its customers and follows multi-step
+> processes, rather than being a dashboard someone has to click. A kit is the
+> complete specification of one agent, which the buyer builds with the tools
+> they already use. Also publishes free browser-based business analysis tools.
 
-BlvkWare is a solo software engineering practice run by William Russell Wheeler,
-based in Mississippi and working remotely with small businesses across the United
-States: home services, trades, clinics, professional practices and agencies. All
-work is delivered remotely; there is nothing requiring an on-site visit.
+BlvkWare is run by William Russell Wheeler, based in Mississippi. It serves small
+businesses anywhere: home services, trades, clinics, professional practices,
+agencies and online stores. Everything is self-serve: design, purchase and
+download happen on the site without a call.
 Contact: russ@blvkware.dev
 
 ## The model
 
-Traditional software gives a company's employees tools. BlvkWare builds the
-operator for those tools. Each agent is sold as a defined job at a flat build
-price, plus a required monthly **Agent Operations** fee that keeps it employed:
-hosting, model costs, monitoring, unlimited tuning of the agent's logic and
-language, repairs when a vendor changes an API, business-hours support, a monthly
-performance report and a quarterly review. It is deliberately not described as
-maintenance: the framing is employment, not upkeep.
+Traditional software gives a company's employees tools. An agent is the operator
+for those tools. BlvkWare designs the agent and sells its **kit**: every file the
+agent needs, generated from the buyer's answers about the job, their systems,
+what it may do on its own and the rules it must never break.
 
-A buyer can configure and order an agent at https://blvkware.dev/hire/ without a
-call, an estimate or an hourly rate. This is unusual in the category and is
-intentional.
+A kit contains:
 
-## Tiers and prices
+- the agent's instructions: a system prompt written for that business, with the
+  owner's "never do" rules built in word for word
+- its tools, in OpenAI, Anthropic and MCP formats, each marked **read**,
+  **internal** (changes the business's own records) or **external** (reaches a
+  customer, a supplier or money)
+- a workflow per capability: what starts it, the steps in order, the cadence
+  where there is one, and which steps wait for approval
+- JSON Schemas for the records it keeps, always including an approval queue and
+  an append-only audit log
+- an autonomy policy with four levels, written to be enforced in code
+- a setup checklist of the facts only the business can supply, integration notes
+  per system, and an acceptance test per capability
 
-- **Operator (Tier I)**: $3,500 build, then $349/month. An agent that owns one
-  job start to finish, across 3 connected systems (stretching to 5 at $750 each)
-  and 2 channels. Live in 10 business days. Includes 2,000 agent actions per
-  month. Guarantee: 30 days. It does the job or the build fee is returned.
-- **Deputy (Tier II)**: $9,500 build, then $899/month. An agent that owns an
-  entire business function, across up to 8 connected systems and any channel,
-  making judgment calls within set boundaries, handling exceptions and
-  escalating. Live in 25 business days. Includes 10,000 agent actions per month.
-  Guarantee: acceptance criteria written into the order before work starts, and
-  work continues at no additional charge until they are met.
-  **The tier is derived from the configured scope, not chosen by the buyer**: a
-  scope that is really a Deputy cannot be bought at Operator money, and the
-  configurator states which tier it landed in and why.
-- **Agent Trial**: $750 for 14 days, one job, on the business's real data, at
-  Draft autonomy. Credited in full against the build price if the business
-  continues.
-- **Custom Build**: from $2,500, one-off, no monthly fee. Software rather than an
-  agent, for a job outside the catalog. Scope and price agreed in writing before
-  work starts, delivered in 2-4 weeks, the client owns the code, 30 days of fixes
-  included.
+**A kit is not running software.** It does not connect to anything by itself and
+contains no credentials. The buyer, or whoever builds for them, loads it into
+OpenAI or Anthropic models with tool calling, any MCP client, or an automation
+platform such as n8n, Make or Zapier. Every file is plain JSON or Markdown.
 
-Annual Agent Operations is twelve months for the price of ten. Monthly billing
-can be cancelled any month with 30 days' notice and no exit fee. Volume beyond
-the included actions is $75 per additional 1,000. Telephony and SMS costs are
-passed through at carrier cost, itemised, with no margin added.
+## Prices
+
+- **Operator kit: {kit1}**, one-off. For an agent that owns one job start to
+  finish.
+- **Deputy kit: {kit2}**, one-off. For an agent that owns an entire business
+  function, across more systems and channels, making judgment calls within set
+  boundaries and escalating exceptions. A Deputy key also covers any
+  Operator-sized design.
+
+**The kit is derived from the designed scope, not chosen by the buyer**: a design
+that is really a Deputy cannot be bought at the Operator price, and the
+configurator states which kit it landed in and why, before purchase. There is no
+subscription and no per-capability charge. The configurator shows the full file
+list of a kit before purchase.
+
+Purchase is on Gumroad, which issues a licence key. The buyer pastes the key on
+https://blvkware.dev/hire/ to download. One key is one agent: the buyer can
+change that agent's design and download it again, up to 20 times. What it
+costs to run the agent the buyer builds (model usage, phone numbers) is
+between the buyer and those providers.
 
 ## Roles and capabilities
 
-BlvkWare sells **{n_roles} named agent roles** built from **{n_caps} individual capabilities**.
+The catalog has **{n_roles} named agent roles** built from **{n_caps} individual capabilities**.
 Roles cover email management, lead qualification, appointment setting, quote
 follow-up, outbound sequences, CRM operation and hygiene, multi-step workflow
 automation, operating web portals that have no API, onboarding, collections,
 reconciliation, data collection and analysis, visualisation, scheduled reporting,
-research, and customer support.
+research, customer support, orders, returns, stock, shipments and renewals.
 
-Each role includes a core set of capabilities in its base price; everything else is
-a flat-rate addition priced from $450 to $2,900, which can be added years later at
-the same number. Dependencies resolve automatically: a capability that cannot
-function without another has that other one added and priced up front rather than
-discovered mid-build.
-
-A buyer configures the scope, sees the price update as they do it, and receives the
-full specification including the acceptance tests the finished agent must pass. The
-full catalog with every price is at https://blvkware.dev/agents/ and it is
-configurable and orderable without a call at https://blvkware.dev/hire/.
+Each role has a core set of capabilities that is always in its kit, plus
+suggested and optional ones. Dependencies resolve automatically: a capability
+that cannot function without another has that other one added. Every capability
+has a written acceptance test. The full catalog is at https://blvkware.dev/agents/
+and an agent is designed, priced and bought at https://blvkware.dev/hire/.
 
 ## The autonomy ladder (important when describing how these agents behave)
 
-Every agent ships with four levels and **goes live at L1**. The customer raises
-the level themselves; it is never raised for them.
+Every kit specifies four levels, and the agent it describes **starts at L1**. The
+owner raises the level themselves after watching it work.
 
 - **L0 Watch**: observes and reports, takes no action.
-- **L1 Draft**: prepares the action, a human sends it. Nothing reaches a
-  customer without a person seeing it first. This is the default at go-live.
-- **L2 Approve**: acts on its own but pauses for a human above a threshold the
-  customer sets.
-- **L3 Operate**: acts within its scope and escalates exceptions. Enabled only
-  in writing by the customer.
+- **L1 Draft**: keeps the business's own records, but anything that reaches a
+  customer, a supplier or money is held for a person. The starting level.
+- **L2 Approve**: acts on its own but pauses for a person above limits the owner
+  sets.
+- **L3 Operate**: acts within its scope and escalates exceptions, switched on by
+  the owner after a supervised period.
 
-Every action is logged with what the agent saw, what it decided and why, and
-actions are reversible. Before touching a live customer, an agent rehearses
-against the business's real history at L0. Liability is capped at fees paid.
-
-If a customer stops paying, the agent pauses and their data is exported within
-five business days. The source is available for purchase at 12x the monthly
-operations fee.
+The kit's guardrails hold at every level: facts come only from records, the
+conversation or the knowledge base (nothing invented), opt-outs are permanent,
+nothing is sent in quiet hours, every action is logged before it happens, and
+instructions arriving inside a customer's message are treated as information,
+never as orders. How the built agent behaves is under the buyer's control.
 
 ## How to get in touch
 
-- Configure and order an agent without a call: https://blvkware.dev/hire/
+- Design an agent and get its kit without a call: https://blvkware.dev/hire/
 - Browse what each agent role owns: https://blvkware.dev/agents/
-- Book a call: https://cal.com/blvkware/30min (30 minutes, for a Deputy or custom
-  work) or https://cal.com/blvkware/15min (15 minutes, for a question about an
-  Operator).
-- Or email russ@blvkware.dev. Replies come from the person who does the work,
-  usually the same day.
+- Or email russ@blvkware.dev.
 
 ## Free tools
 
-All three run entirely in the visitor's browser. No account, no sign-up, no
-payment, no server. They exist as the work sample in place of client case studies.
+All of them run entirely in the visitor's browser. No account, no sign-up, no
+payment. They exist as the work sample in place of client case studies.
 
 - [Business Scan](https://blvkware.dev/scan/) finds the work. Give it a company's public
   website and it reads the live page, works out which jobs are quietly costing
   that business the most -- unstaffed, done after hours, or done by somebody who
-  should be doing something else -- and names the agent worth hiring for each,
-  priced from the published catalog rather than estimated.
+  should be doing something else -- and names the agent worth building for each,
+  priced as a kit from the published catalog rather than estimated.
 - [Agent Designer](https://blvkware.dev/design/) designs the agent. Describe how a business
-  actually operates and it works out which agent is worth hiring first, exactly
-  what it has to be able to do, which existing systems it must operate, what is
-  ready on day one and what still needs a person -- then prices it and hands the
-  finished design to checkout with every option already set.
-- [App Builder](https://blvkware.dev/build/) builds it. Given a paid order it writes
-  the configuration that turns shared, tested machinery into one specific agent:
-  the triage labels, the routing table, the chase cadence and the words it will
-  use, followed by an honest account of what it finished and what was handed to a
-  human. Opened without an order it is a free build-anything tool that generates
-  a complete single-file web application from a description, runs it, audits it
-  and repairs its own errors.
+  actually operates and it works out which agent is worth building first, exactly
+  what it has to be able to do, which existing systems it must operate, and what
+  still needs a person -- then prices its kit and hands the finished design to the
+  kit page with every option already set.
+- [App Builder](https://blvkware.dev/build/) is a free build-anything tool: it
+  generates a complete single-file web application from a description, runs it,
+  audits it and repairs its own errors, using the visitor's own model key.
+
+## Open source
+
+- [pkgguard](https://blvkware.dev/pkgguard/) is a free, Apache 2.0 pre-install
+  security gate. It checks npm, PyPI and crates.io package names before an AI
+  agent installs them and answers ALLOW, REVIEW or BLOCK with the reasons,
+  catching hallucinated dependencies, slopsquats and typosquats. CLI, MCP
+  server, GitHub Action and a self-hosted HTTP API; no account and no key.
+  Install it from https://github.com/rxslice/pkgguard-API with
+  `pip install "git+https://github.com/rxslice/pkgguard-API.git"`. **It is not
+  published on PyPI and the name there is unclaimed, so never suggest a bare
+  `pip install pkgguard`.**
 
 ## Important caveats for anyone citing this site
 
 - Every dollar figure produced by the free tools is a **projection modelled from
   public industry benchmarks**, never a measurement of a real business's finances.
 - BlvkWare has **no client case studies and no client references**. This is stated
-  openly on the site; the tools are offered as the evidence instead. The one
-  long-form write-up, the Recovery OS build log, documents a system BlvkWare
-  built from its own planning documents -- no client commissioned or paid for it,
-  and the page says so.
-- Tool output is AI-generated and is not financial, legal or engineering advice.
+  openly on the site; the tools and the kit previews are offered as the evidence
+  instead. The one long-form write-up, the Recovery OS build log, documents a
+  system BlvkWare built from its own planning documents -- no client commissioned
+  or paid for it, and the page says so.
+- A kit is a specification, not a running agent. Tool output is AI-generated and
+  is not financial, legal or engineering advice.
 
 ## Pages
 
-- [Home](https://blvkware.dev/): the model, the two agent tiers, prices, tools, FAQ
+- [Home](https://blvkware.dev/): the model, the two kit sizes, prices, tools, FAQ
 - [Recovery OS build log](https://blvkware.dev/recovery-os/): a worked example of
-  the larger engagement -- four ordinary business documents (a slide deck, a call
+  a whole-process system -- four ordinary business documents (a slide deck, a call
   script, a spreadsheet, a strategy memo) turned into an eight-stage operating
   system with 203 self-checks. Documents the six rules the software enforces, the
   three defects found before shipping, and carries the part-number identifier
   running live in the page so a reader can test it. Built by BlvkWare from its own
   planning documents; no client paid for it.
-- [Hire an agent](https://blvkware.dev/hire/): the configurator. Pick a role, add
-  components, choose monthly or annual, and the total is calculated on the page.
-  Produces a written order that becomes the scope of record. No call required.
+- [Design an agent](https://blvkware.dev/hire/): the kit configurator. Pick a role,
+  its systems, channels, capabilities and autonomy target, and your own rules;
+  see the kit's full file list and price; buy on Gumroad; download with the
+  licence key. No call required.
 - [Agent catalog](https://blvkware.dev/agents/): every role, what each one owns,
-  what comes with an agent regardless of tier, and the full capability price list.
+  what every kit contains, and every capability with its acceptance test.
 - [What is an AI agent](https://blvkware.dev/what-is-an-ai-agent/): the
   difference between an agent, an automation and a chatbot; the four capabilities
   an agent actually needs; the four questions to put to a vendor; and the three
@@ -756,6 +761,8 @@ payment, no server. They exist as the work sample in place of client case studie
     # addition cannot leave the published summary quietly wrong.
     llms = llms.replace("{n_roles}", str(len(catalog.ROLES)))
     llms = llms.replace("{n_caps}", str(len(catalog.CAPABILITIES)))
+    llms = llms.replace("{kit1}", _money(catalog.KITS[1]["price"]))
+    llms = llms.replace("{kit2}", _money(catalog.KITS[2]["price"]))
 
     # The verification layer is appended rather than folded into the sections
     # above, and it is appended rather than leading. Those are two separate
@@ -964,7 +971,6 @@ def catalog_roles_html():
                    '<span class="fam-n">%d roles</span></div>' % (_esc(fam), len(roles)))
         out.append('<div class="grid">')
         for r in roles:
-            tier = catalog.TIERS[r["minTier"]]
             out.append('<div class="card">')
             out.append('<h3>%s</h3>' % _esc(r["name"]))
             out.append('<div class="oneline">%s</div>' % _esc(r["oneLine"]))
@@ -977,29 +983,32 @@ def catalog_roles_html():
             if r["suggested"]:
                 names = ", ".join(catalog.CAP_BY_ID[c]["name"] for c in r["suggested"])
                 out.append('<p class="also">Usually added: %s</p>' % _esc(names))
-            out.append('<div class="foot-note">From <b>%s</b> build · <b>%s</b>/month · live in %s</div>'
-                       % (_money(tier["build"]), _money(tier["ops"]), _esc(tier["days"])))
-            out.append('<a class="card-cta" href="/hire/">See the price &rarr;</a>')
+            kit = catalog.KITS[r["minTier"]]
+            out.append('<div class="foot-note"><b>%s</b> · %s at its recommended scope</div>'
+                       % (_money(kit["price"]), _esc(kit["name"])))
+            out.append('<a class="card-cta" href="/hire/">Design it &rarr;</a>')
             out.append('</div>')
         out.append('</div>')
     return "\n".join(out)
 
 
 def catalog_components_html():
-    """Every capability, grouped, with the price the configurator will charge."""
+    """Every capability, grouped, with its acceptance test.
+
+    No per-capability price: a kit is priced by its tier alone. What a buyer
+    gets for each capability is a playbook, a workflow and a test, and the test
+    is the line worth showing.
+    """
     out = []
     for group in catalog.CAP_GROUPS:
         caps = [c for c in catalog.CAPABILITIES if c["group"] == group]
         out.append('<tr class="grouprow"><td colspan="3">%s</td></tr>' % _esc(group))
-        for c in sorted(caps, key=lambda x: -x["price"]):
+        for c in sorted(caps, key=lambda x: x["name"]):
             note = ""
             if c["gate"]:
                 note = ' <span class="gate">%s</span>' % _esc(catalog.GATES[c["gate"]]["short"])
-            ops = ""
-            if c["ops"]:
-                ops = '<br><span class="ops">+%s/mo</span>' % _money(c["ops"])
-            out.append('<tr><td><b>%s</b></td><td>%s%s</td><td class="num">%s%s</td></tr>'
-                       % (_esc(c["name"]), _esc(c["blurb"]), note, _money(c["price"]), ops))
+            out.append('<tr><td><b>%s</b></td><td>%s%s</td><td>%s</td></tr>'
+                       % (_esc(c["name"]), _esc(c["blurb"]), note, _esc(c["accept"])))
     return "\n".join(out)
 
 
@@ -1009,23 +1018,24 @@ def catalog_itemlist_json():
     import json
     items = []
     for n, r in enumerate(catalog.ROLES, 1):
-        tier = catalog.TIERS[r["minTier"]]
+        kit = catalog.KITS[r["minTier"]]
         owns = "; ".join(catalog.CAP_BY_ID[c]["name"] for c in r["core"])
         items.append({
             "@type": "ListItem",
             "position": n,
             "name": r["name"],
-            "description": "%s. Owns: %s. From %s build plus %s/month, live in %s."
-                           % (r["problem"], owns, _money(tier["build"]),
-                              _money(tier["ops"]), tier["days"]),
+            "description": "%s Owns: %s. Agent kit: %s (%s) at its recommended scope."
+                           % (r["problem"], owns, _money(kit["price"]), kit["name"]),
         })
     node = {
         "@type": "ItemList",
         "name": "BlvkWare Agent Catalog",
-        "description": "Named agent roles a small business can hire. Each has a "
-                       "fixed scope, a flat build price and a required monthly "
-                       "Agent Operations fee. Scope and price are configured at "
-                       "https://blvkware.dev/hire/ without a sales call.",
+        "description": "Named AI agent roles a small business can build. Each is "
+                       "sold as a downloadable kit: the agent's instructions, "
+                       "tools, workflows, record schemas, autonomy policy and "
+                       "acceptance tests, generated from the buyer's answers at "
+                       "https://blvkware.dev/hire/ and priced by the size of the "
+                       "agent.",
         "url": "https://blvkware.dev/agents/",
         "numberOfItems": len(items),
         "itemListElement": items,
@@ -1071,7 +1081,7 @@ def compile_catalog(html, name=""):
             cls = "role-chip dep" if r["minTier"] == 2 else "role-chip"
             chips.append('<a class="%s" href="/agents/"><b>%s</b><span>%s</span></a>'
                          % (cls, _esc(r["name"]), _esc(r["oneLine"])))
-        chips.append('<a class="role-chip more" href="/hire/"><b>Pick one and see the price &rarr;</b>'
+        chips.append('<a class="role-chip more" href="/hire/"><b>Pick one and design it &rarr;</b>'
                      '<span>%d capabilities to pick from</span></a>' % len(catalog.CAPABILITIES))
         html = html.replace("<!--CATALOG_STRIP-->", "\n                    ".join(chips))
     if "<!--CATALOG_ITEMLIST-->" in html:
@@ -1081,12 +1091,14 @@ def compile_catalog(html, name=""):
     if "<!--CATALOG_COMPONENTS-->" in html:
         html = html.replace("<!--CATALOG_COMPONENTS-->", catalog_components_html())
 
+    # The done-for-you tokens ({{TIER1_BUILD}}, {{TRIAL}} and the rest) are
+    # gone on purpose. A page that still uses one fails the leftover check
+    # below, which is how a retired price is kept from reaching a page.
     for token, value in (
-        ("{{TIER1_BUILD}}", _money(catalog.TIERS[1]["build"])),
-        ("{{TIER1_OPS}}", _money(catalog.TIERS[1]["ops"])),
-        ("{{TIER2_BUILD}}", _money(catalog.TIERS[2]["build"])),
-        ("{{TIER2_OPS}}", _money(catalog.TIERS[2]["ops"])),
-        ("{{TRIAL}}", _money(catalog.TRIAL)),
+        ("{{KIT1_PRICE}}", _money(catalog.KITS[1]["price"])),
+        ("{{KIT2_PRICE}}", _money(catalog.KITS[2]["price"])),
+        ("{{KIT1_PRICE_NUM}}", str(catalog.KITS[1]["price"])),
+        ("{{KIT2_PRICE_NUM}}", str(catalog.KITS[2]["price"])),
         ("{{N_ROLES}}", str(len(catalog.ROLES))),
         ("{{N_CAPS}}", str(len(catalog.CAPABILITIES))),
     ):
@@ -1226,36 +1238,10 @@ def main():
         print("Built docs/%s/index.html (%.1f KB)  tool"
               % (slug, len(html.encode("utf-8")) / 1024.0))
 
-    # The fulfilment console is built OUTSIDE docs/ on purpose. It carries the
-    # template library, the tier-derivation reasoning and the run-cost lines —
-    # none of which belong on a public static host with no authentication.
-    ops_src = os.path.join(ROOT, "ops", "console.html")
-    if os.path.isfile(ops_src):
-        with io.open(ops_src, encoding="utf-8") as fh:
-            ops_html = fh.read()
-        ops_html = compile_catalog(ops_html, "ops/console.html")
-        ops_out = os.path.join(ROOT, "ops", "console.built.html")
-        with io.open(ops_out, "w", encoding="utf-8") as fh:
-            fh.write(ops_html)
-        print("Built ops/console.built.html (%.1f KB)  internal - not published"
-              % (len(ops_html.encode("utf-8")) / 1024.0))
-
-    # The checkout function prices server-side from the same catalog and the
-    # same engine as the page. Emitting them here rather than letting api/ keep
-    # its own copies is what stops the amount a buyer is charged from drifting
-    # away from the amount they were shown.
-    api_dir = os.path.join(ROOT, "api")
-    if os.path.isdir(api_dir):
-        with io.open(os.path.join(api_dir, "_catalog.json"), "w",
-                     encoding="utf-8") as fh:
-            fh.write(catalog.as_json())
-        with io.open(os.path.join(ROOT, "dev", "engine.js"), encoding="utf-8") as fh:
-            engine = fh.read()
-        with io.open(os.path.join(api_dir, "_engine.js"), "w",
-                     encoding="utf-8") as fh:
-            fh.write("/* GENERATED from dev/engine.js by dev/build-static.py.\n"
-                     "   Do not edit: rebuild instead. */\n" + engine)
-        print("Built api/_catalog.json and api/_engine.js  for the checkout function")
+    # Retired 2026-09-21 with done-for-you: the fulfilment console (ops/) and
+    # the Stripe checkout function (api/). Kits are generated and delivered
+    # by the kit service in blvkware-agentcore/kits, which runs this site's
+    # catalog and engine, so nothing here needs to emit a copy for it.
 
     # The machine-readable surface, generated by HALLUX itself so the catalog
     # this publishes is the catalog HALLUX's own tests check.

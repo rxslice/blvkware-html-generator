@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy | BlvkWare</title>
-    <meta name="description" content="What BlvkWare collects, and what it doesn't. No accounts, no analytics, no tracking. The tools run entirely in your browser and keep nothing on any server.">
+    <meta name="description" content="What BlvkWare collects, and what it doesn't. No accounts, no analytics, no tracking. The free tools run in your browser, and the kit service keeps no copy of your design or your kit.">
     <link rel="canonical" href="https://blvkware.dev/privacy/">
     <meta name="robots" content="index, follow">
     <meta property="og:title" content="Privacy Policy | BlvkWare">
@@ -62,12 +62,12 @@
     </a>
 
     <h1>Privacy Policy</h1>
-    <div class="updated">Last updated 9 August 2026</div>
+    <div class="updated">Last updated 21 September 2026</div>
 
-    <p class="lede">BlvkWare does not run analytics, does not set cookies, and has no user accounts. The tools on this site run entirely inside your browser and send nothing to any BlvkWare server, because there isn't one. This page explains precisely what does happen, including the parts involving third parties.</p>
+    <p class="lede">BlvkWare does not run analytics, does not set cookies, and has no user accounts. The free tools on this site run entirely inside your browser. Two things do use a server: the kit service, which lists and generates agent kits, and the HALLUX API. This page explains precisely what each part does with your information, including the parts involving third parties.</p>
 
     <h2>Who is responsible</h2>
-    <p>BlvkWare is a sole operation run by William Russell Wheeler, based in Mississippi, United States, and serving clients remotely nationwide. For anything on this page, write to <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a>.</p>
+    <p>BlvkWare is a sole operation run by William Russell Wheeler, based in Mississippi, United States, and selling to businesses nationwide. For anything on this page, write to <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a>.</p>
 
     <h2>What this website collects</h2>
     <p><strong>No accounts. No cookies. No analytics. No advertising or tracking pixels.</strong> There is no sign-up anywhere on this site and no profile is ever built about you.</p>
@@ -86,30 +86,42 @@
     <p>Whatever you type into a tool is sent to that provider along with the request, and is handled under <em>their</em> privacy terms. Read those if you intend to enter anything sensitive.</p>
 
     <h3>Data kept in your browser</h3>
-    <p>The tools store a small amount of state in <code>localStorage</code> on your device: your chosen provider and API key, your light/dark theme preference, whether you've dismissed the support dialog, and, in App Builder, the builds you've generated, so they survive a page reload. None of it leaves your device. Clearing site data in your browser deletes all of it.</p>
+    <p>The tools store a small amount of state in <code>localStorage</code> on your device: your chosen provider and API key, your light/dark theme preference, in App Builder the builds you've generated, and on the kit page the agent design you are working on, so they survive a page reload. None of it leaves your device except as described under the kit service below. Clearing site data in your browser deletes all of it.</p>
 
     <h3>Business Scan and third-party page readers</h3>
     <p>Business Scan analyses a public web page you nominate. A browser cannot fetch an arbitrary website directly, so the address you enter is passed to public read-only relay services, currently <code>corsproxy.io</code>, <code>api.allorigins.win</code> and <code>r.jina.ai</code>, which retrieve the page and return it. <strong>Those services see the URL you asked for and your IP address.</strong> They are independent third parties operating under their own terms. Only the address is sent; no other information about you is included.</p>
 
-    <h3>Agent Designer's "Email me this map"</h3>
-    <p>This does not transmit anything on its own. It opens your own email application with the map already written into a draft addressed to BlvkWare. Nothing is sent unless you choose to press send, at which point it becomes an ordinary email, see below.</p>
+    <h3>Downloading a report or a design</h3>
+    <p>The download buttons in Business Scan and Agent Designer build the file in your browser and save it to your device. Nothing is sent anywhere.</p>
+
+    <h2>Designing and buying a kit</h2>
+
+    <h3>The kit service</h3>
+    <p>The <a href="/hire/">kit page</a> sends the design you make to BlvkWare's kit service: the role, the systems, channels and capabilities you picked, the autonomy level, and your answers about your business, including any rules you write. The service uses it to list the files in your kit and, when you download, to generate the kit. <strong>The design is not stored.</strong> Once the response is sent it is gone, and BlvkWare keeps no copy of it or of your kit.</p>
+    <p>The kit service runs on <strong>Netlify</strong>, which records standard request data (your IP address, browser user agent and the time) as any host does, under Netlify's own privacy policy.</p>
+
+    <h3>Your licence key</h3>
+    <p>When you download, the kit service checks your licence key with Gumroad. It keeps one record per key: a one-way fingerprint of the key, which cannot be turned back into the key, with the role it unlocked, the kit size, the times of its first and latest download, and a download count. That is all. No name, no email address and no design is kept with it. The key itself is not stored in your browser either.</p>
+
+    <h3>Gumroad</h3>
+    <p>Kits are bought on <strong>Gumroad</strong>, which collects what it needs to take your payment and issue your key, under Gumroad's own privacy policy. BlvkWare never sees your card details. As the seller, BlvkWare can see the purchase in its Gumroad account, including the email address you bought with. That is used only for your purchase, to answer you or to handle a refund, and is never added to a marketing list.</p>
+
+    <h2>The HALLUX API</h2>
+    <p>HALLUX, the package-verification API at <code>api.blvkware.dev</code>, meters requests by a salted, truncated hash of the calling address rather than the address itself, so its quota records cannot be walked back to an IP address. Its hosts, Netlify and Hugging Face, record standard request data as any host does. The method is set out in the <a href="/hallux/">HALLUX documentation</a>.</p>
 
     <h2>When you email BlvkWare</h2>
-    <p>Email sent to <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> is received and stored in <strong>Zoho Mail</strong>. Your address and the content of your message are kept so the conversation can continue and so records of any work can be maintained. It is never sold, never shared with advertisers, and never added to a marketing list without you asking. Ask and it will be deleted.</p>
-
-    <h2>Clients and paid work</h2>
-    <p>If you engage BlvkWare for a paid service, the information needed to deliver it (contact details, business details, and any system access you explicitly grant) is processed for that purpose only. Systems built for you are yours. Any credentials you provide are held only as long as the work requires and are handed back or destroyed on request.</p>
+    <p>Email sent to <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> is received and stored in <strong>Zoho Mail</strong>. Your address and the content of your message are kept so the conversation can continue. It is never sold, never shared with advertisers, and never added to a marketing list without you asking. Ask and it will be deleted.</p>
 
     <div class="box">
-        <p><strong>Children.</strong> This site and these services are for businesses and are not directed at anyone under 16. No information is knowingly collected from children.</p>
+        <p><strong>Children.</strong> This site and its kits are for businesses and are not directed at anyone under 16. No information is knowingly collected from children.</p>
     </div>
 
     <h2>Your rights</h2>
-    <p>Because there are no accounts and no tracking, there is usually nothing held about you at all. Where there is (an email you sent, or records from paid work), you may ask for a copy, a correction, or its deletion, and you may object to its use. Write to <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> and it will be handled within 30 days at no cost.</p>
+    <p>Because there are no accounts and no tracking, there is usually nothing held about you at all. Where there is (an email you sent, or a purchase), you may ask for a copy, a correction, or its deletion, and you may object to its use. Write to <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> and it will be handled within 30 days at no cost.</p>
     <p>Depending on where you live, these rights may be guaranteed to you by law, including the UK and EU GDPR and the California Consumer Privacy Act. BlvkWare does not sell personal information, under any definition, to anyone.</p>
 
     <h2>Security</h2>
-    <p>The site is served over HTTPS. Because there is no server, no database and no account system, there is no store of user data to breach. The main security consideration is your own AI provider key, which is why it stays on your device and is never transmitted to BlvkWare.</p>
+    <p>Everything is served over HTTPS. There is no account system and no store of personal data to breach: the kit service keeps no design and no kit, and its only records are licence-key fingerprints, which cannot be turned back into keys. The main security consideration is your own AI provider key, which is why it stays on your device and is never transmitted to BlvkWare.</p>
 
     <h2>Changes</h2>
     <p>If this policy changes, the date at the top changes with it. Material changes will be described plainly rather than buried.</p>
