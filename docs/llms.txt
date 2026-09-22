@@ -226,9 +226,6 @@ than at businesses.
   Live namespaces: cite.doi, pkg.crates, pkg.go, pkg.maven, pkg.npm, pkg.nuget, pkg.pypi.
   Free tier: 500 identifiers a day per client, no account, no key,
   within a shared pool of 50,000 a day for all free traffic.
-  **Not deployed yet.** Built and tested, but no endpoint is
-  answering. It is under `roadmap` in the agent catalog rather
-  than listed as a capability. Do not call it.
 - [Agent catalog](https://blvkware.dev/.well-known/ai-catalog.json): machine-readable
   index of every capability that answers, with prices and payment
   rails. Capabilities listed under `roadmap` are not built.

@@ -235,6 +235,16 @@ def tokens():
         "{{HALLUX_NAMESPACES}}": ", ".join(namespaces),
         "{{HALLUX_NAMESPACE_COUNT}}": str(len(namespaces)),
         "{{HALLUX_NEUTRALITY}}": payment.PRICE_NOTES["neutrality"],
+        # Priced is not the same as purchasable. With no settlement backend
+        # connected, every paid tier on the table is documentation, and the
+        # page says so above the fold of the table rather than letting a
+        # reader go looking for a buy button that does not exist.
+        "{{HALLUX_PAID_NOTICE}}": "" if payment.settlement().configured() else (
+            '<p class="note"><strong>Only the open tier is available today.</strong> '
+            "The paid tiers and watches below are priced and documented, but no "
+            "payment rail is connected yet, so none of them can be bought. The "
+            "open tier needs no account and no key.</p>"
+        ),
         # The example command on the page. It was hard-coded to
         # api.blvkware.dev, which is not the host serving it, so the moment
         # the not-deployed notice came down the page would have shown a
@@ -380,6 +390,7 @@ def publish_attestation_key(out_dir, api=None):
 
     Returns True when the key was published. The catalog's attestation-key
     entry is gated on this, so it can never name a key file that is absent.
+    A live endpoint that reports no key gets no key published.
     """
     import base64
     import json
@@ -404,10 +415,14 @@ def publish_attestation_key(out_dir, api=None):
             health = json.load(response)
         live_key = (health.get("receipts") or {}).get("publicKey")
         if not live_key:
-            raise RuntimeError(
-                "the endpoint is live but reports no receipt key; refusing to "
-                "publish a verification key for receipts it does not issue"
-            )
+            # A live host that signs nothing (the Netlify host: receipts are a
+            # paid-tier feature and no paid tier is open). Publishing a
+            # verification key for receipts nobody issues would imply they
+            # exist, so the key is withdrawn, including any earlier copy.
+            stale = os.path.join(out_dir, ".well-known", "blvkware-attestation.pub")
+            if os.path.isfile(stale):
+                os.remove(stale)
+            return False
         if path not in sys.path:
             sys.path.insert(0, path)
         from cryptography.hazmat.primitives import serialization

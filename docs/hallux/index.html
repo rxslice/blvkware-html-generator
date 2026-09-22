@@ -55,6 +55,7 @@
         .rule strong { display: block; font-size: 1.05rem; margin-bottom: 0.35rem; }
         .notice { background: rgba(232,101,79,0.08); border: 1px solid rgba(232,101,79,0.35); border-radius: 12px; padding: 1.15rem 1.35rem; margin: 0 0 2.5rem; color: var(--ink-2); font-size: 0.95rem; }
         .notice strong { color: var(--stop); }
+        .note { border-left: 3px solid var(--brass); background: var(--surface); border-radius: 0 10px 10px 0; padding: 0.9rem 1.1rem; margin: 0 0 1.4rem; }
         /* Wide tables cannot shrink below their content, so they get their own
            scroll container rather than widening the page on a phone. */
         .tw { overflow-x: auto; margin: 1.5rem 0; -webkit-overflow-scrolling: touch; }
@@ -82,19 +83,34 @@
 
     <p class="lede">A registry of identifiers that do not exist, but that models confidently believe do. Check a package name against its registry before anything installs it, and find out whether the name is one that language models invent.</p>
 
-    <div class="notice"><strong>The public endpoint is not answering right now.</strong> The service is built and tested, and everything below describes what it does. While no endpoint is answering it is listed under <code>roadmap</code> in the agent catalog rather than as a capability, so an agent reading that catalog will not try to call it.</div>
+    
 
     <p>An agent writes <code>pip install requests-oauth2-helper</code>. The name is plausible, the agent is confident, and the package has never existed. Either the install fails and the agent burns a retry loop, or somebody has already registered that name because they watched a model emit it a thousand times.</p>
 
     <p>The second case is called slopsquatting. It is the only supply-chain attack where the attacker's target list is generated for them, for free, by the victims' own tooling.</p>
 
-    <h2>What it answers</h2>
+    <h2>Try it now</h2>
 
-    <p>When the endpoint is answering, checking a name is one command. Right now this is what it will answer, not what it does answer:</p>
+    <p>No account, no key, no signup. One command:</p>
 
 <pre><code><span class="c">curl</span> https://api.blvkware.dev/hallux/v1/check/pkg.pypi/requests-oauth2-helper</code></pre>
 
-<p>The public endpoint will answer this when it is back.</p>
+<pre><code>{
+  &quot;namespace&quot;: &quot;pkg.pypi&quot;,
+  &quot;value&quot;: &quot;requests-oauth2-helper&quot;,
+  &quot;verdict&quot;: <span class="s">&quot;absent&quot;</span>,
+  &quot;confidence&quot;: 1,
+  &quot;evidence&quot;: {
+    &quot;registryStatus&quot;: &quot;not_found&quot;,
+    &quot;nearestExisting&quot;: [
+      &quot;requests-oauthlib&quot;,
+      &quot;requests&quot;,
+      &quot;requests-toolbelt&quot;
+    ]
+  },
+  &quot;recommendation&quot;: &quot;do_not_install&quot;,
+  &quot;successor&quot;: <span class="c">&quot;requests-oauthlib&quot;</span>
+}</code></pre>
 
     <h2>Six verdicts</h2>
 
@@ -166,6 +182,8 @@
     </div>
 
     <p>That is not a promise, it is a property. The function that prices a request takes a count of identifiers and has no parameter through which a verdict could reach it, and the test suite resolves the same batch under four different registry states and asserts a single charge.</p>
+
+    <p class="note"><strong>Only the open tier is available today.</strong> The paid tiers and watches below are priced and documented, but no payment rail is connected yet, so none of them can be bought. The open tier needs no account and no key.</p>
 
     <div class="tw">
     <table>
