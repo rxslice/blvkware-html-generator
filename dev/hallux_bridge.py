@@ -1167,7 +1167,38 @@ def _live_stats():
         return None
 
 
-def _methodology_page(source, ledger):
+#: How the panel's hosts are named on the page.
+_HOST_NAMES = {"groq": "Groq", "gemini": "Google AI Studio", "openrouter": "OpenRouter"}
+
+
+def _panel_section(panel):
+    """The models step 1 actually samples, from the file the runner reads."""
+    if not panel:
+        return ""
+    rows = ['<div class="tw"><table><thead><tr><th>Model</th><th>Served by</th>'
+            "</tr></thead><tbody>"]
+    for member in panel["members"]:
+        rows.append("<tr><td><code>%s</code></td><td>%s</td></tr>" % (
+            _escape(member["model"]),
+            _escape(_HOST_NAMES.get(member["host"], member["host"]))))
+    rows.append("</tbody></table></div>")
+    return (
+        "<h2>The panel</h2>"
+        "<p>These are the models step 1 samples, one per model family, "
+        "because the phantom threshold counts families. Each day the panel "
+        "answers every %s prompt of the bank, offset by the date so every "
+        "ecosystem appears daily and the whole bank is covered every %d days, "
+        "with %d samples a prompt at temperature %s. A name counts only if it "
+        "recurs in at least two samples of one prompt. This table is read "
+        "from the same file the runner reads.</p>"
+        % ({2: "second", 3: "third", 4: "fourth"}.get(panel["rotation"],
+                                                    "%dth" % panel["rotation"]),
+           panel["rotation"], panel["samples"], panel["temperature"])
+        + "".join(rows)
+    )
+
+
+def _methodology_page(source, ledger, panel=None):
     thresholds = [
         ("Attestations for a name to become a phantom",
          str(ledger.PHANTOM_MIN_ATTESTATIONS)),
@@ -1190,30 +1221,30 @@ def _methodology_page(source, ledger):
     if stats is None:
         today = ""
     else:
+        built = str(stats.get("asOf") or "")[:10]
         counts = [(stats.get(k) or 0) for k in
                   ("phantoms", "squats", "archived", "candidates", "attestations")]
         if not any(counts):
             summary = (
-                "<p>At the last build of this page the public ledger held no "
-                "phantoms, no squats and no candidates. Names enter it only "
-                "from the elicitation panel, and are promoted only by the "
-                "rules above; the panel has not fed the live ledger yet, so "
-                "there is nothing to show, and nothing has been put there to "
-                "fill the space. Until there is, a name no registry has is "
-                "answered <code>absent</code>, which is a stop verdict in its "
-                "own right.</p>"
+                "<p>On %s, when this page was last built, the public ledger "
+                "held no phantoms, no squats and no candidates. Names enter it "
+                "only from the panel above and are promoted only by the rules "
+                "above, so the count starts at zero and nothing has been put "
+                "there to fill the space. Until there is, a name no registry "
+                "has is answered <code>absent</code>, which is a stop verdict "
+                "in its own right.</p>" % built
             )
         else:
             summary = (
-                "<p>At the last build of this page the public ledger held "
-                "%s phantoms, %s squats, %s archived and %s candidates, from "
-                "%s attestations across %s model families.</p>"
-                % tuple("{:,}".format(stats.get(k) or 0) for k in (
+                "<p>On %s, when this page was last built, the public ledger "
+                "held %s phantoms, %s squats, %s archived and %s candidates, "
+                "from %s attestations across %s model families.</p>"
+                % ((built,) + tuple("{:,}".format(stats.get(k) or 0) for k in (
                     "phantoms", "squats", "archived", "candidates",
-                    "attestations", "modelFamilies"))
+                    "attestations", "modelFamilies")))
             )
         today = (
-            "<h2>The ledger today</h2>" + summary
+            "<h2>The ledger</h2>" + summary
             + "<p>The live counts are one request away, with no key: "
             "<code>GET %s/stats</code>. The rolling window itself is "
             "<code>GET %s/corpus</code>, as JSON lines.</p>" % (api, api)
@@ -1225,6 +1256,7 @@ def _methodology_page(source, ledger):
         '<a href="/docs/hallux-spec">specification</a>, published at the '
         "address every <code>/v1/stats</code> response links to.</p>"
         + markdown_to_html(_spec_section(source, "6.", 2))
+        + _panel_section(panel)
         + "<h2>The thresholds in force</h2>"
         "<p>Generated from the constants the ledger runs on, so this table "
         "cannot describe a rule the service does not apply.</p>"
@@ -1382,6 +1414,15 @@ def _pricing_page(source, payment):
     )
 
 
+def _panel_config(path):
+    """HALLUX's dev/panel.json, or None if this checkout has no panel."""
+    panel_path = os.path.join(path, "dev", "panel.json")
+    if not os.path.isfile(panel_path):
+        return None
+    with io.open(panel_path, encoding="utf-8") as fh:
+        return json.load(fh)
+
+
 def build_reference_pages(out_dir):
     """Publish the four pages the API links to. Returns the paths written."""
     path = locate()
@@ -1398,7 +1439,7 @@ def build_reference_pages(out_dir):
 
     return [
         _write_page(out_dir, ("docs", "corpus-methodology"),
-                    _methodology_page(source, ledger)),
+                    _methodology_page(source, ledger, _panel_config(path))),
         _write_page(out_dir, ("legal", "corpus-license"),
                     _licence_page(payment, ledger, ATTRIBUTION)),
         _write_page(out_dir, ("docs", "payment"), _payment_page(source, payment)),
