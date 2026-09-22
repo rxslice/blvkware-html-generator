@@ -1149,6 +1149,52 @@ def disable_code_ligatures():
     return count
 
 
+GENERIC_CARD = "https://blvkware.dev/assets/og.png"
+
+
+def point_social_cards():
+    """Give every built page its own og:image, when marketing/og/render.py made one.
+
+    Pages are written with the generic card. A link shared from /hallux/
+    should preview HALLUX, not the logo, so each page whose card exists at
+    docs/assets/og/<slug>.png is pointed at it, with twitter:image and the
+    image size alongside. A page without a card keeps the generic one, so
+    no page ever names an image that is not there.
+    """
+    cards = os.path.join(OUT_DIR, "assets", "og")
+    count = 0
+    for dirpath, _dirs, files in os.walk(OUT_DIR):
+        if "index.html" not in files:
+            continue
+        path = os.path.join(dirpath, "index.html")
+        rel = os.path.relpath(dirpath, OUT_DIR).replace(os.sep, "/")
+        slug = "home" if rel in (".", "") else rel.replace("/", "-")
+        card = os.path.join(cards, slug + ".png")
+        with io.open(path, encoding="utf-8") as fh:
+            html = fh.read()
+        if 'property="og:image"' not in html:
+            continue
+        url = ("https://blvkware.dev/assets/og/%s.png" % slug) if os.path.isfile(card) else GENERIC_CARD
+        html = re.sub(r'<meta property="og:image" content="[^"]*">',
+                      '<meta property="og:image" content="%s">' % url, html, count=1)
+        extra = ""
+        if 'property="og:image:width"' not in html:
+            extra += ('<meta property="og:image:width" content="1200">'
+                      '<meta property="og:image:height" content="630">')
+        if 'name="twitter:image"' not in html:
+            extra += '<meta name="twitter:image" content="%s">' % url
+        else:
+            html = re.sub(r'<meta name="twitter:image" content="[^"]*">',
+                          '<meta name="twitter:image" content="%s">' % url, html, count=1)
+        if extra:
+            html = html.replace('<meta property="og:image" content="%s">' % url,
+                                '<meta property="og:image" content="%s">%s' % (url, extra), 1)
+        with io.open(path, "w", encoding="utf-8") as fh:
+            fh.write(html)
+        count += url != GENERIC_CARD
+    return count
+
+
 def main():
     if not os.path.isdir(OUT_DIR):
         os.makedirs(OUT_DIR)
@@ -1343,6 +1389,7 @@ def main():
     write_seo_files()
 
     print("Turned off code ligatures on %d pages" % disable_code_ligatures())
+    print("Pointed %d pages at their own social card" % point_social_cards())
 
     # Pages would otherwise run the output through Jekyll.
     with io.open(os.path.join(OUT_DIR, ".nojekyll"), "w", encoding="utf-8") as fh:

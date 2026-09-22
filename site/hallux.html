@@ -16,6 +16,31 @@
     <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
     <link rel="apple-touch-icon" href="/assets/logo-192.png">
     <meta name="theme-color" content="#0A0908">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "HALLUX",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Any (HTTP API and MCP server)",
+      "url": "https://blvkware.dev/hallux/",
+      "description": "Checks whether a package name, module path or DOI exists in its authoritative registry before an AI agent installs, imports or cites it, and records the names language models invent.",
+      "featureList": [
+        "Verdicts: exists, deprecated, absent, phantom, squat, unknown",
+        "{{HALLUX_NAMESPACE_COUNT}} registries: {{HALLUX_NAMESPACES}}",
+        "MCP server over Streamable HTTP",
+        "Billed on questions asked, never on the verdict"
+      ],
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "description": "Open tier: {{HALLUX_FREE_DAILY}} identifiers a day per client, no account, no key."
+      },
+      "provider": { "@type": "Organization", "name": "BlvkWare", "url": "https://blvkware.dev/" },
+      "documentation": "https://blvkware.dev/docs/hallux-spec"
+    }
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Fira+Code:wght@500&display=swap');
         :root {

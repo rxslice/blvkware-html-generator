@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Social card template. render.py injects one card's data as window.CARD
+     and screenshots the page at 1200x630. Two layouts: "product" (headline,
+     pills and a panel) and "article" (a page title and its summary). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Fira+Code:wght@400;500&display=block" rel="stylesheet">
+<style>
+  :root { --bg:#0A0908; --surface:#15120E; --panel:#110F0C; --accent:#D4F24A; --brass:#D9B65C;
+          --ink:#F5F0E6; --ink-2:#A89D8B; --line:rgba(245,240,230,0.1); --stop:#E8654F; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1200px; height:630px; overflow:hidden; background:var(--bg); }
+  body { font-family:'Manrope',sans-serif; color:var(--ink); position:relative; }
+  body::before { content:""; position:absolute; inset:0;
+    background-image:linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:60px 60px; opacity:0.35;
+    mask-image:radial-gradient(ellipse at 30% 40%, #000 20%, transparent 75%); }
+  body::after { content:""; position:absolute; right:-160px; bottom:-220px; width:620px; height:620px;
+    background:radial-gradient(circle, rgba(212,242,74,0.16), transparent 62%); }
+  .card { position:relative; z-index:1; width:1200px; height:630px; padding:56px 60px; display:flex; gap:44px; }
+  .left { flex:1 1 0; min-width:0; display:flex; flex-direction:column; }
+  .brand { display:flex; align-items:center; gap:14px; margin-bottom:30px; }
+  .brand img { width:52px; height:52px; border-radius:13px; display:block; }
+  .brand b { font-size:26px; font-weight:800; letter-spacing:-0.01em; }
+  .brand b span { color:var(--accent); }
+  .eyebrow { font-family:'Fira Code',monospace; font-size:17px; letter-spacing:0.14em; text-transform:uppercase;
+             color:var(--brass); margin-bottom:16px; }
+  h1 { font-size:62px; line-height:1.04; font-weight:800; letter-spacing:-0.03em; }
+  h1 em { font-style:normal; color:var(--accent); }
+  .sub { margin-top:20px; font-size:24px; line-height:1.38; color:var(--ink-2); font-weight:500; }
+  .foot { margin-top:auto; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .pill { background:var(--accent); color:#0A0908; font-weight:800; font-size:22px; padding:10px 18px; border-radius:12px; }
+  .pill.ghost { background:transparent; color:var(--ink); border:1.5px solid rgba(245,240,230,0.25); font-weight:700; }
+  .url { font-family:'Fira Code',monospace; font-size:18px; color:var(--ink-2); margin-left:auto; }
+  .right { flex:0 0 470px; display:flex; align-items:center; }
+  .panel { width:100%; background:var(--panel); border:1px solid rgba(245,240,230,0.14); border-radius:18px;
+           box-shadow:0 30px 70px rgba(0,0,0,0.55); overflow:hidden; }
+  .bar { display:flex; gap:8px; padding:14px 18px; border-bottom:1px solid var(--line); }
+  .bar i { width:12px; height:12px; border-radius:50%; background:rgba(245,240,230,0.18); }
+  .body { padding:18px 22px 20px; font-family:'Fira Code',monospace; font-size:16.5px; line-height:1.62; color:var(--ink-2);
+          white-space:pre; }
+  .body .c { color:var(--accent); } .body .s { color:var(--stop); font-weight:500; } .body .b { color:var(--brass); }
+  .body .i { color:var(--ink); } .body .d { color:rgba(168,157,139,0.6); }
+  .rows { padding:10px 0; }
+  .row { display:flex; justify-content:space-between; align-items:baseline; gap:16px; padding:11px 24px;
+         border-bottom:1px solid var(--line); font-size:21px; }
+  .row:last-child { border-bottom:0; }
+  .row b { font-weight:700; } .row span { font-family:'Fira Code',monospace; font-size:17px; color:var(--brass); white-space:nowrap; }
+  .row.more b { color:var(--ink-2); font-weight:500; }
+  /* article */
+  .article .left { padding-right:40px; }
+  .article h1 { font-size:66px; max-width:900px; }
+  .article .sub { max-width:880px; }
+  .mark { position:absolute; right:60px; top:56px; width:150px; height:150px; opacity:0.9; }
+  .mark .plate { fill:none; stroke:var(--brass); stroke-width:1.6; opacity:0.55; }
+  .mark .rail { stroke:var(--brass); stroke-width:1.6; stroke-linecap:round; opacity:0.8; }
+  .mark .ring { fill:none; stroke:var(--accent); stroke-width:1.8; }
+  .mark .node { fill:var(--accent); }
+</style>
+</head>
+<body>
+<div class="card" id="card"></div>
+<script>/*DATA*/</script>
+<script>
+  const C = window.CARD;
+  const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const card = document.getElementById("card");
+  const brand = `<div class="brand"><img src="${C.logo}" alt=""><b>BlvkWare<span>.</span></b></div>`;
+  const foot = `<div class="foot">${(C.pills || []).map((p, i) =>
+      `<span class="pill${i ? " ghost" : ""}">${esc(p)}</span>`).join("")}<span class="url">${esc(C.url)}</span></div>`;
+  let panel = "";
+  if (C.terminal) {
+    panel = `<div class="panel"><div class="bar"><i></i><i></i><i></i></div><div class="body">${C.terminal}</div></div>`;
+  } else if (C.rows) {
+    panel = `<div class="panel"><div class="rows">${C.rows.map((r) =>
+      `<div class="row${r.more ? " more" : ""}"><b>${esc(r.name)}</b><span>${esc(r.value || "")}</span></div>`).join("")}</div></div>`;
+  }
+  if (C.layout === "article") {
+    card.parentElement.classList.add("article");
+    card.innerHTML = `<div class="left">${brand}<div class="eyebrow">${esc(C.eyebrow)}</div>
+      <h1>${C.title}</h1><p class="sub">${esc(C.sub || "")}</p>${foot}</div>
+      <svg class="mark" viewBox="0 0 40 40"><rect class="plate" x="4.5" y="9" width="10.5" height="14.5" rx="2"/>
+      <rect class="plate" x="8" y="13" width="10.5" height="14.5" rx="2"/><path class="rail" d="M21.5 20h5"/>
+      <circle class="ring" cx="32" cy="20" r="6.2"/><circle class="node" cx="32" cy="20" r="2.2"/></svg>`;
+  } else {
+    card.innerHTML = `<div class="left">${brand}<div class="eyebrow">${esc(C.eyebrow)}</div>
+      <h1>${C.title}</h1><p class="sub">${esc(C.sub || "")}</p>${foot}</div><div class="right">${panel}</div>`;
+  }
+  // Shrink the headline, then the summary, until the left column fits.
+  document.fonts.ready.then(() => {
+    const left = card.querySelector(".left"), h1 = card.querySelector("h1"), sub = card.querySelector(".sub");
+    const fits = () => left.scrollHeight <= left.clientHeight + 1;
+    let size = parseFloat(getComputedStyle(h1).fontSize);
+    while (!fits() && size > 34) { size -= 2; h1.style.fontSize = size + "px"; }
+    let s = parseFloat(getComputedStyle(sub).fontSize);
+    while (!fits() && s > 17) { s -= 1; sub.style.fontSize = s + "px"; }
+    document.body.dataset.ready = fits() ? "fit" : "overflow";
+  });
+</script>
+</body>
+</html>
