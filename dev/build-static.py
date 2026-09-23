@@ -1453,6 +1453,22 @@ def main():
     except RuntimeError as e:
         print("WARNING: %s" % e)
 
+    # The MCP Registry proves blvkware.dev owns dev.blvkware/hallux by
+    # fetching this record: the public half of the key HALLUX's
+    # dev/publish-registry.py signs with. Copied from the HALLUX repository so
+    # the record and the key cannot disagree; losing it breaks every future
+    # update of the registry listing.
+    hallux_path = hallux.locate()
+    record = os.path.join(hallux_path, "deploy", "mcp-registry", "mcp-registry-auth") if hallux_path else ""
+    if record and os.path.isfile(record):
+        well_known = os.path.join(OUT_DIR, ".well-known")
+        os.makedirs(well_known, exist_ok=True)
+        with io.open(record, encoding="utf-8") as fh:
+            text = fh.read().strip()
+        with io.open(os.path.join(well_known, "mcp-registry-auth"), "w", encoding="utf-8", newline="\n") as fh:
+            fh.write(text + "\n")
+        print("Built docs/.well-known/mcp-registry-auth")
+
     # The specification, at the URL the page, llms.txt and the catalog all
     # point at. Those links exist, so the page has to.
     spec = hallux.build_spec_page(OUT_DIR)
