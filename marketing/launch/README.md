@@ -26,7 +26,11 @@ checks a day) that no longer matches the catalog or HALLUX.
 | awesome-remote-mcp-servers | **PR opened**, [punkpeye/awesome-remote-mcp-servers#553](https://github.com/punkpeye/awesome-remote-mcp-servers/pull/553); submission check passed | Maintainer merge |
 | awesome-mcp-servers (pkgguard) | Ready, Security section | pkgguard's Glama page first, same reason |
 | Smithery | **Listed 2026-09-23** as [`blvkware/hallux`](https://smithery.ai/servers/blvkware/hallux) (namespace `blvkware` created in the account), release SUCCESS, **quality 100/100** with the Typed Output badge (output schemas, full parameter descriptions, uploaded icon) | Optional: Smithery's verified badge needs a paid developer plan plus a DNS TXT record, so it is left alone |
-| Show HN, Reddit, X, LinkedIn, Product Hunt, Indie Hackers | Copy in `kits.md` and `hallux.md` | Your accounts |
+| Show HN | **Refused 2026-09-23**: HN said it is not accepting posts right now "because of the recent surge in volume". The account `blvkware` was created that morning (karma 1), and new accounts are the likely target | Retry on a weekday morning ET; meanwhile a few genuine comments from the account; or ask hn@ycombinator.com (draft in the chat, 2026-09-23) |
+| X | **Posted 2026-09-23** by @BlvkWare: full HALLUX thread (3 posts, `og/hallux.png` on the first), [status 2102654767977640348](https://x.com/BlvkWare/status/2102654767977640348) | Kits thread later (`kits.md` X 1-4) |
+| Indie Hackers | **Product page live 2026-09-23**: [BlvkWare Agent Kits](https://www.indiehackers.com/product/blvkware-agent-kits) (motivation max 220 chars; tags AI, B2B, Bots, Productivity; solo, bootstrapped, Sales & Transactions). Account `AIWinLab` cannot create posts yet | Comment on a few posts to unlock posting; then `IH title`/`IH body` |
+| Product Hunt | **Scheduled for 2026-09-29 12:01am PDT**: [BlvkWare Agent Kits](https://www.producthunt.com/products/blvkware-agent-kits) with `PH *` copy, thumbnail, 5 gallery images, tags AI / Productivity / No-Code, first comment | Be around on the 29th to answer comments; share the link on X/LinkedIn that morning |
+| Reddit, LinkedIn | Copy in `kits.md` and `hallux.md` | Your accounts |
 | Gumroad listings | **Done 2026-09-23**: both descriptions carry a "Read a real kit first" section linking `https://blvkware.dev/sample-kit/`, verified on the public pages | Nothing |
 
 ## Images
