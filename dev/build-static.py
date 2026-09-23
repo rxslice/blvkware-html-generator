@@ -50,9 +50,7 @@ TOOLS = [
                      "Refine it and keep every version",
                      "Runs entirely in the browser, no account"],
         "title": "App Builder: Describe It and It Gets Built | BlvkWare",
-        "desc": ("Write down what you want and watch it become real software: a complete, working, "
-                 "single-file application streamed into the page, then run, audited and repaired. "
-                 "Free, and it runs in your browser with your own model key."),
+        "desc": ("Describe what you want and watch it become working software: a complete single-file app streamed into the page, then run, audited and repaired. Free."),
     },
     {
         "src": "scan.html",
@@ -65,11 +63,7 @@ TOOLS = [
                      "Names the agent worth building for each one",
                      "Prices every one from the published catalog"],
         "title": "Business Scan: Which Jobs Are Costing You Most | BlvkWare",
-        "desc": ("Give it a website. It reads the live page the way a buyer would, works out "
-                 "which jobs are quietly costing that business the most: unstaffed, done after "
-                 "hours, or done by somebody who should be doing something else, and names the "
-                 "agent worth building for each, at its real kit price. About a minute, free, "
-                 "no sign-up."),
+        "desc": ("Give it a website and it finds the jobs quietly costing that business most, then names the agent worth building for each at its real kit price. Free."),
     },
     {
         "src": "designer.html",
@@ -82,10 +76,7 @@ TOOLS = [
                      "Shows what is ready on day one and what needs you",
                      "Prices its kit, then hands the design to the kit page"],
         "title": "Agent Designer: Your Agent, Designed and Priced | BlvkWare",
-        "desc": ("Describe how your business actually operates. It works out which AI agent is "
-                 "worth building first, exactly what it needs to be able to do, which of your "
-                 "systems it has to operate, and what its kit costs, on the page, in about a "
-                 "minute. Free, no sign-up."),
+        "desc": ("Describe how your business operates and it works out which AI agent to build first, what it must do, which systems it uses and what its kit costs."),
     },
 ]
 
@@ -442,14 +433,15 @@ SITEMAP = [
     ("/quote-follow-up-automation/", "0.8", "monthly"),
     ("/ai-automation-for-plumbers/", "0.8", "monthly"),
     ("/hallux/", "0.9", "weekly"),
-    ("/docs/hallux-spec", "0.7", "monthly"),
-    ("/docs/limits", "0.4", "monthly"),
-    ("/docs/corpus-methodology", "0.5", "monthly"),
-    ("/docs/payment", "0.3", "monthly"),
-    ("/pricing", "0.5", "monthly"),
+    ("/docs/hallux-spec/", "0.7", "monthly"),
+    ("/docs/limits/", "0.4", "monthly"),
+    ("/docs/corpus-methodology/", "0.5", "monthly"),
+    ("/docs/payment/", "0.3", "monthly"),
+    ("/pricing/", "0.5", "monthly"),
     ("/sample-kit/", "0.8", "weekly"),
-    ("/legal/corpus-license", "0.3", "yearly"),
-    ("/legal/bsl-1.1", "0.3", "yearly"),
+    ("/guides/", "0.8", "weekly"),
+    ("/legal/corpus-license/", "0.3", "yearly"),
+    ("/legal/bsl-1.1/", "0.3", "yearly"),
     ("/vendor-renewal-tracker/", "0.9", "monthly"),
     ("/subscription-audit/", "0.85", "monthly"),
     ("/pkgguard/", "0.95", "weekly"),
@@ -537,14 +529,25 @@ def write_seo_files():
     with io.open(os.path.join(OUT_DIR, "robots.txt"), "w", encoding="utf-8") as fh:
         fh.write(robots)
 
-    today = BUILD_DATE
+    # lastmod is the date the page's source last changed, from git, so a
+    # crawler can trust it; a date that moves on every build gets ignored.
+    sources = {"/": "site/index.html"}
+    sources.update({"/%s/" % slug: "site/" + src for src, slug in MARKETING_PAGES})
+    sources.update({"/%s/" % t["slug"]: t["src"] for t in TOOLS})
+    sources.update({"/%s/" % slug: "site/" + src for slug, src in STATIC_TOOLS})
+
+    def lastmod(loc):
+        src = sources.get(loc)
+        dates = _git_dates(os.path.join(ROOT, src)) if src else None
+        return dates[1] if dates else BUILD_DATE
+
     urls = "".join(
         "  <url>\n"
         "    <loc>%s%s</loc>\n"
         "    <lastmod>%s</lastmod>\n"
         "    <changefreq>%s</changefreq>\n"
         "    <priority>%s</priority>\n"
-        "  </url>\n" % (base, loc, today, freq, pri)
+        "  </url>\n" % (base, loc, lastmod(loc), freq, pri)
         for loc, pri, freq in SITEMAP
     )
     sitemap = ('<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -663,8 +666,8 @@ payment. They exist as the work sample in place of client case studies.
 
 - [Business Scan](https://blvkware.dev/scan/) finds the work. Give it a company's public
   website and it reads the live page, works out which jobs are quietly costing
-  that business the most -- unstaffed, done after hours, or done by somebody who
-  should be doing something else -- and names the agent worth building for each,
+  that business the most (unstaffed, done after hours, or done by somebody who
+  should be doing something else) and names the agent worth building for each,
   priced as a kit from the published catalog rather than estimated.
 - [Agent Designer](https://blvkware.dev/design/) designs the agent. Describe how a business
   actually operates and it works out which agent is worth building first, exactly
@@ -694,7 +697,7 @@ payment. They exist as the work sample in place of client case studies.
 - BlvkWare has **no client case studies and no client references**. This is stated
   openly on the site; the tools and the kit previews are offered as the evidence
   instead. The one long-form write-up, the Recovery OS build log, documents a
-  system BlvkWare built from its own planning documents -- no client commissioned
+  system BlvkWare built from its own planning documents; no client commissioned
   or paid for it, and the page says so.
 - A kit is a specification, not a running agent. Tool output is AI-generated and
   is not financial, legal or engineering advice.
@@ -703,7 +706,7 @@ payment. They exist as the work sample in place of client case studies.
 
 - [Home](https://blvkware.dev/): the model, the two kit sizes, prices, tools, FAQ
 - [Recovery OS build log](https://blvkware.dev/recovery-os/): a worked example of
-  a whole-process system -- four ordinary business documents (a slide deck, a call
+  a whole-process system: four ordinary business documents (a slide deck, a call
   script, a spreadsheet, a strategy memo) turned into an eight-stage operating
   system with 203 self-checks. Documents the six rules the software enforces, the
   three defects found before shipping, and carries the part-number identifier
@@ -734,16 +737,20 @@ payment. They exist as the work sample in place of client case studies.
   ladder (Watch, Draft, Approve, Operate), least privilege for agents, the three
   things every agent must have before it touches a customer (a reasoning log, a
   reverse, a stop), what must never be unsupervised, and where liability sits.
-- [How BlvkWare agents are controlled](https://blvkware.dev/how-agents-are-controlled/):
-  the mechanics rather than the argument. Where credentials live (a permissioned
-  file on the agent's own machine, never in the codebase, not separately
-  encrypted at rest and stated as such), the two destinations data goes to (the
-  customer's own vendors, and the model provider for reasoning only), that the
-  agent runs with no model at all on a deterministic path and what that costs in
-  escalations, the append-only log written before each side effect, what can and
-  cannot be undone, the customer's own one-press stop, export on exit, and an
-  explicit list of what the page does NOT claim (no SOC 2, no encryption at
-  rest, and that the agent can be wrong).
+- [How BlvkWare agent kits are controlled](https://blvkware.dev/how-agents-are-controlled/):
+  what a kit specifies about control, and what it cannot do for you. BlvkWare
+  does not run, host or access the agent: the buyer's build enforces the
+  controls the kit writes down. Every tool is marked read, internal or
+  external; four autonomy levels (Watch, Draft, Approve, Operate) with every
+  kit starting at Draft, enforced in the tool handler rather than the prompt;
+  the approval queue schema in every kit; the append-only log written before
+  each action; the owner's own stop (set the level to Watch); and where
+  credentials and data go (the buyer's own systems and vendors, never BlvkWare).
+- [AI employee cost](https://blvkware.dev/ai-employee/): what an "AI employee"
+  costs against a real hire, using BLS employer-cost data, with a calculator
+  that says when not to buy one.
+- [Guides](https://blvkware.dev/guides/): every guide above, grouped and
+  summarised, in reading order.
 - [Quote follow-up automation](https://blvkware.dev/quote-follow-up-automation/):
   how automated quote follow-up works, the arithmetic for deciding whether it
   pays, why the sequence must stop when the customer answers, and why US A2P
@@ -931,6 +938,11 @@ def build_tool(tool):
         return None
 
     body = src[src.index("<style>"):]
+    # The provider picker asks the dev server for /api/providers. Static
+    # hosting has no such endpoint, so every visit would log a 404; the
+    # published copy skips the request and keeps the picker hidden.
+    body = body.replace("async function loadProviders() {",
+                        "async function loadProviders() {\n    return;  // static hosting: no provider endpoint", 1)
     close_script = "<" + "/script>"
 
     head = (
@@ -1252,6 +1264,305 @@ def build_sample_kit():
 GENERIC_CARD = "https://blvkware.dev/assets/og.png"
 
 
+# Pages written as <dir>/index.html but named without the trailing slash in
+# the sources. GitHub Pages answers the slashless form with a 301, so a
+# canonical or link naming it points search engines at a redirect.
+DIRECTORY_PAGES = ("docs/hallux-spec", "docs/limits", "docs/corpus-methodology",
+                   "docs/payment", "pricing", "legal/corpus-license", "legal/bsl-1.1")
+
+
+def slash_directory_urls():
+    """Give every link, canonical and structured-data URL for a directory page
+    its trailing slash, so nothing on the site names a URL that redirects."""
+    alt = "|".join(re.escape(p) for p in DIRECTORY_PAGES)
+    attr = re.compile(r'((?:href|content)=")((?:https://blvkware\.dev)?/(?:%s))([#?][^"]*)?"' % alt)
+    ld = re.compile(r'("https://blvkware\.dev/(?:%s))"' % alt)
+    count = 0
+    for dirpath, _dirs, files in os.walk(OUT_DIR):
+        for name in files:
+            if not name.endswith(".html"):
+                continue
+            path = os.path.join(dirpath, name)
+            with io.open(path, encoding="utf-8") as fh:
+                html = fh.read()
+            new = attr.sub(lambda m: '%s%s/%s"' % (m.group(1), m.group(2), m.group(3) or ""), html)
+            new = ld.sub(r'\1/"', new)
+            if new != html:
+                count += 1
+                with io.open(path, "w", encoding="utf-8") as fh:
+                    fh.write(new)
+    return count
+
+
+# The guides hub at /guides/, in reading order. Each entry is a built page;
+# its title and summary are read from that page, so the hub cannot drift.
+GUIDES = (
+    ("Start here", ("what-is-an-ai-agent", "ai-agent-pricing", "ai-employee")),
+    ("Running an agent safely", ("ai-agent-permissions", "how-agents-are-controlled")),
+    ("Jobs worth automating", ("quote-follow-up-automation", "ai-automation-for-plumbers",
+                               "subscription-audit", "vendor-renewal-tracker")),
+    ("See a real system", ("recovery-os", "sample-kit")),
+)
+
+
+def build_guides_page():
+    """Write /guides/: every guide, grouped, with its own title and summary.
+
+    A hub that links each article with a sentence about it is how a crawler
+    or an assistant finds the set as a set, and it gives the header's Guides
+    link somewhere to go. It borrows the article pages' shell so it looks
+    like one of them.
+    """
+    shell_path = os.path.join(OUT_DIR, "what-is-an-ai-agent", "index.html")
+    with io.open(shell_path, encoding="utf-8") as fh:
+        shell = fh.read()
+    style = shell[shell.index("<style>"):shell.index("</style>") + len("</style>")]
+    groups, items = [], []
+    for heading, slugs in GUIDES:
+        cards = []
+        for slug in slugs:
+            path = os.path.join(OUT_DIR, slug, "index.html")
+            if not os.path.isfile(path):
+                print("WARNING: guide %s not built" % slug)
+                continue
+            with io.open(path, encoding="utf-8") as fh:
+                page = fh.read()
+            title = re.sub(r"<[^>]+>", "", re.search(r"<h1[^>]*>(.*?)</h1>", page, re.S).group(1)).strip()
+            desc = re.search(r'<meta name="description" content="([^"]*)"', page).group(1)
+            dates = _git_dates(os.path.join(ROOT, "site", slug + ".html"))
+            when = ""
+            if dates:
+                d = datetime.date.fromisoformat(dates[1])
+                when = '<time datetime="%s">Updated %s %d, %d</time>' % (dates[1], d.strftime("%B"), d.day, d.year)
+            url = "/%s/" % slug
+            cards.append('<li class="guide"><a href="%s"><span class="g-title">%s</span>'
+                         '<span class="g-desc">%s</span>%s</a></li>' % (url, title, desc, when))
+            items.append({"@type": "ListItem", "position": len(items) + 1,
+                          "url": "https://blvkware.dev" + url, "name": title})
+        groups.append('<h2>%s</h2>\n<ul class="guides">%s</ul>' % (heading, "".join(cards)))
+    schema = {
+        "@context": "https://schema.org",
+        "@graph": [
+            {"@type": "BreadcrumbList", "itemListElement": [
+                {"@type": "ListItem", "position": 1, "name": "BlvkWare", "item": "https://blvkware.dev/"},
+                {"@type": "ListItem", "position": 2, "name": "Guides", "item": "https://blvkware.dev/guides/"}]},
+            {"@type": "CollectionPage", "name": "BlvkWare guides",
+             "url": "https://blvkware.dev/guides/", "publisher": {"@id": "https://blvkware.dev/#org"},
+             "mainEntity": {"@type": "ItemList", "itemListElement": items}},
+        ],
+    }
+    desc = ("Plain-language guides to AI agents for small businesses: what an agent is, what it "
+            "should cost, how to keep it safe, and which jobs are worth handing to one.")
+    extra_css = """<style>
+.guides { list-style: none; padding: 0; margin: 0 0 2.75rem; display: grid; gap: .8rem; }
+.guide a { display: block; padding: 1.1rem 1.25rem; border: 1px solid var(--line); border-radius: 12px;
+           background: var(--surface); text-decoration: none; color: inherit; transition: border-color .2s ease; }
+.guide a:hover { border-color: rgba(212,242,74,.45); text-decoration: none; }
+.g-title { display: block; font-weight: 800; font-size: 1.08rem; color: var(--ink); margin-bottom: .3rem; }
+.g-desc { display: block; color: var(--ink-2); font-size: .95rem; line-height: 1.55; }
+.guide time { display: block; margin-top: .55rem; font-family: var(--mono); font-size: .7rem;
+              letter-spacing: .08em; text-transform: uppercase; color: var(--brass); }
+</style>"""
+    html = (
+        '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
+        '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
+        '<title>Guides to AI Agents for Small Business | BlvkWare</title>\n'
+        '<meta name="description" content="%s">\n'
+        '<link rel="canonical" href="https://blvkware.dev/guides/">\n'
+        '<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">\n'
+        '<meta property="og:title" content="Guides to AI agents for small business">\n'
+        '<meta property="og:description" content="%s">\n'
+        '<meta property="og:type" content="website">\n'
+        '<meta property="og:url" content="https://blvkware.dev/guides/">\n'
+        '<meta property="og:image" content="%s">\n'
+        '<meta property="og:site_name" content="BlvkWare">\n'
+        '<meta name="twitter:card" content="summary_large_image">\n'
+        '<link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">\n'
+        '<link rel="apple-touch-icon" href="/assets/logo-192.png">\n'
+        '<meta name="theme-color" content="#0A0908">\n'
+        '<script type="application/ld+json">\n%s\n</script>\n%s\n%s\n</head>\n<body>\n'
+        '<div class="wrap">\n'
+        '<a class="top" href="/"><span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>'
+        '<span class="wordmark">BlvkWare<span>.</span></span></a>\n'
+        '<div class="eyebrow">Guides</div>\n<h1>Guides to AI agents</h1>\n'
+        '<p class="lede">Written for the owner who has to decide, not the vendor selling to them. Each one '
+        'answers a question people ask before buying an agent, with the arithmetic and the reasons not to.</p>\n'
+        '%s\n'
+        '<p>Ready to try one against your own business? <a href="/hire/">Design an agent</a> and see its '
+        'whole kit and price before you pay, or <a href="/sample-kit/">read a complete sample kit</a> first.</p>\n'
+        '</div>\n</body>\n</html>\n'
+    ) % (desc, desc, GENERIC_CARD, json.dumps(schema, indent=2), style, extra_css, "\n".join(groups))
+    out = os.path.join(OUT_DIR, "guides")
+    os.makedirs(out, exist_ok=True)
+    with io.open(os.path.join(out, "index.html"), "w", encoding="utf-8") as fh:
+        fh.write(html)
+    print("Built docs/guides/index.html (%d guides)" % len(items))
+
+
+SITE_NAV = (
+    ("/agents/", "Agents"),
+    ("/sample-kit/", "Sample kit"),
+    ("/#lab", "Free tools"),
+    ("/guides/", "Guides"),
+    ("/hallux/", "Developers"),
+)
+SITE_NAV_CSS = """<style>
+.sitebar { display: flex; align-items: center; justify-content: space-between; gap: 1.25rem; flex-wrap: wrap; }
+.sitebar > .top { margin-bottom: 0 !important; }
+.sitenav { display: flex; align-items: center; gap: 1.35rem; font-size: .9rem; }
+.sitenav a { color: var(--ink-2, #A89D8B); text-decoration: none; font-weight: 600; white-space: nowrap; }
+.sitenav a:hover, .sitenav a[aria-current] { color: var(--ink, #F5F0E6); text-decoration: none; }
+.sitenav .sitenav-cta { color: #14170A; background: var(--accent, #D4F24A); padding: .5rem .9rem; border-radius: 8px; font-weight: 700; }
+.sitenav .sitenav-cta:hover { color: #14170A; filter: brightness(1.06); }
+@media (max-width: 720px) { .sitenav a:not(.sitenav-cta) { display: none; } }
+</style>
+"""
+
+
+def add_site_nav():
+    """Give every secondary page the same header navigation.
+
+    Articles, product pages and references were written with the logo alone
+    at the top, so a visitor who lands on one from search has no way to the
+    catalog, the free tools or the kit page except the footer. This wraps
+    the existing logo link in a header with the site's main destinations and
+    the one call to action, marking the current page. The kit page itself
+    keeps the links but not a button that points back at itself.
+    """
+    top = re.compile(r'<a class="top" href="/">.*?</a>', re.S)
+    count = 0
+    for dirpath, _dirs, files in os.walk(OUT_DIR):
+        if "index.html" not in files:
+            continue
+        rel = "/" + os.path.relpath(dirpath, OUT_DIR).replace(os.sep, "/") + "/"
+        path = os.path.join(dirpath, "index.html")
+        with io.open(path, encoding="utf-8") as fh:
+            html = fh.read()
+        m = top.search(html)
+        if not m or 'class="sitebar"' in html:
+            continue
+        links = "".join(
+            '<a href="%s"%s>%s</a>' % (href, ' aria-current="page"' if href == rel else "", label)
+            for href, label in SITE_NAV)
+        if rel != "/hire/":
+            links += '<a class="sitenav-cta" href="/hire/">Design an agent</a>'
+        bar = ('<header class="sitebar" style="margin-bottom:2.75rem">%s'
+               '<nav class="sitenav" aria-label="Site">%s</nav></header>' % (m.group(0), links))
+        html = html[:m.start()] + bar + html[m.end():]
+        html = html.replace("</head>", SITE_NAV_CSS + "</head>", 1)
+        with io.open(path, "w", encoding="utf-8") as fh:
+            fh.write(html)
+        count += 1
+    return count
+
+
+GOOGLE_FONTS_IMPORT = re.compile(r"@import url\('https://fonts\.googleapis\.com/[^']*'\);?\s*")
+GOOGLE_FONTS_LINK = re.compile(r'<link[^>]*(?:fonts\.googleapis\.com|fonts\.gstatic\.com)[^>]*>\s*')
+FONT_HEAD = ('<link rel="preload" href="/assets/fonts/manrope-latin-400-800.woff2" as="font" '
+             'type="font/woff2" crossorigin>\n<link rel="stylesheet" href="/assets/fonts/fonts.css">\n')
+
+
+def self_host_fonts():
+    """Serve the typefaces from blvkware.dev instead of Google Fonts.
+
+    The sources keep their @import so each file still renders when opened on
+    its own. Published pages get the local stylesheet in the head instead: an
+    @import inside <style> is fetched only after the stylesheet is parsed and
+    then chains to a second origin for the font files, which delays first
+    paint, and it hands every visitor's IP address to Google. The files in
+    docs/assets/fonts are the same OFL-licensed fonts, licences alongside.
+    """
+    if not os.path.isfile(os.path.join(OUT_DIR, "assets", "fonts", "fonts.css")):
+        print("WARNING: docs/assets/fonts/fonts.css missing - fonts left on Google")
+        return 0
+    count = 0
+    for dirpath, _dirs, files in os.walk(OUT_DIR):
+        for name in files:
+            if not name.endswith(".html"):
+                continue
+            path = os.path.join(dirpath, name)
+            with io.open(path, encoding="utf-8") as fh:
+                html = fh.read()
+            if "fonts.googleapis.com" not in html:
+                continue
+            new = GOOGLE_FONTS_LINK.sub("", GOOGLE_FONTS_IMPORT.sub("", html))
+            if "/assets/fonts/fonts.css" not in new:
+                new = new.replace("<style>", FONT_HEAD + "<style>", 1)
+            if "fonts.googleapis.com" in new:
+                print("WARNING: %s still names Google Fonts" % os.path.relpath(path, OUT_DIR))
+            with io.open(path, "w", encoding="utf-8") as fh:
+                fh.write(new)
+            count += 1
+    return count
+
+
+def _git_dates(path):
+    """(first, last) commit dates of a source file, or None outside git.
+
+    A file with uncommitted edits counts as modified today, since that is
+    the version being published."""
+    import subprocess
+    try:
+        run = lambda *a: subprocess.run(["git", "-C", ROOT] + list(a), capture_output=True,
+                                        text=True, check=True).stdout.split()
+        log = run("log", "--follow", "--format=%cs", "--", path)
+        if not log:
+            return None
+        dirty = run("status", "--porcelain", "--", path)
+        return log[-1], (BUILD_DATE if dirty else log[0])
+    except Exception:
+        return None
+
+
+def complete_article_schema():
+    """Date and illustrate every Article node, and show the date on the page.
+
+    Search engines and answer engines weigh freshness, and an Article without
+    datePublished, dateModified and image is incomplete for Google's article
+    features. The dates come from the source file's git history, so they are
+    never invented. Runs after point_social_cards so the image is the page's
+    own card.
+    """
+    count = 0
+    for dirpath, _dirs, files in os.walk(OUT_DIR):
+        if "index.html" not in files:
+            continue
+        rel = os.path.relpath(dirpath, OUT_DIR).replace(os.sep, "/")
+        source = os.path.join(ROOT, "site", rel + ".html")
+        path = os.path.join(dirpath, "index.html")
+        with io.open(path, encoding="utf-8") as fh:
+            html = fh.read()
+        if '"@type": "Article"' not in html or not os.path.isfile(source):
+            continue
+        dates = _git_dates(source)
+        if not dates:
+            continue
+        published, modified = dates
+        image = re.search(r'<meta property="og:image" content="([^"]+)"', html)
+
+        def fill(m):
+            node = m.group(0)
+            extra = ""
+            if '"datePublished"' not in node:
+                extra += ',\n      "datePublished": "%s"' % published
+            if '"dateModified"' not in node:
+                extra += ',\n      "dateModified": "%s"' % modified
+            if '"image"' not in node and image:
+                extra += ',\n      "image": "%s"' % image.group(1)
+            return node[:-1].rstrip() + extra + "\n    }"
+
+        html = re.sub(r'\{\s*"@type": "Article",[^{}]*(?:\{[^{}]*\}[^{}]*)*\}', fill, html, count=1)
+        when = datetime.date.fromisoformat(modified)
+        stamp = "Updated %s %d, %d" % (when.strftime("%B"), when.day, when.year)
+        html = re.sub(r'(<div class="eyebrow">)([^<]*)(</div>)',
+                      lambda m: "%s%s <span class=\"updated\">&middot; <time datetime=\"%s\">%s</time></span>%s"
+                      % (m.group(1), m.group(2).strip(), modified, stamp, m.group(3)), html, count=1)
+        with io.open(path, "w", encoding="utf-8") as fh:
+            fh.write(html)
+        count += 1
+    return count
+
+
 def point_social_cards():
     """Give every built page its own og:image, when marketing/og/render.py made one.
 
@@ -1512,10 +1823,15 @@ def main():
             print("ABORTED: %s" % problem)
         return 1
 
+    build_guides_page()
     write_seo_files()
 
     print("Turned off code ligatures on %d pages" % disable_code_ligatures())
     print("Pointed %d pages at their own social card" % point_social_cards())
+    print("Slashed directory URLs on %d pages" % slash_directory_urls())
+    print("Dated %d articles from git history" % complete_article_schema())
+    print("Self-hosted fonts on %d pages" % self_host_fonts())
+    print("Added the site header to %d pages" % add_site_nav())
 
     # Pages would otherwise run the output through Jekyll.
     with io.open(os.path.join(OUT_DIR, ".nojekyll"), "w", encoding="utf-8") as fh:

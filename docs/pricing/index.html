@@ -5,18 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HALLUX pricing | BlvkWare</title>
 <meta name="description" content="HALLUX pricing: a free open tier, per-identifier metering capped at the Team price, and flat tiers. Billed on questions asked, never on answers given.">
-<link rel="canonical" href="https://blvkware.dev/pricing">
+<link rel="canonical" href="https://blvkware.dev/pricing/">
 <meta name="robots" content="index, follow">
 <meta property="og:title" content="HALLUX pricing | BlvkWare">
 <meta property="og:description" content="HALLUX pricing: a free open tier, per-identifier metering capped at the Team price, and flat tiers. Billed on questions asked, never on answers given.">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://blvkware.dev/pricing">
+<meta property="og:url" content="https://blvkware.dev/pricing/">
 <meta property="og:image" content="https://blvkware.dev/assets/og/pricing.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:image" content="https://blvkware.dev/assets/og/pricing.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
 <meta name="theme-color" content="#0A0908">
+<link rel="preload" href="/assets/fonts/manrope-latin-400-800.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts/fonts.css">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Fira+Code:wght@500&display=swap');
 :root { --bg:#0A0908; --surface:#17140F; --accent:#D4F24A; --brass:#D9B65C;
   --ink:#F5F0E6; --ink-2:#A89D8B; --line:rgba(245,240,230,0.1);
   --font:'Manrope',system-ui,-apple-system,sans-serif; --mono:'Fira Code',ui-monospace,monospace; }
@@ -55,13 +56,23 @@ td { color:var(--ink-2); }
 .foot-links { display:flex; flex-wrap:wrap; gap:0.5rem 1.25rem; }
 </style>
 <style id="no-code-ligatures">*{font-variant-ligatures:no-contextual}</style>
+<style>
+.sitebar { display: flex; align-items: center; justify-content: space-between; gap: 1.25rem; flex-wrap: wrap; }
+.sitebar > .top { margin-bottom: 0 !important; }
+.sitenav { display: flex; align-items: center; gap: 1.35rem; font-size: .9rem; }
+.sitenav a { color: var(--ink-2, #A89D8B); text-decoration: none; font-weight: 600; white-space: nowrap; }
+.sitenav a:hover, .sitenav a[aria-current] { color: var(--ink, #F5F0E6); text-decoration: none; }
+.sitenav .sitenav-cta { color: #14170A; background: var(--accent, #D4F24A); padding: .5rem .9rem; border-radius: 8px; font-weight: 700; }
+.sitenav .sitenav-cta:hover { color: #14170A; filter: brightness(1.06); }
+@media (max-width: 720px) { .sitenav a:not(.sitenav-cta) { display: none; } }
+</style>
 </head>
 <body>
 <div class="wrap">
-<a class="top" href="/">
+<header class="sitebar" style="margin-bottom:2.75rem"><a class="top" href="/">
   <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
   <span class="wordmark">BlvkWare<span>.</span></span>
-</a>
+</a><nav class="sitenav" aria-label="Site"><a href="/agents/">Agents</a><a href="/sample-kit/">Sample kit</a><a href="/#lab">Free tools</a><a href="/guides/">Guides</a><a href="/hallux/">Developers</a><a class="sitenav-cta" href="/hire/">Design an agent</a></nav></header>
 <a class="back" href="/hallux/">&larr; HALLUX</a>
 <h1>HALLUX pricing</h1>
 <p>The price list for HALLUX, the identifier verification API. BlvkWare's agent kits are priced on the <a href="/#services">home page</a>.</p><div class="live"><p><strong>Only the open tier is available today.</strong> The paid tiers below are priced and documented, but no payment rail is connected yet, so none of them can be bought. The open tier needs no account and no key.</p></div><h2>The constraint</h2><p><strong>HALLUX is never paid more because it blocked you.</strong></p>
@@ -70,7 +81,7 @@ td { color:var(--ink-2); }
 <p>So billing is a function of <strong>questions asked</strong>, never of <strong>answers given</strong>. This is enforced in code rather than promised: the quoting function accepts a count of identifiers and has no parameter through which a verdict could reach it, and a test asserts that the charge for a batch is identical whatever the batch resolves to.</p>
 <p>The same rule governs watches. They are priced on what a customer chose to watch, never on whether it fired.</p><h2>The ladder</h2><div class="tw"><table><thead><tr><th>Tier</th><th>Who buys it</th><th>What it is</th><th>Price</th></tr></thead><tbody><tr><td><strong>Open</strong></td><td>Any agent or developer, no account</td><td>Single-lookup GET, 500 identifiers/day, every verdict, no receipt</td><td>Free</td></tr><tr><td><strong>Metered</strong></td><td>An individual agent or small team</td><td>Batch, receipts, watches. Capped, see below</td><td>$0.0008 per identifier</td></tr><tr><td><strong>Team</strong></td><td>A company putting HALLUX in CI</td><td>Unmetered, 100 watches, private-namespace exclusions</td><td>$299/month, $2,990/year</td></tr><tr><td><strong>Feed</strong></td><td>Registries, IDE vendors, CI platforms, security vendors, insurers</td><td>Full ledger, complete history, per-model attribution, live transition stream, unlimited watches, licence to surface findings in your product</td><td>$1,500/month, $15,000/year</td></tr><tr><td><strong>Embedded</strong></td><td>A platform shipping HALLUX inside its product</td><td>Self-hosted or white-labelled, BSL 1.1 commercial grant</td><td>From $2,500/month</td></tr></tbody></table></div>
 <p>Watches on Metered are $0.02 per watched identifier per month.</p>
-<p>An annual commitment is twelve months charged as ten.</p><p>The same list, machine-readable: <code>GET https://api.blvkware.dev/hallux/v1/pricing</code>. How a paid request is settled is at <a href="/docs/payment">/docs/payment</a>, and why the numbers are what they are is section 8 of the <a href="/docs/hallux-spec">specification</a>.</p>
+<p>An annual commitment is twelve months charged as ten.</p><p>The same list, machine-readable: <code>GET https://api.blvkware.dev/hallux/v1/pricing</code>. How a paid request is settled is at <a href="/docs/payment/">/docs/payment</a>, and why the numbers are what they are is section 8 of the <a href="/docs/hallux-spec/">specification</a>.</p>
 <div class="foot">
   <div class="foot-links">
     <a href="/">BlvkWare</a>

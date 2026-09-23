@@ -108,8 +108,8 @@ payment. They exist as the work sample in place of client case studies.
 
 - [Business Scan](https://blvkware.dev/scan/) finds the work. Give it a company's public
   website and it reads the live page, works out which jobs are quietly costing
-  that business the most -- unstaffed, done after hours, or done by somebody who
-  should be doing something else -- and names the agent worth building for each,
+  that business the most (unstaffed, done after hours, or done by somebody who
+  should be doing something else) and names the agent worth building for each,
   priced as a kit from the published catalog rather than estimated.
 - [Agent Designer](https://blvkware.dev/design/) designs the agent. Describe how a business
   actually operates and it works out which agent is worth building first, exactly
@@ -139,7 +139,7 @@ payment. They exist as the work sample in place of client case studies.
 - BlvkWare has **no client case studies and no client references**. This is stated
   openly on the site; the tools and the kit previews are offered as the evidence
   instead. The one long-form write-up, the Recovery OS build log, documents a
-  system BlvkWare built from its own planning documents -- no client commissioned
+  system BlvkWare built from its own planning documents; no client commissioned
   or paid for it, and the page says so.
 - A kit is a specification, not a running agent. Tool output is AI-generated and
   is not financial, legal or engineering advice.
@@ -148,7 +148,7 @@ payment. They exist as the work sample in place of client case studies.
 
 - [Home](https://blvkware.dev/): the model, the two kit sizes, prices, tools, FAQ
 - [Recovery OS build log](https://blvkware.dev/recovery-os/): a worked example of
-  a whole-process system -- four ordinary business documents (a slide deck, a call
+  a whole-process system: four ordinary business documents (a slide deck, a call
   script, a spreadsheet, a strategy memo) turned into an eight-stage operating
   system with 203 self-checks. Documents the six rules the software enforces, the
   three defects found before shipping, and carries the part-number identifier
@@ -179,16 +179,20 @@ payment. They exist as the work sample in place of client case studies.
   ladder (Watch, Draft, Approve, Operate), least privilege for agents, the three
   things every agent must have before it touches a customer (a reasoning log, a
   reverse, a stop), what must never be unsupervised, and where liability sits.
-- [How BlvkWare agents are controlled](https://blvkware.dev/how-agents-are-controlled/):
-  the mechanics rather than the argument. Where credentials live (a permissioned
-  file on the agent's own machine, never in the codebase, not separately
-  encrypted at rest and stated as such), the two destinations data goes to (the
-  customer's own vendors, and the model provider for reasoning only), that the
-  agent runs with no model at all on a deterministic path and what that costs in
-  escalations, the append-only log written before each side effect, what can and
-  cannot be undone, the customer's own one-press stop, export on exit, and an
-  explicit list of what the page does NOT claim (no SOC 2, no encryption at
-  rest, and that the agent can be wrong).
+- [How BlvkWare agent kits are controlled](https://blvkware.dev/how-agents-are-controlled/):
+  what a kit specifies about control, and what it cannot do for you. BlvkWare
+  does not run, host or access the agent: the buyer's build enforces the
+  controls the kit writes down. Every tool is marked read, internal or
+  external; four autonomy levels (Watch, Draft, Approve, Operate) with every
+  kit starting at Draft, enforced in the tool handler rather than the prompt;
+  the approval queue schema in every kit; the append-only log written before
+  each action; the owner's own stop (set the level to Watch); and where
+  credentials and data go (the buyer's own systems and vendors, never BlvkWare).
+- [AI employee cost](https://blvkware.dev/ai-employee/): what an "AI employee"
+  costs against a real hire, using BLS employer-cost data, with a calculator
+  that says when not to buy one.
+- [Guides](https://blvkware.dev/guides/): every guide above, grouped and
+  summarised, in reading order.
 - [Quote follow-up automation](https://blvkware.dev/quote-follow-up-automation/):
   how automated quote follow-up works, the arithmetic for deciding whether it
   pays, why the sequence must stop when the customer answers, and why US A2P

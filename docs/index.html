@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BlvkWare: Design an AI Agent, Download Its Complete Kit</title>
-    <meta name="description" content="Design an AI agent that does the work and download its complete kit: instructions, tools, workflows, records, approval rules and tests, generated from your answers. $79 for one job, $199 for a whole function.">
+    <meta name="description" content="Design an AI agent that does real work and download its complete kit, generated from your answers. $79 for one job, $199 for a whole function.">
     <link rel="canonical" href="https://blvkware.dev/">
     <meta property="og:title" content="BlvkWare: Design an AI Agent, Download Its Complete Kit">
     <meta property="og:description" content="Traditional software gives your employees tools. An agent gives your tools an operator. Design one and download everything it needs to run.">
@@ -281,10 +281,10 @@
 }
 </script>
 
-    <style>
+    <link rel="preload" href="/assets/fonts/manrope-latin-400-800.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts/fonts.css">
+<style>
         /* --- FONT IMPORTS --- */
-        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Fira+Code:wght@500&display=swap');
-
         /* --- CSS VARIABLES (BLVKWARE "CARBON & ACID") --- */
         :root {
             --font-primary: 'Manrope', sans-serif;
@@ -322,13 +322,13 @@
             position: relative;
         }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
-        section { padding: 8rem 0; position: relative; z-index: 2; }
+        section { padding: clamp(4.5rem, 7vw, 6.25rem) 0; position: relative; z-index: 2; }
         /* Solid, not gradient-filled. Gradient text is the house style of every
            dark SaaS template; the identity here comes from the brass rule and
            node underneath, which repeats the mark's construction. */
         .section-title {
-            font-size: 3rem; font-weight: 800; text-align: center;
-            margin-bottom: 1rem; letter-spacing: -0.02em;
+            font-size: 3rem; font-weight: 800; text-align: center; line-height: 1.15;
+            margin-bottom: 1rem; letter-spacing: -0.02em; text-wrap: balance;
             color: var(--color-text-primary); position: relative; padding-bottom: 1.1rem;
         }
         .section-title::after {
@@ -487,8 +487,8 @@
         .btn-ghost:hover { box-shadow: inset 0 0 0 1px rgba(212,242,74,.4); transform: translateY(-3px); }
 
         /* --- HERO --- */
-        #hero { padding-top: 14rem; text-align: center; }
-        .hero-title { font-size: 4.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; letter-spacing: -0.02em; }
+        #hero { padding-top: clamp(8.5rem, 16vh, 10.5rem); text-align: center; }
+        .hero-title { font-size: clamp(3rem, 5vw, 4.25rem); font-weight: 800; line-height: 1.08; margin-bottom: 1.4rem; letter-spacing: -0.025em; }
         .hero-title .highlight { background: linear-gradient(90deg, var(--color-primary-accent), var(--color-brass)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
         #hero-title { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
         #hero-title.visible { opacity: 1; transform: translateY(0); }
@@ -504,7 +504,7 @@
            commercial intent explicit in the opening lines without compacting it
            into a single unreadable keyword-dense sentence. */
         .hero-subtitle { font-size: 1.25rem; max-width: 700px; margin: 0 auto 1.1rem; color: var(--color-text-secondary); }
-        .hero-subtitle-2 { font-size: 1.1rem; margin-bottom: 2.5rem; }
+        .hero-subtitle-2 { font-size: 1.05rem; margin-bottom: 2.1rem; }
         .hero-trust {
             font-family: var(--font-code); font-size: 0.74rem; letter-spacing: 0.06em;
             color: var(--color-text-secondary); opacity: 0.75; margin-top: 1.4rem;
@@ -677,9 +677,9 @@
 
         /* ---- the pipeline ---- */
         .pipeline { max-width: 900px; margin: 0 auto 3.5rem; }
-        .pipe-track { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; gap: 0; }
+        .pipe-track { list-style: none; margin: 0; padding: 0; display: flex; align-items: flex-start; gap: 0; }
         .pipe-stage { display: flex; flex-direction: column; align-items: center; text-align: center;
-                      gap: .35rem; flex: none; width: 116px; }
+                      gap: .35rem; flex: none; width: 136px; }
         .pipe-stage b { font-size: .95rem; font-weight: 800; letter-spacing: -.01em; color: var(--color-text-primary); }
         .pipe-stage > span:not(.pipe-glyph) { font-size: .76rem; line-height: 1.35; color: var(--color-text-secondary); }
         .pipe-glyph { width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center;
@@ -695,7 +695,7 @@
 
         /* The rail carries a travelling pulse, so the row reads as a sequence
            with a direction rather than four unrelated badges. */
-        .pipe-rail { flex: 1; height: 1px; background: var(--glass-border); position: relative; min-width: 18px; }
+        .pipe-rail { flex: 1; height: 1px; background: var(--glass-border); position: relative; min-width: 18px; margin-top: 23px; }
         .pipe-rail i { position: absolute; top: -1.5px; left: 0; width: 26px; height: 4px; border-radius: 4px;
                        background: linear-gradient(90deg, transparent, var(--color-primary-accent), transparent);
                        opacity: .75; animation: pipeFlow 3.4s linear infinite; }
@@ -822,7 +822,9 @@
         .faq-q { width: 100%; text-align: left; background: none; border: none; cursor: pointer; padding: 1.5rem 2.5rem 1.5rem 0; font-family: var(--font-primary); font-size: 1.125rem; font-weight: 700; color: var(--color-text-primary); position: relative; }
         .faq-q::after { content: "+"; position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); font-size: 1.5rem; font-weight: 400; color: var(--color-primary-accent); transition: transform 0.25s ease; }
         .faq-item[open] .faq-q::after { transform: translateY(-50%) rotate(45deg); }
+        .faq-q { list-style: none; display: block; }
         .faq-q::-webkit-details-marker { display: none; }
+        .faq-q::marker { content: ''; }
         .faq-a { padding: 0 2.5rem 1.75rem 0; color: var(--color-text-secondary); }
         .faq-a p { margin-bottom: 0.9rem; }
         .faq-a p:last-child { margin-bottom: 0; }
@@ -854,11 +856,24 @@
         .secondary-cta-link svg { width: 20px; height: 20px; }
 
         /* --- FOOTER --- */
-        .footer { padding: 4rem 0 2rem; text-align: center; border-top: 1px solid var(--glass-border); position: relative; z-index: 2; }
-        .footer-links { list-style: none; display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap; }
-        .footer-links a { color: var(--color-text-secondary); text-decoration: none; transition: color 0.3s ease; }
-        .footer-links a:hover { color: var(--color-text-primary); }
-        .footer-text { color: var(--color-text-secondary); font-size: 0.95rem; }
+        .footer { padding: 4.5rem 0 2.25rem; border-top: 1px solid var(--glass-border); position: relative; z-index: 2; }
+        .footer-grid { display: grid; grid-template-columns: 1.5fr repeat(4, 1fr); gap: 2.5rem; }
+        .footer-logo { display: inline-flex; align-items: center; gap: .6rem; color: var(--color-text-primary);
+                       text-decoration: none; font-weight: 800; font-size: 1.15rem; margin-bottom: .9rem; }
+        .footer-logo img { border-radius: 9px; }
+        .footer-brand p { color: var(--color-text-secondary); font-size: .92rem; line-height: 1.55; max-width: 290px; margin-bottom: .8rem; }
+        .footer-mail { color: var(--color-primary-accent); text-decoration: none; }
+        .footer-col h2 { font-family: var(--font-code); font-size: .7rem; font-weight: 500; letter-spacing: .2em;
+                         text-transform: uppercase; color: var(--color-brass); margin-bottom: 1rem; }
+        .footer-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .55rem; }
+        .footer-col a { color: var(--color-text-secondary); text-decoration: none; font-size: .92rem; transition: color .2s ease; }
+        .footer-col a:hover, .footer-base a:hover { color: var(--color-text-primary); }
+        .footer-base { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;
+                       margin-top: 3.25rem; padding-top: 1.5rem; border-top: 1px solid var(--glass-border);
+                       color: var(--color-text-secondary); font-size: .85rem; }
+        .footer-base a { color: var(--color-text-secondary); text-decoration: none; margin-left: 1.25rem; }
+        @media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr 1fr; } .footer-brand { grid-column: 1 / -1; } }
+        @media (max-width: 480px) { .footer-base { flex-direction: column; align-items: flex-start; } .footer-base a { margin: 0 1.25rem 0 0; } }
 
         /* --- COLLAPSED NAVIGATION ---
            Seven links and a button need about 1100px. Below that the bar
@@ -918,10 +933,10 @@
 
         /* --- MOBILE --- */
         @media (max-width: 768px) {
-            .nav-cta { padding: 0.6rem 1rem; font-size: 0.9rem; }
-            .logo-mark { width: 60px; height: 60px; border-radius: 16px; }
-            .logo { font-size: 1.2rem; gap: 0.55rem; }
-            #hero { padding-top: 11rem; }
+            .nav-cta { padding: 0.6rem 0.9rem; font-size: 0.86rem; white-space: nowrap; }
+            .logo-mark { width: 48px; height: 48px; border-radius: 13px; }
+            .logo { font-size: 1.15rem; gap: 0.5rem; }
+            #hero { padding-top: 8.5rem; }
             .hero-title { font-size: 2.75rem; }
             .section-title { font-size: 2.25rem; }
             section { padding: 5rem 0; }
@@ -1033,10 +1048,10 @@
                                 <p class="dev-h">Start here</p>
                                 <a href="/hallux/#connect">Connect HALLUX to your coding agent</a>
                                 <a href="/hallux/#try">Check a package in one command</a>
-                                <a href="/docs/hallux-spec">API specification</a>
-                                <a href="/pricing">Pricing and the free allowance</a>
-                                <a href="/docs/limits">Rate limits</a>
-                                <a href="/docs/corpus-methodology">How the ledger is built</a>
+                                <a href="/docs/hallux-spec/">API specification</a>
+                                <a href="/pricing/">Pricing and the free allowance</a>
+                                <a href="/docs/limits/">Rate limits</a>
+                                <a href="/docs/corpus-methodology/">How the ledger is built</a>
                                 <a href="/.well-known/ai-catalog.json">Agent catalog <small>JSON</small></a>
                                 <a href="/llms.txt">llms.txt</a>
                               </div>
@@ -1093,8 +1108,8 @@
                 <h1 class="hero-title" id="hero-title">
                     Don't buy another tool for your team to operate.<br><span class="highlight">Design the agent that operates them.</span>
                 </h1>
-                <p class="hero-subtitle">BlvkWare designs AI agents that actually do the work: reasoning through tasks, using the business software you already run, talking to your customers, and following multi-step processes. Pick the job and download the complete kit for that agent: its instructions, its tools, its workflows, the records it keeps, the rules that hold it back, and the tests it has to pass.</p>
-                <p class="hero-subtitle hero-subtitle-2">Every kit is generated from your answers and priced by the size of the agent. You see every file before you pay, and you build it with the tools you already use: OpenAI, Anthropic, any MCP client, n8n, Make or Zapier. No subscription, no estimate, nobody to talk to unless you want to.</p>
+                <p class="hero-subtitle">BlvkWare designs AI agents that do the work: they reason through tasks, use the software you already run, talk to your customers and follow multi-step processes. Pick the job and download the agent&rsquo;s complete kit: instructions, tools, workflows, records, guardrails and tests.</p>
+                <p class="hero-subtitle hero-subtitle-2">Generated from your answers and built with what you already use: OpenAI, Anthropic, any MCP client, n8n, Make or Zapier. No subscription, and nobody to talk to unless you want to.</p>
                 <div class="hero-actions">
                     <a href="/hire/" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.125rem;">Design an agent <span aria-hidden="true">&rarr;</span></a>
                     <a href="/scan/" class="btn btn-ghost" style="padding: 1rem 2rem; font-size: 1.125rem;">Which job first? Find out free</a>
@@ -1412,7 +1427,7 @@
                             <li>A registry it cannot reach answers unknown, never a pass</li>
                             <li>Billed on questions asked, never on the answer, so it gains nothing by blocking you</li>
                         </ul>
-                        <div class="service-meta"><a href="/docs/hallux-spec" style="color:var(--color-brass);text-decoration:underline">Read the specification</a></div>
+                        <div class="service-meta"><a href="/docs/hallux-spec/" style="color:var(--color-brass);text-decoration:underline">Read the specification</a></div>
                         <a class="service-cta" href="/hallux/">See HALLUX
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
                         </a>
@@ -1532,21 +1547,57 @@
 
     <footer class="footer">
         <div class="container">
-            <ul class="footer-links">
-                <li><a href="/agents/">Agent catalog</a></li>
-                <li><a href="/hire/">Design an agent</a></li>
-                <li><a href="#lab">The Lab</a></li>
-                <li><a href="/scan/">Business Scan</a></li>
-                <li><a href="/design/">Agent Designer</a></li>
-                <li><a href="/build/">App Builder</a></li>
-                <li><a href="/hallux/">HALLUX API</a></li>
-                <li><a href="/pkgguard/">pkgguard</a></li>
-                <li><a href="https://github.com/rxslice/blvkware-html-generator" target="_blank" rel="noopener noreferrer">GitHub</a></li>
-                <li><a href="/privacy/">Privacy</a></li>
-                <li><a href="/terms/">Terms</a></li>
-            </ul>
-            <p class="footer-text"><a href="mailto:russ@blvkware.dev" style="color:var(--color-primary-accent);text-decoration:none">russ@blvkware.dev</a></p>
-            <p class="footer-text">Copyright © 2026 BlvkWare / William Russell Wheeler. All Rights Reserved.</p>
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="/" class="footer-logo"><img src="/assets/logo-96.png" alt="" width="36" height="36" loading="lazy"><span>BlvkWare<span class="logo-dot">.</span></span></a>
+                    <p>AI agents designed from your answers, sold as complete kits you build with the tools you already use.</p>
+                    <p><a class="footer-mail" href="mailto:russ@blvkware.dev">russ@blvkware.dev</a></p>
+                </div>
+                <nav class="footer-col" aria-label="Agent kits">
+                    <h2>Agent kits</h2>
+                    <ul>
+                        <li><a href="/hire/">Design an agent</a></li>
+                        <li><a href="/agents/">Agent catalog</a></li>
+                        <li><a href="/sample-kit/">Free sample kit</a></li>
+                        <li><a href="#services">Kit prices</a></li>
+                        <li><a href="/how-agents-are-controlled/">How kits are controlled</a></li>
+                    </ul>
+                </nav>
+                <nav class="footer-col" aria-label="Free tools">
+                    <h2>Free tools</h2>
+                    <ul>
+                        <li><a href="/scan/">Business Scan</a></li>
+                        <li><a href="/design/">Agent Designer</a></li>
+                        <li><a href="/build/">App Builder</a></li>
+                        <li><a href="/vendor-renewal-tracker/">Renewal tracker</a></li>
+                        <li><a href="/recovery-os/">Recovery OS demo</a></li>
+                    </ul>
+                </nav>
+                <nav class="footer-col" aria-label="Developers">
+                    <h2>Developers</h2>
+                    <ul>
+                        <li><a href="/hallux/">HALLUX API</a></li>
+                        <li><a href="/pkgguard/">pkgguard</a></li>
+                        <li><a href="/docs/hallux-spec/">API specification</a></li>
+                        <li><a href="/llms.txt">llms.txt</a></li>
+                        <li><a href="https://github.com/rxslice" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                    </ul>
+                </nav>
+                <nav class="footer-col" aria-label="Guides">
+                    <h2>Guides</h2>
+                    <ul>
+                        <li><a href="/what-is-an-ai-agent/">What is an AI agent?</a></li>
+                        <li><a href="/ai-agent-pricing/">What an agent should cost</a></li>
+                        <li><a href="/ai-agent-permissions/">Agent permissions</a></li>
+                        <li><a href="/ai-employee/">AI employee vs a hire</a></li>
+                        <li><a href="/subscription-audit/">Subscription audit</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="footer-base">
+                <p>&copy; 2026 BlvkWare / William Russell Wheeler. Mississippi, serving the United States.</p>
+                <p><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></p>
+            </div>
         </div>
     </footer>
 
