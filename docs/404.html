@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page not found | BlvkWare</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+<link rel="apple-touch-icon" href="/assets/logo-192.png">
+<meta name="theme-color" content="#0A0908">
+<link rel="preload" href="/assets/fonts/manrope-latin-400-800.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts/fonts.css">
+<style>
+        :root {
+            --bg: #0A0908; --surface: #17140F; --accent: #D4F24A; --brass: #D9B65C; --warm: #E8734A;
+            --ink: #F5F0E6; --ink-2: #A89D8B; --line: rgba(245,240,230,0.1);
+            --font: 'Manrope', system-ui, -apple-system, sans-serif;
+            --mono: 'Fira Code', ui-monospace, monospace;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+        .wrap { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+        .top { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 3.5rem; text-decoration: none; color: inherit; }
+        .mark { width: 52px; height: 52px; border-radius: 14px; background: #060504; overflow: hidden; flex: none; }
+        .mark img { width: 100%; height: 100%; display: block; }
+        .wordmark { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; }
+        .wordmark span { color: var(--accent); }
+        .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--brass); margin-bottom: 1rem; }
+        h1 { font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 1rem; line-height: 1.12; }
+        .lede { font-size: 1.15rem; color: var(--ink-2); margin-bottom: 2.5rem; padding-bottom: 2.5rem; border-bottom: 1px solid var(--line); }
+        h2 { font-size: 1.5rem; font-weight: 700; margin: 3rem 0 1rem; letter-spacing: -0.01em; }
+        h3 { font-size: 1.05rem; font-weight: 700; margin: 1.75rem 0 0.6rem; color: var(--brass); }
+        p { color: var(--ink-2); margin-bottom: 1.1rem; }
+        ul, ol { margin: 0 0 1.1rem 1.2rem; color: var(--ink-2); }
+        li { margin-bottom: 0.6rem; }
+        strong { color: var(--ink); font-weight: 700; }
+        em { color: var(--ink); font-style: italic; }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        code { font-family: var(--mono); font-size: 0.87em; background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; color: var(--brass); }
+        .box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem; margin: 1.75rem 0; }
+        .box p:last-child { margin-bottom: 0; }
+        .box.warn { border-color: rgba(232,115,74,.3); background: rgba(232,115,74,.06); }
+        /* A price range must not wrap mid-figure, so these cells cannot shrink.
+           Wide tables therefore scroll inside their own container rather than
+           pushing the whole page sideways — the body must never scroll
+           horizontally on a phone. */
+        .tw { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1.5rem 0; }
+        .tw table { margin: 0; min-width: 30rem; }
+        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
+        th, td { text-align: left; padding: 0.7rem 0.6rem; border-bottom: 1px solid var(--line); color: var(--ink-2); vertical-align: top; }
+        th { color: var(--ink); font-weight: 700; }
+        td strong { color: var(--ink); }
+        .cta { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 2rem; margin: 3rem 0 0; }
+        .btn { display: inline-block; background: var(--accent); color: #14170A; font-weight: 700; padding: 0.85rem 1.5rem; border-radius: 10px; margin-top: 0.5rem; }
+        .btn:hover { text-decoration: none; opacity: 0.92; }
+        .btn-2 { display: inline-block; color: var(--ink-2); font-weight: 600; padding: 0.85rem 1.2rem; border: 1px solid var(--line); border-radius: 10px; margin: 0.5rem 0 0 0.4rem; }
+        .btn-2:hover { color: var(--ink); text-decoration: none; }
+        .foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--ink-2); }
+        /* Flex with a gap, not inline margins: a trailing margin-right on the
+           last link of a wrapped line still occupies space and pushed the page
+           16px wider than the viewport on a phone. */
+        .foot-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+        .foot a { margin-right: 0; }
+
+        /* The three-way comparison. A drawn figure rather than a table, because
+           the point is the shape of the escalation, not the cell contents. */
+        .ladder-fig { margin: 2rem 0; }
+        .ladder-fig svg { width: 100%; height: auto; display: block; }
+        .fig-cap { font-family: var(--mono); font-size: 0.74rem; color: var(--ink-2); text-align: center; margin-top: 0.7rem; }
+    </style>
+<style>
+.guides { list-style: none; padding: 0; margin: 2rem 0 2.5rem; display: grid; gap: .8rem;
+          grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+.guide a { display: block; height: 100%; padding: 1.1rem 1.25rem; border: 1px solid var(--line); border-radius: 12px;
+           background: var(--surface); text-decoration: none; color: inherit; transition: border-color .2s ease; }
+.guide a:hover { border-color: rgba(212,242,74,.45); text-decoration: none; }
+.g-title { display: block; font-weight: 800; color: var(--ink); margin-bottom: .3rem; }
+.g-desc { display: block; color: var(--ink-2); font-size: .92rem; line-height: 1.5; }
+</style>
+<style id="no-code-ligatures">*{font-variant-ligatures:no-contextual}</style>
+<style>
+.sitebar { display: flex; align-items: center; justify-content: space-between; gap: 1.25rem; flex-wrap: wrap; }
+.sitebar > .top { margin-bottom: 0 !important; }
+.sitenav { display: flex; align-items: center; gap: 1.35rem; font-size: .9rem; }
+.sitenav a { color: var(--ink-2, #A89D8B); text-decoration: none; font-weight: 600; white-space: nowrap; }
+.sitenav a:hover, .sitenav a[aria-current] { color: var(--ink, #F5F0E6); text-decoration: none; }
+.sitenav .sitenav-cta { color: #14170A; background: var(--accent, #D4F24A); padding: .5rem .9rem; border-radius: 8px; font-weight: 700; }
+.sitenav .sitenav-cta:hover { color: #14170A; filter: brightness(1.06); }
+@media (max-width: 720px) { .sitenav a:not(.sitenav-cta) { display: none; } }
+/* Links inside running text are underlined, not told apart by colour alone. */
+.wrap p a:not([class]), .wrap li:not(.guide) > a:not([class]), .wrap td a:not([class]) {
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="sitebar" style="margin-bottom:2.75rem"><a class="top" href="/"><span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span><span class="wordmark">BlvkWare<span>.</span></span></a><nav class="sitenav" aria-label="Site"><a href="/agents/">Agents</a><a href="/sample-kit/">Sample kit</a><a href="/#lab">Free tools</a><a href="/guides/">Guides</a><a href="/hallux/">Developers</a><a class="sitenav-cta" href="/hire/">Design an agent</a></nav></header>
+<div class="eyebrow">404</div>
+<h1>That page isn&rsquo;t here.</h1>
+<p class="lede">The link may be old or mistyped. Here is where most people are headed.</p>
+<ul class="guides"><li class="guide"><a href="/hire/"><span class="g-title">Design an agent</span><span class="g-desc">Pick the job and see its whole kit and price before you pay.</span></a></li><li class="guide"><a href="/agents/"><span class="g-title">Agent catalog</span><span class="g-desc">Every agent role, what it owns and what its kit costs.</span></a></li><li class="guide"><a href="/sample-kit/"><span class="g-title">Free sample kit</span><span class="g-desc">A complete kit, every file, free to read.</span></a></li><li class="guide"><a href="/guides/"><span class="g-title">Guides</span><span class="g-desc">What an agent is, what it should cost, and how to keep it safe.</span></a></li><li class="guide"><a href="/#lab"><span class="g-title">Free tools</span><span class="g-desc">Business Scan, Agent Designer and App Builder, in your browser.</span></a></li><li class="guide"><a href="/hallux/"><span class="g-title">HALLUX API</span><span class="g-desc">Check that a package an AI suggested actually exists.</span></a></li></ul>
+<p>Looking for something else? Write to <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a>.</p>
+</div>
+</body>
+</html>

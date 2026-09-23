@@ -65,6 +65,10 @@ td { color:var(--ink-2); }
 .sitenav .sitenav-cta { color: #14170A; background: var(--accent, #D4F24A); padding: .5rem .9rem; border-radius: 8px; font-weight: 700; }
 .sitenav .sitenav-cta:hover { color: #14170A; filter: brightness(1.06); }
 @media (max-width: 720px) { .sitenav a:not(.sitenav-cta) { display: none; } }
+/* Links inside running text are underlined, not told apart by colour alone. */
+.wrap p a:not([class]), .wrap li:not(.guide) > a:not([class]), .wrap td a:not([class]) {
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2px; }
 </style>
 </head>
 <body>
@@ -75,7 +79,7 @@ td { color:var(--ink-2); }
 </a><nav class="sitenav" aria-label="Site"><a href="/agents/">Agents</a><a href="/sample-kit/">Sample kit</a><a href="/#lab">Free tools</a><a href="/guides/">Guides</a><a href="/hallux/">Developers</a><a class="sitenav-cta" href="/hire/">Design an agent</a></nav></header>
 <a class="back" href="/hallux/">&larr; HALLUX</a>
 <h1>HALLUX licence</h1>
-<p>This is the licence referenced by the HALLUX entry in the <a href="/.well-known/ai-catalog.json">agent catalog</a>. It is reproduced verbatim from the LICENSE file in the source repository; that file is the operative copy.</p><pre><code>Business Source License 1.1
+<p>This is the licence referenced by the HALLUX entry in the <a href="/.well-known/ai-catalog.json">agent catalog</a>. It is reproduced verbatim from the LICENSE file in the source repository; that file is the operative copy.</p><pre tabindex="0"><code>Business Source License 1.1
 
 Parameters
 

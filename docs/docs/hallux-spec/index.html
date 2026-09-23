@@ -65,6 +65,10 @@ td { color:var(--ink-2); }
 .sitenav .sitenav-cta { color: #14170A; background: var(--accent, #D4F24A); padding: .5rem .9rem; border-radius: 8px; font-weight: 700; }
 .sitenav .sitenav-cta:hover { color: #14170A; filter: brightness(1.06); }
 @media (max-width: 720px) { .sitenav a:not(.sitenav-cta) { display: none; } }
+/* Links inside running text are underlined, not told apart by colour alone. */
+.wrap p a:not([class]), .wrap li:not(.guide) > a:not([class]), .wrap td a:not([class]) {
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2px; }
 </style>
 </head>
 <body>
@@ -98,7 +102,7 @@ td { color:var(--ink-2); }
 <h2>5. API</h2>
 <h3><code>POST /v1/check</code></h3>
 <p>Batch up to 100 identifiers per request.</p>
-<pre><code>{
+<pre tabindex="0"><code>{
   "identifiers": [
     { "namespace": "pkg.pypi", "value": "requests-oauth2-helper" },
     { "namespace": "pkg.npm",  "value": "react-dom" },
@@ -107,7 +111,7 @@ td { color:var(--ink-2); }
   "receipt": true
 }</code></pre>
 <p>Response:</p>
-<pre><code>{
+<pre tabindex="0"><code>{
   "checkedAt": "2026-09-20T14:22:08Z",
   "results": [
     {
@@ -163,7 +167,7 @@ td { color:var(--ink-2); }
 }</code></pre>
 <h3><code>GET /v1/check/{namespace}/{value}</code></h3>
 <p>Single lookup. Free tier, no auth, no receipt. This exists so the cost of trying HALLUX is one curl command.</p>
-<pre><code>curl https://api.blvkware.dev/hallux/v1/check/pkg.pypi/requests-oauth2-helper</code></pre>
+<pre tabindex="0"><code>curl https://api.blvkware.dev/hallux/v1/check/pkg.pypi/requests-oauth2-helper</code></pre>
 <h3><code>POST /v1/watch</code></h3>
 <p>Register identifiers for notification on verdict transition. The transition that matters is <code>phantom</code> → <code>squat</code>. Delivered by webhook.</p>
 <h3><code>GET /v1/corpus</code></h3>

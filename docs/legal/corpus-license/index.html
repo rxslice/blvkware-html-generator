@@ -65,6 +65,10 @@ td { color:var(--ink-2); }
 .sitenav .sitenav-cta { color: #14170A; background: var(--accent, #D4F24A); padding: .5rem .9rem; border-radius: 8px; font-weight: 700; }
 .sitenav .sitenav-cta:hover { color: #14170A; filter: brightness(1.06); }
 @media (max-width: 720px) { .sitenav a:not(.sitenav-cta) { display: none; } }
+/* Links inside running text are underlined, not told apart by colour alone. */
+.wrap p a:not([class]), .wrap li:not(.guide) > a:not([class]), .wrap td a:not([class]) {
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2px; }
 </style>
 </head>
 <body>
@@ -75,7 +79,7 @@ td { color:var(--ink-2); }
 </a><nav class="sitenav" aria-label="Site"><a href="/agents/">Agents</a><a href="/sample-kit/">Sample kit</a><a href="/#lab">Free tools</a><a href="/guides/">Guides</a><a href="/hallux/">Developers</a><a class="sitenav-cta" href="/hire/">Design an agent</a></nav></header>
 <a class="back" href="/hallux/">&larr; HALLUX</a>
 <h1>Corpus licence</h1>
-<p>The terms the HALLUX phantom ledger is published under. Corpus responses carry this address in a <code>Link: rel="license"</code> header. The HALLUX software is a separate matter, under the <a href="/legal/bsl-1.1/">Business Source License 1.1</a>.</p><h2>The open window</h2><p>The rolling 30-day window of the ledger, as served by <code>GET /v1/corpus</code>, is free to use with attribution. The attribution is:</p><pre><code>BlvkWare (blvkware.dev), verification layer for the agentic web.</code></pre><p>Every corpus response carries it in the <code>X-HALLUX-Attribution</code> header, so a consumer never has to copy it by hand. The open window does not include which model families emitted a name.</p><h2>The full corpus</h2><p>Complete history, per-model attribution and the live transition stream are the Feed tier, at $1,500 a month or $15,000 a year, with a licence to surface findings inside your own product. It is not on sale yet: no payment rail is connected, so a request for <code>?full=1</code> answers <code>402</code> with these terms rather than a way to pay.</p><p>How names enter the ledger is published in full at <a href="/docs/corpus-methodology/">/docs/corpus-methodology</a>. Questions: russ@blvkware.dev.</p>
+<p>The terms the HALLUX phantom ledger is published under. Corpus responses carry this address in a <code>Link: rel="license"</code> header. The HALLUX software is a separate matter, under the <a href="/legal/bsl-1.1/">Business Source License 1.1</a>.</p><h2>The open window</h2><p>The rolling 30-day window of the ledger, as served by <code>GET /v1/corpus</code>, is free to use with attribution. The attribution is:</p><pre tabindex="0"><code>BlvkWare (blvkware.dev), verification layer for the agentic web.</code></pre><p>Every corpus response carries it in the <code>X-HALLUX-Attribution</code> header, so a consumer never has to copy it by hand. The open window does not include which model families emitted a name.</p><h2>The full corpus</h2><p>Complete history, per-model attribution and the live transition stream are the Feed tier, at $1,500 a month or $15,000 a year, with a licence to surface findings inside your own product. It is not on sale yet: no payment rail is connected, so a request for <code>?full=1</code> answers <code>402</code> with these terms rather than a way to pay.</p><p>How names enter the ledger is published in full at <a href="/docs/corpus-methodology/">/docs/corpus-methodology</a>. Questions: russ@blvkware.dev.</p>
 <div class="foot">
   <div class="foot-links">
     <a href="/">BlvkWare</a>

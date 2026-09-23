@@ -65,6 +65,10 @@ td { color:var(--ink-2); }
 .sitenav .sitenav-cta { color: #14170A; background: var(--accent, #D4F24A); padding: .5rem .9rem; border-radius: 8px; font-weight: 700; }
 .sitenav .sitenav-cta:hover { color: #14170A; filter: brightness(1.06); }
 @media (max-width: 720px) { .sitenav a:not(.sitenav-cta) { display: none; } }
+/* Links inside running text are underlined, not told apart by colour alone. */
+.wrap p a:not([class]), .wrap li:not(.guide) > a:not([class]), .wrap td a:not([class]) {
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2px; }
 </style>
 </head>
 <body>

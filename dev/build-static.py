@@ -1399,6 +1399,57 @@ def build_guides_page():
     print("Built docs/guides/index.html (%d guides)" % len(items))
 
 
+def build_not_found_page():
+    """Write docs/404.html, which GitHub Pages serves for any missing path.
+
+    Without it a mistyped or retired link lands on GitHub's own page, with
+    no way back into the site. Every URL is absolute because the page is
+    served at whatever path was asked for. It is noindex and in no sitemap.
+    """
+    shell_path = os.path.join(OUT_DIR, "what-is-an-ai-agent", "index.html")
+    with io.open(shell_path, encoding="utf-8") as fh:
+        shell = fh.read()
+    style = shell[shell.index("<style>"):shell.index("</style>") + len("</style>")]
+    links = (
+        ("/hire/", "Design an agent", "Pick the job and see its whole kit and price before you pay."),
+        ("/agents/", "Agent catalog", "Every agent role, what it owns and what its kit costs."),
+        ("/sample-kit/", "Free sample kit", "A complete kit, every file, free to read."),
+        ("/guides/", "Guides", "What an agent is, what it should cost, and how to keep it safe."),
+        ("/#lab", "Free tools", "Business Scan, Agent Designer and App Builder, in your browser."),
+        ("/hallux/", "HALLUX API", "Check that a package an AI suggested actually exists."),
+    )
+    cards = "".join('<li class="guide"><a href="%s"><span class="g-title">%s</span>'
+                    '<span class="g-desc">%s</span></a></li>' % l for l in links)
+    extra_css = """<style>
+.guides { list-style: none; padding: 0; margin: 2rem 0 2.5rem; display: grid; gap: .8rem;
+          grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+.guide a { display: block; height: 100%; padding: 1.1rem 1.25rem; border: 1px solid var(--line); border-radius: 12px;
+           background: var(--surface); text-decoration: none; color: inherit; transition: border-color .2s ease; }
+.guide a:hover { border-color: rgba(212,242,74,.45); text-decoration: none; }
+.g-title { display: block; font-weight: 800; color: var(--ink); margin-bottom: .3rem; }
+.g-desc { display: block; color: var(--ink-2); font-size: .92rem; line-height: 1.5; }
+</style>"""
+    html = (
+        '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
+        '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
+        '<title>Page not found | BlvkWare</title>\n'
+        '<meta name="robots" content="noindex">\n'
+        '<link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">\n'
+        '<link rel="apple-touch-icon" href="/assets/logo-192.png">\n'
+        '<meta name="theme-color" content="#0A0908">\n%s\n%s\n</head>\n<body>\n<div class="wrap">\n'
+        '<a class="top" href="/"><span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>'
+        '<span class="wordmark">BlvkWare<span>.</span></span></a>\n'
+        '<div class="eyebrow">404</div>\n<h1>That page isn&rsquo;t here.</h1>\n'
+        '<p class="lede">The link may be old or mistyped. Here is where most people are headed.</p>\n'
+        '<ul class="guides">%s</ul>\n'
+        '<p>Looking for something else? Write to <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a>.</p>\n'
+        '</div>\n</body>\n</html>\n'
+    ) % (style, extra_css, cards)
+    with io.open(os.path.join(OUT_DIR, "404.html"), "w", encoding="utf-8") as fh:
+        fh.write(html)
+    print("Built docs/404.html")
+
+
 SITE_NAV = (
     ("/agents/", "Agents"),
     ("/sample-kit/", "Sample kit"),
@@ -1415,6 +1466,10 @@ SITE_NAV_CSS = """<style>
 .sitenav .sitenav-cta { color: #14170A; background: var(--accent, #D4F24A); padding: .5rem .9rem; border-radius: 8px; font-weight: 700; }
 .sitenav .sitenav-cta:hover { color: #14170A; filter: brightness(1.06); }
 @media (max-width: 720px) { .sitenav a:not(.sitenav-cta) { display: none; } }
+/* Links inside running text are underlined, not told apart by colour alone. */
+.wrap p a:not([class]), .wrap li:not(.guide) > a:not([class]), .wrap td a:not([class]) {
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2px; }
 </style>
 """
 
@@ -1431,11 +1486,15 @@ def add_site_nav():
     """
     top = re.compile(r'<a class="top" href="/">.*?</a>', re.S)
     count = 0
-    for dirpath, _dirs, files in os.walk(OUT_DIR):
-        if "index.html" not in files:
-            continue
+    pages = [(dirpath, "index.html") for dirpath, _d, files in os.walk(OUT_DIR) if "index.html" in files]
+    pages.append((OUT_DIR, "404.html"))
+    for dirpath, name in pages:
         rel = "/" + os.path.relpath(dirpath, OUT_DIR).replace(os.sep, "/") + "/"
-        path = os.path.join(dirpath, "index.html")
+        if name == "404.html":
+            rel = "/404/"
+        path = os.path.join(dirpath, name)
+        if not os.path.isfile(path):
+            continue
         with io.open(path, encoding="utf-8") as fh:
             html = fh.read()
         m = top.search(html)
@@ -1460,6 +1519,25 @@ GOOGLE_FONTS_IMPORT = re.compile(r"@import url\('https://fonts\.googleapis\.com/
 GOOGLE_FONTS_LINK = re.compile(r'<link[^>]*(?:fonts\.googleapis\.com|fonts\.gstatic\.com)[^>]*>\s*')
 FONT_HEAD = ('<link rel="preload" href="/assets/fonts/manrope-latin-400-800.woff2" as="font" '
              'type="font/woff2" crossorigin>\n<link rel="stylesheet" href="/assets/fonts/fonts.css">\n')
+
+
+def focusable_code_blocks():
+    """Let keyboard users scroll wide code blocks: a scrolling <pre> must be
+    able to take focus (WCAG 2.1.1), so every one gets tabindex="0"."""
+    count = 0
+    for dirpath, _dirs, files in os.walk(OUT_DIR):
+        for name in files:
+            if not name.endswith(".html"):
+                continue
+            path = os.path.join(dirpath, name)
+            with io.open(path, encoding="utf-8") as fh:
+                html = fh.read()
+            new = re.sub(r"<pre(?![^>]*tabindex)(?=[\s>])", '<pre tabindex="0"', html)
+            if new != html:
+                count += 1
+                with io.open(path, "w", encoding="utf-8") as fh:
+                    fh.write(new)
+    return count
 
 
 def self_host_fonts():
@@ -1824,6 +1902,7 @@ def main():
         return 1
 
     build_guides_page()
+    build_not_found_page()
     write_seo_files()
 
     print("Turned off code ligatures on %d pages" % disable_code_ligatures())
@@ -1832,6 +1911,7 @@ def main():
     print("Dated %d articles from git history" % complete_article_schema())
     print("Self-hosted fonts on %d pages" % self_host_fonts())
     print("Added the site header to %d pages" % add_site_nav())
+    print("Made code blocks focusable on %d pages" % focusable_code_blocks())
 
     # Pages would otherwise run the output through Jekyll.
     with io.open(os.path.join(OUT_DIR, ".nojekyll"), "w", encoding="utf-8") as fh:

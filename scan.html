@@ -14,7 +14,7 @@
     --line-2:    #423a2e;
     --ink:   #f5f0e6;
     --ink-2: #a89d8b;
-    --ink-3: #726858;
+    --ink-3: #958a76;
     --accent:     #d4f24a;
     --accent-ink: #d4f24a;
     --on-accent:  #14170a;
@@ -1447,7 +1447,7 @@ catch (e) { window.BLVK_CATALOG = null; }
     var H = 26 + rows.length * (BOXH + ROWPAD * 2) + (rows.length - 1) * GAPY + 26;
     var s = '<svg class="arch-svg" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="System architecture diagram">';
     s += '<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
-         '<path d="M0 0 10 5 0 10z" fill="#726858"/></marker></defs>';
+         '<path d="M0 0 10 5 0 10z" fill="#958a76"/></marker></defs>';
 
     var y = 26;
     rows.forEach(function (L, ri) {
@@ -1486,7 +1486,7 @@ catch (e) { window.BLVK_CATALOG = null; }
              'font-family="Inter,system-ui,sans-serif" font-size="12.5" font-weight="600">' + esc(nm) + '</text>';
         if (nd.tech) {
           var tc = nd.tech.length > Math.floor(bw / 5.6) ? nd.tech.slice(0, Math.floor(bw / 5.6) - 1) + '…' : nd.tech;
-          s += '<text x="' + (bx + bw / 2) + '" y="' + (by + 40) + '" text-anchor="middle" fill="#726858" ' +
+          s += '<text x="' + (bx + bw / 2) + '" y="' + (by + 40) + '" text-anchor="middle" fill="#958a76" ' +
                'font-family="ui-monospace,Menlo,Consolas,monospace" font-size="10.5">' + esc(tc) + '</text>';
         }
       });
@@ -1494,7 +1494,7 @@ catch (e) { window.BLVK_CATALOG = null; }
       if (ri < rows.length - 1) {
         var cx = W / 2, y1 = y + bandH, y2 = y + bandH + GAPY;
         s += '<line x1="' + cx + '" y1="' + y1 + '" x2="' + cx + '" y2="' + (y2 - 2) +
-             '" stroke="#726858" stroke-width="1.6" marker-end="url(#ah)"/>';
+             '" stroke="#958a76" stroke-width="1.6" marker-end="url(#ah)"/>';
       }
       y += bandH + GAPY;
     });
