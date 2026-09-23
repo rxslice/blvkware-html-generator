@@ -25,9 +25,9 @@ checks a day) that no longer matches the catalog or HALLUX.
 | Glama (pkgguard) | **Submitted for review 2026-09-23** (`rxslice/pkgguard-API`) | Wait for its page at glama.ai/mcp/servers/rxslice/pkgguard-API |
 | awesome-remote-mcp-servers | **PR opened**, [punkpeye/awesome-remote-mcp-servers#553](https://github.com/punkpeye/awesome-remote-mcp-servers/pull/553); submission check passed | Maintainer merge |
 | awesome-mcp-servers (pkgguard) | Ready, Security section | pkgguard's Glama page first, same reason |
-| Smithery | Ready: smithery.ai/new, URL `https://api.blvkware.dev/hallux/mcp` | Smithery login |
+| Smithery | Ready: smithery.ai/new, URL `https://api.blvkware.dev/hallux/mcp` | Your decision: the form fixes the namespace to the account's username (princeofswag666); a BlvkWare-named listing needs an organisation created first |
 | Show HN, Reddit, X, LinkedIn, Product Hunt, Indie Hackers | Copy in `kits.md` and `hallux.md` | Your accounts |
-| Gumroad listings | Add a link to `https://blvkware.dev/sample-kit/` in both descriptions | Gumroad login |
+| Gumroad listings | **Done 2026-09-23**: both descriptions carry a "Read a real kit first" section linking `https://blvkware.dev/sample-kit/`, verified on the public pages | Nothing |
 
 ## Images
 
