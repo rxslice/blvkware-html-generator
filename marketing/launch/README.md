@@ -13,6 +13,22 @@ Run `python marketing/launch/check.py` after editing any copy. It fails on a blo
 its limit, an em or en dash, a price the site does not charge, or a count (jobs, free
 checks a day) that no longer matches the catalog or HALLUX.
 
+## Status
+
+| Channel | Status | Needs |
+|---|---|---|
+| Official MCP Registry | **Listed 2026-09-22** as `dev.blvkware/hallux` (active) | Nothing. Updates: bump `version` in hallux `deploy/mcp-registry/server.json`, run `python dev/publish-registry.py publish` |
+| mcp.so | **Submitted 2026-09-22**, [chatmcp/mcpso#4310](https://github.com/chatmcp/mcpso/issues/4310) | Nothing; watch the issue |
+| mcpservers.org | **Submitted 2026-09-22**, free tier, review within 2 weeks | Nothing; approval email goes to russ@blvkware.dev |
+| PulseMCP | Submissions paused on their side; they help run the official registry | Re-check later |
+| Glama (HALLUX) | Imports from the official registry; not synced yet | Glama login (GitHub) to claim the connector (HTTP challenge on blvkware.dev) |
+| Glama (pkgguard) | Not indexed | Glama login to add `rxslice/pkgguard-API` |
+| awesome-remote-mcp-servers | Ready | HALLUX's Glama connector page must exist first (the entry carries its badge) |
+| awesome-mcp-servers (pkgguard) | Ready, Security section | pkgguard's Glama page first, same reason |
+| Smithery | Ready: smithery.ai/new, URL `https://api.blvkware.dev/hallux/mcp` | Smithery login |
+| Show HN, Reddit, X, LinkedIn, Product Hunt, Indie Hackers | Copy in `kits.md` and `hallux.md` | Your accounts |
+| Gumroad listings | Add a link to `https://blvkware.dev/sample-kit/` in both descriptions | Gumroad login |
+
 ## Images
 
 - Social cards, one per page: `docs/assets/og/<page>.png` (1200x630). Shared links pick
