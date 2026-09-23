@@ -21,9 +21,9 @@ checks a day) that no longer matches the catalog or HALLUX.
 | mcp.so | **Submitted 2026-09-22**, [chatmcp/mcpso#4310](https://github.com/chatmcp/mcpso/issues/4310) | Nothing; watch the issue |
 | mcpservers.org | **Submitted 2026-09-22**, free tier, review within 2 weeks | Nothing; approval email goes to russ@blvkware.dev |
 | PulseMCP | Submissions paused on their side; they help run the official registry | Re-check later |
-| Glama (HALLUX) | Imports from the official registry; not synced yet | Glama login (GitHub) to claim the connector (HTTP challenge on blvkware.dev) |
-| Glama (pkgguard) | Not indexed | Glama login to add `rxslice/pkgguard-API` |
-| awesome-remote-mcp-servers | Ready | HALLUX's Glama connector page must exist first (the entry carries its badge) |
+| Glama (HALLUX) | **Claimed 2026-09-23**, ownership verified (HTTP challenge served by the API at `/.well-known/glama.json`), thumbnail set; Healthy, TDQS A 4.3 | By hand: 3 categories (Developer Tools, Security, Coding Agents) and the Publisher profile; the form's pickers resist automation |
+| Glama (pkgguard) | **Submitted for review 2026-09-23** (`rxslice/pkgguard-API`) | Wait for its page at glama.ai/mcp/servers/rxslice/pkgguard-API |
+| awesome-remote-mcp-servers | **PR opened**, [punkpeye/awesome-remote-mcp-servers#553](https://github.com/punkpeye/awesome-remote-mcp-servers/pull/553); submission check passed | Maintainer merge |
 | awesome-mcp-servers (pkgguard) | Ready, Security section | pkgguard's Glama page first, same reason |
 | Smithery | Ready: smithery.ai/new, URL `https://api.blvkware.dev/hallux/mcp` | Smithery login |
 | Show HN, Reddit, X, LinkedIn, Product Hunt, Indie Hackers | Copy in `kits.md` and `hallux.md` | Your accounts |
