@@ -1230,7 +1230,15 @@ try {
 
     function markStale() {
         var s = document.getElementById("stale");
-        if (s) s.hidden = !shownFor || shownFor === designKey();
+        var current = !!shownFor && shownFor === designKey();
+        if (s) s.hidden = !shownFor || current;
+        // Once the kit on screen matches the design, the panel's button stops
+        // asking to see it again and takes the buyer to the buy button instead.
+        var go = document.getElementById("go");
+        var buy = document.getElementById("buy");
+        var buying = current && buy && !buy.hidden;
+        go.textContent = buying ? "Buy the kit" : "See your kit";
+        go.dataset.mode = buying ? "buy" : "see";
     }
 
     function renderSummary(q) {
@@ -1360,16 +1368,24 @@ try {
         }
         var q = E.price(state);
         shownFor = designKey();
-        markStale();
         renderSummary(q);
         renderBuy(q);
+        markStale();
         loadPreview();
         var sec = document.getElementById("spec");
         sec.classList.add("on");
         sec.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
-    document.getElementById("go").addEventListener("click", showKit);
+    document.getElementById("go").addEventListener("click", function () {
+        var buy = document.getElementById("buy");
+        if (this.dataset.mode === "buy" && buy && !buy.hidden) {
+            buy.scrollIntoView({ behavior: "smooth", block: "center" });
+            buy.focus({ preventScroll: true });
+            return;
+        }
+        showKit();
+    });
 
     function dlNote(text, cls, link) {
         var n = document.getElementById("dl-note");

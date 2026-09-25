@@ -5,7 +5,7 @@
 // body[data-ready] once fonts have loaded and the text has been fitted, so a
 // card is never captured mid-layout.
 import { spawn } from "node:child_process";
-import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -18,10 +18,13 @@ const EDGE = [
 ].find(existsSync);
 if (!EDGE) { console.error("no Edge or Chrome found"); process.exit(2); }
 
+// A throwaway browser profile; Edge fills it with ~100 MB of caches, so it is
+// removed on exit rather than left in %TEMP% after every render.
+const profile = mkdtempSync(join(tmpdir(), "og-"));
 const port = 9800 + Math.floor(Math.random() * 150);
 const edge = spawn(EDGE, ["--headless=new", "--disable-gpu", "--hide-scrollbars",
   "--allow-file-access-from-files", `--remote-debugging-port=${port}`,
-  `--user-data-dir=${mkdtempSync(join(tmpdir(), "og-"))}`, "--window-size=1200,630", "about:blank"],
+  `--user-data-dir=${profile}`, "--window-size=1200,630", "about:blank"],
   { stdio: "ignore" });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 let target;
@@ -55,4 +58,6 @@ for (const job of jobs) {
 }
 ws.close();
 edge.kill();
+await new Promise((r) => { edge.once("exit", r); setTimeout(r, 3000); });
+try { rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 }); } catch {}
 process.exit(failed ? 1 : 0);
