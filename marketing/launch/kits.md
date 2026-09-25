@@ -43,6 +43,72 @@ What it is not: running software. You, or whoever builds for you, load it into O
 One person built this. I would genuinely like to know which job you would give an agent first.
 ```
 
+### Product Hunt extras
+
+**Video.** `marketing/video/out/blvkware-kits-demo.mp4`: 94 s, 1080p, captioned, no
+sound needed. It is a real run of the live kit page (pick a job, tick systems, choose
+capabilities, set autonomy, write the never-do rule, see the file list, the buy button,
+the sample kit). Rebuild with `node marketing/video/record.mjs` after the page changes.
+Upload it to YouTube as **Unlisted** or Public with `youtube-thumbnail.jpg`, then paste
+the link into the PH "Video / Loom" field. PH only takes YouTube or Loom links.
+
+```post name="YouTube title" limit=100
+BlvkWare Agent Kits: design an AI agent for one job, see every file before you pay
+```
+
+```post name="YouTube description" limit=5000
+A walk through the kit page at https://blvkware.dev/hire/
+
+You pick the job an agent should own, tick the systems it may touch, choose what it handles, set how much it may do on its own (every kit starts at Draft: anything a customer would see waits for a person), and write down what it must never do. The page then lists every file in your kit before you pay: instructions, tools in OpenAI, Anthropic and MCP formats, a workflow per task, record schemas, guardrails and acceptance tests.
+
+$79 for an agent that owns one job, $199 for one that runs a whole function. One-off.
+
+Read a complete sample kit first, free: https://blvkware.dev/sample-kit/
+```
+
+**Animated thumbnail.** `marketing/video/out/ph-thumbnail.gif` (240x240, 166 KB, loops):
+the mark, the kit's folders, the $79 price, "See it first". PH accepts GIF thumbnails;
+movement in the feed is what earns the click. Rebuild with `python marketing/video/thumb.py`.
+
+**Hunter.** Keep yourself. A hunter no longer brings their followers to a launch (PH
+stopped notifying followers of hunts), and a self-hunted launch is ranked the same way.
+Swap only if someone with real reach in small-business or AI circles offers.
+
+**Makers.** `@blvkware` is right. Add anyone else only if they actually built part of it:
+PH shows makers as the people answering comments.
+
+**Shoutouts.** Each becomes a founder review on that product's PH page, linking back.
+Only name tools the kits really run on. The three below are true of this stack.
+
+```post name="PH shoutout: Claude" limit=500
+The kit generator, the site and the kit service were built with Claude as a pair programmer, and the kits themselves ship tool definitions in Anthropic's format. It helped most with the careful parts: the guardrails, the autonomy levels and the acceptance tests every kit carries.
+```
+
+```post name="PH shoutout: Gumroad" limit=500
+Gumroad takes the payments and issues the licence key that unlocks each kit download. No store to build, refunds and disputes handled, and the licence API made it simple to stop a refunded key from downloading. For a one-person product it was the fastest honest way to sell.
+```
+
+```post name="PH shoutout: Netlify" limit=500
+The kit service runs as Netlify Functions: it previews the exact file list before you pay and generates the kit when you download it. Functions let a static site do the one thing that needs a server, without me running one.
+```
+
+Optional fourth if PH lists it: GitHub (the site is served by GitHub Pages).
+
+**Launch-day replies.** Answer every comment within the hour, in your own words; these
+are starting points for the questions most likely to come.
+
+```post name="PH reply: is it just prompts" limit=800
+Fair question. The prompt is one file out of the twenty-plus in a kit. The rest is what makes an agent safe to switch on: a tool definition per action in OpenAI, Anthropic and MCP formats, each marked read-only or external, a step-by-step workflow per task, JSON schemas for the records it keeps, the approval rules, and acceptance tests it has to pass. The free sample shows all of it: https://blvkware.dev/sample-kit/
+```
+
+```post name="PH reply: does it run the agent" limit=800
+No, and that is deliberate. It is the specification a builder needs, not hosted software, so you keep your own model account, your own data and no monthly fee. You, or whoever builds for you, load it into OpenAI or Anthropic tool calling, any MCP client, or n8n, Make and Zapier.
+```
+
+```post name="PH reply: why not ChatGPT" limit=800
+You could get a prompt from ChatGPT. What you would not get is the part that takes the time: which of your systems it may touch and how, what it may do alone at each autonomy level, what must wait for a person, and tests that prove it before it talks to a customer. The kit is generated from your answers, so those are written for your business, and you see every file before you pay.
+```
+
 ## LinkedIn
 
 Attach: `marketing/kits/out/operator-ad-landscape-1200x628.png`

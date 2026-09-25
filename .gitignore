@@ -21,3 +21,6 @@ dev/.indexnow-key
 # never published, and regenerated on every build.
 ops/console.built.html
 ops/*.json
+
+# The demo video is rebuilt by marketing/video/record.mjs; too big for git.
+marketing/video/out/*.mp4

@@ -1,0 +1,31 @@
+<!doctype html>
+<!-- Animated Product Hunt thumbnail, 240x240. Rendered frame by frame by thumb.mjs (?f=0..N). -->
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: Manrope; src: url(../../docs/assets/fonts/manrope-latin-400-800.woff2) format("woff2"); font-weight: 400 800; }
+  @font-face { font-family: "Fira Code"; src: url(../../docs/assets/fonts/firacode-latin-400-500.woff2) format("woff2"); font-weight: 400 500; }
+  html, body { margin: 0; width: 480px; height: 480px; overflow: hidden; background: #0A0908; }
+  .t { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; text-align: center;
+    background: radial-gradient(260px 220px at 50% 36%, rgba(212,242,74,.13), transparent 72%), #0A0908;
+    font-family: Manrope, system-ui, sans-serif; color: #F5F0E6; }
+  img { width: 176px; height: 176px; border-radius: 40px; }
+  .word { margin-top: 26px; font-size: 54px; font-weight: 800; letter-spacing: -.04em; line-height: 1; }
+  .word em { font-style: normal; color: #D4F24A; }
+  .kit { position: absolute; inset: 44px; border-radius: 30px; background: #15120E; border: 2px solid rgba(245,240,230,.12);
+    padding: 34px 36px; font-family: "Fira Code", ui-monospace, monospace; font-size: 30px; line-height: 1.55; color: #B3A894; text-align: left; }
+  .kit .d { color: #D9B65C; } .kit .h { color: #F5F0E6; }
+  .price { position: absolute; right: 30px; bottom: 30px; background: #D4F24A; color: #15170A; font-family: Manrope, sans-serif;
+    font-weight: 800; font-size: 50px; padding: 6px 18px 10px; border-radius: 16px; letter-spacing: -.03em; }
+</style>
+<div id="stage"></div>
+<script>
+  // Four scenes: the mark, the kit's files, the price, back to the mark.
+  var f = +(new URLSearchParams(location.search).get("f") || 0);
+  var scenes = [
+    '<div class="t"><img src="../../docs/assets/logo-512.png"><div class="word">Agent <em>kits</em></div></div>',
+    '<div class="t"><div class="kit"><span class="h">agent.json</span><br><span class="d">prompts/</span><br><span class="d">tools/</span><br><span class="d">workflows/</span><br><span class="h">tests/</span></div></div>',
+    '<div class="t"><div class="kit"><span class="h">agent.json</span><br><span class="d">prompts/</span><br><span class="d">tools/</span><br><span class="d">workflows/</span><br><span class="h">tests/</span></div><div class="price">$79</div></div>',
+    '<div class="t"><img src="../../docs/assets/logo-512.png"><div class="word">See it <em>first</em></div></div>'
+  ];
+  document.getElementById("stage").innerHTML = scenes[f % scenes.length];
+</script>
