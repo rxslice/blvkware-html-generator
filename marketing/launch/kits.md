@@ -28,7 +28,7 @@ Every file your AI agent needs, designed from your answers
 ```
 
 ```post name="PH description" limit=260
-Pick the job an agent should own. Answer a few questions. Get its instructions, tools (OpenAI, Anthropic, MCP), workflows, records, guardrails and acceptance tests. Every file shown before you pay. $79 or $199, one-off.
+Pick the job an agent should own. Answer a few questions. Get its instructions, tools (OpenAI, Anthropic, MCP), workflows, records, tests and a Python runtime that enforces its rules in code. Every file shown before you pay. $79 or $199, one-off.
 ```
 
 ```post name="PH first comment" limit=1500
@@ -111,6 +111,41 @@ Partly, and deliberately not hosted. The kit includes a runtime that enforces th
 You could get a prompt from ChatGPT. What you would not get is the part that takes the time: which of your systems it may touch and how, what it may do alone at each autonomy level, what must wait for a person, and tests that prove it before it talks to a customer. The kit is generated from your answers, so those are written for your business, and you see every file before you pay.
 ```
 
+The rest of the likely questions, written looser so they read like you and not like a
+FAQ. Change anything that does not sound like you.
+
+```post name="PH reply: do I need a developer" limit=800
+Honestly, somewhat technical helps. If you've wired up a Zapier or n8n flow before, you can do most of it: the workflows map straight onto those. For the Python route you'd fill in one small function per tool (it's documented right there in handlers.py) and add your model key. If you've never touched either, hand the kit to whoever builds for you. It's written so they don't have to guess anything.
+```
+
+```post name="PH reply: what does it cost to run" limit=800
+The kit's a one-off, and nothing in it bills you monthly. Running it costs whatever your model provider charges for the calls (your own OpenAI or Anthropic account) plus whatever your own tools cost, like a phone number if it texts. The runtime itself is plain Python with nothing to install, so it runs on the machine you already have.
+```
+
+```post name="PH reply: my data" limit=800
+Good thing to ask. The kit service builds your kit and forgets it: your design isn't stored and no copy of the kit is kept. The licence just remembers which job it was bought for. Once you download it, it's all on your side: your model account, your systems, your data. It has no credentials in it and phones home to nobody.
+```
+
+```post name="PH reply: vs hosted agent platforms" limit=800
+They're good if you want someone else to run it. This is for when you'd rather own it: no monthly seat, your data stays in your accounts, and the rules live in files you can read and change, not in a vendor's settings page. Plenty of people will want the hosted route, and that's fair. This is the other option.
+```
+
+```post name="PH reply: which models" limit=800
+Anything with tool calling. The tools ship in OpenAI, Anthropic and MCP formats, and there are working loops for both OpenAI and Anthropic in the kit. The MCP server means Claude Desktop or Claude Code can drive it directly too, and the same rules still apply to every call.
+```
+
+```post name="PH reply: what if it gets it wrong" limit=800
+That's the whole design, really. It starts at Draft, so anything a customer would see waits for you to approve it first. The runtime also holds any draft that names a price or a date, or that breaks one of your own "never" rules, even at higher levels. Every action is logged in a chain you can verify, so you can always see what it did and why. You only loosen it once you've watched it work.
+```
+
+```post name="PH reply: refunds" limit=800
+You see the full file list and price for your exact design before you pay, so there shouldn't be surprises. If there are, Gumroad's money-back guarantee on the product page applies, and a refunded key just stops downloading. No hoops.
+```
+
+```post name="PH reply: thanks" limit=800
+Thank you, really appreciate you taking a look. If you try the kit page, I'd love to know which job you picked and whether anything in the file list surprised you.
+```
+
 ## Gumroad listings (updated and pasted 2026-09-27)
 
 Paste into each product's description; covers and thumbnail are re-rendered in
@@ -167,7 +202,7 @@ The job that quietly costs the most is usually one nobody owns: the quote nobody
 
 I have been building AI agent kits for exactly those jobs. You pick the job, answer a few questions about your business, choose which of your systems it may touch, and set how much it may do on its own. The kit is everything a builder needs to make that agent real: its instructions, its tools in OpenAI, Anthropic and MCP formats, a workflow per task, the records it keeps, the rules it must never break, and the tests it has to pass before it talks to a customer.
 
-It starts at Draft. Anything a customer would see waits for a person until you decide otherwise.
+It starts at Draft. Anything a customer would see waits for a person until you decide otherwise. And that is enforced, not just requested: every kit ships a small runtime that checks each action before it runs, keeps the approval queue and a tamper-evident log, and never contacts anyone who opted out.
 
 You see every file before you pay. $79 for an agent that owns one job, $199 for one that runs a whole function. One-off.
 
@@ -199,6 +234,22 @@ Every agent starts at Draft. It keeps your records straight, and anything a cust
 Yours is generated from your answers: your job, your "never" list, your systems, your channels. The kit page shows every file before you pay. $79 for one job, $199 for a whole function. One-off.
 
 https://blvkware.dev/hire/
+```
+
+Launch day only, posted on its own (not in the thread) once the PH page is live. PH frowns
+on asking for upvotes, so it asks for opinions instead.
+
+```post name="X launch day" limit=280
+BlvkWare Agent Kits is live on Product Hunt today.
+
+Design an AI agent for one job in your business and see every file before you pay. The rules are enforced in code, not just asked for in a prompt.
+
+Honest takes welcome:
+https://www.producthunt.com/products/blvkware-agent-kits
+```
+
+```post name="LinkedIn launch day comment" limit=1250
+It is on Product Hunt today, if you would like to see what people make of it or ask me anything there: https://www.producthunt.com/products/blvkware-agent-kits
 ```
 
 ## Reddit
