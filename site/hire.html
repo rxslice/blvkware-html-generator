@@ -374,7 +374,7 @@
 
     <div class="eyebrow">Design the agent · Download the kit · Build it your way</div>
     <h1>Design your agent, <em>download the kit.</em></h1>
-    <p class="lede">Pick the job and what it has to handle. You get the complete kit for that one agent: its instructions, every tool it may use and what each one is allowed to do, its workflows, the records it keeps, its approval rules, and the tests it has to pass. Load it into whatever you build with.</p>
+    <p class="lede">Pick the job and what it has to handle. You get the complete kit for that one agent: its instructions, every tool it may use and what each one is allowed to do, its workflows, the records it keeps, its approval rules, the tests it has to pass, and the code that enforces those rules. Load it into whatever you build with.</p>
     <p class="hero-foot">{{KIT1_PRICE}} for an agent that owns one job. {{KIT2_PRICE}} for one that runs a whole function. You see every file before you pay.</p>
 
     <div class="rule"></div>
@@ -527,6 +527,7 @@
         <details class="faq">
             <summary>What exactly is in it?</summary>
             <p>The agent's instructions, written for your business with your rules built in. Its tools, in OpenAI, Anthropic and MCP formats, each marked read, internal or external. A workflow per capability: what starts it, the steps in order, and which steps wait for approval. JSON Schemas for every record it keeps, including an approval queue and an audit log. An autonomy policy with four levels. A setup checklist of the facts only you can supply, integration notes for each of your systems, and acceptance tests.</p>
+            <p>And the part most kits leave to you: a small runtime, in plain Python with nothing to install, that sits between the model and your systems and makes the rules hold in code. It checks every tool call against the autonomy level, keeps a real approval queue and a tamper-evident log, never contacts anyone who opted out, holds sends until morning in quiet hours, and holds any draft that names a price, a date or breaks one of your own rules. It ships with tests you can run to prove it, and working loops for OpenAI and Anthropic.</p>
             <p>Press "See your kit" above and the full file list for your design appears, before you pay anything. Want to read what is inside one first? <a href="/sample-kit/">Here is a complete sample kit</a>, every file, free.</p>
         </details>
 
@@ -550,7 +551,7 @@
 
         <details class="faq">
             <summary>What stops the agent doing something it shouldn't?</summary>
-            <p>The kit is written so that it starts at Draft, where anything a customer would see waits for a person. Every tool carries its effect, and the autonomy policy says which effects each level allows, so whoever builds it can enforce the rules in code rather than only in the prompt. Every action is logged before it happens, opt-outs are permanent, nothing is sent in quiet hours, and instructions that arrive inside a customer's message are treated as information, never as orders.</p>
+            <p>The kit is written so that it starts at Draft, where anything a customer would see waits for a person. Every tool carries its effect, and the autonomy policy says which effects each level allows, and the kit includes the code that enforces it, so the rules hold even when the model gets it wrong. Every action is logged before it happens, opt-outs are permanent, nothing is sent in quiet hours, instructions that arrive inside a customer's message are treated as information, never as orders, and a draft that promises a price or a date, or breaks one of your own rules, waits for a person. The kit's own tests prove each of those before you switch it on.</p>
             <p>How it behaves once built is under your control, which is why the kit keeps it at Draft until its acceptance tests pass. <a href="/how-agents-are-controlled/">How agents are controlled</a> covers credentials, logs and the stop in full.</p>
         </details>
 
