@@ -14,10 +14,10 @@ catalog `https://blvkware.dev/agents/` · free job finder `https://blvkware.dev/
 
 ## Product Hunt
 
-Gallery: `marketing/kits/out/operator-gumroad-cover-1-hero.png`,
-`operator-gumroad-cover-2-inside.png`, `operator-gumroad-cover-3-how.png`,
-`docs/assets/og/sample-kit.png`. Thumbnail: `operator-gumroad-thumbnail.png`.
-Topics: Artificial Intelligence, Productivity, Small Business, No-Code.
+Live gallery order (2026-09-27): `docs/assets/og/hire.png`, `docs/assets/og/sample-kit.png`,
+the YouTube demo, `marketing/kits/out/operator-gumroad-cover-1-hero.png`, `-3-how.png`,
+`-2-inside.png`. Thumbnail: `marketing/video/out/ph-thumbnail.gif`.
+Launch tags: Productivity, Artificial Intelligence, No-Code.
 
 ```post name="PH name" limit=40
 BlvkWare Agent Kits
@@ -38,7 +38,9 @@ So that is what a kit is. You pick the job (chasing quotes, answering the inbox,
 
 The kit page lists every file your kit will contain, with the price, before you pay. If you want to read one first, there is a complete sample kit here, every file, free: https://blvkware.dev/sample-kit/
 
-What it is not: running software. You, or whoever builds for you, load it into OpenAI or Anthropic tool calling, any MCP client, or n8n, Make and Zapier.
+The part I care most about: the rules are not just asked for in a prompt. Every kit ships a small Python runtime (nothing to install) that checks each action before it runs, holds anything customer-facing in an approval queue with its own approvals page, keeps a tamper-evident log, and honours opt-outs and quiet hours. It also runs as an MCP server, so you can try the agent in Claude Desktop.
+
+What it is not: hosted software. You keep your own model account and data, and wire it into OpenAI or Anthropic tool calling, any MCP client, or n8n, Make and Zapier.
 
 One person built this. I would genuinely like to know which job you would give an agent first.
 ```
@@ -98,18 +100,18 @@ Optional fourth if PH lists it: GitHub (the site is served by GitHub Pages).
 are starting points for the questions most likely to come.
 
 ```post name="PH reply: is it just prompts" limit=800
-Fair question. The prompt is one file out of the twenty-plus in a kit. The rest is what makes an agent safe to switch on: a tool definition per action in OpenAI, Anthropic and MCP formats, each marked read-only or external, a step-by-step workflow per task, JSON schemas for the records it keeps, the approval rules, and acceptance tests it has to pass. The free sample shows all of it: https://blvkware.dev/sample-kit/
+Fair question. The prompt is one file out of about fifty in a kit. The rest is what makes an agent safe to switch on: a tool definition per action in OpenAI, Anthropic and MCP formats, each marked read, internal or external, a workflow per task, JSON schemas for the records it keeps, and a small Python runtime that enforces the approval rules in code, with tests you can run to prove it. The free sample shows all of it: https://blvkware.dev/sample-kit/
 ```
 
 ```post name="PH reply: does it run the agent" limit=800
-No, and that is deliberate. It is the specification a builder needs, not hosted software, so you keep your own model account, your own data and no monthly fee. You, or whoever builds for you, load it into OpenAI or Anthropic tool calling, any MCP client, or n8n, Make and Zapier.
+Partly, and deliberately not hosted. The kit includes a runtime that enforces the rules around your model calls (approvals, opt-outs, quiet hours, an audit log) plus working loops for OpenAI and Anthropic and an MCP server, so you can run it on your own machine today. What you add is your model key and the handlers that talk to your own systems, one documented function per tool. No monthly fee, and your data never passes through me.
 ```
 
 ```post name="PH reply: why not ChatGPT" limit=800
 You could get a prompt from ChatGPT. What you would not get is the part that takes the time: which of your systems it may touch and how, what it may do alone at each autonomy level, what must wait for a person, and tests that prove it before it talks to a customer. The kit is generated from your answers, so those are written for your business, and you see every file before you pay.
 ```
 
-## Gumroad listings (updated 2026-09-27, not yet pasted)
+## Gumroad listings (updated and pasted 2026-09-27)
 
 Paste into each product's description; covers and thumbnail are re-rendered in
 `marketing/kits/out/` (operator-* and deputy-*) with the current counts.
@@ -217,7 +219,7 @@ What you get is a kit: the agent's instructions, its tools in OpenAI, Anthropic 
 
 To show what that actually means, here is a complete sample kit for a fictional plumbing business, every file readable in the browser, no email required: https://blvkware.dev/sample-kit/
 
-It is not running software, and I say so on the page: you or a developer load it into the tools you already use.
+It also ships a small Python runtime that enforces those rules in code (approval queue, opt-outs, quiet hours, a tamper-evident log). It is not hosted: you or a developer connect it to your own model account and systems.
 
 Pricing is on the page: $79 for an agent that owns one job, $199 for one that runs a whole function, one-off. Happy to answer anything, including "why would I not just prompt ChatGPT".
 ```
@@ -232,6 +234,8 @@ Selling AI agent specifications instead of AI agents: $79 kits, every file shown
 I retired a done-for-you agent service in favour of self-serve kits, because every sale needed me on a call and every build needed me after it. A kit is the part of that work that can be generated: the agent's instructions, tools, workflows, records, guardrails and tests, written from the buyer's answers.
 
 How it sells without me: the buyer designs the agent on the site, the kit page lists every file and the price, Gumroad takes the payment, and the licence key downloads the zip. Nobody talks to anybody unless they want to.
+
+The part that made it worth the price, I think: the rules are enforced, not just written down. Every kit ships a small stdlib Python runtime that checks each action before it runs, holds anything customer-facing for approval, keeps a hash-chained audit log and honours opt-outs, with tests the buyer can run. It doubles as an MCP server.
 
 The conversion bet is transparency. The file list is shown before payment, and there is now a complete sample kit anyone can read: https://blvkware.dev/sample-kit/
 

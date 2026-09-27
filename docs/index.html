@@ -80,7 +80,7 @@
       "brand": {
         "@id": "https://blvkware.dev/#org"
       },
-      "description": "The complete specification of one AI agent, generated from the buyer's answers: a system prompt written for their business, tool definitions in OpenAI, Anthropic and MCP formats with each tool marked read, internal or external, a workflow per capability, JSON Schemas for its records including an approval queue and audit log, an autonomy policy that starts at Draft, a setup checklist, integration notes and acceptance tests. A download, not running software.",
+      "description": "The complete specification of one AI agent, generated from the buyer's answers: a system prompt written for their business, tool definitions in OpenAI, Anthropic and MCP formats with each tool marked read, internal or external, a workflow per capability, JSON Schemas for its records including an approval queue and audit log, an autonomy policy that starts at Draft, a small Python runtime that enforces those rules in code, a setup checklist, integration notes and acceptance tests. A download, not hosted software.",
       "offers": [
         {
           "@type": "Offer",
@@ -1393,12 +1393,12 @@
                 <div class="ops-note fade-in">
                     <div class="ops-col">
                         <p class="ops-h">What a kit is</p>
-                        <p>The complete specification of one agent: its instructions, the tools it may call and what each one may change, a workflow per capability, the records it keeps, the rules that hold it back, a setup checklist and its acceptance tests.</p>
-                        <p>Every file is plain JSON or Markdown, written for the tools you already use. <a href="/sample-kit/" style="color:var(--color-primary-accent)">Read a complete sample kit</a>, every file, free.</p>
+                        <p>The complete specification of one agent: its instructions, the tools it may call and what each one may change, a workflow per capability, the records it keeps, the rules that hold it back, a small runtime that enforces them in code, a setup checklist and its acceptance tests.</p>
+                        <p>Every file is plain JSON, Markdown or Python, written for the tools you already use. <a href="/sample-kit/" style="color:var(--color-primary-accent)">Read a complete sample kit</a>, every file, free.</p>
                     </div>
                     <div class="ops-col">
                         <p class="ops-h">What it is not</p>
-                        <p>Running software. It does not connect to your systems by itself and holds no credentials. You, or whoever builds for you, load it into OpenAI or Anthropic models with tool calling, any MCP client, or n8n, Make or Zapier.</p>
+                        <p>Hosted software. It holds no credentials and does not connect to your systems until you, or whoever builds for you, fill in its handlers and plug it into OpenAI or Anthropic models with tool calling, any MCP client, or n8n, Make or Zapier.</p>
                         <p>What running it costs, like model usage or a phone number, is between you and those providers.</p>
                     </div>
                     <div class="ops-col">
