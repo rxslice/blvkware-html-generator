@@ -109,6 +109,51 @@ No, and that is deliberate. It is the specification a builder needs, not hosted 
 You could get a prompt from ChatGPT. What you would not get is the part that takes the time: which of your systems it may touch and how, what it may do alone at each autonomy level, what must wait for a person, and tests that prove it before it talks to a customer. The kit is generated from your answers, so those are written for your business, and you see every file before you pay.
 ```
 
+## Gumroad listings (updated 2026-09-27, not yet pasted)
+
+Paste into each product's description; covers and thumbnail are re-rendered in
+`marketing/kits/out/` (operator-* and deputy-*) with the current counts.
+
+```post name="Gumroad Operator description" limit=2500
+An AI agent that owns one job in your business, start to finish, specified down to the last file and generated from your own answers.
+
+You design it first at blvkware.dev/hire: pick the job (chasing quotes, answering the inbox, booking, collections and 19 more), tick the systems it may touch, write down what it must never do, and set how much it may do on its own. The page shows every file in your kit before you pay.
+
+What you download:
+- Its instructions, written for your business with your "never do" rules built in word for word
+- Its tools in OpenAI, Anthropic and MCP formats, each marked read, internal or external
+- A workflow per task: what starts it, the steps in order, which steps wait for your approval
+- A JSON Schema for every record it keeps, including an approval queue and an audit log
+- An autonomy policy with four levels. It starts at Draft: nothing reaches a customer unapproved
+- The rules, in code: a small Python runtime that sits between the model and your systems and checks every action first. It keeps a real approval queue with its own approvals page, a tamper-evident log, never contacts anyone who opted out, holds sends until morning, and holds any draft that names a price or a date or breaks one of your rules
+- A handlers file with one documented function per tool, ready for your own systems
+- Tests you can run that prove every one of those rules holds, plus working loops for OpenAI and Anthropic
+
+It is not hosted software and contains no credentials: you, or whoever builds for you, run it with your own model account. Read a complete sample kit first, free: blvkware.dev/sample-kit
+
+$79, one-off. Change the design and download again, up to 20 times.
+```
+
+```post name="Gumroad Deputy description" limit=2500
+One AI agent for a whole function (front desk, revenue, back office or e-commerce), specified down to the last file and generated from your own answers.
+
+A Deputy works across more systems and channels, makes judgment calls and escalates the exceptions. You design it at blvkware.dev/hire and see every file before you pay; a Deputy key also covers any Operator-sized design.
+
+What you download:
+- Its instructions, written for your business with your "never do" rules built in word for word
+- Its tools in OpenAI, Anthropic and MCP formats, each marked read, internal or external
+- A workflow per task, with the steps that wait for your approval marked
+- A JSON Schema for every record it keeps, including an approval queue and an audit log
+- An autonomy policy with four levels, starting at Draft
+- The rules, in code: a small Python runtime that checks every action before it runs. It keeps a real approval queue with its own approvals page, a tamper-evident log, honours opt-outs and quiet hours, holds refunds above your limit, and holds any draft that names a price or a date or breaks one of your rules
+- A handlers file with one documented function per tool, ready for your own systems
+- Tests you can run that prove every one of those rules holds, plus working loops for OpenAI and Anthropic
+
+It is not hosted software and contains no credentials. Read a complete sample kit first, free: blvkware.dev/sample-kit
+
+$199, one-off. Change the design and download again, up to 20 times.
+```
+
 ## LinkedIn
 
 Attach: `marketing/kits/out/operator-ad-landscape-1200x628.png`

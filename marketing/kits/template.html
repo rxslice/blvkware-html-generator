@@ -148,14 +148,15 @@ const KITS = {
     adSub: "An AI agent that owns one job, start to finish.",
     roles: ["Follow-Up Agent", "Email Manager", "Appointment Setter", "Lead Qualifier", "Support Agent", "Collections Agent", "Research Agent"],
     rolesMore: "+12 more roles",
-    example: { role: "Follow-Up Agent", files: 39, workflows: 7, schemas: 8 },
+    example: { role: "Follow-Up Agent", files: 50, workflows: 7, schemas: 8 },
     tree: [
       ["README.md", "hot"], ["SETUP.md", "hot"], ["agent.json", ""],
       ["prompts/", "dir"], ["  system.md", "hot"], ["  capabilities/quote.followup.md", ""],
       ["tools/", "dir"], ["  openai.json", ""], ["  anthropic.json", ""], ["  mcp.json", ""],
       ["workflows/", "dir"], ["  quote.followup.json", "hot", "+6"],
       ["schemas/records/", "dir"], ["  approval.schema.json", "", "+7"],
-      ["policies/autonomy.json", ""], ["tests/acceptance.md", ""],
+      ["policies/autonomy.json", ""],
+      ["runtime/", "dir"], ["  blvk_runtime.py", "hot", "+8"],
     ],
   },
   deputy: {
@@ -166,7 +167,7 @@ const KITS = {
     adSub: "Front desk, revenue, back office or e‑commerce, with judgment and escalation built in.",
     roles: ["Front Desk", "Revenue Deputy", "Back Office", "E-commerce Deputy"],
     rolesMore: "+ any Operator-sized design",
-    example: { role: "Front Desk", files: 53, workflows: 12, schemas: 9 },
+    example: { role: "Front Desk", files: 64, workflows: 12, schemas: 9 },
     tree: [
       ["README.md", "hot"], ["SETUP.md", "hot"], ["agent.json", ""],
       ["prompts/", "dir"], ["  system.md", "hot"], ["  capabilities/voice.inbound.md", "", "+11"],
@@ -174,7 +175,7 @@ const KITS = {
       ["integrations/", "dir"], ["  telephony.md", "", "+3"],
       ["workflows/", "dir"], ["  email.triage.json", "hot", "+11"],
       ["schemas/records/", "dir"], ["  approval.schema.json", "", "+8"],
-      ["policies/autonomy.json", ""],
+      ["runtime/", "dir"], ["  blvk_runtime.py", "hot", "+8"],
     ],
   },
 };
@@ -226,7 +227,7 @@ const LAYOUTS = {
         </div>
         ${tree()}
       </div>
-      <div class="bottom"><span>Instructions · Tools · Workflows · Schemas · Policies · Tests</span><span><b>blvkware.dev/hire</b></span></div>
+      <div class="bottom"><span>Instructions · Tools · Workflows · Schemas · Policies · Runtime · Tests</span><span><b>blvkware.dev/hire</b></span></div>
     </div>`,
 
   inside: () => `
@@ -239,12 +240,12 @@ const LAYOUTS = {
           <div class="tile"><div class="k">prompts/system.md</div><div class="t">Instructions</div><div class="d">Written for your business, with your own "never do" rules built in word for word.</div></div>
           <div class="tile"><div class="k">tools/*.json</div><div class="t">Tools</div><div class="d">Every action it can take, for OpenAI, Anthropic and MCP, each marked read, internal or external.</div></div>
           <div class="tile"><div class="k">workflows/*.json</div><div class="t">Workflows</div><div class="d">What starts each job, the steps in order, and which steps wait for your approval.</div></div>
-          <div class="tile"><div class="k">schemas/records/</div><div class="t">Record schemas</div><div class="d">JSON Schema for everything it keeps, always with an approval queue and an audit log.</div></div>
-          <div class="tile"><div class="k">policies/autonomy.json</div><div class="t">Autonomy policy</div><div class="d">Four levels from Watch to Operate. It starts at Draft: nothing reaches a customer unapproved.</div></div>
-          <div class="tile"><div class="k">tests/acceptance.md</div><div class="t">Setup and tests</div><div class="d">The facts only you can supply, and a test that proves each capability works.</div></div>
+          <div class="tile"><div class="k">policies/ · schemas/</div><div class="t">Autonomy and records</div><div class="d">Four levels from Watch to Operate, starting at Draft, and a JSON Schema for everything it keeps.</div></div>
+          <div class="tile"><div class="k">runtime/</div><div class="t">The rules, in code</div><div class="d">Approvals page, tamper-evident log, opt-outs and quiet hours, enforced before any action runs.</div></div>
+          <div class="tile"><div class="k">tests/acceptance.md</div><div class="t">Setup and tests</div><div class="d">The facts only you can supply, and tests you can run that prove the rules hold.</div></div>
         </div>
       </div>
-      <div class="bottom"><span>Plain JSON and Markdown. Works with the tools you already use.</span><span><b>${K.price}</b> one-off</span></div>
+      <div class="bottom"><span>Plain JSON, Markdown and Python. Works with the tools you already use.</span><span><b>${K.price}</b> one-off</span></div>
     </div>`,
 
   how: () => `
