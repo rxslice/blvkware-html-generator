@@ -215,7 +215,7 @@ Solo builder here. The thing I kept seeing small businesses stuck on with AI age
 
 So I built a configurator that writes that specification for you. You pick the job (quote follow-up, inbox, booking, collections, returns: 23 in the catalog), describe your business and the rules it must never break, choose the systems it touches, and set how much it may do alone. It starts at Draft, so anything a customer would see waits for a person.
 
-What you get is a kit: the agent's instructions, its tools in OpenAI, Anthropic and MCP formats, a workflow per task (usable in n8n, Make or Zapier), record schemas, guardrails and acceptance tests. Plain JSON and Markdown.
+What you get is a kit: the agent's instructions, its tools in OpenAI, Anthropic and MCP formats, a workflow per task (usable in n8n, Make or Zapier), record schemas, guardrails and acceptance tests, plus a small Python runtime that enforces the rules. Plain JSON, Markdown and Python.
 
 To show what that actually means, here is a complete sample kit for a fictional plumbing business, every file readable in the browser, no email required: https://blvkware.dev/sample-kit/
 

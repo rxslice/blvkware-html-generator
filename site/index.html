@@ -1047,6 +1047,9 @@
     <main>
         <section id="hero">
             <div class="container hero-content">
+<a class="ph-live" id="ph-live" hidden href="https://www.producthunt.com/products/blvkware-agent-kits?launch=blvkware-agent-kits" rel="noopener"><span class="ph-dot"></span><span id="ph-live-t">Live on Product Hunt today</span> <span aria-hidden="true">&rarr;</span></a>
+<style>.ph-live{display:inline-flex;align-items:center;gap:.55rem;margin:0 0 1.1rem;padding:.42rem .95rem;border:1px solid rgba(217,182,92,.45);border-radius:999px;font-family:"Fira Code",ui-monospace,monospace;font-size:.74rem;letter-spacing:.06em;color:#D4F24A;background:rgba(212,242,74,.05);text-decoration:none}.ph-live[hidden]{display:none}.ph-live:hover{border-color:#D4F24A}.ph-dot{width:.5rem;height:.5rem;border-radius:50%;background:#E8734A;box-shadow:0 0 0 0 rgba(232,115,74,.6);animation:phpulse 2s infinite}@keyframes phpulse{70%{box-shadow:0 0 0 .5rem rgba(232,115,74,0)}100%{box-shadow:0 0 0 0 rgba(232,115,74,0)}}@media (prefers-reduced-motion:reduce){.ph-dot{animation:none}}</style>
+<script>(function(){var n=Date.now(),s=Date.UTC(2026,8,29,7,1),e=Date.UTC(2026,8,30,7,1),x=Date.UTC(2026,9,13);if(n<s||n>x)return;var a=document.getElementById("ph-live");if(n>e)document.getElementById("ph-live-t").textContent="BlvkWare Agent Kits on Product Hunt";a.hidden=false;})();</script>
                 <p class="hero-premise">Software was built to be used. Agents are built to work.</p>
                 <h1 class="hero-title" id="hero-title">
                     Don't buy another tool for your team to operate.<br><span class="highlight">Design the agent that operates them.</span>
@@ -1388,7 +1391,7 @@
                     </details>
                     <details class="faq-item">
                         <summary class="faq-q">Is the kit a working agent?</summary>
-                        <div class="faq-a"><p>No, and the difference matters. A kit is the complete specification of one agent: what it does, step by step, the tools it may call and what each one is allowed to change, the records it keeps, the rules that stop it acting beyond its authority, and the tests that prove it works. It does not connect to your systems by itself and holds no credentials.</p><p>You, or whoever builds for you, load it into the tools you already use: OpenAI or Anthropic models with tool calling, any MCP client, or an automation platform like n8n, Make or Zapier. Every file is plain JSON or Markdown, so nothing locks you to one vendor.</p></div>
+                        <div class="faq-a"><p>Almost, and the gap is deliberate. A kit is the complete specification of one agent (what it does, step by step, the tools it may call and what each one is allowed to change, the records it keeps, the rules that stop it acting beyond its authority, and the tests that prove it works) plus a small runtime that enforces those rules in code. What it does not have is access to your systems: it holds no credentials.</p><p>You, or whoever builds for you, fill in one documented function per tool for your own systems and add your model key. It then runs with OpenAI or Anthropic tool calling, any MCP client, or an automation platform like n8n, Make or Zapier. Every file is plain JSON, Markdown or Python, so nothing locks you to one vendor.</p></div>
                     </details>
                     <details class="faq-item">
                         <summary class="faq-q">What stops the agent doing something it shouldn't?</summary>
