@@ -34,6 +34,23 @@ checks a day) that no longer matches the catalog or HALLUX.
 | Reddit, LinkedIn | Copy in `kits.md` and `hallux.md` | Your accounts |
 | Gumroad listings | **Done 2026-09-23**, refreshed 2026-09-27 (runtime bullets, new covers; "What it is not" now says not hosted software), verified on the public pages | Nothing |
 
+## Results (checked 2026-10-02)
+
+| Channel | Result |
+|---|---|
+| Product Hunt (29 Sep) | 1 upvote, 0 comments, 2 followers. Not among the day's featured launches |
+| Gumroad, all products, 30 days | 26 product views (all "direct", many of them our own checks), 0 sales |
+| YouTube demo | 0 views |
+| X @BlvkWare | 3 followers; HALLUX thread 30 views; kits post (24 Sep) 2 views. No launch-day post found |
+| Indie Hackers | Product page only, 0 posts |
+| awesome-remote-mcp-servers | PR merged 2026-09-23 |
+| mcp.so | Issue still open, no response |
+| Glama pkgguard | Page now exists, so the awesome-mcp-servers PR is unblocked |
+
+Read: the product works end to end, but the launch reached almost nobody. Every account is
+new, with no audience, and nothing was posted around the PH day. The next lever is reaching
+buyers directly, not more polish.
+
 ## Images
 
 - Social cards, one per page: `docs/assets/og/<page>.png` (1200x630). Shared links pick
