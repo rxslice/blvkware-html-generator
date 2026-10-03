@@ -1,0 +1,7 @@
+# Distinct invented names by registry and whether a stranger could register them, checked 2026-10-02.
+# Names that anyone could register are deliberately not published. Source: https://blvkware.dev/ai-package-hallucination-data/
+registry,invented_names,registrable_by_anyone,protected_org_scope,protected_types_scope,protected_npm_punctuation_rule,unclear
+pypi,7,7,0,0,0,0
+crates.io,4,4,0,0,0,0
+npm,17,8,5,1,2,1
+all,28,19,5,1,2,1

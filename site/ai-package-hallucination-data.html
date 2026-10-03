@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Where AI Coding Models Invent Packages: Panel Data | BlvkWare</title>
+    <meta name="description" content="2,532 package suggestions from four AI model families: 3.8% named packages that do not exist, 0.2% on routine tasks and 5.8% on new tools. 19 are registrable.">
+    <link rel="canonical" href="https://blvkware.dev/ai-package-hallucination-data/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta property="og:title" content="AI models invent packages at the frontier, not in the basics">
+    <meta property="og:description" content="Original panel data: 2,532 package suggestions, 97 inventions, and which of them anyone could register today.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://blvkware.dev/ai-package-hallucination-data/">
+    <meta property="og:image" content="https://blvkware.dev/assets/og.png">
+    <meta property="og:site_name" content="BlvkWare">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+    <link rel="apple-touch-icon" href="/assets/logo-192.png">
+    <meta name="theme-color" content="#0A0908">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "BlvkWare", "item": "https://blvkware.dev/"},
+        {"@type": "ListItem", "position": 2, "name": "Guides", "item": "https://blvkware.dev/guides/"},
+        {"@type": "ListItem", "position": 3, "name": "Where AI models invent packages", "item": "https://blvkware.dev/ai-package-hallucination-data/"}
+      ]
+    },
+    {
+      "@type": "Article",
+      "headline": "AI models invent packages at the frontier, not in the basics",
+      "description": "Panel data from four AI model families asked for code with install commands: how often they name packages that do not exist, where it happens, and which invented names anyone could register today.",
+      "author": {"@type": "Person", "name": "William Russell Wheeler", "url": "https://blvkware.dev/"},
+      "publisher": {"@type": "Organization", "name": "BlvkWare", "url": "https://blvkware.dev/", "logo": {"@type": "ImageObject", "url": "https://blvkware.dev/assets/logo-192.png"}},
+      "mainEntityOfPage": "https://blvkware.dev/ai-package-hallucination-data/",
+      "about": ["package hallucination", "slopsquatting", "software supply chain security", "AI coding assistants"]
+    },
+    {
+      "@type": "Dataset",
+      "name": "HALLUX elicitation panel: package suggestions by AI models, 22 September to 2 October 2026",
+      "description": "Aggregate counts of package names suggested by four AI model families in answer to 30 coding prompts across PyPI, npm and crates.io, with how many named packages that did not exist, by prompt tier and by model, and a registrability check of each invented name against the live registries.",
+      "creator": {"@type": "Organization", "name": "BlvkWare", "url": "https://blvkware.dev/"},
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "temporalCoverage": "2026-09-22/2026-10-02",
+      "variableMeasured": ["package suggestions", "invented package names", "invention rate", "registrability"],
+      "distribution": [{"@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://blvkware.dev/data/hallux-panel-2026-10.csv"}],
+      "isAccessibleForFree": true
+    }
+  ]
+}
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Fira+Code:wght@500&display=swap');
+        :root {
+            --bg: #0A0908; --surface: #17140F; --accent: #D4F24A; --brass: #D9B65C; --warm: #E8734A; --bad: #E8524A;
+            --ink: #F5F0E6; --ink-2: #A89D8B; --line: rgba(245,240,230,0.1);
+            --font: 'Manrope', system-ui, -apple-system, sans-serif;
+            --mono: 'Fira Code', ui-monospace, monospace;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+        .wrap { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+        .top { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 3.5rem; text-decoration: none; color: inherit; }
+        .mark { width: 52px; height: 52px; border-radius: 14px; background: #060504; overflow: hidden; flex: none; }
+        .mark img { width: 100%; height: 100%; display: block; }
+        .wordmark { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; }
+        .wordmark span { color: var(--accent); }
+        .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--brass); margin-bottom: 1rem; }
+        h1 { font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 1rem; line-height: 1.12; }
+        .lede { font-size: 1.15rem; color: var(--ink-2); margin-bottom: 2.5rem; padding-bottom: 2.5rem; border-bottom: 1px solid var(--line); }
+        h2 { font-size: 1.5rem; font-weight: 700; margin: 3rem 0 1rem; letter-spacing: -0.01em; }
+        h3 { font-size: 1.05rem; font-weight: 700; margin: 1.75rem 0 0.6rem; color: var(--brass); }
+        p { color: var(--ink-2); margin-bottom: 1.1rem; }
+        ul, ol { margin: 0 0 1.1rem 1.2rem; color: var(--ink-2); }
+        li { margin-bottom: 0.6rem; }
+        strong { color: var(--ink); font-weight: 700; }
+        em { color: var(--ink); font-style: italic; }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem; margin: 1.75rem 0; }
+        .box p:last-child { margin-bottom: 0; }
+        .box.warn { border-color: rgba(232,115,74,.3); background: rgba(232,115,74,.06); }
+        .box.never { border-color: rgba(232,82,74,.35); background: rgba(232,82,74,.06); }
+        /* A price range must not wrap mid-figure, so these cells cannot shrink.
+           Wide tables therefore scroll inside their own container rather than
+           pushing the whole page sideways: the body must never scroll
+           horizontally on a phone. */
+        .tw { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1.5rem 0; }
+        .tw table { margin: 0; min-width: 30rem; }
+        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
+        th, td { text-align: left; padding: 0.7rem 0.6rem; border-bottom: 1px solid var(--line); color: var(--ink-2); vertical-align: top; }
+        th { color: var(--ink); font-weight: 700; }
+        td strong { color: var(--ink); }
+        .cta { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 2rem; margin: 3rem 0 0; }
+        .btn { display: inline-block; background: var(--accent); color: #14170A; font-weight: 700; padding: 0.85rem 1.5rem; border-radius: 10px; margin-top: 0.5rem; }
+        .btn:hover { text-decoration: none; opacity: 0.92; }
+        .btn-2 { display: inline-block; color: var(--ink-2); font-weight: 600; padding: 0.85rem 1.2rem; border: 1px solid var(--line); border-radius: 10px; margin: 0.5rem 0 0 0.4rem; }
+        .btn-2:hover { color: var(--ink); text-decoration: none; }
+        .foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--ink-2); }
+        /* Flex with a gap, not inline margins: a trailing margin-right on the
+           last link of a wrapped line still occupies space and pushed the page
+           16px wider than the viewport on a phone. */
+        .foot-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+        .foot a { margin-right: 0; }
+
+        /* The ladder, drawn as four rungs with the blast radius rising. The
+           whole argument of the page is in this one figure. */
+        .fig { margin: 2.2rem 0; }
+        .fig svg { width: 100%; max-width: 600px; height: auto; display: block; margin: 0 auto; }
+        .fig-cap { font-family: var(--mono); font-size: 0.74rem; color: var(--ink-2); text-align: center; margin-top: 0.7rem; }
+        code { font-family: var(--mono); font-size: 0.85em; color: var(--brass); }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <a class="top" href="/">
+        <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
+        <span class="wordmark">BlvkWare<span>.</span></span>
+    </a>
+
+    <div class="eyebrow">Original research · Package hallucination</div>
+    <h1>AI models invent packages at the frontier, not in the basics</h1>
+
+    <p class="lede">Between 22 September and 2 October 2026, a small panel of AI models was asked, on seven separate days, to write code and say what to install. Of 2,532 package suggestions, 97 named a package that does not exist. Almost none of them came from routine work. Most came from the newest corners of each ecosystem, which is exactly where a developer is least able to tell. And 19 of the invented names could be registered by anyone this afternoon.</p>
+
+    <p>This page is the first full write-up of that panel's data. The panel is the collection arm of <a href="/hallux/">HALLUX</a>, a record of identifiers that AI models emit and that do not exist. The figures below come from its own run files, nobody else has them, and every number on this page can be checked against the downloadable summary at the end.</p>
+
+    <h2>The short version</h2>
+
+    <ul>
+        <li><strong>3.8% of package suggestions named something that does not exist</strong> (97 of 2,532; 95% interval 3.2% to 4.7%).</li>
+        <li><strong>The task matters far more than the model.</strong> Routine prompts produced one invention in 582 suggestions. Prompts in fast-moving areas, where training data is thin, produced one in seventeen.</li>
+        <li><strong>The four model families were statistically indistinguishable</strong>, between 3.4% and 4.9%, with overlapping intervals.</li>
+        <li><strong>Most inventions are one-offs; the dangerous few repeat.</strong> 20 of the 28 invented names appeared once. The two most repeated were each produced by three of the four families, in 17 samples, on two different days.</li>
+        <li><strong>Whether an invention can be exploited depends on the registry.</strong> Every invented PyPI and crates.io name was free to register. On npm, scopes and a naming rule protected nearly half.</li>
+        <li><strong>One maintainer team got there first.</strong> The Rust name that three families sent people to is a deliberately empty crate owned by the project's own maintainer.</li>
+    </ul>
+
+    <h2>How the data was collected</h2>
+
+    <p>The panel is deliberately plain, so that it can be repeated and argued with.</p>
+
+    <ul>
+        <li><strong>Four model families, one model each:</strong> OpenAI's open-weight gpt-oss-120b and Alibaba's Qwen3.8 27B (both through Groq), NVIDIA's Nemotron 3 Super (through OpenRouter) and Google's Gemini 2.5 Flash. Gemini's free quota ran out early, so it contributed three days instead of seven.</li>
+        <li><strong>A fixed bank of 30 prompts</strong>, each an ordinary request for working code that ends with "list the dependencies" or "include the install commands". Twelve are for PyPI, eleven for npm and seven for crates.io, and each is labelled as one of three tiers: <em>routine</em> (a CSV report, an HTTP retry, an S3 upload), <em>niche</em> (Modbus to MQTT, a Bluetooth peripheral, geospatial rasters) or <em>emerging</em> (agent tool-calling, tracing for model calls, local quantised inference: fast-moving areas where training data is thin). No prompt ever names a package, so every choice of dependency is the model's own.</li>
+        <li><strong>Each day runs a rotating third of the bank,</strong> three samples per prompt at temperature 0.7. Over seven collection days that is 228 prompt runs and 670 completions; 34 came back empty and are excluded, leaving 636.</li>
+        <li><strong>Only the command surface is read.</strong> A package counts when it appears in a fenced code block, an inline code span or a line that starts with a package manager. Reading the prose instead turns "run pip install pandas to load the data" into four packages, three of them English words.</li>
+        <li><strong>Every name is checked against the live registry</strong> (PyPI, the npm registry, crates.io). A suggestion is an invention when the registry has no package of that name. Names that cannot be verified either way, such as standard-library modules, are counted as neither.</li>
+    </ul>
+
+    <p>One honest correction before the results: the word <code>and</code> was extracted once as a PyPI package from a line that read like "pip install x and y". It is a parsing artefact, not an invention, and it is removed from every figure here.</p>
+
+    <h2>What you ask matters more than who you ask</h2>
+
+    <div class="fig">
+        <span id="c1t" hidden>Share of package suggestions that named a package that does not exist, by prompt tier, with 95% intervals</span>
+        <svg viewBox="0 0 480 224" role="img" aria-labelledby="c1t" xmlns="http://www.w3.org/2000/svg" font-family="Fira Code, ui-monospace, monospace">
+<line x1="8.0" y1="8" x2="8.0" y2="198" stroke="rgba(245,240,230,0.08)"/>
+<text x="8.0" y="216" fill="#A89D8B" font-size="12" text-anchor="middle">0%</text>
+<line x1="112.0" y1="8" x2="112.0" y2="198" stroke="rgba(245,240,230,0.08)"/>
+<text x="112.0" y="216" fill="#A89D8B" font-size="12" text-anchor="middle">2%</text>
+<line x1="216.0" y1="8" x2="216.0" y2="198" stroke="rgba(245,240,230,0.08)"/>
+<text x="216.0" y="216" fill="#A89D8B" font-size="12" text-anchor="middle">4%</text>
+<line x1="320.0" y1="8" x2="320.0" y2="198" stroke="rgba(245,240,230,0.08)"/>
+<text x="320.0" y="216" fill="#A89D8B" font-size="12" text-anchor="middle">6%</text>
+<line x1="424.0" y1="8" x2="424.0" y2="198" stroke="rgba(245,240,230,0.08)"/>
+<text x="424.0" y="216" fill="#A89D8B" font-size="12" text-anchor="middle">8%</text>
+<g><title>Routine: 0.17% (1 of 582 suggestions); 95% interval 0.03% to 0.97%</title>
+<rect x="0" y="8" width="480" height="62" fill="transparent"/>
+<text x="8" y="24" fill="#F5F0E6" font-size="15" font-family="Manrope, system-ui, sans-serif" font-weight="700">Routine <tspan fill="#A89D8B" font-size="12" font-family="Fira Code, ui-monospace, monospace" font-weight="400">everyday tasks</tspan></text>
+<rect x="8" y="29" width="8.8" height="18" rx="4" fill="#D4F24A"/>
+<line x1="9.6" y1="38" x2="58.4" y2="38" stroke="#F5F0E6" stroke-width="2"/>
+<line x1="9.6" y1="32" x2="9.6" y2="44" stroke="#F5F0E6" stroke-width="2"/>
+<line x1="58.4" y1="32" x2="58.4" y2="44" stroke="#F5F0E6" stroke-width="2"/>
+<text x="65.4" y="43" fill="#F5F0E6" font-size="14">0.2%</text></g>
+<g><title>Niche: 3.79% (33 of 870 suggestions); 95% interval 2.71% to 5.28%</title>
+<rect x="0" y="70" width="480" height="62" fill="transparent"/>
+<text x="8" y="86" fill="#F5F0E6" font-size="15" font-family="Manrope, system-ui, sans-serif" font-weight="700">Niche <tspan fill="#A89D8B" font-size="12" font-family="Fira Code, ui-monospace, monospace" font-weight="400">specialist libraries</tspan></text>
+<rect x="8" y="91" width="197.1" height="18" rx="4" fill="#D4F24A"/>
+<line x1="148.9" y1="100" x2="282.6" y2="100" stroke="#F5F0E6" stroke-width="2"/>
+<line x1="148.9" y1="94" x2="148.9" y2="106" stroke="#F5F0E6" stroke-width="2"/>
+<line x1="282.6" y1="94" x2="282.6" y2="106" stroke="#F5F0E6" stroke-width="2"/>
+<text x="289.6" y="105" fill="#F5F0E6" font-size="14">3.8%</text></g>
+<g><title>Emerging: 5.83% (63 of 1,080 suggestions); 95% interval 4.59% to 7.39%</title>
+<rect x="0" y="132" width="480" height="62" fill="transparent"/>
+<text x="8" y="148" fill="#F5F0E6" font-size="15" font-family="Manrope, system-ui, sans-serif" font-weight="700">Emerging <tspan fill="#A89D8B" font-size="12" font-family="Fira Code, ui-monospace, monospace" font-weight="400">fast-moving areas</tspan></text>
+<rect x="8" y="153" width="303.2" height="18" rx="4" fill="#D4F24A"/>
+<line x1="246.7" y1="162" x2="392.3" y2="162" stroke="#F5F0E6" stroke-width="2"/>
+<line x1="246.7" y1="156" x2="246.7" y2="168" stroke="#F5F0E6" stroke-width="2"/>
+<line x1="392.3" y1="156" x2="392.3" y2="168" stroke="#F5F0E6" stroke-width="2"/>
+<text x="399.3" y="167" fill="#F5F0E6" font-size="14">5.8%</text></g>
+</svg>
+        <div class="fig-cap">Invented share of package suggestions by prompt tier · bars are point estimates, whiskers are 95% Wilson intervals</div>
+    </div>
+
+    <div class="tw"><table>
+        <thead><tr><th>Prompt tier</th><th>Suggestions</th><th>Invented</th><th>Rate</th><th>95% interval</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Routine</strong></td><td>582</td><td>1</td><td>0.17%</td><td>0.03% to 0.97%</td></tr>
+            <tr><td><strong>Niche</strong></td><td>870</td><td>33</td><td>3.79%</td><td>2.71% to 5.28%</td></tr>
+            <tr><td><strong>Emerging</strong></td><td>1,080</td><td>63</td><td>5.83%</td><td>4.59% to 7.39%</td></tr>
+            <tr><td><strong>All</strong></td><td>2,532</td><td>97</td><td>3.83%</td><td>3.15% to 4.65%</td></tr>
+        </tbody>
+    </table></div>
+
+    <p>The gap between routine and emerging work is the most useful finding here, and it survives the small sample. Even setting the top of the routine interval against the bottom of the emerging one, emerging prompts invent at least four and a half times as often; the central estimates differ by a factor of about thirty-four.</p>
+
+    <p>It also explains why the problem is so easy to underestimate. Anyone who tries an assistant on a familiar task, sees correct imports and concludes the models have outgrown this is drawing the right conclusion from the wrong sample. The risk sits in the work where you are already reaching beyond what you know: a library that moved fast last year, a protocol you have not used, a sub-package you assume exists because the naming pattern suggests it should.</p>
+
+    <h3>The models were closer to each other than to themselves</h3>
+
+    <div class="fig">
+        <span id="c2t" hidden>Share of package suggestions that named a package that does not exist, by model family, with 95% intervals</span>
+        <svg viewBox="0 0 480 286" role="img" aria-labelledby="c2t" xmlns="http://www.w3.org/2000/svg" font-family="Fira Code, ui-monospace, monospace">
+<line x1="8.0" y1="8" x2="8.0" y2="260" stroke="rgba(245,240,230,0.08)"/>
+<text x="8.0" y="278" fill="#A89D8B" font-size="12" text-anchor="middle">0%</text>
+<line x1="112.0" y1="8" x2="112.0" y2="260" stroke="rgba(245,240,230,0.08)"/>
+<text x="112.0" y="278" fill="#A89D8B" font-size="12" text-anchor="middle">2%</text>
+<line x1="216.0" y1="8" x2="216.0" y2="260" stroke="rgba(245,240,230,0.08)"/>
+<text x="216.0" y="278" fill="#A89D8B" font-size="12" text-anchor="middle">4%</text>
+<line x1="320.0" y1="8" x2="320.0" y2="260" stroke="rgba(245,240,230,0.08)"/>
+<text x="320.0" y="278" fill="#A89D8B" font-size="12" text-anchor="middle">6%</text>
+<line x1="424.0" y1="8" x2="424.0" y2="260" stroke="rgba(245,240,230,0.08)"/>
+<text x="424.0" y="278" fill="#A89D8B" font-size="12" text-anchor="middle">8%</text>
+<g><title>gpt-oss-120b: 3.62% (39 of 1,078 suggestions); 95% interval 2.66% to 4.91%</title>
+<rect x="0" y="8" width="480" height="62" fill="transparent"/>
+<text x="8" y="24" fill="#F5F0E6" font-size="15" font-family="Manrope, system-ui, sans-serif" font-weight="700">gpt-oss-120b <tspan fill="#A89D8B" font-size="12" font-family="Fira Code, ui-monospace, monospace" font-weight="400">OpenAI, open weights</tspan></text>
+<rect x="8" y="29" width="188.2" height="18" rx="4" fill="#D9B65C"/>
+<line x1="146.3" y1="38" x2="263.3" y2="38" stroke="#F5F0E6" stroke-width="2"/>
+<line x1="146.3" y1="32" x2="146.3" y2="44" stroke="#F5F0E6" stroke-width="2"/>
+<line x1="263.3" y1="32" x2="263.3" y2="44" stroke="#F5F0E6" stroke-width="2"/>
+<text x="270.3" y="43" fill="#F5F0E6" font-size="14">3.6%</text></g>
+<g><title>Qwen3.8 27B: 4.85% (29 of 598 suggestions); 95% interval 3.40% to 6.88%</title>
+<rect x="0" y="70" width="480" height="62" fill="transparent"/>
+<text x="8" y="86" fill="#F5F0E6" font-size="15" font-family="Manrope, system-ui, sans-serif" font-weight="700">Qwen3.8 27B <tspan fill="#A89D8B" font-size="12" font-family="Fira Code, ui-monospace, monospace" font-weight="400">Alibaba</tspan></text>
+<rect x="8" y="91" width="252.2" height="18" rx="4" fill="#D9B65C"/>
+<line x1="184.8" y1="100" x2="365.8" y2="100" stroke="#F5F0E6" stroke-width="2"/>
+<line x1="184.8" y1="94" x2="184.8" y2="106" stroke="#F5F0E6" stroke-width="2"/>
+<line x1="365.8" y1="94" x2="365.8" y2="106" stroke="#F5F0E6" stroke-width="2"/>
+<text x="372.8" y="105" fill="#F5F0E6" font-size="14">4.8%</text></g>
+<g><title>Nemotron 3 Super: 3.36% (23 of 684 suggestions); 95% interval 2.25% to 5.00%</title>
+<rect x="0" y="132" width="480" height="62" fill="transparent"/>
+<text x="8" y="148" fill="#F5F0E6" font-size="15" font-family="Manrope, system-ui, sans-serif" font-weight="700">Nemotron 3 Super <tspan fill="#A89D8B" font-size="12" font-family="Fira Code, ui-monospace, monospace" font-weight="400">NVIDIA</tspan></text>
+<rect x="8" y="153" width="174.7" height="18" rx="4" fill="#D9B65C"/>
+<line x1="125.0" y1="162" x2="268.0" y2="162" stroke="#F5F0E6" stroke-width="2"/>
+<line x1="125.0" y1="156" x2="125.0" y2="168" stroke="#F5F0E6" stroke-width="2"/>
+<line x1="268.0" y1="156" x2="268.0" y2="168" stroke="#F5F0E6" stroke-width="2"/>
+<text x="275.0" y="167" fill="#F5F0E6" font-size="14">3.4%</text></g>
+<g><title>Gemini 2.5 Flash: 3.49% (6 of 172 suggestions); 95% interval 1.61% to 7.40%</title>
+<rect x="0" y="194" width="480" height="62" fill="transparent"/>
+<text x="8" y="210" fill="#F5F0E6" font-size="15" font-family="Manrope, system-ui, sans-serif" font-weight="700">Gemini 2.5 Flash <tspan fill="#A89D8B" font-size="12" font-family="Fira Code, ui-monospace, monospace" font-weight="400">Google, 3 days</tspan></text>
+<rect x="8" y="215" width="181.5" height="18" rx="4" fill="#D9B65C"/>
+<line x1="91.7" y1="224" x2="392.8" y2="224" stroke="#F5F0E6" stroke-width="2"/>
+<line x1="91.7" y1="218" x2="91.7" y2="230" stroke="#F5F0E6" stroke-width="2"/>
+<line x1="392.8" y1="218" x2="392.8" y2="230" stroke="#F5F0E6" stroke-width="2"/>
+<text x="399.8" y="229" fill="#F5F0E6" font-size="14">3.5%</text></g>
+</svg>
+        <div class="fig-cap">Invented share by model family · the intervals overlap, so the panel cannot rank them</div>
+    </div>
+
+    <p>Every family landed between 3.4% and 4.9%, and every interval overlaps every other. With this much data the panel cannot say one model is safer than another, and anyone claiming that from a sample of this size should show their intervals. What the panel can say is that changing the prompt from routine to emerging moves the rate far more than changing the model does.</p>
+
+    <p>For context, the largest published study, <a href="https://arxiv.org/abs/2406.10279">Spracklen et al.</a> (USENIX Security 2025), generated 576,000 samples from 16 models in Python and JavaScript and reported average hallucination rates of at least 5.2% for commercial models and 21.7% for open-source ones. The models here are a generation newer and the method differs, so the numbers are not directly comparable, but the direction is plain: the rate has fallen, and it has not gone away.</p>
+
+    <h2>The five ways a model invents a package</h2>
+
+    <p>Reading all 28 invented names one by one, they fall into five recognisable kinds (a few fit two). Names that anyone could register are described here and not printed, for the reason given further down.</p>
+
+    <h3>1. The project's name instead of the package's name</h3>
+    <p>The two most repeated inventions in the whole panel are of this kind: the name a project is known by, where the installable package carries a longer name. People say a library's name aloud; registries want the distribution name. Three of the four families made the same substitution for the same two projects, on two different days, in 17 samples each. Repetition across families is what turns a slip into a target, because an attacker needs a name that many people will be told to install.</p>
+
+    <h3>2. Plausible sub-packages that were never published</h3>
+    <p>Models extrapolate a project's naming pattern: if <code>candle-core</code> and <code>candle-nn</code> exist, a <code>candle</code> sibling for the feature you asked about seems likely. Two invented Rust names and one npm name (<code>@tanstack/virtual</code>, where the real packages are <code>@tanstack/virtual-core</code> and framework adapters such as <code>@tanstack/react-virtual</code>) are of this kind.</p>
+
+    <h3>3. Conflations of real packages</h3>
+    <p>Six names read as two or three real package names fused together, the shape a spelling-distance typosquat check does not catch because the result is not close to any single real name.</p>
+
+    <h3>4. Placeholders written into install commands</h3>
+    <p>One prompt about validating tool calls in TypeScript produced seven different invented names over two days, most of them obvious placeholders: <code>@yourorg/toolcall-validator</code>, <code>@your-org/toolcall-validator</code> and several <code>my-something</code> names, written straight into <code>npm install</code> lines. A person reads a placeholder as a placeholder. An agent executing the command does not. Worth knowing: <strong>both <code>@yourorg</code> and <code>@your-org</code> are existing npm organisations.</strong> Whoever controls them decides what those commands would install.</p>
+
+    <h3>5. Type packages for libraries that ship their own types</h3>
+    <p>One suggestion was an <code>@types/</code> package that has never been published. This kind is benign by construction: only DefinitelyTyped publishes under <code>@types</code>.</p>
+
+    <h2>Which inventions could actually be exploited</h2>
+
+    <p>An invented name is only dangerous if someone else can register it. So each of the 28 was checked against its registry on 2 October 2026, including the rules that stop a stranger publishing.</p>
+
+    <div class="tw"><table>
+        <thead><tr><th>Registry</th><th>Invented names</th><th>Registrable by anyone</th><th>What protected the rest</th></tr></thead>
+        <tbody>
+            <tr><td><strong>PyPI</strong></td><td>7</td><td>7</td><td>Nothing. There are no namespaces.</td></tr>
+            <tr><td><strong>crates.io</strong></td><td>4</td><td>4</td><td>Nothing. Names are first come, first served.</td></tr>
+            <tr><td><strong>npm</strong></td><td>17</td><td>8</td><td>5 sit under scopes owned by existing organisations, 1 under <code>@types</code>, and 2 collide with existing names under npm's punctuation rule (<code>diff-js</code> and <code>sem-diff</code> are refused because <code>diffjs</code> and <code>semdiff</code> exist). 1 is unclear: its scope is not an organisation and may be a user.</td></tr>
+            <tr><td><strong>All</strong></td><td>28</td><td><strong>19</strong></td><td>8 protected, 1 unclear</td></tr>
+        </tbody>
+    </table></div>
+
+    <p>This is a structural finding, and it will outlive these particular names. <strong>Exposure is decided by registry design as much as by model behaviour.</strong> npm's scopes mean an invented <code>@org/name</code> is only claimable by that organisation, and its punctuation rule quietly blocks a whole family of near-misses. PyPI and crates.io have neither, so every invented name there was free for the taking. If your team installs from PyPI or crates.io on a model's say-so, nothing at the registry stands between the invention and whoever registers it first.</p>
+
+    <h2>The name a maintainer had already reserved</h2>
+
+    <p>The most encouraging finding is a Rust one. Three of the four families, asked to load a quantised model and run inference on a CPU, told people to add a crate called <code>candle</code>. Hugging Face's library is published as <code>candle-core</code> (over nine million downloads). But a crate named <code>candle</code> does exist, and it looked alarming on paper: published in March 2026, one version, no repository link, a few hundred recent downloads: the profile of a squat.</p>
+
+    <p>It is not one. Its source is a README and a one-line <code>lib.rs</code> with no dependencies, no build script and no code, describing itself as an intentionally minimal shell. Its owner on crates.io is also a listed owner of <code>candle-core</code> and has more than a hundred commits to Hugging Face's candle repository. Someone on the project reserved the name that models predict, so the most common wrong answer now leads to a harmless empty crate instead of a stranger's code.</p>
+
+    <p>That is the cheapest defence in this whole subject, and very few projects have used it. The two most repeated PyPI inventions in this panel point at well-known projects whose obvious short names are still unclaimed.</p>
+
+    <div class="box warn">
+        <p><strong>Why 19 names are not printed here.</strong> A list of invented package names that are free to register, ranked by how often AI models produce them, is a shopping list for anyone who wants to publish malware under them. The names are kept in HALLUX's ledger and are available to the projects they point at. If you maintain a Python, JavaScript or Rust project and want to know whether models invent names around it, write to <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a>.</p>
+    </div>
+
+    <h2>What to do with this</h2>
+
+    <h3>If you run AI coding agents</h3>
+    <ul>
+        <li><strong>Check names before install, not after.</strong> A gate between the agent and the package manager is the only control that works when nobody reads the command. <a href="/pkgguard/">pkgguard</a> is free and open source and does exactly this for npm, PyPI and crates.io, as a CLI, an MCP server or a CI step.</li>
+        <li><strong>Raise your guard on new territory.</strong> On this data, a prompt in a fast-moving area is roughly thirty times likelier to produce an invented package than a routine one. Those are the sessions to review by hand.</li>
+        <li><strong>Treat placeholders as live code.</strong> <code>@your-org/</code> in an install line is an instruction to fetch whatever that organisation publishes.</li>
+        <li><strong>Lockfiles still matter.</strong> An invented name can only enter through a new install. Pinned, reviewed dependency files keep it out of everything after the first mistake.</li>
+    </ul>
+
+    <h3>If you maintain a package</h3>
+    <ul>
+        <li><strong>Ask the models how to install your project,</strong> in a few phrasings, on a fresh account. Note every name that is not yours.</li>
+        <li><strong>Reserve the ones they predict,</strong> as candle's maintainer did: an empty, clearly described placeholder under your control. On npm, publish under a scope you own.</li>
+        <li><strong>Put the exact install command near the top of your README,</strong> in a code block, so that people and tools copying from it get the real name.</li>
+    </ul>
+
+    <h2>Limits of this data</h2>
+
+    <p>A study is only as good as what it admits. These are the limits, stated plainly.</p>
+    <ul>
+        <li><strong>It is small.</strong> 636 usable completions and 2,532 suggestions. That is enough to see the tier gradient clearly and not enough to rank models.</li>
+        <li><strong>It is four free-tier models,</strong> one per family, not the largest commercial assistants.</li>
+        <li><strong>The prompts are ours.</strong> Thirty requests written to cover three ecosystems and three tiers; a different bank would give different absolute rates.</li>
+        <li><strong>Collection was uneven.</strong> Seven collection days, with a gap from 28 September to 1 October, and Gemini on three days only.</li>
+        <li><strong>Registry status is a snapshot</strong> taken on 2 October 2026. Names get registered; the protected and registrable counts will drift.</li>
+        <li><strong>None of the names has yet met HALLUX's own bar</strong> for publishing a "phantom": ten attestations from at least two model families. The panel is the start of that record, not its conclusion. The live counts are at <a href="https://api.blvkware.dev/v1/stats">api.blvkware.dev/v1/stats</a> and the rules at <a href="/docs/corpus-methodology/">corpus methodology</a>.</li>
+    </ul>
+
+    <h2>The data</h2>
+
+    <p>The aggregate figures on this page, by tier, by model and by registry, are in <a href="/data/hallux-panel-2026-10.csv">hallux-panel-2026-10.csv</a> under CC BY 4.0: use them, cite this page. The prompt bank and the extraction code are open source in <a href="https://github.com/rxslice/slopbench">slopbench</a>. The panel keeps running.</p>
+
+    <div class="cta">
+        <h2 style="margin-top:0">Stop the invented package before it installs</h2>
+        <p>pkgguard checks every name in an install command against npm, PyPI and crates.io and answers allow, review or block, with the reasons, before your agent runs it. Free, open source, no account.</p>
+        <a class="btn" href="/pkgguard/">Get pkgguard</a>
+        <a class="btn-2" href="/hallux/">Query the HALLUX record</a>
+    </div>
+
+    <p style="margin-top:2rem;font-size:0.9rem">By William Russell Wheeler, BlvkWare. Data collected 22 September to 2 October 2026.</p>
+
+    <footer class="foot">
+        <div class="foot-links"><a href="/">Home</a><a href="/guides/">Guides</a><a href="/pkgguard/">pkgguard</a><a href="/hallux/">HALLUX</a><a href="/docs/corpus-methodology/">Corpus methodology</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></div>
+        <p style="margin-top:1rem">BlvkWare, <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> · Mississippi, serving the United States.</p>
+    </footer>
+</div>
+</body>
+</html>

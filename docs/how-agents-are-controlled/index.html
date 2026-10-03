@@ -32,7 +32,7 @@
       "@type": "FAQPage",
       "mainEntity": [
         {"@type": "Question", "name": "Can I stop the agent myself?",
-         "acceptedAnswer": {"@type": "Answer", "text": "Yes. Every kit sets the agent's autonomy level in one file, policies/autonomy.json. Setting it to L0, Watch, stops everything that changes anything: the agent may still read and report, and no tool that changes a record or reaches a customer may run. That holds when the level is enforced in the tool handler, which the kit tells whoever builds it to do. Nothing already sent can be unsent, by this or by any other system."}},
+         "acceptedAnswer": {"@type": "Answer", "text": "Yes. Every kit sets the agent's autonomy level in one file, policies/autonomy.json. Setting it to L0, Watch, stops everything that changes anything: the agent may still read and report, and no tool that changes a record or reaches a customer may run. That holds when tool calls go through the kit's runtime, which checks the level before every call, or through a handler that enforces it the same way. Nothing already sent can be unsent, by this or by any other system."}},
         {"@type": "Question", "name": "Where are my credentials stored?",
          "acceptedAnswer": {"@type": "Answer", "text": "Not with BlvkWare, and not in the kit. A kit contains no credentials and nothing on the site asks for one. Access is granted in your own systems, to the agent's own login or API key rather than a person's, with the smallest access that covers what its tools do. The kit's notes for each system list exactly what that is."}},
         {"@type": "Question", "name": "What data does BlvkWare see?",
@@ -140,7 +140,7 @@ pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2
 
     <p>You are, completely, and that is the point of a kit rather than a service. BlvkWare does not run your agent, does not host it, and never has access to your systems. The agent is built on your tools, with access you grant and can take back, and it talks to your vendors directly.</p>
 
-    <p>The honest consequence: the controls below are specified by us and enforced by your build. The kit writes each one down precisely, in files a developer can wire straight into code, and it says where each rule has to live. Whether it is wired in is up to the build, and the acceptance tests exist so you can check.</p>
+    <p>The honest consequence: the controls below are written down by us and enforced on your side. Every kit now ships a small runtime, in plain Python with nothing to install, that sits between the model and your systems and enforces them in code: the level check on every tool call, the approval queue, the opt-out list, quiet hours and the log. It comes with tests you can run to prove each rule holds. If your build uses something else, such as n8n or Zapier, the kit says exactly where each rule has to live there, and the acceptance tests are how you check.</p>
 
     <h2>It starts unable to act on its own</h2>
 
@@ -230,7 +230,7 @@ pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2
 
     <ul>
         <li><strong>No formal certification.</strong> There is no SOC 2 report and no ISO certificate. This is a one-person company and pretending otherwise would be the first thing you found out was untrue.</li>
-        <li><strong>A kit enforces nothing by itself.</strong> It is a specification. The controls on this page are as strong as the build that implements them, which is why every capability comes with an acceptance test and the kit says to keep the agent at Draft until they pass.</li>
+        <li><strong>A kit is not a hosted service.</strong> Its runtime enforces the controls on this page in code, but only once it is the thing your agent actually calls through. A build that bypasses it, or reimplements the rules somewhere else, is as strong as that build. That is why every capability comes with an acceptance test and the kit says to keep the agent at Draft until they pass.</li>
         <li><strong>The agent can be wrong.</strong> Every provider telling you theirs cannot is either inexperienced or not being straight with you. What a kit offers instead is an agent specified to start unable to act on its own, to write down everything it does, and to stop when you say so. The commercial position is in the <a href="/terms/">terms</a>.</li>
     </ul>
 

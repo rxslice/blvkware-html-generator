@@ -18,6 +18,7 @@ import io
 import json
 import os
 import re
+import shutil
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -405,6 +406,9 @@ MARKETING_PAGES = [
     # Every price on it is a token filled from the HALLUX repository at
     # build time; there is no number in the source to go stale.
     ("hallux.html", "hallux"),
+    # Original research from HALLUX's own panel data: the asset nobody else
+    # can publish. Its figures are also served as CSV under /data/.
+    ("ai-package-hallucination-data.html", "ai-package-hallucination-data"),
 ]
 
 # Standalone browser tools copied verbatim into a sub-directory URL. Unlike
@@ -433,6 +437,7 @@ SITEMAP = [
     ("/quote-follow-up-automation/", "0.8", "monthly"),
     ("/ai-automation-for-plumbers/", "0.8", "monthly"),
     ("/hallux/", "0.9", "weekly"),
+    ("/ai-package-hallucination-data/", "0.85", "monthly"),
     ("/docs/hallux-spec/", "0.7", "monthly"),
     ("/docs/limits/", "0.4", "monthly"),
     ("/docs/corpus-methodology/", "0.5", "monthly"),
@@ -739,13 +744,20 @@ payment. They exist as the work sample in place of client case studies.
   reverse, a stop), what must never be unsupervised, and where liability sits.
 - [How BlvkWare agent kits are controlled](https://blvkware.dev/how-agents-are-controlled/):
   what a kit specifies about control, and what it cannot do for you. BlvkWare
-  does not run, host or access the agent: the buyer's build enforces the
-  controls the kit writes down. Every tool is marked read, internal or
+  does not run, host or access the agent. Every kit ships a small Python
+  runtime that enforces the controls in code on the buyer's side. Every tool is marked read, internal or
   external; four autonomy levels (Watch, Draft, Approve, Operate) with every
   kit starting at Draft, enforced in the tool handler rather than the prompt;
   the approval queue schema in every kit; the append-only log written before
   each action; the owner's own stop (set the level to Watch); and where
   credentials and data go (the buyer's own systems and vendors, never BlvkWare).
+- [Where AI coding models invent packages](https://blvkware.dev/ai-package-hallucination-data/):
+  original panel data from BlvkWare's HALLUX project. Four AI model families,
+  2,532 package suggestions across PyPI, npm and crates.io: 3.83% named packages
+  that do not exist; 0.17% on routine prompts against 5.83% on fast-moving
+  topics; the four families statistically indistinguishable; 19 of 28 invented
+  names registrable by anyone (all PyPI and crates.io ones; npm scopes and the
+  punctuation rule protected 8). Aggregate CSV under CC BY 4.0.
 - [AI employee cost](https://blvkware.dev/ai-employee/): what an "AI employee"
   costs against a real hire, using BLS employer-cost data, with a calculator
   that says when not to buy one.
@@ -1298,7 +1310,8 @@ def slash_directory_urls():
 # its title and summary are read from that page, so the hub cannot drift.
 GUIDES = (
     ("Start here", ("what-is-an-ai-agent", "ai-agent-pricing", "ai-employee")),
-    ("Running an agent safely", ("ai-agent-permissions", "how-agents-are-controlled")),
+    ("Running an agent safely", ("ai-agent-permissions", "how-agents-are-controlled",
+                                 "ai-package-hallucination-data")),
     ("Jobs worth automating", ("quote-follow-up-automation", "ai-automation-for-plumbers",
                                "subscription-audit", "vendor-renewal-tracker")),
     ("See a real system", ("recovery-os", "sample-kit")),
@@ -1780,6 +1793,14 @@ def main():
     sample = build_sample_kit()
     if sample:
         print("Built docs/%s (%s)" % (SAMPLE_ZIP, sample["{{SAMPLE_SIZE}}"]))
+
+    # Downloadable research data, copied as is to /data/.
+    data_src = os.path.join(ROOT, "site", "data")
+    if os.path.isdir(data_src):
+        data_out = os.path.join(OUT_DIR, "data")
+        os.makedirs(data_out, exist_ok=True)
+        for name in sorted(os.listdir(data_src)):
+            shutil.copyfile(os.path.join(data_src, name), os.path.join(data_out, name))
 
     # Standalone marketing pages, each at its own clean directory URL.
     for src, slug in MARKETING_PAGES:

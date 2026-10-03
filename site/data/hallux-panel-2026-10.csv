@@ -1,0 +1,12 @@
+# HALLUX elicitation panel, aggregate figures. Source: https://blvkware.dev/ai-package-hallucination-data/
+# Collected 2026-09-22 to 2026-10-02 (7 collection days). License: CC BY 4.0, cite the source page.
+# rate_pct and the 95% Wilson interval are invented/suggestions. One parsing artefact ("and" on PyPI) is excluded.
+dimension,group,suggestions,invented,rate_pct,ci95_low_pct,ci95_high_pct
+tier,routine,582,1,0.17,0.03,0.97
+tier,niche,870,33,3.79,2.71,5.28
+tier,emerging,1080,63,5.83,4.59,7.39
+model,openai/gpt-oss-120b,1078,39,3.62,2.66,4.91
+model,qwen/qwen3.8-27b,598,29,4.85,3.40,6.88
+model,nvidia/nemotron-3-super-120b-a12b,684,23,3.36,2.25,5.00
+model,gemini-2.5-flash (3 days),172,6,3.49,1.61,7.40
+all,all,2532,97,3.83,3.15,4.65
