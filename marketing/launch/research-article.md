@@ -70,7 +70,7 @@ Six names read as two or three real package names fused together, the shape a sp
 
 ### 4. Placeholders written into install commands
 
-One prompt about validating tool calls in TypeScript produced seven different invented names over two days, most of them obvious placeholders: `@yourorg/toolcall-validator`, `@your-org/toolcall-validator` and several `my-something` names, written straight into `npm install` lines. A person reads a placeholder as a placeholder. An agent executing the command does not. Worth knowing: **both `@yourorg` and `@your-org` are existing npm organisations.** Whoever controls them decides what those commands would install.
+One prompt about validating tool calls in TypeScript produced seven different invented names over two days, most of them obvious placeholders: names under the `@yourorg/` and `@your-org/` scopes and several `my-something` names, written straight into `npm install` lines. A person reads a placeholder as a placeholder. An agent executing the command does not. Worth knowing: **both `@yourorg` and `@your-org` are existing npm organisations.** Whoever controls them decides what those commands would install.
 
 ### 5. Type packages for libraries that ship their own types
 

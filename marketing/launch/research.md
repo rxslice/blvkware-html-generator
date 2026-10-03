@@ -61,7 +61,7 @@ That crate exists, and it is an empty placeholder owned by a candle-core maintai
 ```
 
 ```post name="Research X 5" limit=280
-Models also write placeholders straight into install commands: npm install @your-org/toolcall-validator.
+Models also write placeholders straight into install commands, like npm install @your-org/ followed by an invented package name.
 
 A person reads that as a placeholder. An agent runs it. Both @yourorg and @your-org are real npm organisations.
 ```
