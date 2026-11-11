@@ -829,7 +829,7 @@ payment. They exist as the work sample in place of client case studies.
   prompt-injection patterns and returns clean markdown with a verdict: clean,
   suspicious or hostile. Free tier with no account; paid by BlvkWare key or per
   call over x402. Service documentation for agents:
-  https://blvkware-cordon.aiprodev0.workers.dev/llms.txt
+  https://cordon.blvkware.dev/llms.txt
 """ % base
     with io.open(os.path.join(OUT_DIR, "llms.txt"), "w", encoding="utf-8") as fh:
         fh.write(llms)
