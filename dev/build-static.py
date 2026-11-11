@@ -406,6 +406,11 @@ MARKETING_PAGES = [
     # Every price on it is a token filled from the HALLUX repository at
     # build time; there is no number in the source to go stale.
     ("hallux.html", "hallux"),
+    # The second verification API: what an agent reads, rather than what it
+    # installs. Unlike HALLUX it has no bridge to a sibling repository, so its
+    # prices are written in the page and the page points at /v1/pricing on the
+    # service as the machine-readable source.
+    ("cordon.html", "cordon"),
     # Original research from HALLUX's own panel data: the asset nobody else
     # can publish. Its figures are also served as CSV under /data/.
     ("ai-package-hallucination-data.html", "ai-package-hallucination-data"),
@@ -437,6 +442,7 @@ SITEMAP = [
     ("/quote-follow-up-automation/", "0.8", "monthly"),
     ("/ai-automation-for-plumbers/", "0.8", "monthly"),
     ("/hallux/", "0.9", "weekly"),
+    ("/cordon/", "0.9", "weekly"),
     ("/ai-package-hallucination-data/", "0.85", "monthly"),
     ("/docs/hallux-spec/", "0.7", "monthly"),
     ("/docs/limits/", "0.4", "monthly"),
@@ -811,6 +817,20 @@ payment. They exist as the work sample in place of client case studies.
     import hallux_bridge
 
     llms = llms.rstrip() + "\n" + hallux_bridge.llms_section(base)
+    # CORDON is a live service with its own llms.txt; this names the page and
+    # that file and nothing the build cannot see for itself.
+    llms = llms.rstrip() + """
+
+## CORDON
+
+- [CORDON](%s/cordon/): a content firewall for AI agents. Reads a web page or
+  scans content an agent already holds, removes text a human could not see
+  (hidden elements, HTML comments, invisible Unicode, Unicode smuggling), flags
+  prompt-injection patterns and returns clean markdown with a verdict: clean,
+  suspicious or hostile. Free tier with no account; paid by BlvkWare key or per
+  call over x402. Service documentation for agents:
+  https://blvkware-cordon.aiprodev0.workers.dev/llms.txt
+""" % base
     with io.open(os.path.join(OUT_DIR, "llms.txt"), "w", encoding="utf-8") as fh:
         fh.write(llms)
 
@@ -1430,6 +1450,7 @@ def build_not_found_page():
         ("/guides/", "Guides", "What an agent is, what it should cost, and how to keep it safe."),
         ("/#lab", "Free tools", "Business Scan, Agent Designer and App Builder, in your browser."),
         ("/hallux/", "HALLUX API", "Check that a package an AI suggested actually exists."),
+        ("/cordon/", "CORDON API", "Read a web page for an agent with the hidden instructions taken out."),
     )
     cards = "".join('<li class="guide"><a href="%s"><span class="g-title">%s</span>'
                     '<span class="g-desc">%s</span></a></li>' % l for l in links)

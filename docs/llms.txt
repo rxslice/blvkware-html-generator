@@ -249,3 +249,13 @@ than at businesses.
   rails. Capabilities listed under `roadmap` are not built.
 - [HALLUX specification](https://blvkware.dev/docs/hallux-spec): verdict semantics,
   namespaces, receipt format and corpus methodology.
+
+## CORDON
+
+- [CORDON](https://blvkware.dev/cordon/): a content firewall for AI agents. Reads a web page or
+  scans content an agent already holds, removes text a human could not see
+  (hidden elements, HTML comments, invisible Unicode, Unicode smuggling), flags
+  prompt-injection patterns and returns clean markdown with a verdict: clean,
+  suspicious or hostile. Free tier with no account; paid by BlvkWare key or per
+  call over x402. Service documentation for agents:
+  https://blvkware-cordon.aiprodev0.workers.dev/llms.txt
