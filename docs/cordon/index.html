@@ -160,6 +160,8 @@ pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2
 
     <p>The hidden block never reaches the agent. What it said is reported in <code>findings</code>, so the operator can see what the page tried.</p>
 
+    <p>To see what your own agent's fetch tool does with the same trick, point it at the <a href="/cordon/test/">hidden text test page</a>: an ordinary article with ten harmless markers hidden ten different ways.</p>
+
     <h2 id="removes">What it takes out</h2>
 
     <div class="tw">
@@ -220,7 +222,7 @@ pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2
     </table>
     </div>
 
-    <p>A page read is 2 units. A scan is 1 unit for each 20,000 characters. The key is the same <code>bk_live_</code> key <a href="/hallux/">HALLUX</a> uses, and the balance is shared: one purchase covers both.</p>
+    <p>A page read is 2 units. A scan is 1 unit for each 20,000 characters. A key is prepaid credit, bought in packs through PayPal and sent as <code>Authorization: Bearer bk_live_...</code>. The purchase link is in every 402 response and in the pricing document below.</p>
 
     <p>The third row is for agents that pay their own way. When the free allowance runs out, the response is HTTP 402 with a <code>PAYMENT-REQUIRED</code> header in the <a href="https://www.x402.org/" rel="noopener noreferrer">x402</a> format. An agent holding USDC on Base signs the payment and retries the same request. Nobody opens an account and nobody issues a key.</p>
 
