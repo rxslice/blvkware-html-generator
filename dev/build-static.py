@@ -716,7 +716,7 @@ payment. They exist as the work sample in place of client case studies.
   It holds the prompt bank and the extraction code behind the panel data below.
   Runs against Ollama (local, free), Claude, or any OpenAI-compatible endpoint,
   and exits 1 when it finds a recurring invented name, so it can gate CI. Install
-  with `pip install "git+https://github.com/rxslice/slopbench"`.
+  with `pip install slopbench` (on PyPI; add `[pkgguard]` for pkgguard's scoring).
 
 ## Important caveats for anyone citing this site
 
