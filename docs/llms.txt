@@ -195,6 +195,13 @@ payment. They exist as the work sample in place of client case studies.
   topics; the four families statistically indistinguishable; 19 of 28 invented
   names registrable by anyone (all PyPI and crates.io ones; npm scopes and the
   punctuation rule protected 8). Aggregate CSV under CC BY 4.0.
+- [What an HTML reader hands your model that you cannot see](https://blvkware.dev/hidden-text-html-extractors/):
+  original measurement, 11 November 2026. One public test page carrying ten kinds
+  of hidden text was run through eighteen HTML-to-text readers. Every library
+  passed at least four of ten hidden markers to the model; markdownify and
+  html-to-text passed nine; Chromium innerText passed four (zero font size,
+  off-screen, white-on-white, Unicode tags); CORDON passed two (CSS class,
+  white-on-white). Test page at /cordon/test/, CSV under CC BY 4.0.
 - [AI employee cost](https://blvkware.dev/ai-employee/): what an "AI employee"
   costs against a real hire, using BLS employer-cost data, with a calculator
   that says when not to buy one.

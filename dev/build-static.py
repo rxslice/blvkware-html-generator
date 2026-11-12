@@ -411,6 +411,9 @@ MARKETING_PAGES = [
     # prices are written in the page and the page points at /v1/pricing on the
     # service as the machine-readable source.
     ("cordon.html", "cordon"),
+    # Original measurement: one public test page through eighteen HTML readers.
+    # Its table is generated from site/data/hidden-text-readers-2026-11.csv.
+    ("hidden-text-html-extractors.html", "hidden-text-html-extractors"),
     # Original research from HALLUX's own panel data: the asset nobody else
     # can publish. Its figures are also served as CSV under /data/.
     ("ai-package-hallucination-data.html", "ai-package-hallucination-data"),
@@ -447,6 +450,7 @@ SITEMAP = [
     ("/ai-automation-for-plumbers/", "0.8", "monthly"),
     ("/hallux/", "0.9", "weekly"),
     ("/cordon/", "0.9", "weekly"),
+    ("/hidden-text-html-extractors/", "0.85", "monthly"),
     ("/ai-package-hallucination-data/", "0.85", "monthly"),
     ("/docs/hallux-spec/", "0.7", "monthly"),
     ("/docs/limits/", "0.4", "monthly"),
@@ -768,6 +772,13 @@ payment. They exist as the work sample in place of client case studies.
   topics; the four families statistically indistinguishable; 19 of 28 invented
   names registrable by anyone (all PyPI and crates.io ones; npm scopes and the
   punctuation rule protected 8). Aggregate CSV under CC BY 4.0.
+- [What an HTML reader hands your model that you cannot see](https://blvkware.dev/hidden-text-html-extractors/):
+  original measurement, 11 November 2026. One public test page carrying ten kinds
+  of hidden text was run through eighteen HTML-to-text readers. Every library
+  passed at least four of ten hidden markers to the model; markdownify and
+  html-to-text passed nine; Chromium innerText passed four (zero font size,
+  off-screen, white-on-white, Unicode tags); CORDON passed two (CSS class,
+  white-on-white). Test page at /cordon/test/, CSV under CC BY 4.0.
 - [AI employee cost](https://blvkware.dev/ai-employee/): what an "AI employee"
   costs against a real hire, using BLS employer-cost data, with a calculator
   that says when not to buy one.
@@ -1335,7 +1346,7 @@ def slash_directory_urls():
 GUIDES = (
     ("Start here", ("what-is-an-ai-agent", "ai-agent-pricing", "ai-employee")),
     ("Running an agent safely", ("ai-agent-permissions", "how-agents-are-controlled",
-                                 "ai-package-hallucination-data")),
+                                 "ai-package-hallucination-data", "hidden-text-html-extractors")),
     ("Jobs worth automating", ("quote-follow-up-automation", "ai-automation-for-plumbers",
                                "subscription-audit", "vendor-renewal-tracker")),
     ("See a real system", ("recovery-os", "sample-kit")),
