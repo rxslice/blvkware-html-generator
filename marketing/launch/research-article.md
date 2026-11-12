@@ -104,7 +104,7 @@ That is the cheapest defence in this whole subject, and very few projects have u
 ### If you run AI coding agents
 
 - **Check names before install, not after.** A gate between the agent and the package manager is the only control that works when nobody reads the command. [pkgguard](https://blvkware.dev/pkgguard/) is free and open source and does exactly this for npm, PyPI and crates.io, as a CLI, an MCP server or a CI step.
-- **Raise your guard on new territory.** On this data, a prompt in a fast-moving area is roughly thirty times likelier to produce an invented package than a routine one. Those are the sessions to review by hand.
+- **Raise your guard on new territory.** On this data, a prompt in a fast-moving area is about 34 times likelier to produce an invented package than a routine one. Those are the sessions to review by hand.
 - **Treat placeholders as live code.** `@your-org/` in an install line is an instruction to fetch whatever that organisation publishes.
 - **Lockfiles still matter.** An invented name can only enter through a new install. Pinned, reviewed dependency files keep it out of everything after the first mistake.
 
@@ -127,7 +127,7 @@ A study is only as good as what it admits. These are the limits, stated plainly.
 
 ## The data
 
-The aggregate figures on this page, by tier, by model and by registry, are in [hallux-panel-2026-10.csv](https://blvkware.dev/data/hallux-panel-2026-10.csv) under CC BY 4.0: use them, cite this page. The prompt bank and the extraction code are open source in [slopbench](https://github.com/rxslice/slopbench). The panel keeps running.
+The aggregate figures on this page, by tier, by model and by registry, are in [hallux-panel-2026-10.csv](https://blvkware.dev/data/hallux-panel-2026-10.csv) under CC BY 4.0: use them, cite this page. The prompt bank and the extraction code are open source in [slopbench](https://github.com/rxslice/slopbench), under the Apache 2.0 licence. The panel keeps running.
 
 ---
 

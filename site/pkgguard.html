@@ -42,8 +42,8 @@
          "acceptedAnswer": {"@type": "Answer", "text": "No. It protects the decision before anything is installed. Pair it with a content or runtime scanner for defense in depth."}},
         {"@type": "Question", "name": "Is pkgguard free?",
          "acceptedAnswer": {"@type": "Answer", "text": "Yes. It is Apache 2.0, free for commercial use, and needs no account, no API key and no paid data feed. It runs where your agent or CI runs."}},
-        {"@type": "Question", "name": "Why is pkgguard not installed from PyPI?",
-         "acceptedAnswer": {"@type": "Answer", "text": "It is not published there, and the name pkgguard on PyPI is unclaimed. Install it from its GitHub repository. An unclaimed name that people are told to install is exactly what slopsquatting exploits."}},
+        {"@type": "Question", "name": "Why is the PyPI package called blvkware-pkgguard?",
+         "acceptedAnswer": {"@type": "Answer", "text": "PyPI would not register the bare name because an unrelated project, pkg-guard, is too similar, and pkgguard-cli is a different tool by a different author. The package is published as blvkware-pkgguard and installs the pkgguard command. It can also be installed straight from its GitHub repository."}},
         {"@type": "Question", "name": "How do I connect pkgguard to an AI agent?",
          "acceptedAnswer": {"@type": "Answer", "text": "Four ways: the MCP server (pkgguard-mcp, one tool called authorize_install_command), the install wrapper (pkgguard-gate -- npm install ...), the self-hosted HTTP endpoint /v1/agent/authorize, or the GitHub Action. Each returns an explicit decision and a safe_to_execute boolean, and fails closed on shell chaining or command shapes it does not recognise."}}
       ]
