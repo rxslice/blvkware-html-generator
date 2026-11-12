@@ -139,18 +139,36 @@ pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2
 <pre tabindex="0"><code>{
   &quot;namespace&quot;: &quot;pkg.pypi&quot;,
   &quot;value&quot;: &quot;requests-oauth2-helper&quot;,
-  &quot;verdict&quot;: <span class="s">&quot;absent&quot;</span>,
-  &quot;confidence&quot;: 1,
   &quot;evidence&quot;: {
     &quot;registryStatus&quot;: &quot;not_found&quot;,
+    &quot;source&quot;: &quot;https://pypi.org/pypi/requests-oauth2-helper/json&quot;,
+    &quot;attestations&quot;: 0,
+    &quot;observedFrom&quot;: [],
+    &quot;firstObserved&quot;: &quot;2026-11-12T01:54:43Z&quot;,
+    &quot;lastObserved&quot;: &quot;2026-11-12T03:13:16Z&quot;,
+    &quot;checksWhileAbsent&quot;: 21,
     &quot;nearestExisting&quot;: [
-      &quot;requests-oauthlib&quot;,
       &quot;requests&quot;,
+      &quot;requests-oauthlib&quot;,
       &quot;requests-toolbelt&quot;
-    ]
+    ],
+    &quot;conflation&quot;: {
+      &quot;parents&quot;: [
+        &quot;oauth2client&quot;,
+        &quot;requests&quot;
+      ],
+      &quot;confidence&quot;: 0.78,
+      &quot;note&quot;: &quot;Every token comes from a real package but the combination does not exist: the shape of an LLM conflation.&quot;
+    }
   },
+  &quot;verdict&quot;: <span class="s">&quot;absent&quot;</span>,
+  &quot;confidence&quot;: 1,
   &quot;recommendation&quot;: &quot;do_not_install&quot;,
-  &quot;successor&quot;: <span class="c">&quot;requests-oauthlib&quot;</span>
+  &quot;billing&quot;: {
+    &quot;tier&quot;: &quot;free&quot;,
+    &quot;charged&quot;: 1,
+    &quot;remaining&quot;: 498
+  }
 }</code></pre>
 
     <h2 id="verdicts">Six verdicts</h2>

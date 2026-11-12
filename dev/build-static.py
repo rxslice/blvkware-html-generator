@@ -1519,7 +1519,7 @@ CORDON_CATALOG = (
         },
         "payment": {
             "rails": ["api-key", "x402"],
-            "x402": {"version": 2, "network": "eip155:8453", "asset": "USDC", "amountPerUnit": "0.001"},
+            "x402": {"version": 2, "network": "eip155:8453", "asset": "USDC", "amountPerUnit": "0.0008"},
         },
         "limits": "https://blvkware.dev/cordon/#limits",
         "status": "live",

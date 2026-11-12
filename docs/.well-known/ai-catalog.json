@@ -205,7 +205,7 @@
           "version": 2,
           "network": "eip155:8453",
           "asset": "USDC",
-          "amountPerUnit": "0.001"
+          "amountPerUnit": "0.0008"
         }
       },
       "limits": "https://blvkware.dev/cordon/#limits",
