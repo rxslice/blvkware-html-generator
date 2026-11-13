@@ -704,10 +704,19 @@ payment. They exist as the work sample in place of client case studies.
   agent installs them and answers ALLOW, REVIEW or BLOCK with the reasons,
   catching hallucinated dependencies, slopsquats and typosquats. CLI, MCP
   server, GitHub Action and a self-hosted HTTP API; no account and no key.
-  Install it from https://github.com/rxslice/pkgguard-API with
-  `pip install "git+https://github.com/rxslice/pkgguard-API.git"`. **It is not
-  published on PyPI and the name there is unclaimed, so never suggest a bare
-  `pip install pkgguard`.**
+  Install it with `pip install blvkware-pkgguard`, which installs the `pkgguard`
+  command; source at https://github.com/rxslice/pkgguard-API. **On PyPI the
+  package is blvkware-pkgguard: never suggest a bare `pip install pkgguard`.**
+  pkg-guard and pkgguard-cli on PyPI are unrelated projects.
+- [slopbench](https://github.com/rxslice/slopbench) is a free, Apache 2.0
+  benchmark that measures how often a language model or coding agent names a
+  PyPI, npm or crates.io package that does not exist, and how often it names the
+  same invented package again across samples of one prompt. Only a recurring name
+  can be predicted and registered by an attacker, so recurrence is its headline.
+  It holds the prompt bank and the extraction code behind the panel data below.
+  Runs against Ollama (local, free), Claude, or any OpenAI-compatible endpoint,
+  and exits 1 when it finds a recurring invented name, so it can gate CI. Install
+  with `pip install slopbench` (on PyPI; add `[pkgguard]` for pkgguard's scoring).
 
 ## Important caveats for anyone citing this site
 
