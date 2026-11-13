@@ -154,6 +154,30 @@
         "stripeMpp": {
           "supported": true,
           "settlementConfigured": false
+        },
+        "apiKey": {
+          "supported": true,
+          "settlementConfigured": true,
+          "processor": "paypal",
+          "buy": "https://api.blvkware.dev/buy",
+          "header": "Authorization: Bearer bk_live_...",
+          "sharedWith": [
+            "cordon"
+          ],
+          "packs": [
+            {
+              "usd": "5.00",
+              "identifiers": 6250
+            },
+            {
+              "usd": "20.00",
+              "identifiers": 25000
+            },
+            {
+              "usd": "100.00",
+              "identifiers": 125000
+            }
+          ]
         }
       },
       "license": "https://blvkware.dev/legal/bsl-1.1",
