@@ -268,10 +268,11 @@ def tokens():
         # page says so above the fold of the table rather than letting a
         # reader go looking for a buy button that does not exist.
         "{{HALLUX_PAID_NOTICE}}": "" if payment.settlement().configured() else (
+            _packs_notice("p") or (
             '<p class="note"><strong>Only the open tier is available today.</strong> '
             "The paid tiers and watches below are priced and documented, but no "
             "payment rail is connected yet, so none of them can be bought. The "
-            "open tier needs no account and no key.</p>"
+            "open tier needs no account and no key.</p>")
         ),
         # The example command on the page. It was hard-coded to
         # api.blvkware.dev, which is not the host serving it, so the moment
@@ -546,7 +547,40 @@ def build_surface(out_dir, site="https://blvkware.dev", api=None):
         if not os.path.isdir(target_dir):
             os.makedirs(target_dir)
         shutil.copyfile(source, os.path.join(target_dir, "ai-catalog.json"))
+    add_key_rail_to_catalog(os.path.join(target_dir, "ai-catalog.json"))
     return result.stdout.strip()
+
+
+def add_key_rail_to_catalog(path):
+    """Name the prepaid-key rail on HALLUX's catalog entry while it is on sale.
+
+    HALLUX's generator describes the rails it can settle itself (x402, Stripe),
+    and reports both unconfigured. The prepaid key bought through PayPal is
+    sold by the live edge, so the generator never sees it, and an agent reading
+    the catalog concluded HALLUX could not be paid for at all. CORDON's entry
+    already lists the same key; this makes the two agree.
+    """
+    on_sale = live_packs()
+    if on_sale is None or not os.path.isfile(path):
+        return
+    packs, buy = on_sale
+    with io.open(path, encoding="utf-8") as fh:
+        catalog = json.load(fh)
+    for entry in catalog.get("entries", []):
+        if entry.get("id") != "hallux":
+            continue
+        payment = entry.setdefault("payment", {})
+        payment["apiKey"] = {
+            "supported": True,
+            "settlementConfigured": True,
+            "processor": "paypal",
+            "buy": buy,
+            "header": "Authorization: Bearer bk_live_...",
+            "sharedWith": ["cordon"],
+            "packs": [{"usd": p["amount"], "identifiers": p["credits"]} for p in packs],
+        }
+    with io.open(path, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(json.dumps(catalog, indent=2, ensure_ascii=False) + "\n")
 
 
 def _mcp_paragraph(deployed):
@@ -1150,6 +1184,61 @@ def _spec_section(source, title, level):
     return "\n".join(out).strip()
 
 
+def live_packs():
+    """Prepaid credit packs the live service sells, as (packs, buy_url), or None.
+
+    Two different things were being read as one. ``settlement().configured()``
+    is whether this build machine can settle an x402 payment; whether anyone
+    can buy credit is a property of the live service, which sells prepaid packs
+    through PayPal from its own edge. Reading only the first, the site told
+    every reader that nothing could be bought while /buy was taking payments.
+    Asked of the live pricing document, so the page says what the service does.
+    """
+    if "packs" in _LIVE:
+        return _LIVE["packs"]
+    import urllib.request
+
+    found = None
+    request = urllib.request.Request(
+        API_BASE.rstrip("/") + "/hallux/v1/pricing",
+        headers={"User-Agent": "blvkware-site-build/1.0", "Accept": "application/json"},
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=10) as response:
+            pricing = json.loads(response.read().decode("utf-8"))
+        packs = [p for p in (pricing.get("packs") or [])
+                 if p.get("amount") and p.get("credits")]
+        buy = pricing.get("buy") or ""
+        if packs and buy.startswith("https://") and pricing.get("rails"):
+            found = (packs, buy)
+    except Exception:
+        found = None
+    _LIVE["packs"] = found
+    return found
+
+
+def _packs_notice(tag):
+    """The pricing notice while prepaid packs are on sale and tiers are not."""
+    on_sale = live_packs()
+    if on_sale is None:
+        return None
+    packs, buy = on_sale
+    amounts = ["$" + ("{:,.2f}".format(float(p["amount"])).replace(".00", ""))
+               for p in packs]
+    listed = ", ".join(amounts[:-1]) + " and " + amounts[-1] if len(amounts) > 1 else amounts[0]
+    shown = buy.replace("https://", "")
+    text = (
+        "<strong>Metered credit is on sale now.</strong> Prepaid packs of %s "
+        'are sold through PayPal at <a href="%s">%s</a>, and one key works '
+        "across HALLUX and CORDON. Team, Feed and Embedded are priced below but "
+        "are not yet sold through the site, and watches are not available yet. "
+        "The open tier needs no account and no key." % (listed, buy, shown)
+    )
+    if tag == "p":
+        return '<p class="note">%s</p>' % text
+    return '<div class="live"><p>%s</p></div>' % text
+
+
 def _live_stats():
     """/v1/stats from the live service, or None. Only asked when it answers."""
     if not endpoint_live()[0]:
@@ -1310,9 +1399,11 @@ def _licence_page(payment, ledger, attribution):
             _money(feed.monthly_usd),
             _money(feed.annual_usd),
             "" if on_sale else (
-                " It is not on sale yet: no payment rail is connected, so a "
+                " It is not on sale yet: %s, so a "
                 "request for <code>?full=1</code> answers <code>402</code> "
-                "with these terms rather than a way to pay."
+                "with these terms rather than a way to pay." % (
+                    "the Feed tier is not sold through the site"
+                    if live_packs() else "no payment rail is connected")
             ),
         )
     )
@@ -1388,10 +1479,11 @@ def _payment_page(source, payment):
 def _pricing_page(source, payment):
     pricing = _spec_section(source, "8.", 2)
     notice = "" if payment.settlement().configured() else (
+        _packs_notice("div") or (
         '<div class="live"><p><strong>Only the open tier is available today.'
         "</strong> The paid tiers below are priced and documented, but no "
         "payment rail is connected yet, so none of them can be bought. The "
-        "open tier needs no account and no key.</p></div>"
+        "open tier needs no account and no key.</p></div>")
     )
     body = (
         "<p>The price list for HALLUX, the identifier verification API. "
