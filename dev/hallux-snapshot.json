@@ -1,0 +1,23 @@
+{
+  "{{HALLUX_API_BASE}}": "https://api.blvkware.dev/hallux/v1",
+  "{{HALLUX_CAP_IDENTIFIERS}}": "373,750",
+  "{{HALLUX_EMBEDDED_FROM}}": "from $2,500",
+  "{{HALLUX_FEED_MONTH}}": "$1,500",
+  "{{HALLUX_FEED_YEAR}}": "$15,000",
+  "{{HALLUX_FREE_DAILY}}": "500",
+  "{{HALLUX_MCP}}": "<p>There is also an MCP server exposing the same capability as tools, so a coding agent can check a command before running it without anyone wiring an integration. It answers at <code>https://api.blvkware.dev/hallux/mcp</code> over Streamable HTTP, with no account and no key:</p>\n<pre><code><span class=\"c\">claude</span> mcp add --transport http hallux https://api.blvkware.dev/hallux/mcp</code></pre>\n<p>Any other MCP host takes the same address. The tools are <code>hallux_check_command</code>, to call before an install, <code>hallux_check_manifest</code>, after editing a dependency file, and <code>hallux_check</code> for identifiers; <code>hallux_watch</code> is refused until durable storage is configured. Every identifier a tool resolves counts against the open tier, like any other check.</p>",
+  "{{HALLUX_NAMESPACES}}": "cite.doi, pkg.crates, pkg.go, pkg.maven, pkg.npm, pkg.nuget, pkg.pypi",
+  "{{HALLUX_NAMESPACE_COUNT}}": "7",
+  "{{HALLUX_NEUTRALITY}}": "HALLUX is never paid more because it blocked you. Billing is a function of identifiers submitted, not of the verdicts returned. A verification vendor paid per finding has a commercial reason to find more.",
+  "{{HALLUX_OPEN_POOL}}": "50,000",
+  "{{HALLUX_PAID_NOTICE}}": "<p class=\"note\"><strong>Metered credit is on sale now.</strong> Prepaid packs of $5, $20 and $100 are sold through PayPal at <a href=\"https://api.blvkware.dev/buy\">api.blvkware.dev/buy</a>, and one key works across HALLUX and CORDON. Team, Feed and Embedded are priced below but are not yet sold through the site, and watches are not available yet. The open tier needs no account and no key.</p>",
+  "{{HALLUX_PRICE_PER_IDENTIFIER}}": "$0.0008",
+  "{{HALLUX_STATUS_NOTICE}}": "",
+  "{{HALLUX_TEAM_MONTH}}": "$299",
+  "{{HALLUX_TEAM_WATCHES}}": "100",
+  "{{HALLUX_TEAM_YEAR}}": "$2,990",
+  "{{HALLUX_TRY_HEADING}}": "Try it now",
+  "{{HALLUX_TRY_INTRO}}": "<p>No account, no key, no signup. One command:</p>",
+  "{{HALLUX_TRY_RESPONSE}}": "<pre><code>{\n  &quot;namespace&quot;: &quot;pkg.pypi&quot;,\n  &quot;value&quot;: &quot;requests-oauth2-helper&quot;,\n  &quot;evidence&quot;: {\n    &quot;registryStatus&quot;: &quot;not_found&quot;,\n    &quot;source&quot;: &quot;https://pypi.org/pypi/requests-oauth2-helper/json&quot;,\n    &quot;attestations&quot;: 0,\n    &quot;observedFrom&quot;: [],\n    &quot;firstObserved&quot;: &quot;2026-11-12T01:54:43Z&quot;,\n    &quot;lastObserved&quot;: &quot;2026-11-14T02:24:11Z&quot;,\n    &quot;checksWhileAbsent&quot;: 90,\n    &quot;nearestExisting&quot;: [\n      &quot;requests&quot;,\n      &quot;requests-oauthlib&quot;,\n      &quot;requests-toolbelt&quot;\n    ],\n    &quot;conflation&quot;: {\n      &quot;parents&quot;: [\n        &quot;oauth2client&quot;,\n        &quot;requests&quot;\n      ],\n      &quot;confidence&quot;: 0.78,\n      &quot;note&quot;: &quot;Every token comes from a real package but the combination does not exist: the shape of an LLM conflation.&quot;\n    }\n  },\n  &quot;verdict&quot;: <span class=\"s\">&quot;absent&quot;</span>,\n  &quot;confidence&quot;: 1,\n  &quot;recommendation&quot;: &quot;do_not_install&quot;,\n  &quot;billing&quot;: {\n    &quot;tier&quot;: &quot;free&quot;,\n    &quot;charged&quot;: 1,\n    &quot;remaining&quot;: 495\n  }\n}</code></pre>",
+  "{{HALLUX_WATCH_MONTH}}": "$0.02"
+}

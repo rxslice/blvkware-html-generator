@@ -106,6 +106,10 @@ python dev/embed-logo.py       # regenerate logo assets from the master
 
 Stdlib only for the server; the logo tooling needs Pillow and numpy.
 
+The build writes to a staging copy and replaces `docs/` only if every step passes, so an aborted build never publishes a half-updated site.
+
+HALLUX prices and coverage come from the private `hallux` repository when it is checked out beside this one. Each such build also refreshes `dev/hallux-snapshot.json`. A clone without `hallux` fills the same tokens from that snapshot, so the public repository still builds. Set `BLVKWARE_REQUIRE_HALLUX=1` to refuse the snapshot (for the production publish), and run `python dev/check-public-build.py` to verify both paths.
+
 ---
 
 ## Limitations
