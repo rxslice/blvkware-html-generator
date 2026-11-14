@@ -19,6 +19,7 @@ import json
 import os
 import re
 import shutil
+import tempfile
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -1795,6 +1796,36 @@ def point_social_cards():
 
 
 def main():
+    """Build into a staging copy of docs/ and swap it in only on success.
+
+    The build writes hundreds of files. Writing them straight into docs/
+    meant an abort halfway through (an unresolved token, a price mismatch)
+    left a published tree that was part old, part new.
+    """
+    global OUT_DIR
+    final = OUT_DIR
+    stage = tempfile.mkdtemp(prefix=".docs-staging-", dir=ROOT)
+    try:
+        if os.path.isdir(final):
+            shutil.copytree(final, stage, symlinks=True, dirs_exist_ok=True)
+        OUT_DIR = stage
+        code = _build()
+        if code != 0:
+            print("docs/ left unchanged")
+            return code
+        previous = final + ".previous"
+        shutil.rmtree(previous, ignore_errors=True)
+        if os.path.isdir(final):
+            os.rename(final, previous)
+        os.rename(stage, final)
+        shutil.rmtree(previous, ignore_errors=True)
+        return 0
+    finally:
+        OUT_DIR = final
+        shutil.rmtree(stage, ignore_errors=True)
+
+
+def _build():
     if not os.path.isdir(OUT_DIR):
         os.makedirs(OUT_DIR)
 

@@ -225,15 +225,58 @@ def _try_response(deployed):
     return "<pre><code>%s</code></pre>" % text
 
 
-def tokens():
-    """The `{{HALLUX_*}}` substitutions, or None when HALLUX is absent.
+#: The token values from the last build that had HALLUX checked out. Every
+#: full build rewrites it, so it is committed beside the docs/ it produced and
+#: cannot drift from them. A public clone without the private HALLUX
+#: repository fills the pages from it instead of aborting.
+SNAPSHOT = os.path.join(HERE, "hallux-snapshot.json")
 
-    Every value here is read from HALLUX at build time. Nothing in this
-    function may be a literal price.
+_SNAPSHOT_NOTED = []
+
+
+def _write_snapshot(values):
+    text = json.dumps(values, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
+    try:
+        with io.open(SNAPSHOT, encoding="utf-8") as fh:
+            if fh.read() == text:
+                return
+    except OSError:
+        pass
+    with io.open(SNAPSHOT, "w", encoding="utf-8") as fh:
+        fh.write(text)
+
+
+def _read_snapshot():
+    try:
+        with io.open(SNAPSHOT, encoding="utf-8") as fh:
+            values = json.load(fh)
+    except (OSError, ValueError):
+        return None
+    if not _SNAPSHOT_NOTED:
+        _SNAPSHOT_NOTED.append(True)
+        print("note: HALLUX not checked out; HALLUX tokens filled from "
+              "dev/hallux-snapshot.json (the last full build's values)")
+    return values
+
+
+def tokens():
+    """The `{{HALLUX_*}}` substitutions, or None when HALLUX is absent and no
+    snapshot exists.
+
+    Every value here is read from HALLUX at build time, or from the snapshot
+    the last such build wrote. Nothing in this function may be a literal price.
     """
     path = locate()
     if path is None:
-        return None
+        if os.environ.get("BLVKWARE_REQUIRE_HALLUX") == "1":
+            return None
+        return _read_snapshot()
+    values = _live_tokens(path)
+    _write_snapshot(values)
+    return values
+
+
+def _live_tokens(path):
     payment, authorities = _load(path)
     # Named apart from `namespaces` on purpose: an earlier version called both
     # of these `live`, the namespace list overwrote the probe result, and the
