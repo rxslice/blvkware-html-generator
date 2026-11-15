@@ -254,12 +254,14 @@ than at businesses.
   A phantom is a name no registry has and models repeatedly invent.
   A squat is a phantom somebody has since registered, which is a
   supply-chain attack caught before the first install.
-  Live namespaces: cite.doi, pkg.crates, pkg.go, pkg.maven, pkg.npm, pkg.nuget, pkg.pypi.
+  Live namespaces: pkg.npm, pkg.pypi, pkg.crates, pkg.go, pkg.maven, pkg.nuget, pkg.rubygems, pkg.packagist, pkg.hex, pkg.pub, img.docker, repo.github, cite.doi.
   Free tier: 500 identifiers a day per client, no account, no key,
   within a shared pool of 50,000 a day for all free traffic.
   MCP server: https://api.blvkware.dev/hallux/mcp (Streamable HTTP, no account, no key).
   Tools: hallux_check_command before an install, hallux_check_manifest
-  after editing a dependency file, hallux_check for identifiers.
+  after editing a dependency file, hallux_check for identifiers
+  (read-only); hallux_watch and hallux_report with an API key;
+  hallux_account for credits.
 - [Agent catalog](https://blvkware.dev/.well-known/ai-catalog.json): machine-readable
   index of every capability that answers, with prices and payment
   rails. Capabilities listed under `roadmap` are not built.

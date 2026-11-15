@@ -77,6 +77,32 @@ def _load(path):
     return payment, authorities
 
 
+def contract(path=None):
+    """HALLUX's production contract (deploy/cloudflare/contract.json), or None.
+
+    Generated from the Cloudflare Worker modules that actually serve
+    api.blvkware.dev and checked in HALLUX's CI. Coverage, MCP tools and the
+    prices that can actually be bought come from here, not from the Python
+    port, which is how the site came to advertise 7 namespaces while 13
+    answered.
+    """
+    path = path or locate()
+    if path is None:
+        return None
+    target = os.path.join(path, "deploy", "cloudflare", "contract.json")
+    if not os.path.isfile(target):
+        return None
+    with io.open(target, encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def live_namespaces(authorities=None):
+    c = contract()
+    if c:
+        return [n["namespace"] for n in c["hallux"]["namespaces"]]
+    return list(authorities.supported()) if authorities else []
+
+
 def _money(value):
     """Render a price the way the rest of the site renders one."""
     text = str(value).strip()
@@ -242,7 +268,7 @@ def tokens():
     deployed, _detail = endpoint_live()
 
     by_id = payment.TIERS_BY_ID
-    namespaces = list(authorities.supported())
+    namespaces = live_namespaces(authorities)
     pricing = payment.catalog_pricing()
 
     return {
@@ -391,13 +417,21 @@ def check_published_prices(pages, out_dir=None):
                         "the agent catalog quotes $%s per identifier but "
                         "HALLUX charges $%s" % (amount, payment.PRICE_PER_IDENTIFIER_USD)
                     )
-                cap = entry.get("pricing", {}).get("cap", {})
-                if str(cap.get("thenMonthlyUsd", "")) != payment.PRICE_TEAM_MONTH_USD:
-                    problems.append(
-                        "the agent catalog quotes a cap price of $%s but the "
-                        "Team price is $%s"
-                        % (cap.get("thenMonthlyUsd"), payment.PRICE_TEAM_MONTH_USD)
-                    )
+                # What can be bought must be exactly what production sells.
+                c = contract()
+                if c:
+                    sold = [(p["id"], p["usd"], p["credits"]) for p in c["hallux"]["pricing"]["packs"]]
+                    listed = [(p.get("id"), p.get("usd"), p.get("credits"))
+                              for p in entry.get("pricing", {}).get("purchasable", [])]
+                    if listed != sold:
+                        problems.append(
+                            "the agent catalog lists purchasable packs %r but "
+                            "production sells %r" % (listed, sold))
+                    if sorted(entry.get("coverage", {}).get("live", [])) != sorted(live_namespaces()):
+                        problems.append("the agent catalog's live namespaces differ from production")
+                for plan in entry.get("pricing", {}).get("proposedPlans", []):
+                    if plan.get("status") != "proposed-not-on-sale":
+                        problems.append("proposed plan %s is not marked as not on sale" % plan.get("id"))
     return problems, notes
 
 
@@ -599,12 +633,14 @@ def _mcp_paragraph(deployed):
         "without anyone wiring an integration. It answers at <code>%s</code> "
         "over Streamable HTTP, with no account and no key:</p>\n"
         '<pre><code><span class="c">claude</span> mcp add --transport http hallux %s</code></pre>\n'
-        "<p>Any other MCP host takes the same address. The tools are "
+        "<p>Any other MCP host takes the same address. The read-only tools are "
         "<code>hallux_check_command</code>, to call before an install, "
         "<code>hallux_check_manifest</code>, after editing a dependency file, "
-        "and <code>hallux_check</code> for identifiers; <code>hallux_watch</code> "
-        "is refused until durable storage is configured. Every identifier a "
-        "tool resolves counts against the open tier, like any other check.</p>"
+        "and <code>hallux_check</code> for identifiers. <code>hallux_watch</code> "
+        "and <code>hallux_report</code> need an API key, and "
+        "<code>hallux_account</code> shows your credits. Every tool publishes "
+        "an output schema. Every identifier a tool resolves counts against "
+        "the open tier, like any other check.</p>"
         % (url, url)
     )
 
@@ -619,12 +655,14 @@ def llms_section(base="https://blvkware.dev"):
     if path is None:
         return ""
     payment, authorities = _load(path)
-    live = ", ".join(authorities.supported())
+    live = ", ".join(live_namespaces(authorities))
     deployed, _detail = endpoint_live()
     mcp_note = (
         "  MCP server: %s/hallux/mcp (Streamable HTTP, no account, no key).\n"
         "  Tools: hallux_check_command before an install, hallux_check_manifest\n"
-        "  after editing a dependency file, hallux_check for identifiers.\n"
+        "  after editing a dependency file, hallux_check for identifiers\n"
+        "  (read-only); hallux_watch and hallux_report with an API key;\n"
+        "  hallux_account for credits.\n"
         % API_BASE.rstrip("/")
         if deployed and mcp_live()[0]
         else ""
@@ -1075,9 +1113,8 @@ def build_limits_page(out_dir):
         ("Identifiers per day, all open-tier traffic combined",
          "{:,}".format(payment.OPEN_POOL_DAILY_IDENTIFIERS)),
         ("Identifiers per batch request", str(MAX_BATCH)),
-        ("Identifiers per month before the metered cap",
-         "{:,}".format(payment.METERED_CAP_IDENTIFIERS)),
-        ("Watched identifiers per request", str(MAX_BATCH)),
+        ("Uncached registry lookups per request", "45"),
+        ("Identifiers per watch", str(MAX_BATCH)),
         ("Authentication on the open tier", "none"),
     ]
     table = ['<div class="tw"><table><thead><tr><th>Limit</th><th>Value</th>'
@@ -1093,25 +1130,25 @@ def build_limits_page(out_dir):
         "describe a limit that is not the real one.</p>"
         + "".join(table)
         + "<h2>How limits are reported</h2>"
-        "<p>Every response carries <code>RateLimit-Limit</code>, "
-        "<code>RateLimit-Remaining</code> and <code>RateLimit-Reset</code>. "
-        "<code>RateLimit-Remaining</code> is what you can actually still use: "
-        "the smaller of your own allowance and what is left in the shared "
-        "pool, which is also reported on its own as "
-        "<code>X-HALLUX-Open-Pool-Remaining</code>. Pace from that header "
-        "and a refusal is never a surprise.</p>"
-        "<p>When an open allowance is spent the response is "
-        "<code>402 Payment Required</code>. Its body names the price, the "
-        "settlement rails and the flat tier that would remove the meter, and "
-        "its <code>reason</code> says which limit refused you: "
-        "<code>client_allowance_spent</code> or <code>open_pool_spent</code>. "
-        "A request refused by the pool is not charged to your own "
-        "allowance.</p>"
+        "<p>Every successful check carries a <code>billing</code> object: "
+        "<code>tier</code> (<code>free</code> or <code>paid</code>), "
+        "<code>charged</code> and <code>remaining</code>, which is what is "
+        "left of your daily allowance or of your key's credits. Pace from "
+        "<code>remaining</code> and a refusal is never a surprise.</p>"
+        "<p>When the free allowance or a key's credits run out the response "
+        "is <code>402 Payment Required</code> with "
+        "<code>error: payment_required</code>, the price per identifier and "
+        "the PayPal buy link. Over MCP the same answer arrives as a tool "
+        "result with <code>isError</code> set. Identifiers HALLUX does not "
+        "cover come back <code>unknown</code> with reason "
+        "<code>namespace_unsupported</code> and are never charged.</p>"
         "<h2>Batching</h2>"
-        "<p>A batch is charged and served whole. Partially serving a batch and "
-        "charging for the part served would make an agent's behaviour depend "
-        "on where in its dependency list it ran out, which is a worse failure "
-        "than a clean refusal.</p>"
+        "<p>A batch is admitted or refused whole: if your allowance or credits "
+        "cannot cover every identifier in it, nothing is checked and nothing "
+        "is charged. Inside an admitted batch, identifiers that would exceed "
+        "the per-request registry budget come back <code>unknown</code> with "
+        "reason <code>batch_budget</code>, are refunded, and should be "
+        "resubmitted. Cached answers do not count against that budget.</p>"
         "<h2>Abuse</h2>"
         "<p>The open tier is generous on purpose and is expected to be "
         "abused. It is rate limited per client, and all open-tier traffic "
