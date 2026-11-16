@@ -1769,5 +1769,32 @@
         });
     </script>
 
+<script>
+/* WebMCP: the two things this site sells, as tools a browsing agent can call
+   from the page without scraping it. Both hit the free tier, no key. */
+(function(){
+  var mc = document.modelContext || navigator.modelContext;
+  if (!mc || typeof mc.registerTool !== "function") return;
+  var ns = ["pkg.npm","pkg.pypi","pkg.crates","pkg.go","pkg.maven","pkg.nuget","pkg.rubygems","pkg.packagist","pkg.hex","pkg.pub","img.docker","repo.github","cite.doi"];
+  function asText(o){ return { content: [{ type: "text", text: JSON.stringify(o, null, 2) }] }; }
+  var tools = [
+    { name: "hallux_check",
+      description: "Check whether a package, container image, GitHub repo or DOI really exists before installing or citing it. Verdicts: exists, deprecated, absent, phantom (a name models invent), squat (a phantom someone registered), unknown.",
+      inputSchema: { type: "object", required: ["namespace","value"], properties: {
+        namespace: { type: "string", enum: ns, description: "Registry, e.g. pkg.npm or pkg.pypi" },
+        value: { type: "string", description: "The name to check, e.g. requests or owner/repo" } } },
+      execute: function(a){ return fetch("https://api.blvkware.dev/hallux/v1/check/" + encodeURIComponent(a.namespace) + "/" + encodeURIComponent(a.value)).then(function(r){ return r.json(); }).then(asText); } },
+    { name: "cordon_read",
+      description: "Fetch a web page through CORDON and get clean markdown with hidden prompt-injection payloads removed, plus a verdict (clean, suspicious, hostile).",
+      inputSchema: { type: "object", required: ["url"], properties: { url: { type: "string", description: "Absolute http(s) URL" } } },
+      execute: function(a){ return fetch("https://cordon.blvkware.dev/v1/read?url=" + encodeURIComponent(a.url)).then(function(r){ return r.json(); }).then(asText); } },
+    { name: "blvkware_pricing",
+      description: "Pricing and free-tier limits for HALLUX and CORDON, and where to buy a key.",
+      inputSchema: { type: "object", properties: {} },
+      execute: function(){ return fetch("https://api.blvkware.dev/hallux/v1/billing/config").then(function(r){ return r.json(); }).then(function(c){ return asText({ hallux: c, cordon: "https://cordon.blvkware.dev/v1/pricing", buy: "https://api.blvkware.dev/buy", auth: "https://blvkware.dev/auth.md" }); }); } }
+  ];
+  tools.forEach(function(t){ try { var p = mc.registerTool(t); if (p && p.catch) p.catch(function(){}); } catch (e) {} });
+})();
+</script>
 </body>
 </html>

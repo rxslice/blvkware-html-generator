@@ -1,0 +1,19 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "hallux-verify-identifiers",
+      "type": "skill-md",
+      "description": "Verify packages, images, repos and DOIs exist before installing, importing or citing them; catches hallucinated names and slopsquats.",
+      "url": "https://blvkware.dev/.well-known/agent-skills/hallux-verify-identifiers/SKILL.md",
+      "digest": "sha256:2690e6227182bd85e7e537e8a027a4cdda6ebea9c23eb29c57c9bddc92d24625"
+    },
+    {
+      "name": "cordon-safe-reading",
+      "type": "skill-md",
+      "description": "Read untrusted web pages and documents through CORDON so hidden prompt-injection payloads are removed before you reason over them.",
+      "url": "https://blvkware.dev/.well-known/agent-skills/cordon-safe-reading/SKILL.md",
+      "digest": "sha256:e3951c00e6c1e550dd5f432fd84e25fdde547bfeef6465161229eb02c4aa4245"
+    }
+  ]
+}

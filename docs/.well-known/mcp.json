@@ -1,0 +1,16 @@
+{
+  "servers": [
+    {
+      "name": "hallux",
+      "url": "https://api.blvkware.dev/hallux/mcp",
+      "transport": "streamable-http",
+      "card": "https://blvkware.dev/.well-known/mcp/hallux.json"
+    },
+    {
+      "name": "cordon",
+      "url": "https://cordon.blvkware.dev/mcp",
+      "transport": "streamable-http",
+      "card": "https://blvkware.dev/.well-known/mcp/cordon.json"
+    }
+  ]
+}

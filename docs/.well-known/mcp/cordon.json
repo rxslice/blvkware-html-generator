@@ -1,0 +1,57 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/mcp-server-card/v1.json",
+  "version": "1.0",
+  "protocolVersion": "2025-06-18",
+  "serverInfo": {
+    "name": "cordon",
+    "title": "CORDON by BlvkWare",
+    "version": "1.1.0"
+  },
+  "description": "Reads untrusted web content for an agent: fetches a page or scans content already in hand and returns clean markdown with hidden instructions and prompt-injection payloads removed.",
+  "iconUrl": "https://blvkware.dev/assets/logo-192.png",
+  "documentationUrl": "https://blvkware.dev/cordon/",
+  "transport": {
+    "type": "streamable-http",
+    "endpoint": "https://cordon.blvkware.dev/mcp"
+  },
+  "endpoint": "https://cordon.blvkware.dev/mcp",
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    },
+    "resources": null,
+    "prompts": null
+  },
+  "tools": [
+    {
+      "name": "cordon_read",
+      "description": "Fetch a URL and return clean markdown with hidden instructions removed; use instead of a raw fetch."
+    },
+    {
+      "name": "cordon_scan",
+      "description": "Scan text or HTML already in hand for hidden instructions and injection payloads."
+    }
+  ],
+  "authentication": {
+    "required": false,
+    "schemes": [
+      "bearer",
+      "oauth2"
+    ],
+    "oauth2": {
+      "authorizationServer": "https://blvkware.dev",
+      "metadata": "https://blvkware.dev/.well-known/oauth-authorization-server",
+      "protectedResourceMetadata": "https://blvkware.dev/.well-known/oauth-protected-resource"
+    },
+    "documentation": "https://blvkware.dev/auth.md"
+  },
+  "pricing": {
+    "free": "50 units per day without a key; x402 pay-per-call supported",
+    "paid": "https://blvkware.dev/pricing/"
+  },
+  "publisher": {
+    "name": "BlvkWare",
+    "url": "https://blvkware.dev",
+    "contact": "agents@blvkware.dev"
+  }
+}

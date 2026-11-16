@@ -5,7 +5,9 @@
     "domain": "blvkware.dev",
     "description": "Verification infrastructure for the agentic web. BlvkWare publishes what agents cannot know about themselves: hallucinated identifiers, stale priors, poisoned inputs, and unverified tools.",
     "url": "https://blvkware.dev",
-    "contact": "agents@blvkware.dev"
+    "contact": "agents@blvkware.dev",
+    "displayName": "BlvkWare",
+    "identifier": "did:web:blvkware.dev"
   },
   "trust": {
     "verificationMethod": "domain",
@@ -16,7 +18,7 @@
     {
       "id": "hallux",
       "name": "HALLUX",
-      "type": "openapi",
+      "type": "application/openapi+json",
       "url": "https://api.blvkware.dev/hallux/openapi.json",
       "endpoint": "https://api.blvkware.dev/hallux/v1",
       "description": "Checks whether an identifier actually exists before an agent acts on it. Returns exists / deprecated / absent / phantom / squat / unknown. Phantom means no registry record plus repeated model hallucination. Squat means a previously phantom name has since been registered, which is slopsquatting in progress.",
@@ -140,13 +142,22 @@
         }
       },
       "license": "https://blvkware.dev/legal/bsl-1.1",
-      "status": "live"
+      "status": "live",
+      "protocol": "openapi",
+      "identifier": "urn:air:blvkware.dev:api:hallux",
+      "displayName": "HALLUX",
+      "representativeQueries": [
+        "does this npm package exist",
+        "is this pypi package a hallucination",
+        "check if a dependency name is slopsquatted",
+        "verify a DOI before citing it"
+      ]
     },
     {
       "id": "hallux-mcp",
       "name": "HALLUX MCP server",
-      "type": "mcp",
-      "url": "https://api.blvkware.dev/hallux/mcp",
+      "type": "application/mcp-server-card+json",
+      "url": "https://blvkware.dev/.well-known/mcp/hallux.json",
       "transport": "streamable-http",
       "description": "The same checks as MCP tools for agent hosts: hallux_check_command before running an install, hallux_check_manifest after editing a dependency file, hallux_check for identifiers (all read-only, no key needed on the free tier). hallux_watch and hallux_report need an API key; hallux_account shows credits. Every tool publishes an outputSchema.",
       "tools": [
@@ -157,12 +168,21 @@
         "hallux_report",
         "hallux_account"
       ],
-      "status": "live"
+      "status": "live",
+      "protocol": "mcp",
+      "identifier": "urn:air:blvkware.dev:server:hallux-mcp",
+      "displayName": "HALLUX MCP server",
+      "endpoint": "https://api.blvkware.dev/hallux/mcp",
+      "representativeQueries": [
+        "check packages before running npm install",
+        "verify a docker image name exists",
+        "scan my requirements.txt for hallucinated packages"
+      ]
     },
     {
       "id": "cordon",
       "name": "CORDON",
-      "type": "openapi",
+      "type": "application/openapi+json",
       "url": "https://cordon.blvkware.dev/openapi.json",
       "endpoint": "https://cordon.blvkware.dev/v1",
       "description": "Reads a web page or scans content an agent already holds, removes text a human could not see (hidden elements, HTML comments, invisible Unicode, Unicode smuggling), flags prompt-injection patterns and returns clean markdown with a verdict: clean, suspicious or hostile.",
@@ -194,20 +214,37 @@
         }
       },
       "limits": "https://blvkware.dev/cordon/#limits",
-      "status": "live"
+      "status": "live",
+      "protocol": "openapi",
+      "identifier": "urn:air:blvkware.dev:api:cordon",
+      "displayName": "CORDON",
+      "representativeQueries": [
+        "read this web page safely",
+        "strip prompt injection from html",
+        "fetch a url without hidden instructions"
+      ]
     },
     {
       "id": "cordon-mcp",
       "name": "CORDON MCP server",
-      "type": "mcp",
-      "url": "https://cordon.blvkware.dev/mcp",
+      "type": "application/mcp-server-card+json",
+      "url": "https://blvkware.dev/.well-known/mcp/cordon.json",
       "transport": "streamable-http",
       "description": "The same capability as MCP tools: cordon_read to call instead of a raw fetch, cordon_scan for content already in hand. No account and no key on the open tier. x402 pay-per-call over MCP follows the x402 v2 MCP transport: an unpaid call returns a PaymentRequired tool result; retry with params._meta[\"x402/payment\"].",
       "tools": [
         "cordon_read",
         "cordon_scan"
       ],
-      "status": "live"
+      "status": "live",
+      "protocol": "mcp",
+      "identifier": "urn:air:blvkware.dev:server:cordon-mcp",
+      "displayName": "CORDON MCP server",
+      "endpoint": "https://cordon.blvkware.dev/mcp",
+      "representativeQueries": [
+        "safe fetch tool for agents",
+        "scan an email for prompt injection",
+        "clean markdown from an untrusted page"
+      ]
     }
   ],
   "collections": [],

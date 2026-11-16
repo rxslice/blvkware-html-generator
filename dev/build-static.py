@@ -538,6 +538,10 @@ def write_seo_files():
 
     robots = (
         "User-agent: *\n"
+        # Content Signals (contentsignals.org): search, answering and
+        # training are all welcome. BlvkWare is sold to agents; being in
+        # what they know and retrieve is the point.
+        "Content-Signal: ai-train=yes, search=yes, ai-input=yes\n"
         "Allow: /\n\n"
         "# Assistants and agentic search are welcome here.\n"
         "User-agent: GPTBot\nAllow: /\n\n"
@@ -1990,6 +1994,13 @@ def main():
     # so its two catalog entries are stated here and appended to whatever
     # HALLUX wrote. Both name endpoints that answer today.
     add_cordon_to_catalog()
+
+    # Discovery documents for agents (MCP server cards, RFC 9727 API catalog,
+    # agent skills, auth.md) and the ARD fields on the catalog above. The
+    # dynamic half (OAuth, Link headers, Markdown) is the edge Worker in edge/.
+    import agent_discovery
+    agent_discovery.build(OUT_DIR)
+    print("Built agent discovery documents (.well-known/mcp, api-catalog, agent-skills, auth.md)")
 
     # The MCP Registry proves blvkware.dev owns dev.blvkware/hallux by
     # fetching this record: the public half of the key HALLUX's
