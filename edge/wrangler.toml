@@ -11,3 +11,11 @@ routes = [{ pattern = "blvkware.dev/*", zone_name = "blvkware.dev" }]
 
 [observability]
 enabled = true
+
+[[kv_namespaces]]
+binding = "COMMERCE"
+id = "fd6173ac6fd241a2b08e78a4a7454052"
+
+[[services]]
+binding = "HALLUX"
+service = "blvkware-api"

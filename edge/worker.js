@@ -15,7 +15,17 @@
 //
 // Anything else passes straight through to the origin unchanged.
 
+import { agentCard, handleA2A } from "./a2a.js";
+import { handleApi } from "./x402.js";
+import { profile as ucpProfile, handleUcp, handleHandoff } from "./ucp.js";
+
 const ISSUER = "https://blvkware.dev";
+
+// Personal Agent Protocol discovery. BlvkWare is a website plus public APIs; it
+// does not run a PAP personal-agent endpoint, so this declares the web surface only.
+function poppy(origin) {
+  return { protocol_version: "0.1", organization: { name: "BlvkWare", domain: new URL(origin).host }, web: { url: origin, agent_card: origin + "/.well-known/agent-card.json", api_catalog: origin + "/.well-known/api-catalog", auth: origin + "/auth.md" } };
+}
 const API_ACCOUNT = "https://api.blvkware.dev/hallux/v1/account";
 const SCOPES = ["hallux", "cordon"];
 const CODE_TTL = 300; // seconds
@@ -29,6 +39,8 @@ const LINKS = [
   '</.well-known/ai-catalog.json>; rel="describedby"; type="application/json"',
   '</auth.md>; rel="describedby"; type="text/markdown"',
   '</.well-known/mcp/server-card.json>; rel="describedby"; type="application/json"',
+  '</.well-known/agent-card.json>; rel="describedby"; type="application/json"',
+  '</.well-known/ucp>; rel="describedby"; type="application/json"',
 ].join(", ");
 
 const MEDIA_TYPES = {
@@ -45,6 +57,13 @@ export default {
       if (p === "/.well-known/oauth-authorization-server" || p === "/.well-known/oauth-authorization-server/oauth") return json(asMetadata(), 200, cacheable());
       if (p === "/.well-known/oauth-protected-resource" || p.startsWith("/.well-known/oauth-protected-resource/")) return json(prMetadata(), 200, cacheable());
       if (p === "/oauth/jwks.json") return json({ keys: [] }, 200, cacheable());
+      if (p === "/.well-known/agent-card.json" || p === "/.well-known/agent.json") return json(agentCard(url.origin), 200, cacheable());
+      if (p === "/a2a" || p === "/a2a/") return handleA2A(request, env, url.origin, seal, open);
+      if (p === "/api" || p.startsWith("/api/")) return handleApi(request, url);
+      if (p === "/.well-known/ucp") return json(await ucpProfile(url.origin, env), 200, { "cache-control": "public, max-age=600" });
+      if (p.startsWith("/ucp/v1/")) return handleUcp(request, env, url);
+      if (p.startsWith("/checkout/ucp/")) return handleHandoff(request, env, url);
+      if (p === "/.well-known/poppy.json") return json(poppy(url.origin), 200, cacheable());
       if (p.startsWith("/oauth/")) {
         if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: cors() });
         if (p === "/oauth/register") return register(request, env);
@@ -89,7 +108,7 @@ async function passthrough(request, url) {
   }
   const h = new Headers(res.headers);
   h.append("link", LINKS);
-  h.append("link", '<' + url.pathname + '>; rel="alternate"; type="text/markdown"');
+  if (res.ok) h.append("link", '<' + url.pathname + '>; rel="alternate"; type="text/markdown"');
   h.set("vary", appendVary(h.get("vary"), "Accept"));
   return new Response(res.body, { status: res.status, statusText: res.statusText, headers: h });
 }

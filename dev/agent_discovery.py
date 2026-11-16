@@ -110,6 +110,20 @@ def api_catalog():
     return {
         "linkset": [
             {
+                "anchor": BASE + "/api/v1",
+                "service-doc": [{"href": BASE + "/api/v1", "type": "application/json", "title": "x402 pay-per-call gateway (USDC on Base)"}],
+                "terms-of-service": [{"href": BASE + "/terms/", "type": "text/html"}],
+            },
+            {
+                "anchor": BASE + "/a2a",
+                "service-desc": [{"href": BASE + "/.well-known/agent-card.json", "type": "application/json", "title": "A2A agent card (AP2 merchant, a2a-x402)"}],
+            },
+            {
+                "anchor": BASE + "/ucp/v1",
+                "service-desc": [{"href": BASE + "/.well-known/ucp", "type": "application/json", "title": "UCP 2026-04-08 business profile"}],
+                "terms-of-service": [{"href": BASE + "/terms/", "type": "text/html"}],
+            },
+            {
                 "anchor": HALLUX_API + "/v1",
                 "service-desc": [{"href": HALLUX_API + "/openapi.json", "type": "application/openapi+json"}],
                 "service-doc": [

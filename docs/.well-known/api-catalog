@@ -1,6 +1,48 @@
 {
   "linkset": [
     {
+      "anchor": "https://blvkware.dev/api/v1",
+      "service-doc": [
+        {
+          "href": "https://blvkware.dev/api/v1",
+          "type": "application/json",
+          "title": "x402 pay-per-call gateway (USDC on Base)"
+        }
+      ],
+      "terms-of-service": [
+        {
+          "href": "https://blvkware.dev/terms/",
+          "type": "text/html"
+        }
+      ]
+    },
+    {
+      "anchor": "https://blvkware.dev/a2a",
+      "service-desc": [
+        {
+          "href": "https://blvkware.dev/.well-known/agent-card.json",
+          "type": "application/json",
+          "title": "A2A agent card (AP2 merchant, a2a-x402)"
+        }
+      ]
+    },
+    {
+      "anchor": "https://blvkware.dev/ucp/v1",
+      "service-desc": [
+        {
+          "href": "https://blvkware.dev/.well-known/ucp",
+          "type": "application/json",
+          "title": "UCP 2026-04-08 business profile"
+        }
+      ],
+      "terms-of-service": [
+        {
+          "href": "https://blvkware.dev/terms/",
+          "type": "text/html"
+        }
+      ]
+    },
+    {
       "anchor": "https://api.blvkware.dev/hallux/v1",
       "service-desc": [
         {
