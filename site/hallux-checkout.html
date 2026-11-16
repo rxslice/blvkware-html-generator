@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscribe to HALLUX | BlvkWare</title>
+    <meta name="description" content="Subscribe to HALLUX Team or Feed. One key, unmetered checks on HALLUX and CORDON, billed by Paddle as merchant of record.">
+    <link rel="canonical" href="https://blvkware.dev/hallux/checkout/">
+    <!-- A checkout is a step, not a destination: nothing here should rank. -->
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="referrer" content="strict-origin">
+    <meta property="og:title" content="Subscribe to HALLUX | BlvkWare">
+    <meta property="og:description" content="One key, unmetered checks on HALLUX and CORDON.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://blvkware.dev/hallux/checkout/">
+    <meta property="og:image" content="https://blvkware.dev/assets/og.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+    <link rel="apple-touch-icon" href="/assets/logo-192.png">
+    <meta name="theme-color" content="#0A0908">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Fira+Code:wght@500&display=swap');
+        :root {
+            --bg: #0A0908; --surface: #17140F; --surface-2: #1E1A14; --accent: #D4F24A; --brass: #D9B65C;
+            --ink: #F5F0E6; --ink-2: #A89D8B; --line: rgba(245,240,230,0.1);
+            --stop: #E8654F;
+            --font: 'Manrope', system-ui, -apple-system, sans-serif;
+            --mono: 'Fira Code', ui-monospace, monospace;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        [hidden] { display: none !important; }
+        body { background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.65; -webkit-font-smoothing: antialiased; }
+        .wrap { max-width: 1040px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+        .top { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 3rem; text-decoration: none; color: inherit; }
+        .mark { width: 52px; height: 52px; border-radius: 14px; background: #060504; overflow: hidden; flex: none; }
+        .mark img { width: 100%; height: 100%; display: block; }
+        .wordmark { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; }
+        .wordmark span { color: var(--accent); }
+        .eyebrow { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--brass); margin-bottom: 0.9rem; }
+        h1 { font-size: clamp(1.9rem, 4.5vw, 2.6rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.6rem; line-height: 1.15; }
+        h1 #plan-name { color: var(--accent); }
+        h2 { font-size: 1.25rem; font-weight: 700; margin: 0 0 0.9rem; letter-spacing: -0.01em; }
+        p { color: var(--ink-2); margin-bottom: 1rem; }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        code { font-family: var(--mono); font-size: 0.87em; background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; color: var(--brass); }
+        pre { font-family: var(--mono); font-size: 0.82rem; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.1rem 1.25rem; overflow-x: auto; margin: 1rem 0; line-height: 1.6; color: var(--ink-2); }
+        pre code { background: none; padding: 0; color: inherit; }
+        .lede { font-size: 1.08rem; color: var(--ink-2); margin-bottom: 2rem; max-width: 46rem; }
+        .sandbox { display: inline-block; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--bg); background: var(--brass); border-radius: 6px; padding: 0.2rem 0.55rem; margin-left: 0.6rem; vertical-align: middle; }
+
+        .plan-controls { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-bottom: 2rem; }
+        .seg { display: inline-flex; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 4px; }
+        .seg button { font: 600 0.92rem var(--font); color: var(--ink-2); background: none; border: 0; border-radius: 9px; padding: 0.55rem 1rem; cursor: pointer; }
+        .seg button[aria-pressed="true"] { background: var(--surface-2); color: var(--ink); box-shadow: inset 0 0 0 1px rgba(212,242,74,0.45); }
+        .seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .seg button:disabled { cursor: not-allowed; opacity: 0.5; }
+        .seg .save { color: var(--accent); font-weight: 600; font-size: 0.8rem; margin-left: 0.3rem; }
+
+        .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 1.75rem; align-items: start; }
+        @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+        .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 1.5rem; }
+        .price { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.02em; color: var(--ink); line-height: 1.1; }
+        .price small { font-size: 0.95rem; font-weight: 600; color: var(--ink-2); letter-spacing: 0; }
+        .per { font-family: var(--mono); font-size: 0.78rem; color: var(--brass); margin: 0.4rem 0 1.2rem; }
+        ul.inc { list-style: none; margin: 0 0 1.4rem; }
+        ul.inc li { position: relative; padding-left: 1.5rem; margin-bottom: 0.55rem; color: var(--ink-2); }
+        ul.inc li::before { content: ""; position: absolute; left: 0.2rem; top: 0.62rem; width: 0.55rem; height: 0.3rem; border-left: 2px solid var(--accent); border-bottom: 2px solid var(--accent); transform: rotate(-45deg); }
+        ul.inc strong { color: var(--ink); }
+
+        .summary { border-top: 1px solid var(--line); padding-top: 1.1rem; }
+        .items-table { width: 100%; border-collapse: collapse; margin-bottom: 0.6rem; font-size: 0.92rem; }
+        .items-table td { padding: 0.35rem 0; color: var(--ink); }
+        .items-table td:last-child { text-align: right; font-family: var(--mono); }
+        .summary dl { display: grid; grid-template-columns: 1fr auto; gap: 0.35rem 0; font-size: 0.92rem; }
+        .summary dt { color: var(--ink-2); }
+        .summary dd { text-align: right; font-family: var(--mono); color: var(--ink); padding-left: 1rem; }
+        .summary dt.total, .summary dd.total { font-weight: 800; color: var(--ink); border-top: 1px solid var(--line); padding-top: 0.5rem; margin-top: 0.2rem; }
+        .tax-note { font-size: 0.82rem; margin: 0.9rem 0 0; }
+
+        .pay { min-height: 450px; }
+        .checkout-container { min-height: 450px; }
+        .pay.is-closed, .pay.is-closed .checkout-container { min-height: 0; }
+        .loading { display: flex; align-items: center; gap: 0.7rem; color: var(--ink-2); font-size: 0.95rem; padding: 1rem 0; }
+        .spin { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--accent); animation: spin 0.9s linear infinite; flex: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
+        .error { background: rgba(232,101,79,0.08); border: 1px solid rgba(232,101,79,0.35); border-radius: 12px; padding: 1rem 1.2rem; color: var(--ink); font-size: 0.95rem; }
+        .closed h2 { color: var(--ink); }
+        .btn { display: inline-block; font: 700 0.95rem var(--font); color: var(--bg); background: var(--accent); border: 0; border-radius: 10px; padding: 0.75rem 1.2rem; cursor: pointer; text-decoration: none; }
+        .btn:hover { text-decoration: none; filter: brightness(1.05); }
+        .btn.ghost { background: none; color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
+        .btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+        .row { display: flex; flex-wrap: wrap; gap: 0.7rem; align-items: center; }
+
+        #key-reveal .keybox { display: flex; gap: 0.6rem; align-items: stretch; flex-wrap: wrap; margin: 1rem 0; }
+        #key-reveal .keybox pre { flex: 1 1 340px; margin: 0; color: var(--accent); font-size: 0.95rem; word-break: break-all; white-space: pre-wrap; }
+        .warn { border-left: 3px solid var(--brass); padding-left: 1rem; margin: 1rem 0; }
+        .warn strong { color: var(--ink); }
+        .fine { font-size: 0.85rem; }
+        .trust { display: flex; flex-wrap: wrap; gap: 0.5rem 1.4rem; margin-top: 1.2rem; font-size: 0.82rem; color: var(--ink-2); }
+        .trust span::before { content: "\2022"; color: var(--brass); margin-right: 0.45rem; }
+        .foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--ink-2); }
+        .foot-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <a class="top" href="/">
+        <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
+        <span class="wordmark">BlvkWare<span>.</span></span>
+    </a>
+
+    <main>
+        <div class="eyebrow">HALLUX subscription <span id="sandbox-badge" class="sandbox" hidden>Sandbox</span></div>
+        <h1>Subscribe to HALLUX <span id="plan-name">Team</span></h1>
+        <p class="lede">One API key, unmetered checks on <a href="/hallux/">HALLUX</a> and <a href="/cordon/">CORDON</a>. Pay here without leaving the page. Paddle is the merchant of record and handles tax, receipts and cancellation.</p>
+
+        <div class="plan-controls" id="plan-controls">
+            <div class="seg" role="group" aria-label="Tier">
+                <button type="button" data-tier="team" class="tier-btn" aria-pressed="true">Team</button>
+                <button type="button" data-tier="feed" class="tier-btn" aria-pressed="false">Feed</button>
+            </div>
+            <div class="seg" role="group" aria-label="Billing period">
+                <button type="button" data-interval="monthly" class="interval-btn" aria-pressed="true">Monthly</button>
+                <button type="button" data-interval="annual" class="interval-btn" aria-pressed="false">Annual <span class="save">2 months free</span></button>
+            </div>
+        </div>
+
+        <div class="grid">
+            <section class="card" aria-labelledby="plan-heading">
+                <h2 id="plan-heading"><span data-show="team">Team</span><span data-show="feed" hidden>Feed</span></h2>
+                <div class="price" id="list-price">{{HALLUX_TEAM_MONTH}}<small> / month</small></div>
+                <div class="per" id="list-per">billed monthly, cancel any time</div>
+
+                <ul class="inc" data-show="team">
+                    <li><strong>Unmetered checks</strong> on HALLUX and CORDON with the same key. No credit to run down.</li>
+                    <li>Batch endpoint, up to 100 identifiers a request</li>
+                    <li>Signed Ed25519 receipts on every paid response</li>
+                    <li><strong>{{HALLUX_TEAM_WATCHES}} watched identifiers</strong> included; beyond that, {{HALLUX_WATCH_MONTH}} each per month from prepaid credit</li>
+                    <li>MCP server and HTTP API, the same key on both</li>
+                </ul>
+                <ul class="inc" data-show="feed" hidden>
+                    <li><strong>Everything in Team</strong>, unmetered on HALLUX and CORDON</li>
+                    <li><strong>Unlimited watched identifiers</strong></li>
+                    <li>Signed Ed25519 receipts on every paid response</li>
+                    <li>MCP server and HTTP API, the same key on both</li>
+                </ul>
+
+                <section class="summary" aria-live="polite" aria-label="Order summary">
+                    <table class="items-table"><tbody></tbody></table>
+                    <dl>
+                        <dt>Subtotal</dt><dd id="sum-subtotal">&mdash;</dd>
+                        <dt>Discount</dt><dd id="sum-discount">&mdash;</dd>
+                        <dt>Tax</dt><dd id="sum-tax">&mdash;</dd>
+                        <dt class="total">Total today</dt><dd class="total" id="sum-total">&mdash;</dd>
+                        <dt>Renews</dt><dd id="sum-recurring">&mdash;</dd>
+                    </dl>
+                    <p class="tax-note">Tax is calculated by Paddle, our merchant of record, from your billing country. Totals fill in as you enter it.</p>
+                </section>
+
+                <div class="trust">
+                    <span>Billing is never tied to a verdict</span>
+                    <span>Cancel from your Paddle receipt</span>
+                    <span>Key shown once, never emailed</span>
+                </div>
+            </section>
+
+            <section class="card pay" aria-label="Payment">
+                <div id="checkout-loading" class="loading"><span class="spin" aria-hidden="true"></span><span>Loading secure checkout&hellip;</span></div>
+
+                <div id="checkout-closed" class="closed" hidden>
+                    <h2>Subscriptions open soon</h2>
+                    <p>Team and Feed are not sold through the site yet. Everything HALLUX does is available today on prepaid credit at {{HALLUX_PRICE_PER_IDENTIFIER}} per identifier, and the open tier is free with no account.</p>
+                    <div class="row">
+                        <a class="btn" id="buy-credits" href="https://api.blvkware.dev/buy">Buy prepaid credit</a>
+                        <a class="btn ghost" href="mailto:russ@blvkware.dev?subject=HALLUX%20subscription">Talk to us about Team or Feed</a>
+                    </div>
+                </div>
+
+                <div class="checkout-container"></div>
+                <p id="checkout-error" class="error" role="alert" hidden></p>
+
+                <section id="provisioning" hidden aria-live="polite">
+                    <h2>Payment received. Activating your key&hellip;</h2>
+                    <div class="loading"><span class="spin" aria-hidden="true"></span><span id="provisioning-status">Confirming with our server. This usually takes a few seconds.</span></div>
+                </section>
+
+                <section id="key-reveal" hidden>
+                    <h2>Your HALLUX API key</h2>
+                    <div class="warn"><p><strong>Copy it now. It is shown once and we cannot show it again.</strong> If you lose it, <a href="/hallux/recover/">generate a replacement</a> with the email you paid with; the old key stops working when you do.</p></div>
+                    <div class="keybox">
+                        <pre><code id="api-key"></code></pre>
+                        <button type="button" class="btn" id="copy-key">Copy key</button>
+                    </div>
+                    <p>Send it as <code>Authorization: Bearer &lt;key&gt;</code> or <code>X-API-Key: &lt;key&gt;</code>. It works on HALLUX and CORDON.</p>
+<pre><code>curl -H "Authorization: Bearer $HALLUX_KEY" \
+  <span id="example-base">https://api.blvkware.dev</span>/hallux/v1/check/pkg.pypi/requests-oauth2-helper</code></pre>
+                    <p class="fine">A confirmation with your key prefix is on its way to your email. Manage or cancel the subscription from the link in your Paddle receipt.</p>
+                </section>
+            </section>
+        </div>
+    </main>
+
+    <div class="foot">
+        <div class="foot-links">
+            <a href="/hallux/">HALLUX</a>
+            <a href="/cordon/">CORDON</a>
+            <a href="/hallux/recover/">Lost your key?</a>
+            <a href="/pricing">Pricing</a>
+            <a href="/docs/payment">Payment</a>
+            <a href="/privacy/">Privacy</a>
+            <a href="/terms/">Terms</a>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    "use strict";
+    // Prices for the page's own summary before Paddle answers. Same source as /hallux/.
+    var LIST = {
+        "team-monthly": { price: "{{HALLUX_TEAM_MONTH}}", per: "month", note: "billed monthly, cancel any time" },
+        "team-annual":  { price: "{{HALLUX_TEAM_YEAR}}",  per: "year",  note: "billed yearly: twelve months for the price of ten" },
+        "feed-monthly": { price: "{{HALLUX_FEED_MONTH}}", per: "month", note: "billed monthly, cancel any time" },
+        "feed-annual":  { price: "{{HALLUX_FEED_YEAR}}",  per: "year",  note: "billed yearly: twelve months for the price of ten" }
+    };
+    var NAMES = { team: "Team", feed: "Feed" };
+    // Only these two API origins are ever called. ?env=staging selects the sandbox one.
+    var params = new URLSearchParams(location.search);
+    var STAGING = params.get("env") === "staging";
+    var API = STAGING ? "https://api-staging.blvkware.dev" : "https://api.blvkware.dev";
+    var CLAIM = "hallux_claim" + (STAGING ? "_staging" : "");
+    var CONTACT = "russ@blvkware.dev";
+
+    // All state lives here. The plaintext key never goes into a URL, analytics
+    // or localStorage; sessionStorage holds it only until it has been shown.
+    var state = { config: null, session: null, tier: "team", interval: "monthly", completed: false, opening: 0 };
+
+    function $(id) { return document.getElementById(id); }
+    function setText(id, v) { var el = $(id); if (el) el.textContent = v; }
+    function show(id, on) { var el = $(id); if (el) el.hidden = !on; }
+    function slug() { return state.tier + "-" + state.interval; }
+    function money(n, currency) {
+        if (n == null || n === "") return "—";
+        var v = Number(n);
+        // Paddle.js event totals are decimal amounts in the currency.
+        try { return new Intl.NumberFormat("en-US", { style: "currency", currency: currency || "USD" }).format(v); }
+        catch (e) { return v.toFixed(2); }
+    }
+
+    function readPlanFromUrl() {
+        var p = params.get("plan");
+        if (p && LIST[p]) { var s = p.split("-"); state.tier = s[0]; state.interval = s[1]; }
+    }
+    function writePlanToUrl() {
+        var q = new URLSearchParams(location.search);
+        q.set("plan", slug()); q.delete("completed");
+        history.replaceState(null, "", location.pathname + "?" + q.toString());
+    }
+    function renderPlan() {
+        var l = LIST[slug()];
+        setText("plan-name", NAMES[state.tier]);
+        var lp = $("list-price"); lp.textContent = l.price;
+        var small = document.createElement("small"); small.textContent = " / " + l.per; lp.appendChild(small);
+        setText("list-per", l.note);
+        document.querySelectorAll("[data-show]").forEach(function (el) { el.hidden = el.getAttribute("data-show") !== state.tier; });
+        document.querySelectorAll(".tier-btn").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.tier === state.tier)); });
+        document.querySelectorAll(".interval-btn").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.interval === state.interval)); });
+        document.title = "Subscribe to HALLUX " + NAMES[state.tier] + " | BlvkWare";
+        clearSummary();
+    }
+    function clearSummary() {
+        document.querySelector(".items-table tbody").textContent = "";
+        ["sum-subtotal", "sum-discount", "sum-tax", "sum-total", "sum-recurring"].forEach(function (id) { setText(id, "—"); });
+    }
+    function lockControls() {
+        document.querySelectorAll("#plan-controls button").forEach(function (b) { b.disabled = true; });
+    }
+
+    function showCheckoutError(msg) {
+        show("checkout-loading", false);
+        var el = $("checkout-error");
+        el.textContent = msg || ("Checkout is unavailable right now. Email " + CONTACT + " and we will set you up directly.");
+        el.hidden = false;
+    }
+    function showClosed() {
+        show("checkout-loading", false);
+        document.querySelector(".pay").classList.add("is-closed");
+        $("buy-credits").href = API + "/buy";
+        show("checkout-closed", true);
+    }
+
+    function loadPaddle() {
+        return new Promise(function (resolve, reject) {
+            if (window.Paddle) return resolve();
+            var s = document.createElement("script");
+            s.src = "https://cdn.paddle.com/paddle/v2/paddle.js";
+            s.onload = function () { resolve(); };
+            s.onerror = function () { reject(new Error("paddle.js failed to load")); };
+            document.head.appendChild(s);
+        });
+    }
+
+    async function boot() {
+        readPlanFromUrl();
+        renderPlan();
+        if (STAGING) show("sandbox-badge", true);
+        setText("example-base", API);
+        document.querySelectorAll(".tier-btn").forEach(function (b) { b.addEventListener("click", function () { choose(b.dataset.tier, state.interval); }); });
+        document.querySelectorAll(".interval-btn").forEach(function (b) { b.addEventListener("click", function () { choose(state.tier, b.dataset.interval); }); });
+        $("copy-key").addEventListener("click", copyKey);
+
+        // Returning from a redirect-based payment method: resume, do not restart.
+        if (params.get("completed") === "1" && sessionStorage.getItem(CLAIM)) {
+            show("checkout-loading", false);
+            lockControls();
+            show("provisioning", true);
+            pollStatus();
+            return;
+        }
+
+        try {
+            var res = await fetch(API + "/hallux/v1/billing/config", { headers: { accept: "application/json" } });
+            if (!res.ok) throw new Error("config " + res.status);
+            var cfg = await res.json();
+            state.config = cfg.paddle || null;
+        } catch (e) { showCheckoutError(); return; }
+        if (!state.config || !state.config.available) { showClosed(); return; }
+        if (state.config.environment === "sandbox") show("sandbox-badge", true);
+
+        try { await loadPaddle(); } catch (e) { showCheckoutError(); return; }
+        if (state.config.environment === "sandbox") Paddle.Environment.set("sandbox");
+        Paddle.Initialize({
+            token: state.config.client_token,
+            eventCallback: onPaddleEvent,
+            checkout: { settings: {
+                displayMode: "inline",
+                frameTarget: "checkout-container",
+                frameInitialHeight: "450",
+                frameStyle: "width: 100%; min-width: 312px; background-color: transparent; border: none;",
+                theme: "dark",
+                locale: "en",
+                allowLogout: false
+            } }
+        });
+        await startCheckout();
+    }
+
+    function choose(tier, interval) {
+        if (state.completed || (tier === state.tier && interval === state.interval)) return;
+        state.tier = tier; state.interval = interval;
+        renderPlan();
+        writePlanToUrl();
+        if (state.config && state.config.available && window.Paddle) startCheckout();
+    }
+
+    // Session first, then checkout. Our server issues the key (stored as a hash,
+    // inactive) and a claim id; the checkout carries the claim id, and only
+    // Paddle's signed webhook can turn the key on.
+    async function startCheckout() {
+        var mine = ++state.opening;
+        show("checkout-error", false);
+        show("checkout-loading", true);
+        var res;
+        try {
+            res = await fetch(API + "/hallux/v1/billing/paddle/session", {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ plan: slug() })
+            });
+        } catch (e) { if (mine === state.opening) showCheckoutError(); return; }
+        if (mine !== state.opening) return; // the buyer switched plans while this was in flight
+        if (res.status === 429) { showCheckoutError("Too many checkout attempts from this network. Try again within the hour, or email " + CONTACT + "."); return; }
+        if (res.status === 503) { showClosed(); return; }
+        if (!res.ok) { showCheckoutError(); return; }
+        state.session = await res.json();
+        try {
+            sessionStorage.setItem(CLAIM, JSON.stringify({
+                claim_id: state.session.claim_id, nonce: state.session.claim_nonce,
+                api_key: state.session.api_key, tier: state.session.tier
+            }));
+        } catch (e) { /* private mode: the in-memory copy still completes the in-page flow */ }
+        var success = location.origin + location.pathname + "?plan=" + slug() + "&completed=1" + (STAGING ? "&env=staging" : "");
+        Paddle.Checkout.open({
+            items: [{ priceId: state.session.price_id, quantity: 1 }],
+            customData: { claim_id: state.session.claim_id, source: "hallux-inline" },
+            settings: { successUrl: success }
+        });
+    }
+
+    function onPaddleEvent(event) {
+        if (!event || !event.name) return;
+        if (event.name === "checkout.loaded") show("checkout-loading", false);
+        if (event.data && event.data.items) renderSummary(event.data);
+        if (event.name === "checkout.completed") onCompleted();
+        else if (event.name === "checkout.error") showCheckoutError("The payment form reported a problem. Check the details and try again, or email " + CONTACT + ".");
+    }
+
+    function renderSummary(data) {
+        var cur = data.currency_code;
+        var tbody = document.querySelector(".items-table tbody");
+        tbody.textContent = "";
+        (data.items || []).forEach(function (item) {
+            var tr = document.createElement("tr");
+            var a = document.createElement("td"), b = document.createElement("td");
+            var name = (item.product && item.product.name) || "HALLUX";
+            a.textContent = item.price_name ? name + " — " + item.price_name : name;
+            b.textContent = money(item.totals && item.totals.subtotal, cur);
+            tr.appendChild(a); tr.appendChild(b); tbody.appendChild(tr);
+        });
+        var t = data.totals || {}, r = data.recurring_totals || {};
+        setText("sum-subtotal", money(t.subtotal, cur));
+        setText("sum-discount", money(t.discount, cur));
+        setText("sum-tax", money(t.tax, cur));
+        setText("sum-total", money(t.total, cur));
+        setText("sum-recurring", r.total != null ? money(r.total, cur) + " / " + (state.interval === "annual" ? "year" : "month") : "—");
+    }
+
+    function onCompleted() {
+        state.completed = true;
+        lockControls();
+        document.querySelector(".checkout-container").hidden = true;
+        show("checkout-loading", false);
+        show("provisioning", true);
+        pollStatus();
+    }
+
+    function savedClaim() {
+        if (state.session) return { claim_id: state.session.claim_id, nonce: state.session.claim_nonce, api_key: state.session.api_key };
+        try { return JSON.parse(sessionStorage.getItem(CLAIM) || "null"); } catch (e) { return null; }
+    }
+
+    async function pollStatus() {
+        var saved = savedClaim();
+        if (!saved) {
+            setText("provisioning-status", "We could not find this checkout in this browser. Your payment is safe: your confirmation email has the next step, or use the recovery page with the email you paid with.");
+            return;
+        }
+        var deadline = Date.now() + 90000;
+        while (Date.now() < deadline) {
+            try {
+                var r = await fetch(API + "/hallux/v1/billing/paddle/status?claim_id=" + encodeURIComponent(saved.claim_id) + "&nonce=" + encodeURIComponent(saved.nonce));
+                if (r.ok) {
+                    var s = await r.json();
+                    if (s.status === "active" || s.status === "trialing" || s.status === "past_due") { revealKey(saved); return; }
+                    if (s.status === "expired") {
+                        setText("provisioning-status", "This checkout expired before the payment was confirmed. If you were charged, email " + CONTACT + " with your Paddle receipt and we will fix it the same day.");
+                        return;
+                    }
+                }
+            } catch (e) { /* transient; keep polling */ }
+            await new Promise(function (res) { setTimeout(res, 2000); });
+        }
+        setText("provisioning-status", "Activation is taking longer than usual. Your payment is safe: keys activate from Paddle's confirmation, which can lag. Keep this page open, check your email, or contact " + CONTACT + " with your receipt.");
+    }
+
+    function revealKey(saved) {
+        show("provisioning", false);
+        setText("api-key", saved.api_key);
+        show("key-reveal", true);
+        try { sessionStorage.removeItem(CLAIM); } catch (e) {}
+        $("copy-key").focus();
+    }
+
+    async function copyKey() {
+        var code = $("api-key"), btn = $("copy-key");
+        try { await navigator.clipboard.writeText(code.textContent); }
+        catch (e) {
+            var range = document.createRange(); range.selectNodeContents(code);
+            var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+            return;
+        }
+        btn.textContent = "Copied";
+        setTimeout(function () { btn.textContent = "Copy key"; }, 2000);
+    }
+
+    boot();
+})();
+</script>
+</body>
+</html>

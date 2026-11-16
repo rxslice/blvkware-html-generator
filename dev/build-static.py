@@ -406,6 +406,11 @@ MARKETING_PAGES = [
     # Every price on it is a token filled from the HALLUX repository at
     # build time; there is no number in the source to go stale.
     ("hallux.html", "hallux"),
+    # Subscription checkout and key recovery. noindex and absent from the
+    # sitemap: they are steps in a purchase, not pages to land on. Both stay
+    # closed (and say so) until the API reports Paddle as available.
+    ("hallux-checkout.html", "hallux/checkout"),
+    ("hallux-recover.html", "hallux/recover"),
     # The second verification API: what an agent reads, rather than what it
     # installs. Unlike HALLUX it has no bridge to a sibling repository, so its
     # prices are written in the page and the page points at /v1/pricing on the
@@ -1539,7 +1544,8 @@ CORDON_CATALOG = (
         "type": "mcp",
         "url": "https://cordon.blvkware.dev/mcp",
         "transport": "streamable-http",
-        "description": "The same capability as MCP tools: cordon_read to call instead of a raw fetch, cordon_scan for content already in hand. No account and no key on the open tier.",
+        "description": ("The same capability as MCP tools: cordon_read to call instead of a raw fetch, cordon_scan for content already in hand. No account and no key on the open tier. "
+                        "x402 pay-per-call over MCP follows the x402 v2 MCP transport: an unpaid call returns a PaymentRequired tool result; retry with params._meta[\"x402/payment\"]."),
         "tools": ["cordon_read", "cordon_scan"],
         "status": "live",
     },
@@ -1684,6 +1690,25 @@ def self_host_fonts():
     return count
 
 
+def _require_full_history():
+    """Refuse to build from a shallow clone.
+
+    Every lastmod, datePublished and "Updated" stamp comes from git history.
+    A shallow clone has one commit, so every page would claim it was
+    published and modified on that commit's day: a site-wide date rewrite
+    that crawlers read as churn. Fail loudly instead."""
+    import subprocess
+    try:
+        out = subprocess.run(["git", "-C", ROOT, "rev-parse", "--is-shallow-repository"],
+                             capture_output=True, text=True, check=True).stdout.strip()
+    except Exception:
+        return
+    if out == "true":
+        print("ABORTED: this is a shallow clone, so page dates would be wrong. "
+              "Run: git fetch --unshallow")
+        raise SystemExit(1)
+
+
 def _git_dates(path):
     """(first, last) commit dates of a source file, or None outside git.
 
@@ -1795,6 +1820,7 @@ def point_social_cards():
 
 
 def main():
+    _require_full_history()
     if not os.path.isdir(OUT_DIR):
         os.makedirs(OUT_DIR)
 
