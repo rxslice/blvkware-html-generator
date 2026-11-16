@@ -221,9 +221,10 @@ function asMetadata() {
     agent_auth: {
       skill: ISSUER + "/auth.md",
       register_uri: ISSUER + "/oauth/register",
+      claim_uri: ISSUER + "/oauth/authorize",
       identity_types_supported: ["anonymous"],
       anonymous: {
-        credential_types_supported: ["oauth_client_id"],
+        credential_types_supported: ["access_token"],
         claim_uri: ISSUER + "/oauth/authorize",
       },
       credential_use: "Authorization: Bearer <access_token> on https://api.blvkware.dev/hallux and https://cordon.blvkware.dev",

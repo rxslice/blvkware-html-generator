@@ -325,6 +325,12 @@ a config file:
 
 Scopes: `hallux`, `cordon` (one key covers both; scopes are informational).
 
+The `agent_auth` block in the authorization server metadata summarises this:
+`register_uri` is the registration endpoint above, `claim_uri` is the
+authorize endpoint where the user binds their key, and the only identity type
+is `anonymous` (no identity is needed to register; the user's key is the
+claim), issuing an `access_token`.
+
 ### Paying per call instead (CORDON only)
 
 CORDON accepts x402 (v2, USDC on Base). An unpaid HTTP call returns `402` with
