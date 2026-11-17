@@ -1527,6 +1527,7 @@ def _pricing_page(source, payment):
         "BlvkWare's agent kits are priced on the "
         '<a href="/#services">home page</a>.</p>'
         + notice
+        + '<p><a href="/hallux/checkout/">Team and Feed subscription details</a> · <a href="/pricing/embedded.txt" download>Download Embedded pricing (text)</a></p>'
         + "<h2>The constraint</h2>"
         + markdown_to_html(_spec_section(pricing, "The constraint", 3))
         + "<h2>The ladder</h2>"
@@ -1570,6 +1571,17 @@ def build_reference_pages(out_dir):
     payment, _ = _load(path)
     from hallux import ledger  # noqa: E402  (_load put the checkout on sys.path)
     from hallux.api import _ATTRIBUTION as ATTRIBUTION  # noqa: E402
+
+    pricing_dir = os.path.join(out_dir, "pricing")
+    os.makedirs(pricing_dir, exist_ok=True)
+    with io.open(os.path.join(pricing_dir, "embedded.txt"), "w", encoding="utf-8") as sheet:
+        sheet.write("HALLUX Embedded | BlvkWare\nEnterprise pricing in USD\n\n"
+                    "For platforms distributing HALLUX inside their own product.\n"
+                    "Planned offering: self-hosted or white-labelled commercial licensing.\n"
+                    "Starting price: %s per month. No online checkout for Embedded.\n"
+                    "For availability, scope and a written quote: russ@blvkware.dev\n"
+                    "Current pricing: https://blvkware.dev/pricing/\n" %
+                    _money(payment.TIERS_BY_ID[payment.TIER_EMBEDDED].monthly_usd))
 
     return [
         _write_page(out_dir, ("docs", "corpus-methodology"),
