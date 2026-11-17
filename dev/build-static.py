@@ -358,6 +358,8 @@ REDIRECTS = [("html-generator", "build"),
 MARKETING_PAGES = [
     ("privacy.html", "privacy"),
     ("terms.html", "terms"),
+    ("refund.html", "refund"),
+    ("legal.html", "legal"),
     # Commercial pages. Each one has to carry genuinely useful, original material
     # about the workflow and its economics — a set of thin near-duplicates reads
     # as a doorway network and can suppress the whole domain, which is a far
@@ -473,6 +475,8 @@ SITEMAP = [
     ("/vendor-renewal-tracker/importer/", "0.8", "monthly"),
     ("/privacy/", "0.3", "yearly"),
     ("/terms/", "0.3", "yearly"),
+    ("/refund/", "0.3", "yearly"),
+    ("/legal/", "0.3", "yearly"),
 ]
 
 

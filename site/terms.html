@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terms of Service | BlvkWare</title>
-    <meta name="description" content="Terms for using the free BlvkWare tools and for buying an agent kit. Plain language: what a kit is, what your licence key does, what is promised and what is not.">
+    <meta name="description" content="Terms for the free BlvkWare tools, agent kits, and the HALLUX and CORDON APIs, including subscriptions sold through Paddle, our Merchant of Record.">
     <link rel="canonical" href="https://blvkware.dev/terms/">
     <meta name="robots" content="index, follow">
     <meta property="og:title" content="Terms of Service | BlvkWare">
@@ -45,6 +45,7 @@
         a:hover { text-decoration: underline; }
         .box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem; margin: 1.75rem 0; }
         .box p:last-child { margin-bottom: 0; }
+        code { font-family: var(--mono); font-size: 0.87em; background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; color: var(--brass); }
         .foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--ink-2); }
         /* Flex with a gap, not inline margins: a trailing margin-right on the
            last link of a wrapped line still occupies space and pushed the page
@@ -61,9 +62,16 @@
     </a>
 
     <h1>Terms of Service</h1>
-    <div class="updated">Last updated 27 September 2026</div>
+    <div class="updated">Last updated 17 November 2026</div>
 
-    <p class="lede">Two things are covered here: the free tools, which you may use with almost no strings attached, and agent kits, which you design, buy and download on this site without talking to anyone.</p>
+    <p class="lede">Three things are covered here: the free tools, which you may use with almost no strings attached; agent kits, which you design, buy and download on this site; and the HALLUX and CORDON APIs, which you use with an API key, for free or on a paid plan.</p>
+
+    <h2>Who you are dealing with</h2>
+    <p>These terms are an agreement between you and <strong>W. R. Wheeler, trading as BlvkWare</strong> ("BlvkWare", "we"), P.O. Box 406, Wilmer, AL 36587, United States. Contact: <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a>.</p>
+    <p>By using this site, the tools, a kit or the APIs, you agree to these terms. If you continue to use them after the terms change, you agree to the version in force at that time.</p>
+    <div class="box">
+        <p><strong>Paddle is our reseller for subscriptions.</strong> Our order process is conducted by our online reseller Paddle.com. Paddle.com is the Merchant of Record for all our orders. Paddle provides all customer service inquiries and handles returns. This covers the HALLUX Team and Feed subscriptions bought on <a href="/hallux/checkout/">blvkware.dev/hallux/checkout</a>, which are also subject to <a href="https://www.paddle.com/legal/checkout-buyer-terms">Paddle's buyer terms</a>.</p>
+    </div>
 
     <h2>1. The free tools</h2>
     <p>Business Scan, Agent Designer and App Builder are provided free, with no account, and <strong>as is</strong>. You may use their output for any lawful purpose, commercial included. Nothing is charged and nothing is owed.</p>
@@ -102,7 +110,7 @@
     <p>One key is one agent. The first download binds the key to that design's role. After that you may change the design and download again, up to 20 downloads in total, but a different role needs another key. <strong>BlvkWare does not keep a copy of your design or your kit</strong>, so keep what you download.</p>
 
     <h3>Refunds</h3>
-    <p>Refunds are handled through Gumroad, under the refund policy shown on the product page when you buy. A refunded or disputed purchase stops its key downloading.</p>
+    <p>Kits are refunded through Gumroad as set out in the <a href="/refund/">refund policy</a>. A refunded or disputed purchase stops its key downloading.</p>
 
     <h3>What you may do with a kit</h3>
     <p>You may use it, change it and build on it for your own business, with any tool, framework or vendor, for as long as you like, and you may give it to someone you hire to build your agent for you. You may not resell or redistribute the kit, or files generated from it, as a product of their own. Nothing in a kit gives BlvkWare any rights over your data, your customers or your business.</p>
@@ -110,27 +118,66 @@
     <h3>Your responsibilities</h3>
     <p>How the agent is built and run is under your control, and so is the responsibility for it. That includes the access you grant it, reviewing what it does, and keeping a person responsible for it. Messaging in particular is subject to law, including consent and opt-out requirements for automated texts and calls. Building an agent that complies and operating it lawfully is your responsibility as the sender.</p>
 
-    <h2>3. No guarantee of results</h2>
+    <h2>3. The HALLUX and CORDON APIs</h2>
+
+    <h3>What they are</h3>
+    <p>HALLUX checks whether software packages, models and other identifiers an AI agent wants to use actually exist and are safe to proceed with. CORDON reads web pages and documents for an agent and screens them for injected instructions. Both are services reached over the internet at <code>api.blvkware.dev</code> and <code>cordon.blvkware.dev</code>, by API key, by the MCP protocol, or by per-call payment.</p>
+
+    <h3>Plans and payment</h3>
+    <ul>
+        <li><strong>Open tier:</strong> free, with a daily allowance and no key needed.</li>
+        <li><strong>Prepaid credit:</strong> packs of credit bought once through PayPal and attached to an API key. Credit is used up as you make calls and does not renew.</li>
+        <li><strong>Team and Feed subscriptions:</strong> sold by Paddle as Merchant of Record, billed monthly or yearly in advance at the price shown at checkout, and renewing automatically until cancelled. Paddle handles payment, invoices and sales tax, under Paddle's buyer terms.</li>
+        <li><strong>Per-call payment:</strong> some endpoints accept a payment with each request using the x402 protocol, in USDC on the Base network. A call is charged only when it is answered.</li>
+    </ul>
+    <p>Prices are shown on the <a href="/pricing/">pricing page</a> and at checkout. A price change never applies to a period you have already paid for; for subscriptions it applies from your next renewal, and you will be told before it does.</p>
+
+    <h3>Cancelling a subscription</h3>
+    <p>You may cancel at any time from the link in your Paddle receipt or at <a href="https://paddle.net">paddle.net</a>. Your key keeps working until the end of the period you have paid for, and you are not charged again. Refunds are covered by the <a href="/refund/">refund policy</a>.</p>
+
+    <h3>Your API key</h3>
+    <p>Your key is shown once, when it is created, and only a one-way fingerprint of it is stored. Keep it secret: anyone holding it can use your plan or credit. If you lose it, a subscription key can be replaced at <a href="/hallux/recover/">/hallux/recover</a>; the old key stops working when you do.</p>
+
+    <h3>What you may not do</h3>
+    <p>You may not use the APIs, the tools or this site:</p>
+    <ul>
+        <li>for anything unlawful, or to help anyone else break the law;</li>
+        <li>for fraud, spam or deception, including paying with funds or a payment method you are not entitled to use;</li>
+        <li>to infringe anyone's intellectual property or other rights;</li>
+        <li>to interfere with their security or operation: no malware, no probing or scanning for vulnerabilities, no attempts to get around rate limits, quotas or payment, and no load intended to degrade the service;</li>
+        <li>to scrape or bulk-copy the service's data in order to build a competing dataset, or to resell raw access to it, except as a Feed or Embedded plan expressly allows.</li>
+    </ul>
+
+    <h3>Suspension and termination</h3>
+    <p>We may suspend or end access for a key or an address that materially breaches these terms, that is not paid for, that a chargeback or fraud report is made against, or whose use presents a security or fraud risk, and for repeated or serious violations. Where it is reasonable to do so we will tell you first and give you a chance to fix the problem. You may stop using the services at any time.</p>
+
+    <h3>Availability</h3>
+    <p>We work to keep the APIs fast and available, but we do not guarantee that they will be uninterrupted, error-free, or available at any particular time, and they may change. A verdict from HALLUX or CORDON is an automated signal to help a decision, not a guarantee that a package, model or page is safe.</p>
+
+    <h3>Ownership</h3>
+    <p>BlvkWare owns the services, the software behind them, their data and this site, and all intellectual property in them. Using them gives you the right to use them under these terms, not ownership. Results the APIs return to you are yours to use in your own work and products, subject to the limits above.</p>
+
+    <h2>4. No guarantee of results</h2>
     <div class="box">
         <p>Figures quoted anywhere on this site (recovery rates, opportunity ranges, returns) are industry benchmarks or projections used to illustrate what a system does. <strong>They are not a promise of what your business will earn.</strong> Results depend on your market, your pricing, your call volume and how you use the system. No specific revenue, saving or outcome is guaranteed.</p>
     </div>
 
-    <h2>4. Liability</h2>
-    <p>To the fullest extent the law allows, BlvkWare is not liable for indirect, incidental or consequential loss, including lost profit, lost data or business interruption, arising from the tools, the kits, or any agent built from a kit. For a kit, total liability is capped at the price you paid for it. The free tools are supplied without warranty of any kind and carry no liability.</p>
+    <h2>5. Liability</h2>
+    <p>To the fullest extent the law allows, BlvkWare is not liable for indirect, incidental or consequential loss, including lost profit, lost data or business interruption, arising from the tools, the kits, any agent built from a kit, or the APIs. For a kit, total liability is capped at the price you paid for it. For the APIs, it is capped at what you paid us for them in the twelve months before the claim. The free tools and the open tier are supplied without warranty of any kind and carry no liability.</p>
     <p>Nothing here excludes liability that cannot lawfully be excluded, including for fraud or for death or personal injury caused by negligence.</p>
 
-    <h2>5. Privacy</h2>
-    <p>What is and isn't collected is set out in the <a href="/privacy/">privacy policy</a>, which forms part of these terms.</p>
+    <h2>6. Privacy and refunds</h2>
+    <p>What is and isn't collected is set out in the <a href="/privacy/">privacy policy</a>, and refunds in the <a href="/refund/">refund policy</a>. Both form part of these terms.</p>
 
-    <h2>6. Changes and governing law</h2>
-    <p>These terms may be updated; the date at the top will change and the current version governs use from that point. A change does not alter the terms of a kit you have already bought.</p>
+    <h2>7. Changes and governing law</h2>
+    <p>These terms may be updated; the date at the top will change and the current version governs use from that point. A change does not alter the terms of a kit you have already bought or a subscription period you have already paid for.</p>
     <p>BlvkWare operates from the State of Mississippi, United States, and sells to businesses throughout the country. These terms are governed by the laws of the State of Mississippi, without regard to its conflict-of-law rules, and the state and federal courts located in Mississippi have exclusive jurisdiction over any dispute arising from them. Where your own local consumer-protection law grants you rights that cannot be waived by agreement, nothing here removes them. If any provision is found unenforceable, the rest continues to apply.</p>
 
-    <h2>7. Contact</h2>
-    <p>Questions about anything here: <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a>. You will get a direct answer from the person who runs it.</p>
+    <h2>8. Contact</h2>
+    <p>Questions about anything here: <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a>, or by post to W. R. Wheeler (BlvkWare), P.O. Box 406, Wilmer, AL 36587, United States. You will get a direct answer from the person who runs it. For a subscription payment, invoice or refund you can also go straight to Paddle at <a href="https://paddle.net">paddle.net</a>.</p>
 
     <div class="foot">
-        <div class="foot-links"><a href="/">Home</a><a href="/privacy/">Privacy</a><a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a></div>
+        <div class="foot-links"><a href="/">Home</a><a href="/privacy/">Privacy</a><a href="/refund/">Refunds</a><a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a></div>
         <p style="margin-top:1rem">Copyright © 2026 BlvkWare / William Russell Wheeler.</p>
     </div>
 </div>

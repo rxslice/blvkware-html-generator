@@ -101,6 +101,8 @@
         .warn { border-left: 3px solid var(--brass); padding-left: 1rem; margin: 1rem 0; }
         .warn strong { color: var(--ink); }
         .fine { font-size: 0.85rem; }
+        .agree { margin: 0 0 1rem; color: var(--ink-2); }
+        .agree a { color: var(--accent); }
         .trust { display: flex; flex-wrap: wrap; gap: 0.5rem 1.4rem; margin-top: 1.2rem; font-size: 0.82rem; color: var(--ink-2); }
         .trust span::before { content: "\2022"; color: var(--brass); margin-right: 0.45rem; }
         .foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--ink-2); }
@@ -181,6 +183,7 @@
                     </div>
                 </div>
 
+                <p class="fine agree" id="checkout-agree">By subscribing you agree to the <a href="/terms/">Terms of Service</a> and the <a href="/refund/">Refund Policy</a> (30 days, no reason needed). Our order process is conducted by our online reseller Paddle.com, the Merchant of Record for all our orders.</p>
                 <div class="checkout-container"></div>
                 <p id="checkout-error" class="error" role="alert" hidden></p>
 
@@ -215,6 +218,7 @@
             <a href="/docs/payment">Payment</a>
             <a href="/privacy/">Privacy</a>
             <a href="/terms/">Terms</a>
+            <a href="/refund/">Refunds</a>
         </div>
     </div>
 </div>
@@ -291,6 +295,7 @@
     function showClosed() {
         show("checkout-loading", false);
         document.querySelector(".pay").classList.add("is-closed");
+        show("checkout-agree", false);
         $("buy-credits").href = API + "/buy";
         show("checkout-closed", true);
     }
