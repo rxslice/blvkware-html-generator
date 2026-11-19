@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Design Your AI Agent and Download Its Kit | BlvkWare</title>
+    <title>Existing kit downloads | BlvkWare</title><meta name="robots" content="noindex">
     <meta name="description" content="Design an AI agent for one job and download its complete kit: instructions, tools, workflows, approval rules and tests. {{KIT1_PRICE}} or {{KIT2_PRICE}}, one-off.">
     <link rel="canonical" href="https://blvkware.dev/hire/">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
@@ -372,17 +372,7 @@
         <span class="wordmark">BlvkWare<span>.</span></span>
     </a>
 
-<a class="ph-live" id="ph-live" hidden href="https://www.producthunt.com/products/blvkware-agent-kits?launch=blvkware-agent-kits" rel="noopener"><span class="ph-dot"></span><span id="ph-live-t">Live on Product Hunt today</span> <span aria-hidden="true">&rarr;</span></a>
-<style>.ph-live{display:inline-flex;align-items:center;gap:.55rem;margin:0 0 1.1rem;padding:.42rem .95rem;border:1px solid rgba(217,182,92,.45);border-radius:999px;font-family:"Fira Code",ui-monospace,monospace;font-size:.74rem;letter-spacing:.06em;color:#D4F24A;background:rgba(212,242,74,.05);text-decoration:none}.ph-live[hidden]{display:none}.ph-live:hover{border-color:#D4F24A}.ph-dot{width:.5rem;height:.5rem;border-radius:50%;background:#E8734A;box-shadow:0 0 0 0 rgba(232,115,74,.6);animation:phpulse 2s infinite}@keyframes phpulse{70%{box-shadow:0 0 0 .5rem rgba(232,115,74,0)}100%{box-shadow:0 0 0 0 rgba(232,115,74,0)}}@media (prefers-reduced-motion:reduce){.ph-dot{animation:none}}</style>
-<script>(function(){var n=Date.now(),s=Date.UTC(2026,8,29,7,1),e=Date.UTC(2026,8,30,7,1),x=Date.UTC(2026,9,13);if(n<s||n>x)return;var a=document.getElementById("ph-live");if(n>e)document.getElementById("ph-live-t").textContent="BlvkWare Agent Kits on Product Hunt";a.hidden=false;})();</script>
-    <div class="eyebrow">Design the agent · Download the kit · Build it your way</div>
-    <h1>Design your agent, <em>download the kit.</em></h1>
-    <p class="lede">Pick the job and what it has to handle. You get the complete kit for that one agent: its instructions, every tool it may use and what each one is allowed to do, its workflows, the records it keeps, its approval rules, the tests it has to pass, and the code that enforces those rules. Load it into whatever you build with.</p>
-    <p class="hero-foot">{{KIT1_PRICE}} for an agent that owns one job. {{KIT2_PRICE}} for one that runs a whole function. You see every file before you pay.</p>
-
-    <div class="rule"></div>
-
-    <div class="layout">
+<h1>Existing kit downloads</h1><p class="lede">Use your original licence key to download your design. For new projects, visit the <a href="/#catalog">API catalog</a>.</p><div class="layout">
         <div>
             <!-- 01 ROLE -->
             <section class="step" id="s-role">
@@ -498,11 +488,6 @@
         <p class="stale" id="stale" hidden>You have changed the design since this was shown. Press "See your kit" again to refresh it.</p>
         <div class="speccard" id="speccard"></div>
 
-        <div class="buybox">
-            <a class="btn" id="buy" href="#" target="_blank" rel="noopener" hidden>Buy the kit</a>
-            <p id="buy-note"></p>
-        </div>
-
         <div class="unlock" id="unlock">
             <h3>Already bought it?</h3>
             <p>Paste the licence key from your Gumroad receipt and download. One key is one agent: change its design and download it again, up to 20 times.</p>
@@ -517,79 +502,7 @@
 
     <div class="rule"></div>
 
-    <section>
-        <div class="step-head"><span class="step-n">·</span><h2>The questions people actually ask</h2></div>
-        <p class="step-sub">If yours isn't here, email it and you'll get a straight answer.</p>
-
-        <details class="faq">
-            <summary>Is this a working agent?</summary>
-            <p>Almost, and the gap is deliberate. A kit is the complete specification of one agent (what it does, step by step, the tools it may call and what each one is allowed to change, the records it keeps, the rules that stop it acting beyond its authority, and the tests that prove it works) plus a small runtime that enforces those rules in code. What it does not have is access to your systems: it contains no credentials.</p>
-            <p>You, or whoever builds for you, fill in one documented function per tool for your own systems and add your model key. It then runs with OpenAI or Anthropic tool calling, any MCP client, or an automation platform like n8n, Make or Zapier. Every file is plain JSON, Markdown or Python, so nothing locks you to one vendor.</p>
-        </details>
-
-        <details class="faq">
-            <summary>What exactly is in it?</summary>
-            <p>The agent's instructions, written for your business with your rules built in. Its tools, in OpenAI, Anthropic and MCP formats, each marked read, internal or external. A workflow per capability: what starts it, the steps in order, and which steps wait for approval. JSON Schemas for every record it keeps, including an approval queue and an audit log. An autonomy policy with four levels. A setup checklist of the facts only you can supply, integration notes for each of your systems, and acceptance tests.</p>
-            <p>And the part most kits leave to you: a small runtime, in plain Python with nothing to install, that sits between the model and your systems and makes the rules hold in code. It checks every tool call against the autonomy level, keeps a real approval queue and a tamper-evident log, never contacts anyone who opted out, holds sends until morning in quiet hours, and holds any draft that names a price, a date or breaks one of your own rules. It ships with tests you can run to prove it, an approvals page, working loops for OpenAI and Anthropic, and an MCP server so Claude Desktop, Claude Code or any MCP client can use the agent's tools with the same rules in force.</p>
-            <p>Press "See your kit" above and the full file list for your design appears, before you pay anything. Want to read what is inside one first? <a href="/sample-kit/">Here is a complete sample kit</a>, every file, free.</p>
-        </details>
-
-        <details class="faq">
-            <summary>Why does the price change on its own instead of me picking a kit?</summary>
-            <p>Because the size of the agent decides it, not a guess. The price is worked out from what you've actually designed: how many systems it has to operate, how many channels it works across, and how much judgment the job needs. The panel tells you which kit you're in and exactly why.</p>
-            <p>If it says Deputy and you wanted the Operator price, take something out and watch it flip back. A smaller agent genuinely is less to specify, and a Deputy key also covers an Operator-sized design if you trim it later.</p>
-        </details>
-
-        <details class="faq">
-            <summary>Can I change the design after I've bought it?</summary>
-            <p>Yes. One key is one agent: change the capabilities, the systems or your rules and download it again, as often as you need. A key is tied to the first job it downloads, so a different agent needs its own kit.</p>
-            <p>Your design is kept in this browser, so after paying you come back to it exactly as you left it. On another device, rebuild the same design and use the same key.</p>
-        </details>
-
-        <details class="faq">
-            <summary>Can all of it run straight away?</summary>
-            <p>Everything on email, web chat, a shared inbox, Slack or Teams can run as soon as it is built. Inbound phone needs a number, not a registration.</p>
-            <p>The one genuine exception is <b>SMS</b>. Texting your customers from a US business number requires A2P 10DLC carrier registration, and part of it is a manual review nobody can hurry, so budget weeks rather than days. The kit flags it where it applies. Build and test everything else meanwhile, and switch SMS on when the registration clears.</p>
-        </details>
-
-        <details class="faq">
-            <summary>What stops the agent doing something it shouldn't?</summary>
-            <p>The kit is written so that it starts at Draft, where anything a customer would see waits for a person. Every tool carries its effect, and the autonomy policy says which effects each level allows, and the kit includes the code that enforces it, so the rules hold even when the model gets it wrong. Every action is logged before it happens, opt-outs are permanent, nothing is sent in quiet hours, instructions that arrive inside a customer's message are treated as information, never as orders, and a draft that promises a price or a date, or breaks one of your own rules, waits for a person. The kit's own tests prove each of those before you switch it on.</p>
-            <p>How it behaves once built is under your control, which is why the kit keeps it at Draft until its acceptance tests pass. <a href="/how-agents-are-controlled/">How agents are controlled</a> covers credentials, logs and the stop in full.</p>
-        </details>
-
-        <details class="faq">
-            <summary>What if it isn't what I needed?</summary>
-            <p>Look before you buy: the full file list and a summary of everything in the kit are on this page first. After buying, Gumroad's money-back guarantee shown on the product page applies. A refunded key stops unlocking downloads.</p>
-        </details>
-
-        <details class="faq">
-            <summary>Who makes it?</summary>
-            <p>BlvkWare is William Russell Wheeler, in Mississippi. Kits are generated from one catalog of {{N_ROLES}} roles and {{N_CAPS}} capabilities, each with its own written acceptance test, the same catalog the agent runtime behind them was built and tested against.</p>
-        </details>
-    </section>
-
-    <div class="rule"></div>
-
-    <section>
-        <div class="step-head"><span class="step-n">·</span><h2>How it works</h2></div>
-        <div class="steps4">
-            <div><span>01</span><b>Design it here</b><p>Pick the job, the systems, what it may do, and your rules. See the price and every file first.</p></div>
-            <div><span>02</span><b>Buy on Gumroad</b><p>Payment is handled by Gumroad. Your licence key is on the receipt.</p></div>
-            <div><span>03</span><b>Download</b><p>Paste the key into "Already bought it?" and the kit is generated from your design.</p></div>
-            <div><span>04</span><b>Build and test</b><p>Fill in SETUP.md, load the instructions and tools, run the acceptance tests, and start it at Draft.</p></div>
-        </div>
-        <p class="step-sub" style="margin-top:1.25rem"><a href="/agents/">The full catalog</a> lists every role and what each one owns.</p>
-    </section>
-
-    <footer class="foot">
-        <div class="foot-links"><a href="/">Home</a><a href="/agents/">Agent catalog</a><a href="/scan/">Business Scan</a><a href="/design/">Agent Designer</a><a href="/build/">App Builder</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/refund/">Refunds</a></div>
-        <p style="margin-top:1rem">BlvkWare, <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> · Mississippi, serving the United States.</p>
-        <p style="margin-top:0.4rem">Copyright © 2026 BlvkWare / William Russell Wheeler. All Rights Reserved.</p>
-        <p style="margin-top:1rem"><a href="https://launchbison.com" target="_blank" rel="noopener">
-          <img src="https://launchbison.com/badge-dark.svg" alt="Featured on Launchbison" width="198" height="62" />
-        </a></p>
-    </footer>
+<footer><a href="/">API catalog</a> · <a href="mailto:russ@blvkware.dev">Support</a></footer>
 </div>
 
 <script id="blvk-catalog" type="application/json">/*CATALOG_JSON*/</script>
@@ -936,13 +849,7 @@ try {
         var s = document.getElementById("stale");
         var current = !!shownFor && shownFor === designKey();
         if (s) s.hidden = !shownFor || current;
-        // Once the kit on screen matches the design, the panel's button stops
-        // asking to see it again and takes the buyer to the buy button instead.
-        var go = document.getElementById("go");
-        var buy = document.getElementById("buy");
-        var buying = current && buy && !buy.hidden;
-        go.textContent = buying ? "Buy the kit" : "See your kit";
-        go.dataset.mode = buying ? "buy" : "see";
+        document.getElementById("go").textContent = "See your kit";
     }
 
     function renderSummary(q) {
@@ -997,21 +904,6 @@ try {
 
         h("What it must never do without asking");
         p(state.answers.neverDo || "Not stated yet. Fill it in above: it becomes a hard rule in the agent's instructions and guardrails.");
-    }
-
-    function renderBuy(q) {
-        var buy = document.getElementById("buy");
-        var note = document.getElementById("buy-note");
-        var kit = q.kit;
-        if (kit && kit.buy) {
-            buy.hidden = false;
-            buy.href = kit.buy + (kit.buy.indexOf("?") === -1 ? "?" : "&") + "wanted=true";
-            buy.textContent = "Buy the " + kit.name + ": " + money(kit.price);
-            note.textContent = "Payment is handled by Gumroad and opens in a new tab. Your licence key is on the receipt; come back here and download.";
-        } else {
-            buy.hidden = true;
-            note.textContent = "Kits are not on sale yet.";
-        }
     }
 
     function bytes(n) {
@@ -1073,7 +965,6 @@ try {
         var q = E.price(state);
         shownFor = designKey();
         renderSummary(q);
-        renderBuy(q);
         markStale();
         loadPreview();
         var sec = document.getElementById("spec");
@@ -1082,12 +973,6 @@ try {
     }
 
     document.getElementById("go").addEventListener("click", function () {
-        var buy = document.getElementById("buy");
-        if (this.dataset.mode === "buy" && buy && !buy.hidden) {
-            buy.scrollIntoView({ behavior: "smooth", block: "center" });
-            buy.focus({ preventScroll: true });
-            return;
-        }
         showKit();
     });
 
@@ -1128,7 +1013,6 @@ try {
             if (!res.ok) {
                 return res.json().catch(function () { return {}; }).then(function (data) {
                     var err = new Error(data.message || "The download failed. Please try again.");
-                    err.buy = data.buy;
                     throw err;
                 });
             }
@@ -1147,8 +1031,7 @@ try {
                     (left !== null && left !== "" ? " This key has " + left + " download" + (left === "1" ? "" : "s") + " left for this agent." : ""), "good");
             });
         }).catch(function (err) {
-            dlNote(err && err.message ? err.message : String(err), "bad",
-                   err && err.buy ? { text: "Buy the kit this design needs", href: err.buy } : null);
+            dlNote(err && err.message ? err.message : String(err), "bad");
         }).then(function () {
             btn.disabled = false;
             btn.textContent = "Download your kit";

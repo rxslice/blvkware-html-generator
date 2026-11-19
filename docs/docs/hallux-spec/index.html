@@ -64,7 +64,7 @@ td { color:var(--ink-2); }
 .sitenav a:hover, .sitenav a[aria-current] { color: var(--ink, #F5F0E6); text-decoration: none; }
 .sitenav .sitenav-cta { color: #14170A; background: var(--accent, #D4F24A); padding: .5rem .9rem; border-radius: 8px; font-weight: 700; }
 .sitenav .sitenav-cta:hover { color: #14170A; filter: brightness(1.06); }
-@media (max-width: 720px) { .sitenav a:not(.sitenav-cta) { display: none; } }
+@media (max-width: 720px) { .sitenav { flex-wrap: wrap; gap: .8rem; } }
 /* Links inside running text are underlined, not told apart by colour alone. */
 .wrap p a:not([class]), .wrap li:not(.guide) > a:not([class]), .wrap td a:not([class]) {
   text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
@@ -76,7 +76,7 @@ pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2
 <header class="sitebar" style="margin-bottom:2.75rem"><a class="top" href="/">
   <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
   <span class="wordmark">BlvkWare<span>.</span></span>
-</a><nav class="sitenav" aria-label="Site"><a href="/agents/">Agents</a><a href="/sample-kit/">Sample kit</a><a href="/#lab">Free tools</a><a href="/guides/">Guides</a><a href="/hallux/">Developers</a><a class="sitenav-cta" href="/hire/">Design an agent</a></nav></header>
+</a><nav class="sitenav" aria-label="Site"><a href="/#catalog">API catalog</a><a href="/#tools">Tools</a><a href="/#roadmap">Roadmap</a><a href="/pricing/">Pricing</a></nav></header>
 <a class="back" href="/hallux/">&larr; HALLUX</a>
 <h1>HALLUX</h1>
 <p><strong>The hallucination ledger. A registry of identifiers that do not exist but that models confidently believe do.</strong></p>
