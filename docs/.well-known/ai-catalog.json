@@ -253,30 +253,45 @@
   "collections": [],
   "roadmap": [
     {
-      "id": "ward",
-      "name": "WARD",
-      "summary": "Pre-ingestion risk scoring for untrusted content. Call between fetch and context insertion.",
+      "id": "watchpin",
+      "name": "Watchpin",
+      "summary": "Pin MCP tool definitions and detect drift after approval.",
       "status": "not-built"
     },
     {
-      "id": "drift",
-      "name": "DRIFT",
-      "summary": "Is what you believe about X still true, and when did it change.",
+      "id": "beacon",
+      "name": "Beacon",
+      "summary": "Check remote MCP availability, latency and version.",
       "status": "not-built"
     },
     {
-      "id": "veritas",
-      "name": "VERITAS",
-      "summary": "Independent probing of MCP servers and agent tools.",
+      "id": "burnlist",
+      "name": "Burnlist",
+      "summary": "Look up published credential revocations by fingerprint.",
+      "status": "not-built"
+    },
+    {
+      "id": "toolhug",
+      "name": "ToolHug",
+      "summary": "Load compact manifests and retrieve full tool definitions on demand.",
+      "status": "not-built"
+    },
+    {
+      "id": "flight-recorder",
+      "name": "Flight Recorder",
+      "summary": "Verify and export shared hash-chained agent action logs.",
       "status": "not-built"
     }
   ],
   "policy": {
-    "licensing": "https://blvkware.dev/robots.txt",
+    "licensing": "https://blvkware.dev/legal/",
     "terms": "https://blvkware.dev/terms/",
     "rateLimits": "https://blvkware.dev/docs/limits",
     "attribution": "Cite as: BlvkWare (blvkware.dev), verification layer for the agentic web.",
-    "catalogRule": "Every entry under `entries` resolves. Capabilities under `roadmap` are not built and must not be called."
+    "catalogRule": "Every entry under `entries` resolves. Capabilities under `roadmap` are not built and must not be called.",
+    "crawlerPolicy": "https://blvkware.dev/robots.txt",
+    "privacy": "https://blvkware.dev/privacy/",
+    "refunds": "https://blvkware.dev/refund/"
   },
-  "updated": "2026-11-17T00:00:00Z"
+  "updated": "2026-11-19T00:00:00Z"
 }

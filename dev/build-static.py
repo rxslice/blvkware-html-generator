@@ -1562,6 +1562,23 @@ def build_public_pricing():
         "privacyPolicy": "https://blvkware.dev/privacy/",
         "pricing": "https://blvkware.dev/pricing/",
     })
+    catalog_data["roadmap"] = [
+        {"id": slug, "name": name, "summary": summary, "status": "not-built"}
+        for slug, name, summary in (
+            ("watchpin", "Watchpin", "Pin MCP tool definitions and detect drift after approval."),
+            ("beacon", "Beacon", "Check remote MCP availability, latency and version."),
+            ("burnlist", "Burnlist", "Look up published credential revocations by fingerprint."),
+            ("toolhug", "ToolHug", "Load compact manifests and retrieve full tool definitions on demand."),
+            ("flight-recorder", "Flight Recorder", "Verify and export shared hash-chained agent action logs."),
+        )
+    ]
+    catalog_data["policy"].update({
+        "licensing": "https://blvkware.dev/legal/",
+        "crawlerPolicy": "https://blvkware.dev/robots.txt",
+        "privacy": "https://blvkware.dev/privacy/",
+        "refunds": "https://blvkware.dev/refund/",
+    })
+    catalog_data["updated"] = max(catalog_data["updated"], "2026-11-19T00:00:00Z")
     catalog_path.write_text(json.dumps(catalog_data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     hallux = entries["hallux"]["pricing"]
     rate = Decimal(hallux["amount"])
