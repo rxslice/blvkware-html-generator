@@ -10,3 +10,6 @@ Verification APIs and developer infrastructure for agents using HTTP and MCP.
 - Model benchmark: https://github.com/rxslice/slopbench
 - Planned on Cloudflare Workers: Watchpin (tool-definition drift), Beacon (MCP health), Burnlist (credential revocation), ToolHug (compact manifests), Flight Recorder (shared audit log). These projects have no released endpoints. https://blvkware.dev/#roadmap
 - Contact: russ@blvkware.dev
+- Human pricing: https://blvkware.dev/pricing/
+- Authoritative rates: https://api.blvkware.dev/hallux/v1/pricing and https://cordon.blvkware.dev/v1/pricing
+- Service terms, privacy, refunds and software/data licences: https://blvkware.dev/legal/
