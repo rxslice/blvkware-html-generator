@@ -237,6 +237,7 @@
     // Only these two API origins are ever called. ?env=staging selects the sandbox one.
     var params = new URLSearchParams(location.search);
     var STAGING = params.get("env") === "staging";
+    var paymentLink = params.has("_ptxn");
     var API = STAGING ? "https://api-staging.blvkware.dev" : "https://api.blvkware.dev";
     var CLAIM = "hallux_claim" + (STAGING ? "_staging" : "");
     var CONTACT = "russ@blvkware.dev";
@@ -326,7 +327,7 @@
         $("copy-key").addEventListener("click", copyKey);
 
         // Returning from a redirect-based payment method: resume, do not restart.
-        if (params.get("completed") === "1" && sessionStorage.getItem(CLAIM)) {
+        if (!paymentLink && params.get("completed") === "1") {
             show("checkout-loading", false);
             lockControls();
             show("provisioning", true);
@@ -334,13 +335,26 @@
             return;
         }
 
+        if (paymentLink) {
+            document.title = "HALLUX billing | BlvkWare";
+            document.querySelector("main h1").textContent = "HALLUX billing";
+            document.querySelector(".lede").textContent = "Paddle handles the billing request from your payment link.";
+            show("plan-controls", false);
+            document.querySelector('[aria-labelledby="plan-heading"]').hidden = true;
+            document.querySelector(".pay").style.gridColumn = "1 / -1";
+            show("checkout-agree", false);
+        }
         try {
             var res = await fetch(API + "/hallux/v1/billing/config", { headers: { accept: "application/json" } });
             if (!res.ok) throw new Error("config " + res.status);
             var cfg = await res.json();
             state.config = cfg.paddle || null;
         } catch (e) { showCheckoutError(); return; }
-        if (!state.config || !state.config.available) { showClosed(); return; }
+        if (!state.config || !state.config.available) {
+            if (paymentLink) showCheckoutError("This billing link is unavailable. Open your Paddle receipt for billing support.");
+            else showClosed();
+            return;
+        }
         if (state.config.environment === "sandbox") show("sandbox-badge", true);
 
         try { await loadPaddle(); } catch (e) { showCheckoutError(); return; }
@@ -358,11 +372,12 @@
                 allowLogout: false
             } }
         });
-        await startCheckout();
+        // Paddle.js opens the existing transaction from _ptxn automatically.
+        if (!paymentLink) await startCheckout();
     }
 
     function choose(tier, interval) {
-        if (state.completed || (tier === state.tier && interval === state.interval)) return;
+        if (paymentLink || state.completed || (tier === state.tier && interval === state.interval)) return;
         state.tier = tier; state.interval = interval;
         renderPlan();
         writePlanToUrl();
@@ -405,8 +420,13 @@
     function onPaddleEvent(event) {
         if (!event || !event.name) return;
         if (event.name === "checkout.loaded") show("checkout-loading", false);
-        if (event.data && event.data.items) renderSummary(event.data);
-        if (event.name === "checkout.completed") onCompleted();
+        if (!paymentLink && event.data && event.data.items) renderSummary(event.data);
+        if (event.name === "checkout.completed") {
+            if (paymentLink) {
+                show("checkout-loading", false);
+                document.querySelector(".lede").textContent = "Paddle confirmed your billing request.";
+            } else onCompleted();
+        }
         else if (event.name === "checkout.error") showCheckoutError("The payment form reported a problem. Check the details and try again, or email " + CONTACT + ".");
     }
 
@@ -447,7 +467,7 @@
     async function pollStatus() {
         var saved = savedClaim();
         if (!saved) {
-            setText("provisioning-status", "We could not find this checkout in this browser. Your payment is safe: your confirmation email has the next step, or use the recovery page with the email you paid with.");
+            setText("provisioning-status", "This browser has no saved key for this checkout. If you received a Paddle receipt, use Lost your key below with the email on that receipt.");
             return;
         }
         var deadline = Date.now() + 90000;
