@@ -330,7 +330,12 @@ pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2
     async function boot() {
         readPlanFromUrl();
         renderPlan();
-        if (STAGING) show("sandbox-badge", true);
+        if (STAGING) {
+            show("sandbox-badge", true);
+            document.querySelectorAll('a[href="/hallux/recover/"]').forEach(function (link) {
+                link.search = "?env=staging";
+            });
+        }
         setText("example-base", API);
         document.querySelectorAll(".tier-btn").forEach(function (b) { b.addEventListener("click", function () { choose(b.dataset.tier, state.interval); }); });
         document.querySelectorAll(".interval-btn").forEach(function (b) { b.addEventListener("click", function () { choose(state.tier, b.dataset.interval); }); });
