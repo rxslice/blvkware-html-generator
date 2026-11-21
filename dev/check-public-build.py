@@ -21,6 +21,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import tarfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -72,6 +73,37 @@ def check_failed_publication(repo):
             assert not Path(repo, "docs.previous").exists()
 
 
+def check_pages_archive(repo):
+    docs = Path(repo, "docs")
+    target = Path(repo, "release.tar")
+    command = [sys.executable, str(Path(repo, "dev/package-pages.py")), str(docs), str(target)]
+    subprocess.run(command, check=True)
+    with tarfile.open(target) as archive:
+        members = archive.getmembers()
+        assert all(member.isfile() for member in members)
+        assert {member.name.removeprefix("./") for member in members} == {
+            path.relative_to(docs).as_posix() for path in docs.rglob("*") if path.is_file()
+        }
+        for member in members:
+            assert archive.extractfile(member).read() == (docs / member.name).read_bytes()
+    before = hashlib.sha256(target.read_bytes()).digest()
+    catalog = docs / ".well-known/ai-catalog.json"
+    original = catalog.read_bytes()
+    catalog.unlink()
+    for reason in ("discovery", "link", "token"):
+        extra = docs / "unexpected.html"
+        if reason == "link":
+            extra.symlink_to(Path(repo, "README.md"))
+        elif reason == "token":
+            extra.write_text("{{HALLUX_FREE_DAILY}}")
+        result = subprocess.run(command, capture_output=True)
+        assert result.returncode != 0, reason
+        assert hashlib.sha256(target.read_bytes()).digest() == before, reason
+        if reason == "discovery":
+            catalog.write_bytes(original)
+        extra.unlink(missing_ok=True)
+
+
 def main():
     files = subprocess.run(["git", "-C", ROOT, "ls-files", "-co", "--exclude-standard", "-z"],
                            check=True, capture_output=True).stdout.decode().split("\0")
@@ -105,6 +137,7 @@ def main():
             return 1
         print("ok: public build succeeded with no unresolved HALLUX tokens")
 
+        check_pages_archive(repo)
         before = tree_hash(os.path.join(repo, "docs"))
         strict = dict(env, BLVKWARE_REQUIRE_HALLUX="1")
         run = subprocess.run(build, cwd=repo, env=strict, capture_output=True, text=True)

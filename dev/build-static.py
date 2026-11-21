@@ -1634,6 +1634,15 @@ def main(catalog_only=False):
     if strict and catalog_only:
         print("ABORTED: strict releases require the full build")
         return 1
+    if strict:
+        for probe in (hallux.endpoint_live, hallux.mcp_live):
+            ok, detail = probe()
+            if not ok:
+                print("ABORTED: " + detail)
+                return 1
+        if not hallux.live_packs():
+            print("ABORTED: cannot verify the live HALLUX credit packs")
+            return 1
     final = OUT_DIR
     stage = tempfile.mkdtemp(prefix=".docs-staging-", dir=ROOT)
     try:
