@@ -1,0 +1,48 @@
+name: Catalog responsive verification
+on:
+  push:
+    branches: [verify/catalog-responsive-layout]
+permissions:
+  contents: read
+jobs:
+  layout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install playwright==1.55.0
+      - name: Verify rendered public pages at phone and desktop widths
+        run: |
+          python -m http.server 8791 -d docs >/tmp/catalog-http.log 2>&1 &
+          python - <<'PY'
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          issues = []
+          with sync_playwright() as p:
+              browser = p.chromium.launch(executable_path='/usr/bin/google-chrome', args=['--no-sandbox'])
+              for width in (390, 1440):
+                  page = browser.new_page(viewport={'width':width,'height':844})
+                  for file in sorted(Path('docs').rglob('*.html')):
+                      if 'http-equiv="refresh"' in file.read_text()[:1500].lower():
+                          continue
+                      route = str(file.relative_to('docs')).removesuffix('index.html')
+                      page.goto('http://127.0.0.1:8791/'+route, wait_until='domcontentloaded')
+                      page.evaluate('document.fonts.ready')
+                      nav = page.locator('.bw-header')
+                      if width == 390:
+                          nav.locator('summary').click(timeout=3000)
+                          assert nav.locator('details a').first.is_visible(), route
+                          nav.locator('summary').click()
+                      else:
+                          assert nav.locator('.bw-desktop').is_visible(), route
+                      size = page.evaluate('document.documentElement.scrollWidth')
+                      if size > width+1:
+                          issues.append((route, width, size))
+                      if route == 'build/' and width == 390:
+                          grid = page.locator('.gallery').evaluate('e=>getComputedStyle(e).gridTemplateColumns')
+                          assert len(grid.split()) == 1, grid
+                      print(width, route or '/', size)
+                  page.close()
+              browser.close()
+          assert not issues, issues
+          PY
