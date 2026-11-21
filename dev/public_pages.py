@@ -9,14 +9,21 @@ PUBLIC = ROOT / "docs"
 LINKS = (("/#catalog", "APIs"), ("/#tools", "Tools"), ("/#roadmap", "Roadmap"), ("/pricing/", "Pricing"))
 
 
+POLICIES = (("/terms/", "Terms of Service"), ("/privacy/", "Privacy Policy"),
+            ("/refund/", "Refund Policy"), ("/legal/", "Licences and contact"))
+
+
 def shell(body, route):
+    policies = "".join(f'<a href="{url}">{label}</a>' for url, label in POLICIES)
+    policy_menu = ('<details class="bw-policies"><summary>Policies</summary>'
+                   f'<div>{policies}</div></details>')
     links = "".join(f'<a href="{url}"' + (' aria-current="page"' if route == url else '') +
                     f'>{label}</a>' for url, label in LINKS)
     header = (f'<header class="bw-header"><a class="bw-logo" href="/">BlvkWare<b>.</b></a>'
-              f'<nav class="bw-desktop" aria-label="Main">{links}</nav>'
-              f'<details><summary>Menu</summary><nav aria-label="Main">{links}</nav></details></header>')
+              f'<nav class="bw-desktop" aria-label="Main">{links}{policy_menu}</nav>'
+              f'<details><summary>Menu</summary><nav aria-label="Main">{links}{policies}</nav></details></header>')
     if '<header class="bw-header">' in body:
-        return body
+        return re.sub(r'<header class="bw-header">.*?</header>', lambda _: header, body, count=1, flags=re.S)
     for pattern in (r'<header class="sitebar"[^>]*>.*?</header>',
                     r'<header><a class="logo".*?</header>',
                     r'<nav><a class="brand" href="/">BLVKWARE</a>.*?</nav>'):

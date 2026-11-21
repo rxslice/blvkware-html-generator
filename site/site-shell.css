@@ -24,3 +24,7 @@ body>.wrap:has(.bw-header){padding-top:0;padding-bottom:0}
 body:has(.bw-header) .foot-links{display:flex;align-items:center;flex-wrap:wrap;gap:.25rem 1rem}
 body:has(.bw-header) .eyebrow,.bw-header~main>small{font-family:'DM Mono',monospace;letter-spacing:.055em}
 body:has(.bw-header) .bw-header~#app .brand-name i{font-family:Georgia,serif;font-style:italic}
+.bw-header .bw-policies{display:block;position:relative}
+.bw-header .bw-policies summary::before{display:none}
+.bw-header .bw-policies div{position:absolute;right:0;top:100%;min-width:12rem;background:#1a2016;border:1px solid #59604e;padding:.25rem 1rem}
+footer nav[aria-label="Footer"]{display:flex;flex-wrap:wrap;gap:.45rem 1rem}
