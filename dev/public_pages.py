@@ -1,0 +1,52 @@
+"""Apply the catalog identity to HTML from all of the site's page generators."""
+from pathlib import Path
+import re
+import shutil
+
+ROOT = Path(__file__).resolve().parents[1]
+SOURCE = ROOT / "site"
+PUBLIC = ROOT / "docs"
+LINKS = (("/#catalog", "APIs"), ("/#tools", "Tools"), ("/#roadmap", "Roadmap"), ("/pricing/", "Pricing"))
+
+
+def shell(body, route):
+    links = "".join(f'<a href="{url}"' + (' aria-current="page"' if route == url else '') +
+                    f'>{label}</a>' for url, label in LINKS)
+    header = (f'<header class="bw-header"><a class="bw-logo" href="/">BlvkWare<b>.</b></a>'
+              f'<nav class="bw-desktop" aria-label="Main">{links}</nav>'
+              f'<details><summary>Menu</summary><nav aria-label="Main">{links}</nav></details></header>')
+    if '<header class="bw-header">' in body:
+        return body
+    for pattern in (r'<header class="sitebar"[^>]*>.*?</header>',
+                    r'<header><a class="logo".*?</header>',
+                    r'<nav><a class="brand" href="/">BLVKWARE</a>.*?</nav>'):
+        if re.search(pattern, body, re.S):
+            body = re.sub(pattern, lambda _: header, body, count=1, flags=re.S)
+            break
+    else:
+        body = re.sub(r'(<body\b[^>]*>)', lambda m: m[0] + header, body, count=1)
+    if '/assets/fonts/fonts.css' not in body:
+        body = body.replace('</head>', '<link rel="stylesheet" href="/assets/fonts/fonts.css"></head>', 1)
+    return body.replace('</head>', '<link rel="stylesheet" href="/assets/site-shell.css"></head>', 1)
+
+
+def publish(retired):
+    shutil.copyfile(SOURCE / "site-shell.css", PUBLIC / "assets/site-shell.css")
+    for route in (*retired, 'hire'):
+        path = PUBLIC / route / 'index.html'
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text((SOURCE / 'retired.html').read_text())
+    for slug, source in (("hallux/checkout", "hallux-checkout.html"), ("docs/payment", "payment-public.html")):
+        shutil.copyfile(SOURCE / source, PUBLIC / slug / "index.html")
+    for path in PUBLIC.rglob('*.html'):
+        page = path.read_text()
+        route = '/' + str(path.parent.relative_to(PUBLIC)).strip('.') + '/'
+        if 'http-equiv="refresh"' in page[:1500].lower():
+            continue
+        if route == '/docs/hallux-spec/':
+            page = re.sub(r'<h3>The ladder</h3>.*?<h3>Settlement</h3>',
+                          '<h3>Usage pricing</h3><p>Each identifier costs one prepaid credit. '
+                          '<a href="/pricing/#credits">Compare credit packs</a>.</p><h3>Settlement</h3>', page, flags=re.S)
+        path.write_text(shell(page, route))
+    for path in (PUBLIC / 'pricing/embedded.txt', PUBLIC / 'samples/blvkware-sample-kit-follow-up-agent.zip'):
+        path.unlink(missing_ok=True)

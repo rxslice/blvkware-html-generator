@@ -70,13 +70,10 @@ td { color:var(--ink-2); }
   text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2px; }
 </style>
-</head>
+<link rel="stylesheet" href="/assets/site-shell.css"></head>
 <body>
 <div class="wrap">
-<header class="sitebar" style="margin-bottom:2.75rem"><a class="top" href="/">
-  <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
-  <span class="wordmark">BlvkWare<span>.</span></span>
-</a><nav class="sitenav" aria-label="Site"><a href="/#catalog">API catalog</a><a href="/#tools">Tools</a><a href="/#roadmap">Roadmap</a><a href="/pricing/">Pricing</a></nav></header>
+<header class="bw-header"><a class="bw-logo" href="/">BlvkWare<b>.</b></a><nav class="bw-desktop" aria-label="Main"><a href="/#catalog">APIs</a><a href="/#tools">Tools</a><a href="/#roadmap">Roadmap</a><a href="/pricing/">Pricing</a></nav><details><summary>Menu</summary><nav aria-label="Main"><a href="/#catalog">APIs</a><a href="/#tools">Tools</a><a href="/#roadmap">Roadmap</a><a href="/pricing/">Pricing</a></nav></details></header>
 <a class="back" href="/hallux/">&larr; HALLUX</a>
 <h1>HALLUX</h1>
 <p><strong>The hallucination ledger. A registry of identifiers that do not exist but that models confidently believe do.</strong></p>
@@ -190,20 +187,7 @@ pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2
 <p>It is also disqualifying. A verification vendor paid per positive finding has the same structural flaw as a scanner paid per vulnerability: every marginal block is revenue, so the corpus has a commercial reason to grow, and no customer can ever fully rule out that the reason they were stopped was the invoice. This product is an argument about trustworthy verification. Being paid per block loses that argument before it starts.</p>
 <p>So billing is a function of <strong>questions asked</strong>, never of <strong>answers given</strong>. This is enforced in code rather than promised: the quoting function accepts a count of identifiers and has no parameter through which a verdict could reach it, and a test asserts that the charge for a batch is identical whatever the batch resolves to.</p>
 <p>The same rule governs watches. They are priced on what a customer chose to watch, never on whether it fired.</p>
-<h3>The ladder</h3>
-<p><strong>On sale today:</strong> the free Open tier, and prepaid credit at $0.0008 per identifier in packs of $5, $20 and $100, bought with PayPal at <a href="https://api.blvkware.dev/buy">api.blvkware.dev/buy</a>. One key works across HALLUX and CORDON. The metered cap, Team, Feed and Embedded below are the planned ladder: they cannot be bought yet, and no account is upgraded automatically.</p>
-<div class="tw"><table><thead><tr><th>Tier</th><th>Who buys it</th><th>What it is</th><th>Price</th></tr></thead><tbody><tr><td><strong>Open</strong></td><td>Any agent or developer, no account</td><td>Single-lookup GET, 500 identifiers/day, every verdict, no receipt</td><td>Free</td></tr><tr><td><strong>Metered</strong></td><td>An individual agent or small team</td><td>Batch, receipts, watches. Capped, see below</td><td>$0.0008 per identifier</td></tr><tr><td><strong>Team</strong></td><td>A company putting HALLUX in CI</td><td>Unmetered, 100 watches, private-namespace exclusions</td><td>$299/month, $2,990/year</td></tr><tr><td><strong>Feed</strong></td><td>Registries, IDE vendors, CI platforms, security vendors, insurers</td><td>Full ledger, complete history, per-model attribution, live transition stream, unlimited watches, licence to surface findings in your product</td><td>$1,500/month, $15,000/year</td></tr><tr><td><strong>Embedded</strong></td><td>A platform shipping HALLUX inside its product</td><td>Self-hosted or white-labelled, BSL 1.1 commercial grant</td><td>From $2,500/month</td></tr></tbody></table></div>
-<p>Watches on Metered are $0.02 per watched identifier per month.</p>
-<p>An annual commitment is twelve months charged as ten.</p>
-<h3>Why these numbers</h3>
-<p><strong>Open is the advertisement.</strong> 500/day unauthenticated is generous on purpose and will be abused. Rate limit by client at the edge and accept the loss, but bound it: all open-tier traffic shares one daily pool (50,000 identifiers), so a caller who can disguise their address can use up the free tier for the day but never make it bigger. The cost of trying HALLUX has to stay one curl command.</p>
-<p><strong>Metered is priced so that verification is never the reason not to verify.</strong> Resolving a forty-package dependency list costs about three cents, less than the model call that produced the list.</p>
-<p><strong>Metered is capped at the Team price.</strong> A pure per-identifier meter punishes the best channel: a CI pipeline asks about <code>react</code> and <code>lodash</code> a thousand times a day, those are cache hits that cost nothing to serve, and an invoice dominated by them reads as a tax on doing the right thing. Above 373,750 identifiers in a calendar month the account moves to Team and stops being metered. Volume becomes a subscription rather than a surprise. The cap is derived from the Team price in code, not typed, so the two cannot drift.</p>
-<p><strong>Team exists because metered billing is close to unbuyable in a company.</strong> It has no predictable number, so it has no purchase order, so it needs an exception. The draft ladder went straight from free to metered-forever and left the adopter we most want with nothing to buy. $299 sits under the line where an engineering manager needs approval, and adoption in CI is worth more than the margin above it.</p>
-<p><strong>Feed is the business.</strong> The per-call revenue will not pay the bills; it is the distribution channel. The feed and embedded tiers are bought by registries, IDE vendors, CI platforms, security vendors and insurers rather than by agents.</p>
-<p>The earlier draft put Feed at $400/month. That was not caution, it was a credibility problem: a security vendor evaluating a threat-intelligence feed reads $400 as "no company behind this, no SLA, gone within a year" and stops reading. $1,500 is the low end of where differentiated feeds are actually priced, and still inside a data budget that one person can approve.</p>
-<p><strong>Feed should go up, on evidence, not on ambition.</strong> Two events justify raising it: publishing the first confirmed <code>phantom</code> → <code>squat</code> catch, and the corpus carrying a year of history. The asset is the accumulation. Do not raise the price before that evidence exists.</p>
-<h3>Settlement</h3>
+<h3>Usage pricing</h3><p>Each identifier costs one prepaid credit. <a href="/pricing/#credits">Compare credit packs</a>.</p><h3>Settlement</h3>
 <p>Today: prepaid API keys bought with PayPal, shared across HALLUX and CORDON. CORDON also accepts x402 (USDC on Base) per call, over HTTP and over MCP. Planned for HALLUX: x402 per call and Stripe MPP for fiat session billing.</p>
 <h2>9. Failure posture</h2>
 <p>HALLUX never returns <code>exists</code> on uncertainty. When the upstream registry is unreachable, the verdict is <code>unknown</code> with a reason code. An agent that treats <code>unknown</code> as permission has made that choice itself, and the receipt records it.</p>

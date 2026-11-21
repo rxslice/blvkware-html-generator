@@ -24,6 +24,7 @@ import shutil
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from public_pages import publish
 import catalog  # noqa: E402  the single source of truth for what is sold
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -1538,16 +1539,6 @@ def point_social_cards():
 RETIRED_ROUTES = ('agents', 'sample-kit', 'scan', 'design', 'recovery-os', 'ai-employee', 'what-is-an-ai-agent', 'ai-agent-pricing', 'ai-agent-permissions', 'how-agents-are-controlled', 'quote-follow-up-automation', 'ai-automation-for-plumbers', 'augur', 'scry', 'guides')
 
 
-def retire_storefront_routes():
-    page = ('<!doctype html><html lang="en"><head><meta charset="utf-8">'
-            '<meta name="robots" content="noindex"><meta http-equiv="refresh" content="0;url=/#catalog">'
-            '<link rel="canonical" href="https://blvkware.dev/"><title>BlvkWare API catalog</title>'
-            '</head><body><a href="/#catalog">Visit the BlvkWare API catalog</a></body></html>\n')
-    for slug in RETIRED_ROUTES:
-        with open(os.path.join(OUT_DIR, slug, "index.html"), "w", encoding="utf-8") as fh:
-            fh.write(page)
-
-
 def build_public_pricing():
     source = Path(ROOT) / "site"
     dest = Path(OUT_DIR)
@@ -1557,13 +1548,16 @@ def build_public_pricing():
     catalog_data = json.loads(catalog_path.read_text(encoding="utf-8"))
     entries = {e["id"]: e for e in catalog_data["entries"]}
     entries["cordon"]["pricing"].update(CORDON_CATALOG[0]["pricing"])
+    pricing = entries["hallux"]["pricing"]
+    pricing.pop("proposedPlans", None)
+    pricing["note"] = "Free single lookups and prepaid credits are available."
     catalog_data["host"].update({
         "termsOfService": "https://blvkware.dev/terms/",
         "privacyPolicy": "https://blvkware.dev/privacy/",
         "pricing": "https://blvkware.dev/pricing/",
     })
     catalog_data["roadmap"] = [
-        {"id": slug, "name": name, "summary": summary, "status": "not-built"}
+        {"id": slug, "name": name, "summary": summary, "status": "in-development" if slug == "watchpin" else "planned"}
         for slug, name, summary in (
             ("watchpin", "Watchpin", "Pin MCP tool definitions and detect drift after approval."),
             ("beacon", "Beacon", "Check remote MCP availability, latency and version."),
@@ -1578,7 +1572,7 @@ def build_public_pricing():
         "privacy": "https://blvkware.dev/privacy/",
         "refunds": "https://blvkware.dev/refund/",
     })
-    catalog_data["updated"] = max(catalog_data["updated"], "2026-11-19T00:00:00Z")
+    catalog_data["updated"] = max(catalog_data["updated"], "2026-11-21T00:00:00Z")
     catalog_path.write_text(json.dumps(catalog_data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     hallux = entries["hallux"]["pricing"]
     rate = Decimal(hallux["amount"])
@@ -1609,10 +1603,6 @@ def build_catalog_site():
     """Rebuild the public storefront against the checked-in API release artifacts."""
     _require_full_history()
     shutil.copyfile(SITE, os.path.join(OUT_DIR, "index.html"))
-    with open(os.path.join(ROOT, "site", "hire.html"), encoding="utf-8") as fh:
-        redemption = compile_catalog(fh.read(), "site/hire.html")
-    with open(os.path.join(OUT_DIR, "hire", "index.html"), "w", encoding="utf-8") as fh:
-        fh.write(redemption)
     for slug in ("legal", "terms", "privacy", "refund"):
         shutil.copyfile(Path(ROOT) / "site" / (slug + ".html"), Path(OUT_DIR) / slug / "index.html")
     build_public_pricing()
@@ -1620,7 +1610,7 @@ def build_catalog_site():
     write_seo_files()
     add_site_nav()
     self_host_fonts()
-    retire_storefront_routes()
+    publish(RETIRED_ROUTES)
     return 0
 
 
@@ -1875,7 +1865,7 @@ def main():
     print("Added the site header to %d pages" % add_site_nav())
     print("Made code blocks focusable on %d pages" % focusable_code_blocks())
 
-    retire_storefront_routes()
+    publish(RETIRED_ROUTES)
 
     # Pages would otherwise run the output through Jekyll.
     with io.open(os.path.join(OUT_DIR, ".nojekyll"), "w", encoding="utf-8") as fh:

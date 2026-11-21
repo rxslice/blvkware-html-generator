@@ -90,33 +90,7 @@
           "requires": "API key with credits"
         },
         "billingNeutrality": "HALLUX is never paid more because it blocked you. Billing is a function of identifiers submitted, not of the verdicts returned. A verification vendor paid per finding has a commercial reason to find more.",
-        "proposedPlans": [
-          {
-            "id": "team",
-            "name": "Team",
-            "buyer": "a company putting HALLUX in CI or in an internal agent",
-            "monthlyUsd": "299",
-            "annualUsd": "2990",
-            "status": "proposed-not-on-sale"
-          },
-          {
-            "id": "feed",
-            "name": "Feed",
-            "buyer": "registries, IDE vendors, CI platforms, security vendors, insurers",
-            "monthlyUsd": "1500",
-            "annualUsd": "15000",
-            "status": "proposed-not-on-sale"
-          },
-          {
-            "id": "embedded",
-            "name": "Embedded",
-            "buyer": "a platform shipping HALLUX inside its own product",
-            "monthlyUsd": "from 2500",
-            "annualUsd": null,
-            "status": "proposed-not-on-sale"
-          }
-        ],
-        "note": "Only the free tier and the prepaid packs under `purchasable` can be bought. `proposedPlans` are published for planning and cannot be purchased or activated yet; no account is upgraded automatically."
+        "note": "Free single lookups and prepaid credits are available."
       },
       "payment": {
         "apiKey": {
@@ -256,31 +230,31 @@
       "id": "watchpin",
       "name": "Watchpin",
       "summary": "Pin MCP tool definitions and detect drift after approval.",
-      "status": "not-built"
+      "status": "in-development"
     },
     {
       "id": "beacon",
       "name": "Beacon",
       "summary": "Check remote MCP availability, latency and version.",
-      "status": "not-built"
+      "status": "planned"
     },
     {
       "id": "burnlist",
       "name": "Burnlist",
       "summary": "Look up published credential revocations by fingerprint.",
-      "status": "not-built"
+      "status": "planned"
     },
     {
       "id": "toolhug",
       "name": "ToolHug",
       "summary": "Load compact manifests and retrieve full tool definitions on demand.",
-      "status": "not-built"
+      "status": "planned"
     },
     {
       "id": "flight-recorder",
       "name": "Flight Recorder",
       "summary": "Verify and export shared hash-chained agent action logs.",
-      "status": "not-built"
+      "status": "planned"
     }
   ],
   "policy": {
@@ -293,5 +267,5 @@
     "privacy": "https://blvkware.dev/privacy/",
     "refunds": "https://blvkware.dev/refund/"
   },
-  "updated": "2026-11-19T00:00:00Z"
+  "updated": "2026-11-21T00:00:00Z"
 }

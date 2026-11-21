@@ -1,8 +1,0 @@
-HALLUX Embedded | BlvkWare
-Enterprise pricing in USD
-
-For platforms distributing HALLUX inside their own product.
-Planned offering: self-hosted or white-labelled commercial licensing.
-Starting price: from $2,500 per month. No online checkout for Embedded.
-For availability, scope and a written quote: russ@blvkware.dev
-Current pricing: https://blvkware.dev/pricing/

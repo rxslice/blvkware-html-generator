@@ -77,19 +77,17 @@
   text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2px; }
 </style>
-</head>
+<link rel="stylesheet" href="/assets/site-shell.css"></head>
 <body>
 <div class="wrap">
-    <header class="sitebar" style="margin-bottom:2.75rem"><a class="top" href="/">
-        <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
-        <span class="wordmark">BlvkWare<span>.</span></span>
-    </a><nav class="sitenav" aria-label="Site"><a href="/#catalog">API catalog</a><a href="/#tools">Tools</a><a href="/#roadmap">Roadmap</a><a href="/pricing/">Pricing</a></nav></header>
+    <header class="bw-header"><a class="bw-logo" href="/">BlvkWare<b>.</b></a><nav class="bw-desktop" aria-label="Main"><a href="/#catalog">APIs</a><a href="/#tools">Tools</a><a href="/#roadmap">Roadmap</a><a href="/pricing/">Pricing</a></nav><details><summary>Menu</summary><nav aria-label="Main"><a href="/#catalog">APIs</a><a href="/#tools">Tools</a><a href="/#roadmap">Roadmap</a><a href="/pricing/">Pricing</a></nav></details></header>
 
     <main>
         <div class="eyebrow">HALLUX subscription <span id="sandbox-badge" class="sandbox" hidden>Sandbox</span></div>
         <h1>Replace a lost key</h1>
         <p class="lede">We never store your key, only a fingerprint of it, so nobody can send it to you again. What we can do is issue a new one on the same subscription. Your plan, billing and any credit carry over; the old key stops working at that moment.</p>
 
+        <p class="note">For a prepaid credit key, <a href="mailto:russ@blvkware.dev?subject=Prepaid%20key%20recovery">email support</a> with your receipt. The form below is for an existing subscription.</p>
         <section id="step-request" class="card">
             <h2>1. Get a replacement link</h2>
             <form id="request-form" novalidate>
@@ -119,7 +117,7 @@ pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2
             <p>Send it as <code>Authorization: Bearer &lt;key&gt;</code> or <code>X-API-Key: &lt;key&gt;</code>, on HALLUX and CORDON.</p>
         </section>
 
-        <p>This replaces keys for <a href="/hallux/checkout/">Team and Feed subscriptions</a>. For a prepaid credit key, or if the email does not arrive, write to <a href="mailto:russ@blvkware.dev?subject=HALLUX%20key%20recovery">russ@blvkware.dev</a> from the address on your receipt.</p>
+        <p>This form replaces existing subscription keys. For a prepaid credit key, or if the email does not arrive, write to <a href="mailto:russ@blvkware.dev?subject=HALLUX%20key%20recovery">russ@blvkware.dev</a> from the address on your receipt.</p>
     </main>
 
     <div class="foot">

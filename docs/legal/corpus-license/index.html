@@ -70,13 +70,10 @@ td { color:var(--ink-2); }
   text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2px; }
 </style>
-</head>
+<link rel="stylesheet" href="/assets/site-shell.css"></head>
 <body>
 <div class="wrap">
-<header class="sitebar" style="margin-bottom:2.75rem"><a class="top" href="/">
-  <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
-  <span class="wordmark">BlvkWare<span>.</span></span>
-</a><nav class="sitenav" aria-label="Site"><a href="/#catalog">API catalog</a><a href="/#tools">Tools</a><a href="/#roadmap">Roadmap</a><a href="/pricing/">Pricing</a></nav></header>
+<header class="bw-header"><a class="bw-logo" href="/">BlvkWare<b>.</b></a><nav class="bw-desktop" aria-label="Main"><a href="/#catalog">APIs</a><a href="/#tools">Tools</a><a href="/#roadmap">Roadmap</a><a href="/pricing/">Pricing</a></nav><details><summary>Menu</summary><nav aria-label="Main"><a href="/#catalog">APIs</a><a href="/#tools">Tools</a><a href="/#roadmap">Roadmap</a><a href="/pricing/">Pricing</a></nav></details></header>
 <a class="back" href="/hallux/">&larr; HALLUX</a>
 <h1>Corpus licence</h1>
 <p>The terms the HALLUX phantom ledger is published under. Corpus responses carry this address in a <code>Link: rel="license"</code> header. The HALLUX software is a separate matter, under the <a href="/legal/bsl-1.1/">Business Source License 1.1</a>.</p><h2>The open window</h2><p>The rolling 30-day window of the ledger, as served by <code>GET /v1/corpus</code>, is free to use with attribution. The attribution is:</p><pre tabindex="0"><code>BlvkWare (blvkware.dev), verification layer for the agentic web.</code></pre><p>Every corpus response carries it in the <code>X-HALLUX-Attribution</code> header, so a consumer never has to copy it by hand. The open window does not include which model families emitted a name.</p><h2>The full corpus</h2><p>Complete history, per-model attribution and the live transition stream are the Feed tier, at $1,500 a month or $15,000 a year, with a licence to surface findings inside your own product. It is not on sale yet: the Feed tier is not sold through the site, so a request for <code>?full=1</code> answers <code>402</code> with these terms rather than a way to pay.</p><p>How names enter the ledger is published in full at <a href="/docs/corpus-methodology/">/docs/corpus-methodology</a>. Questions: russ@blvkware.dev.</p>

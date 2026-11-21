@@ -69,13 +69,10 @@
   text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2px; }
 </style>
-</head>
+<link rel="stylesheet" href="/assets/site-shell.css"></head>
 <body>
 <div class="wrap">
-    <header class="sitebar" style="margin-bottom:2.75rem"><a class="top" href="/">
-        <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
-        <span class="wordmark">BlvkWare<span>.</span></span>
-    </a><nav class="sitenav" aria-label="Site"><a href="/#catalog">API catalog</a><a href="/#tools">Tools</a><a href="/#roadmap">Roadmap</a><a href="/pricing/">Pricing</a></nav></header>
+    <header class="bw-header"><a class="bw-logo" href="/">BlvkWare<b>.</b></a><nav class="bw-desktop" aria-label="Main"><a href="/#catalog">APIs</a><a href="/#tools">Tools</a><a href="/#roadmap">Roadmap</a><a href="/pricing/">Pricing</a></nav><details><summary>Menu</summary><nav aria-label="Main"><a href="/#catalog">APIs</a><a href="/#tools">Tools</a><a href="/#roadmap">Roadmap</a><a href="/pricing/">Pricing</a></nav></details></header>
 
     <h1>Terms of Service</h1>
     <div class="updated">Last updated 19 November 2026</div>
@@ -85,25 +82,23 @@ pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2
     <h2>Who you are dealing with</h2>
     <p>These terms are an agreement between you and <strong>William Wheeler, trading as BlvkWare</strong> ("BlvkWare", "we"), P.O. Box 406, Wilmer, AL 36587, United States. Contact: <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a>.</p>
     <p>By using this site, the tools, a kit or the APIs, you agree to these terms. If you continue to use them after the terms change, you agree to the version in force at that time.</p>
-    <div class="box">
-        <p><strong>Paddle is our reseller for subscriptions.</strong> Paddle.com is the Merchant of Record for HALLUX Team and Feed subscriptions purchased through Paddle. Paddle handles billing, invoices and subscription refunds. BlvkWare provides technical support. Previous agent-kit purchases were processed by Gumroad; prepaid API credits are purchased separately through PayPal. Subscriptions purchased on <a href="/hallux/checkout/">blvkware.dev/hallux/checkout</a> are also subject to <a href="https://www.paddle.com/legal/buyer-terms">Paddle's buyer terms</a>.</p>
-    </div>
+
 
     <h2>1. The HALLUX and CORDON APIs</h2>
 
     <h3>What they are</h3>
     <p>HALLUX checks whether software packages, models and other identifiers an AI agent wants to use exist in supported registries. CORDON reads web pages and documents for an agent and screens them for injected instructions. Both are services reached over the internet at <code>api.blvkware.dev</code> and <code>cordon.blvkware.dev</code>, by API key, by the MCP protocol, or by per-call payment.</p>
 
-    <h3>Plans and payment</h3>
+    <h3>API usage and payment</h3>
     <ul>
         <li><strong>Open tier:</strong> free, with a daily allowance and no key needed.</li>
         <li><strong>Prepaid credit:</strong> packs of credit bought once through PayPal and attached to an API key. Credit is used up as you make calls and does not renew.</li>
-        <li><strong>Team and Feed subscriptions (when available):</strong> sold by Paddle as Merchant of Record, billed monthly or yearly in advance at the price shown at checkout, and renewing automatically until cancelled. Paddle handles payment, invoices and sales tax, under Paddle's buyer terms.</li>
+
         <li><strong>Per-call payment:</strong> some endpoints accept a payment with each request using the x402 protocol, in USDC on the Base network. A call is charged only when it is answered.</li>
     </ul>
     <p>Prices are shown on the <a href="/pricing/">pricing page</a> and at checkout. A price change never applies to a period you have already paid for; for subscriptions it applies from your next renewal, and you will be told before it does.</p>
 
-    <h3>Cancelling a subscription</h3>
+    <h3>Previous subscription payments</h3>
     <p>You may cancel at any time from the link in your Paddle receipt or at <a href="https://paddle.net">paddle.net</a>. Your key keeps working until the end of the period you have paid for, and you are not charged again. Refunds are covered by the <a href="/refund/">refund policy</a>.</p>
 
     <h3>Your API key</h3>
@@ -130,7 +125,7 @@ pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2
 
     <p>Hosted API use is governed by these terms. The <a href="/legal/bsl-1.1/">HALLUX software licence</a> covers the licensed source, and the <a href="/legal/corpus-license/">corpus licence</a> covers reuse of the ledger. Content retrieved by CORDON remains subject to its original rights.</p>
     <h2>2. The free tools</h2>
-    <p>Business Scan, Agent Designer and App Builder are provided free, with no account, and <strong>as is</strong>. You may use their output for any lawful purpose, commercial included. Nothing is charged and nothing is owed.</p>
+    <p>App Builder is provided free, with no account, and <strong>as is</strong>. You may use its output for any lawful purpose, commercial included. Nothing is charged and nothing is owed.</p>
 
     <h3>They produce estimates, not facts</h3>
     <p>These tools are powered by AI language models. Their output is generated, not verified. Specifically:</p>
@@ -141,32 +136,16 @@ pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2
     </ul>
     <p>None of it is professional advice: not financial, legal, tax or engineering advice. Decisions you make from it are yours.</p>
 
-    <h3>Using Business Scan responsibly</h3>
-    <p>Business Scan reads publicly accessible web pages, exactly as your browser would. You agree not to point it at material you are not entitled to access, to use it in a way that violates a target site's terms, or to use it for harassment, misrepresentation, or any unlawful purpose. Do not use it at a volume intended to burden another party's systems.</p>
 
     <h3>Your own AI key</h3>
     <p>The tools run on an AI provider key that you supply and that stays in your browser. You are responsible for that key, for keeping it secret, and for any cost or limit your provider applies. BlvkWare never receives it and cannot be responsible for its use. Your use of the provider is subject to the provider's terms.</p>
 
     <h3>Availability</h3>
-    <p>The tools depend on third-party services, including AI providers and, for Business Scan, public page-relay services. Those may change, rate-limit or disappear without notice. No uptime is promised, and the tools may be changed or withdrawn at any time.</p>
+    <p>The tools depend on third-party services, including AI providers. Those may change, rate-limit or disappear without notice. No uptime is promised, and the tools may be changed or withdrawn at any time.</p>
 
     <h2>3. Existing kit licences</h2>
 
-    <h3>What a kit is</h3>
-    <p>A kit is a set of files generated from the design you make on the <a href="/hire/">kit page</a>: the agent's instructions, its tool definitions, its workflows, the schemas for the records it keeps, its autonomy policy and guardrails, setup and integration notes, and acceptance tests. </p>
-    <p><strong>A kit is a download: a specification and the code that goes with it, not hosted software and not a service.</strong> It contains no credentials and connects to nothing by itself. Buying one does not include hosting, building, integration, configuration, support or any other work. You, or whoever you choose, build the agent from it.</p>
-
-    <p>New kit sales have closed. Previous buyers can redeem their licence on the <a href="/hire/">existing downloads page</a>. A Deputy key also unlocks Operator designs.</p>
-    <h3>Payment and your licence key</h3>
-    <p>Previous kit purchases were processed by Gumroad, under Gumroad's own terms, and Gumroad issues your licence key. BlvkWare checks that key with Gumroad each time it is used.</p>
-
-    <h3>Downloading</h3>
-    <p>One key is one agent. The first download binds the key to that design's role. After that you may change the design and download again, up to 20 downloads in total, but a different role needs another key. <strong>BlvkWare does not keep a copy of your design or your kit</strong>, so keep what you download.</p>
-
-    <h3>Refunds</h3>
-    <p>Kits are refunded through Gumroad as set out in the <a href="/refund/">refund policy</a>. A refunded or disputed purchase stops its key downloading.</p>
-
-    <h3>What you may do with a kit</h3>
+    <p>For previous purchases, contact <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> with your receipt for download or licence support. Existing purchase terms continue to apply.</p><h3>Existing licence rights</h3>
     <p>You may use it, change it and build on it for your own business, with any tool, framework or vendor, for as long as you like, and you may give it to someone you hire to build your agent for you. You may not resell or redistribute the kit, or files generated from it, as a product of their own. Nothing in a kit gives BlvkWare any rights over your data, your customers or your business.</p>
 
     <h3>Your responsibilities</h3>
