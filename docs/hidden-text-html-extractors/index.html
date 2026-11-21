@@ -134,21 +134,18 @@
 .sitenav a:hover, .sitenav a[aria-current] { color: var(--ink, #F5F0E6); text-decoration: none; }
 .sitenav .sitenav-cta { color: #14170A; background: var(--accent, #D4F24A); padding: .5rem .9rem; border-radius: 8px; font-weight: 700; }
 .sitenav .sitenav-cta:hover { color: #14170A; filter: brightness(1.06); }
-@media (max-width: 720px) { .sitenav a:not(.sitenav-cta) { display: none; } }
+@media (max-width: 720px) {  .sitenav { flex-wrap: wrap; gap: .8rem; } }
 /* Links inside running text are underlined, not told apart by colour alone. */
 .wrap p a:not([class]), .wrap li:not(.guide) > a:not([class]), .wrap td a:not([class]) {
   text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2px; }
 </style>
-</head>
+<link rel="stylesheet" href="/assets/site-shell.css?v=262ec9d0e645"></head>
 <body>
 <div class="wrap">
-    <header class="sitebar" style="margin-bottom:2.75rem"><a class="top" href="/">
-        <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
-        <span class="wordmark">BlvkWare<span>.</span></span>
-    </a><nav class="sitenav" aria-label="Site"><a href="/agents/">Agents</a><a href="/sample-kit/">Sample kit</a><a href="/#lab">Free tools</a><a href="/guides/">Guides</a><a href="/hallux/">Developers</a><a class="sitenav-cta" href="/hire/">Design an agent</a></nav></header>
+    <header class="bw-header"><a class="bw-logo" href="/">BlvkWare<b>.</b></a><nav class="bw-desktop" aria-label="Main"><a href="/#catalog">APIs</a><a href="/#tools">Tools</a><a href="/#roadmap">Roadmap</a><a href="/pricing/">Pricing</a><details class="bw-policies"><summary>Policies</summary><div><a href="/terms/">Terms of Service</a><a href="/privacy/">Privacy Policy</a><a href="/refund/">Refund Policy</a><a href="/legal/">Licences and contact</a></div></details></nav><details><summary>Menu</summary><nav aria-label="Main"><a href="/#catalog">APIs</a><a href="/#tools">Tools</a><a href="/#roadmap">Roadmap</a><a href="/pricing/">Pricing</a><a href="/terms/">Terms of Service</a><a href="/privacy/">Privacy Policy</a><a href="/refund/">Refund Policy</a><a href="/legal/">Licences and contact</a></nav></details></header>
 
-    <div class="eyebrow">Original research · Agent security <span class="updated">&middot; <time datetime="2026-11-12">Updated November 12, 2026</time></span></div>
+    <div class="eyebrow">Original research · Agent security <span class="updated">&middot; <time datetime="2026-11-19">Updated November 19, 2026</time></span></div>
     <h1>What an HTML reader hands your model that you cannot see</h1>
 
     <p class="lede">An agent does not read a web page. A library reads it and gives the agent text. On 11 November 2026 one test page, carrying ten pieces of text a human visitor cannot see, was put through eighteen of those readers. Every library passed at least four of the ten through to the model. A real browser's own <code>innerText</code> passed four.</p>
@@ -224,7 +221,7 @@ pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2
         <li><strong>Find out what your own reader does.</strong> Fetch <a href="/cordon/test/">the test page</a> with the tool your agent actually uses and search the result for <code>canary-</code>. It takes a minute and the answer is specific to your stack.</li>
         <li><strong>Do not treat extraction as a security boundary.</strong> None of these libraries claims to remove hidden text. They are doing what they were built to do.</li>
         <li><strong>Strip what no person can see before the model sees it.</strong> Inline hiding, comments, templates and invisible Unicode can be removed mechanically, with no judgement involved.</li>
-        <li><strong>Keep the other layers.</strong> Two of ten still got through the reader built for the job. An agent that can send data or spend money needs least privilege and an approval step whatever its reader does. <a href="/ai-agent-permissions/">AI agent permissions and safety</a> covers that side.</li>
+        <li><strong>Keep the other layers.</strong> Two of ten still got through the reader built for the job. An agent that can send data or spend money needs least privilege and an approval step whatever its reader does.</li>
     </ul>
 
     <h2>Method and limits</h2>
@@ -252,7 +249,7 @@ pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2
     <p style="margin-top:2rem;font-size:0.9rem">By William Russell Wheeler, BlvkWare. Measured 11 November 2026.</p>
 
     <footer class="foot">
-        <div class="foot-links"><a href="/">Home</a><a href="/guides/">Guides</a><a href="/cordon/">CORDON</a><a href="/hallux/">HALLUX</a><a href="/ai-agent-permissions/">Agent permissions</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></div>
+        <div class="foot-links"><a href="/">Home</a><a href="/#catalog">API catalog</a><a href="/cordon/">CORDON</a><a href="/hallux/">HALLUX</a><a href="/cordon/#limits">CORDON limits</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/refund/">Refunds</a></div>
         <p style="margin-top:1rem">BlvkWare, <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> · Mississippi, serving the United States.</p>
     </footer>
 </div>

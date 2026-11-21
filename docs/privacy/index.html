@@ -4,11 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy | BlvkWare</title>
-    <meta name="description" content="What BlvkWare collects and what it doesn't: no accounts, analytics or tracking, and the kit service keeps no copy of your design or your kit.">
+    <meta name="description" content="How HALLUX and CORDON process identifiers, URLs, scan content, detection reports, API keys and billing data. Contact BlvkWare about access or deletion.">
     <link rel="canonical" href="https://blvkware.dev/privacy/">
     <meta name="robots" content="index, follow">
     <meta property="og:title" content="Privacy Policy | BlvkWare">
-    <meta property="og:description" content="No accounts, no analytics, no tracking. The tools run entirely in your browser.">
+    <meta property="og:description" content="How HALLUX and CORDON process identifiers, URLs, scan content, detection reports, API keys and billing data. Contact BlvkWare about access or deletion.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://blvkware.dev/privacy/">
     <meta property="og:image" content="https://blvkware.dev/assets/og/privacy.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:image" content="https://blvkware.dev/assets/og/privacy.png">
@@ -54,6 +54,7 @@
         .foot-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
         .foot a { margin-right: 0; }
     </style>
+<link rel="stylesheet" href="/assets/policy.css">
 <style id="no-code-ligatures">*{font-variant-ligatures:no-contextual}</style>
 <style>
 .sitebar { display: flex; align-items: center; justify-content: space-between; gap: 1.25rem; flex-wrap: wrap; }
@@ -63,67 +64,74 @@
 .sitenav a:hover, .sitenav a[aria-current] { color: var(--ink, #F5F0E6); text-decoration: none; }
 .sitenav .sitenav-cta { color: #14170A; background: var(--accent, #D4F24A); padding: .5rem .9rem; border-radius: 8px; font-weight: 700; }
 .sitenav .sitenav-cta:hover { color: #14170A; filter: brightness(1.06); }
-@media (max-width: 720px) { .sitenav a:not(.sitenav-cta) { display: none; } }
+@media (max-width: 720px) {  .sitenav { flex-wrap: wrap; gap: .8rem; } }
 /* Links inside running text are underlined, not told apart by colour alone. */
 .wrap p a:not([class]), .wrap li:not(.guide) > a:not([class]), .wrap td a:not([class]) {
   text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2px; }
 </style>
-</head>
+<link rel="stylesheet" href="/assets/site-shell.css?v=262ec9d0e645"></head>
 <body>
 <div class="wrap">
-    <header class="sitebar" style="margin-bottom:2.75rem"><a class="top" href="/">
-        <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
-        <span class="wordmark">BlvkWare<span>.</span></span>
-    </a><nav class="sitenav" aria-label="Site"><a href="/agents/">Agents</a><a href="/sample-kit/">Sample kit</a><a href="/#lab">Free tools</a><a href="/guides/">Guides</a><a href="/hallux/">Developers</a><a class="sitenav-cta" href="/hire/">Design an agent</a></nav></header>
+    <header class="bw-header"><a class="bw-logo" href="/">BlvkWare<b>.</b></a><nav class="bw-desktop" aria-label="Main"><a href="/#catalog">APIs</a><a href="/#tools">Tools</a><a href="/#roadmap">Roadmap</a><a href="/pricing/">Pricing</a><details class="bw-policies"><summary>Policies</summary><div><a href="/terms/">Terms of Service</a><a href="/privacy/">Privacy Policy</a><a href="/refund/">Refund Policy</a><a href="/legal/">Licences and contact</a></div></details></nav><details><summary>Menu</summary><nav aria-label="Main"><a href="/#catalog">APIs</a><a href="/#tools">Tools</a><a href="/#roadmap">Roadmap</a><a href="/pricing/">Pricing</a><a href="/terms/">Terms of Service</a><a href="/privacy/">Privacy Policy</a><a href="/refund/">Refund Policy</a><a href="/legal/">Licences and contact</a></nav></details></header>
 
     <h1>Privacy Policy</h1>
-    <div class="updated">Last updated 23 September 2026</div>
+    <div class="updated">Last updated 19 November 2026</div>
 
-    <p class="lede">BlvkWare does not run analytics, does not set cookies, and has no user accounts. The free tools on this site run entirely inside your browser. Two things do use a server: the kit service, which lists and generates agent kits, and the HALLUX API. This page explains precisely what each part does with your information, including the parts involving third parties.</p>
+    <p class="lede">This policy covers blvkware.dev, the HALLUX API at api.blvkware.dev, and CORDON at cordon.blvkware.dev, including their MCP endpoints, payments and support.</p>
 
     <h2>Who is responsible</h2>
-    <p>BlvkWare is a sole operation run by William Russell Wheeler, based in Mississippi, United States, and selling to businesses nationwide. For anything on this page, write to <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a>.</p>
+    <p>The controller of your personal data is <strong>William Wheeler, trading as BlvkWare</strong>, P.O. Box 406, Wilmer, AL 36587, United States. BlvkWare is a sole operation and sells to businesses. For anything on this page, including any privacy request, write to <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> or to that postal address.</p>
+
+    <h2>The HALLUX and CORDON APIs</h2>
+    <p>HALLUX (<code>api.blvkware.dev</code>) and CORDON (<code>cordon.blvkware.dev</code>) run on <strong>Cloudflare</strong> and keep their records in Cloudflare's database service.</p>
+    <ul>
+        <li><strong>Free-tier quota:</strong> to count the free daily allowance, the API stores the calling IP address with a daily count. These rows are deleted automatically after 3 days. Daily statistics about calls turned away for payment keep only a truncated one-way hash of the address, never the address.</li>
+        <li><strong>API keys:</strong> a key is shown to you once and never stored. Only a one-way fingerprint is kept, with its plan, credit balance, status and the dates it was created and last changed.</li>
+        <li><strong>Paid keys:</strong> an email address supplied at checkout is kept with the key so we can send your receipt and confirmation and let you recover a lost key. For a subscription we also keep Paddle's customer and subscription IDs, so Paddle's notifications can switch the key on, renew it or switch it off. For a credit pack we keep the PayPal order ID.</li>
+        <li><strong>What you send for checking:</strong> the package names, model names and page addresses you submit are used to answer the request. Public facts about those packages are cached, without anything identifying you, so later checks are fast.</li>
+        <li><strong>Per-call payments (x402):</strong> we keep the transaction ID, the paying wallet address and the amount. These are already public on the blockchain.</li>
+        <li><strong>Agent checkout:</strong> if an AI agent starts a purchase for you at <code>blvkware.dev/ucp</code>, the session (the item and any name or email the agent passes) is held for six hours, or 30 days once paid, and then deleted.</li>
+        <li><strong>CORDON reads and scans.</strong> A read sends the requested URL to the destination site. A scan sends your supplied HTML or plain text to CORDON for inspection. Aggregate metrics include counts, units, verdict categories and processing time.</li>
+        <li><strong>Optional detection reports.</strong> Sending content to <code>/v1/report</code> creates a review record containing up to the first 4,000 characters, a hash of that sample, the report type and time, and up to 500 characters each of any URL and note you supply. Remove personal data and secrets before submitting a sample. For deletion requests, use the contact below.</li>
+        <li><strong>HALLUX ledger contributions.</strong> Reports require a key and a model name. Checks submitted with a key and model can also attest an absent identifier to the public ledger. The ledger can include the identifier, model family and prompt class. Submit only identifiers suitable for publication. See the <a href="/docs/corpus-methodology/">corpus methodology</a>.</li>
+        <li><strong>HALLUX watches.</strong> A configured watch associates watched identifiers and its callback configuration with your key so the service can deliver notifications.</li>
+    </ul>
 
     <h2>What this website collects</h2>
-    <p><strong>No accounts. No cookies. No analytics. No advertising or tracking pixels.</strong> There is no sign-up anywhere on this site and no profile is ever built about you.</p>
+    <p><strong>No accounts. No cookies of our own. No analytics. No advertising or tracking pixels.</strong> There is no sign-up anywhere on this site and no profile is ever built about you.</p>
 
     <h3>Hosting logs</h3>
-    <p>The site is served as static files by <strong>GitHub Pages</strong>. Like any web host, GitHub records standard request data (your IP address, browser user agent, and which files were requested) for delivery and abuse prevention. BlvkWare cannot see these logs. GitHub's handling of that data falls under GitHub's own privacy statement.</p>
+    <p>The site is served as static files by <strong>GitHub Pages</strong>, through <strong>Cloudflare</strong>, which also answers the site's agent endpoints (such as <code>/api</code>, <code>/a2a</code> and <code>/ucp</code>). Like any web host, both record standard request data (your IP address, browser user agent, and which address was requested) for delivery, security and abuse prevention, under their own privacy statements. BlvkWare does not keep these logs.</p>
 
     <h3>Fonts</h3>
     <p>Typefaces are served from <strong>blvkware.dev itself</strong>. They are open-licensed fonts (Manrope, Fira Code and DM Mono) hosted alongside the pages, so reading the site does not make your browser contact Google Fonts or any other font service.</p>
 
     <h2>What the tools do with your input</h2>
-    <p>Business Scan, Agent Designer and App Builder are client-side applications. Their code runs on your device. There is no BlvkWare backend receiving your prompts, your API key, or your results.</p>
+    <p>App Builder is a client-side application. Its code runs on your device. There is no BlvkWare backend receiving your prompts, your API key, or your results.</p>
 
     <h3>Your AI provider key</h3>
     <p>The tools need an AI model to work. On this public site you supply your own key from a provider you choose. That key is stored in your browser's <code>localStorage</code>, on your own device, and is sent <strong>directly from your browser to the provider you selected</strong> (Google AI Studio, OpenRouter, or Groq) over HTTPS. It never passes through BlvkWare. Clearing your browser storage, or using the "Forget key" button, removes it permanently.</p>
     <p>Whatever you type into a tool is sent to that provider along with the request, and is handled under <em>their</em> privacy terms. Read those if you intend to enter anything sensitive.</p>
 
     <h3>Data kept in your browser</h3>
-    <p>The tools store a small amount of state in <code>localStorage</code> on your device: your chosen provider and API key, your light/dark theme preference, in App Builder the builds you've generated, and on the kit page the agent design you are working on, so they survive a page reload. None of it leaves your device except as described under the kit service below. Clearing site data in your browser deletes all of it.</p>
+    <p>The tools store a small amount of state in <code>localStorage</code> on your device: your chosen provider and API key, your light/dark theme preference, in App Builder the builds you've generated, so they survive a page reload. Prompts are shared with your chosen provider as described above. Clearing site data in your browser deletes all of it.</p>
 
-    <h3>Business Scan and third-party page readers</h3>
-    <p>Business Scan analyses a public web page you nominate. A browser cannot fetch an arbitrary website directly, so the address you enter is passed to public read-only relay services, currently <code>corsproxy.io</code>, <code>api.allorigins.win</code> and <code>r.jina.ai</code>, which retrieve the page and return it. <strong>Those services see the URL you asked for and your IP address.</strong> They are independent third parties operating under their own terms. Only the address is sent; no other information about you is included.</p>
+    <h2>Previous purchases</h2>
 
-    <h3>Downloading a report or a design</h3>
-    <p>The download buttons in Business Scan and Agent Designer build the file in your browser and save it to your device. Nothing is sent anywhere.</p>
+    <p>Previous downloads were recorded using a licence-key fingerprint, download counts and timestamps. Contact us with your receipt for help with previous purchases.</p><h3>Gumroad</h3>
+    <p>Previous kit purchases were processed by <strong>Gumroad</strong>, which collects what it needs to take your payment and issue your key, under Gumroad's own privacy policy. BlvkWare never sees your card details. As the seller, BlvkWare can see the purchase in its Gumroad account, including the email address you bought with. That is used only for your purchase, to answer you or to handle a refund, and is never added to a marketing list.</p>
 
-    <h2>Designing and buying a kit</h2>
+    <h2>Payments</h2>
+    <p>BlvkWare never sees or stores your card or bank details. Each payment provider collects what it needs to take the payment, under its own privacy policy:</p>
+    <ul>
+        <li><strong>Paddle</strong> (Paddle.com Market Limited and its affiliates) handles previous subscription transactions as our reseller and <strong>Merchant of Record</strong>. Paddle receives your name, email, billing address and payment details, handles tax and invoicing, and shares with us your email, country and the details of your order and subscription. See <a href="https://www.paddle.com/legal/privacy">Paddle's privacy notice</a>.</li>
+        <li><strong>PayPal</strong> takes payment for prepaid credit packs. We receive the order ID, the amount and, if you give it, your email.</li>
+        <li><strong>Gumroad</strong> processes records for previous kit purchases, as described above.</li>
+    </ul>
 
-    <h3>The kit service</h3>
-    <p>The <a href="/hire/">kit page</a> sends the design you make to BlvkWare's kit service: the role, the systems, channels and capabilities you picked, the autonomy level, and your answers about your business, including any rules you write. The service uses it to list the files in your kit and, when you download, to generate the kit. <strong>The design is not stored.</strong> Once the response is sent it is gone, and BlvkWare keeps no copy of it or of your kit.</p>
-    <p>The kit service runs on <strong>Netlify</strong>, which records standard request data (your IP address, browser user agent and the time) as any host does, under Netlify's own privacy policy.</p>
-
-    <h3>Your licence key</h3>
-    <p>When you download, the kit service checks your licence key with Gumroad. It keeps one record per key: a one-way fingerprint of the key, which cannot be turned back into the key, with the role it unlocked, the kit size, the times of its first and latest download, and a download count. That is all. No name, no email address and no design is kept with it. The key itself is not stored in your browser either.</p>
-
-    <h3>Gumroad</h3>
-    <p>Kits are bought on <strong>Gumroad</strong>, which collects what it needs to take your payment and issue your key, under Gumroad's own privacy policy. BlvkWare never sees your card details. As the seller, BlvkWare can see the purchase in its Gumroad account, including the email address you bought with. That is used only for your purchase, to answer you or to handle a refund, and is never added to a marketing list.</p>
-
-    <h2>The HALLUX API</h2>
-    <p>HALLUX, the package-verification API at <code>api.blvkware.dev</code>, meters requests by a salted, truncated hash of the calling address rather than the address itself, so its quota records cannot be walked back to an IP address. Its hosts, Netlify and Hugging Face, record standard request data as any host does. The method is set out in the <a href="/hallux/">HALLUX documentation</a>.</p>
+    <h2>Email we send</h2>
+    <p>Receipts, key confirmations and key-recovery links for paid API keys are sent through <strong>ZeptoMail</strong> (Zoho). They contain your key's prefix, never the full key. They are transactional only: no newsletters, no marketing.</p>
 
     <h2>When you email BlvkWare</h2>
     <p>Email sent to <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> is received and stored in <strong>Zoho Mail</strong>. Your address and the content of your message are kept so the conversation can continue. It is never sold, never shared with advertisers, and never added to a marketing list without you asking. Ask and it will be deleted.</p>
@@ -132,18 +140,43 @@ pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2
         <p><strong>Children.</strong> This site and its kits are for businesses and are not directed at anyone under 16. No information is knowingly collected from children.</p>
     </div>
 
+    <h2>Why we use it (legal basis)</h2>
+    <ul>
+        <li><strong>To provide what you asked for</strong> (performing our contract with you): answering API calls, issuing and running your key, delivering kits, sending receipts and recovery links.</li>
+        <li><strong>Legitimate interests:</strong> preventing abuse and fraud, enforcing the free allowance, keeping the services secure, and answering email you send.</li>
+        <li><strong>Legal obligation:</strong> keeping purchase records that tax and accounting law requires.</li>
+    </ul>
+
+    <h2>Who receives it</h2>
+    <p>Service providers named on this page, each for the purpose described: Cloudflare, GitHub, Netlify, Paddle (as Merchant of Record), PayPal, Gumroad, Zoho (Mail and ZeptoMail), and, for the free tools, the AI provider you choose and the page-reading relays. Beyond those, information is disclosed only to professional advisers such as an accountant or lawyer where needed, or to authorities where the law requires it. It is never sold.</p>
+
+    <h2>How long it is kept</h2>
+    <ul>
+        <li>Free-tier IP addresses: 3 days.</li>
+        <li>Agent checkout sessions: six hours, or 30 days once paid.</li>
+        <li>Key fingerprints and plan records: while the key exists, then deleted on request.</li>
+        <li>Email addresses and order records for paid keys: while the key exists and for up to 7 years after the last purchase, where tax and accounting law requires purchase records to be kept. Anything not needed for that is deleted on request.</li>
+        <li>Email correspondence: until you ask for it to be deleted, or when it is no longer needed.</li>
+    </ul>
+
+    <h2>International transfers</h2>
+    <p>BlvkWare and most of its providers are in the United States, so your information is processed there. Where you are in the UK or the European Economic Area, transfers rely on the safeguards those providers use, such as the European Commission's Standard Contractual Clauses, the UK International Data Transfer Addendum, or the EU-U.S. Data Privacy Framework.</p>
+
+    <h2>Cookies</h2>
+    <p>BlvkWare sets no cookies and uses no analytics. The checkout pages load Paddle's or PayPal's payment form, which may set cookies that are strictly necessary to take the payment securely and prevent fraud, under that provider's own cookie policy. The free tools keep their settings in your browser's <code>localStorage</code>, as described above.</p>
+
     <h2>Your rights</h2>
-    <p>Because there are no accounts and no tracking, there is usually nothing held about you at all. Where there is (an email you sent, or a purchase), you may ask for a copy, a correction, or its deletion, and you may object to its use. Write to <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> and it will be handled within 30 days at no cost.</p>
+    <p>Because there are no accounts and no tracking, there is usually little or nothing held about you. Where there is (an email you sent, a purchase, or a paid key), you may ask for access to it, a copy in a portable form, correction, deletion, or restriction of its use, and you may object to its use or withdraw any consent you gave. Write to <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> and it will be answered within one month, at no cost. If you are unhappy with the answer, you may complain to your local data-protection authority.</p>
     <p>Depending on where you live, these rights may be guaranteed to you by law, including the UK and EU GDPR and the California Consumer Privacy Act. BlvkWare does not sell personal information, under any definition, to anyone.</p>
 
     <h2>Security</h2>
-    <p>Everything is served over HTTPS. There is no account system and no store of personal data to breach: the kit service keeps no design and no kit, and its only records are licence-key fingerprints, which cannot be turned back into keys. The main security consideration is your own AI provider key, which is why it stays on your device and is never transmitted to BlvkWare.</p>
+    <p>Requests to our public APIs use HTTPS. API keys, recovery links and licence keys are stored only as one-way fingerprints that cannot be turned back into keys, card details never reach BlvkWare, and access to the records that do exist is limited to the person who runs the business. The kit service keeps no design and no kit. Your own AI provider key stays on your device and is never transmitted to BlvkWare.</p>
 
     <h2>Changes</h2>
     <p>If this policy changes, the date at the top changes with it. Material changes will be described plainly rather than buried.</p>
 
     <div class="foot">
-        <div class="foot-links"><a href="/">Home</a><a href="/terms/">Terms</a><a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a></div>
+        <div class="foot-links"><a href="/">Home</a><a href="/terms/">Terms</a><a href="/refund/">Refunds</a><a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a></div>
         <p style="margin-top:1rem">Copyright © 2026 BlvkWare / William Russell Wheeler.</p>
     </div>
 </div>

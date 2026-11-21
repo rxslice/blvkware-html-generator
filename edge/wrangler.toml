@@ -1,0 +1,21 @@
+# blvkware-edge: Link headers, Markdown for agents, discovery media types and
+# the OAuth authorization server, in front of GitHub Pages on blvkware.dev.
+# Deployed on the zone route blvkware.dev/* (the apex A records are proxied).
+# Secret: OAUTH_SECRET (random, >= 32 chars). Rotating it invalidates every
+# registered client id and outstanding code; issued tokens (API keys) are unaffected.
+name = "blvkware-edge"
+main = "worker.js"
+compatibility_date = "2026-10-01"
+workers_dev = false
+routes = [{ pattern = "blvkware.dev/*", zone_name = "blvkware.dev" }]
+
+[observability]
+enabled = true
+
+[[kv_namespaces]]
+binding = "COMMERCE"
+id = "fd6173ac6fd241a2b08e78a4a7454052"
+
+[[services]]
+binding = "HALLUX"
+service = "blvkware-api"

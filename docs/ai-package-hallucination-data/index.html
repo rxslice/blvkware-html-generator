@@ -123,21 +123,18 @@
 .sitenav a:hover, .sitenav a[aria-current] { color: var(--ink, #F5F0E6); text-decoration: none; }
 .sitenav .sitenav-cta { color: #14170A; background: var(--accent, #D4F24A); padding: .5rem .9rem; border-radius: 8px; font-weight: 700; }
 .sitenav .sitenav-cta:hover { color: #14170A; filter: brightness(1.06); }
-@media (max-width: 720px) { .sitenav a:not(.sitenav-cta) { display: none; } }
+@media (max-width: 720px) {  .sitenav { flex-wrap: wrap; gap: .8rem; } }
 /* Links inside running text are underlined, not told apart by colour alone. */
 .wrap p a:not([class]), .wrap li:not(.guide) > a:not([class]), .wrap td a:not([class]) {
   text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2px; }
 </style>
-</head>
+<link rel="stylesheet" href="/assets/site-shell.css?v=262ec9d0e645"></head>
 <body>
 <div class="wrap">
-    <header class="sitebar" style="margin-bottom:2.75rem"><a class="top" href="/">
-        <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
-        <span class="wordmark">BlvkWare<span>.</span></span>
-    </a><nav class="sitenav" aria-label="Site"><a href="/agents/">Agents</a><a href="/sample-kit/">Sample kit</a><a href="/#lab">Free tools</a><a href="/guides/">Guides</a><a href="/hallux/">Developers</a><a class="sitenav-cta" href="/hire/">Design an agent</a></nav></header>
+    <header class="bw-header"><a class="bw-logo" href="/">BlvkWare<b>.</b></a><nav class="bw-desktop" aria-label="Main"><a href="/#catalog">APIs</a><a href="/#tools">Tools</a><a href="/#roadmap">Roadmap</a><a href="/pricing/">Pricing</a><details class="bw-policies"><summary>Policies</summary><div><a href="/terms/">Terms of Service</a><a href="/privacy/">Privacy Policy</a><a href="/refund/">Refund Policy</a><a href="/legal/">Licences and contact</a></div></details></nav><details><summary>Menu</summary><nav aria-label="Main"><a href="/#catalog">APIs</a><a href="/#tools">Tools</a><a href="/#roadmap">Roadmap</a><a href="/pricing/">Pricing</a><a href="/terms/">Terms of Service</a><a href="/privacy/">Privacy Policy</a><a href="/refund/">Refund Policy</a><a href="/legal/">Licences and contact</a></nav></details></header>
 
-    <div class="eyebrow">Original research · Package hallucination <span class="updated">&middot; <time datetime="2026-10-03">Updated October 3, 2026</time></span></div>
+    <div class="eyebrow">Original research · Package hallucination <span class="updated">&middot; <time datetime="2026-11-19">Updated November 19, 2026</time></span></div>
     <h1>AI models invent packages at the frontier, not in the basics</h1>
 
     <p class="lede">Between 22 September and 2 October 2026, a small panel of AI models was asked, on seven separate days, to write code and say what to install. Of 2,532 package suggestions, 97 named a package that does not exist. Almost none of them came from routine work. Most came from the newest corners of each ecosystem, which is exactly where a developer is least able to tell. And 19 of the invented names could be registered by anyone this afternoon.</p>
@@ -371,7 +368,7 @@ pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2
     <p style="margin-top:2rem;font-size:0.9rem">By William Russell Wheeler, BlvkWare. Data collected 22 September to 2 October 2026.</p>
 
     <footer class="foot">
-        <div class="foot-links"><a href="/">Home</a><a href="/guides/">Guides</a><a href="/pkgguard/">pkgguard</a><a href="/hallux/">HALLUX</a><a href="/docs/corpus-methodology/">Corpus methodology</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></div>
+        <div class="foot-links"><a href="/">Home</a><a href="/#catalog">API catalog</a><a href="/pkgguard/">pkgguard</a><a href="/hallux/">HALLUX</a><a href="/docs/corpus-methodology/">Corpus methodology</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/refund/">Refunds</a></div>
         <p style="margin-top:1rem">BlvkWare, <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a> · Mississippi, serving the United States.</p>
     </footer>
 </div>

@@ -1,0 +1,15 @@
+# BlvkWare
+Verification APIs and developer infrastructure for agents using HTTP and MCP.
+- API catalog with endpoints, pricing and access details: https://blvkware.dev/.well-known/ai-catalog.json
+- MCP discovery: https://blvkware.dev/.well-known/mcp/server-cards.json
+- HALLUX checks package names and identifiers: https://blvkware.dev/hallux/
+- CORDON reads and inspects web content: https://blvkware.dev/cordon/
+- Authentication: https://blvkware.dev/auth.md
+- Payment: https://blvkware.dev/docs/payment/
+- Open-source package gate: https://blvkware.dev/pkgguard/
+- Model benchmark: https://github.com/rxslice/slopbench
+- Planned on Cloudflare Workers: Watchpin (tool-definition drift), Beacon (MCP health), Burnlist (credential revocation), ToolHug (compact manifests), Flight Recorder (shared audit log). These projects have no released endpoints. https://blvkware.dev/#roadmap
+- Contact: russ@blvkware.dev
+- Human pricing: https://blvkware.dev/pricing/
+- Authoritative rates: https://api.blvkware.dev/hallux/v1/pricing and https://cordon.blvkware.dev/v1/pricing
+- Service terms, privacy, refunds and software/data licences: https://blvkware.dev/legal/

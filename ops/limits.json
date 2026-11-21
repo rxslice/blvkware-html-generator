@@ -1,0 +1,9 @@
+{
+  "currency": "USD",
+  "daily_cap_cents": 500,
+  "per_action_cap_cents": 100,
+  "budget_scope": "shared across all blvkware.dev Workers, repositories and runs",
+  "daily_reset_timezone": "UTC",
+  "recurring_commitments_authorized": false,
+  "on_unavailable_shared_ledger": "deny_new_spend"
+}

@@ -1,0 +1,147 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://blvkware.dev/api/v1",
+      "service-doc": [
+        {
+          "href": "https://blvkware.dev/api/v1",
+          "type": "application/json",
+          "title": "x402 pay-per-call gateway (USDC on Base)"
+        }
+      ],
+      "terms-of-service": [
+        {
+          "href": "https://blvkware.dev/terms/",
+          "type": "text/html"
+        }
+      ]
+    },
+    {
+      "anchor": "https://blvkware.dev/a2a",
+      "service-desc": [
+        {
+          "href": "https://blvkware.dev/.well-known/agent-card.json",
+          "type": "application/json",
+          "title": "A2A agent card (AP2 merchant, a2a-x402)"
+        }
+      ]
+    },
+    {
+      "anchor": "https://blvkware.dev/ucp/v1",
+      "service-desc": [
+        {
+          "href": "https://blvkware.dev/.well-known/ucp",
+          "type": "application/json",
+          "title": "UCP 2026-04-08 business profile"
+        }
+      ],
+      "terms-of-service": [
+        {
+          "href": "https://blvkware.dev/terms/",
+          "type": "text/html"
+        }
+      ]
+    },
+    {
+      "anchor": "https://api.blvkware.dev/hallux/v1",
+      "service-desc": [
+        {
+          "href": "https://api.blvkware.dev/hallux/openapi.json",
+          "type": "application/openapi+json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://blvkware.dev/hallux/",
+          "type": "text/html",
+          "title": "HALLUX"
+        },
+        {
+          "href": "https://blvkware.dev/docs/hallux-spec/",
+          "type": "text/html",
+          "title": "HALLUX specification"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://api.blvkware.dev/hallux/v1/health",
+          "type": "application/json"
+        }
+      ],
+      "terms-of-service": [
+        {
+          "href": "https://blvkware.dev/terms/",
+          "type": "text/html"
+        }
+      ]
+    },
+    {
+      "anchor": "https://api.blvkware.dev/hallux/mcp",
+      "service-desc": [
+        {
+          "href": "https://blvkware.dev/.well-known/mcp/server-card.json",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://blvkware.dev/hallux/",
+          "type": "text/html"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://api.blvkware.dev/hallux/v1/health",
+          "type": "application/json"
+        }
+      ]
+    },
+    {
+      "anchor": "https://cordon.blvkware.dev/",
+      "service-desc": [
+        {
+          "href": "https://cordon.blvkware.dev/openapi.json",
+          "type": "application/openapi+json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://blvkware.dev/cordon/",
+          "type": "text/html",
+          "title": "CORDON"
+        },
+        {
+          "href": "https://cordon.blvkware.dev/llms.txt",
+          "type": "text/plain"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://cordon.blvkware.dev/health",
+          "type": "application/json"
+        }
+      ],
+      "terms-of-service": [
+        {
+          "href": "https://blvkware.dev/terms/",
+          "type": "text/html"
+        }
+      ]
+    },
+    {
+      "anchor": "https://blvkware.dev/oauth",
+      "service-desc": [
+        {
+          "href": "https://blvkware.dev/.well-known/oauth-authorization-server",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://blvkware.dev/auth.md",
+          "type": "text/markdown"
+        }
+      ]
+    }
+  ]
+}

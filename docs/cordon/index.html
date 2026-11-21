@@ -106,19 +106,16 @@
 .sitenav a:hover, .sitenav a[aria-current] { color: var(--ink, #F5F0E6); text-decoration: none; }
 .sitenav .sitenav-cta { color: #14170A; background: var(--accent, #D4F24A); padding: .5rem .9rem; border-radius: 8px; font-weight: 700; }
 .sitenav .sitenav-cta:hover { color: #14170A; filter: brightness(1.06); }
-@media (max-width: 720px) { .sitenav a:not(.sitenav-cta) { display: none; } }
+@media (max-width: 720px) {  .sitenav { flex-wrap: wrap; gap: .8rem; } }
 /* Links inside running text are underlined, not told apart by colour alone. */
 .wrap p a:not([class]), .wrap li:not(.guide) > a:not([class]), .wrap td a:not([class]) {
   text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2px; }
 </style>
-</head>
+<link rel="stylesheet" href="/assets/site-shell.css?v=262ec9d0e645"></head>
 <body>
 <div class="wrap">
-    <header class="sitebar" style="margin-bottom:2.75rem"><a class="top" href="/">
-        <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
-        <span class="wordmark">BlvkWare<span>.</span></span>
-    </a><nav class="sitenav" aria-label="Site"><a href="/agents/">Agents</a><a href="/sample-kit/">Sample kit</a><a href="/#lab">Free tools</a><a href="/guides/">Guides</a><a href="/hallux/">Developers</a><a class="sitenav-cta" href="/hire/">Design an agent</a></nav></header>
+    <header class="bw-header"><a class="bw-logo" href="/">BlvkWare<b>.</b></a><nav class="bw-desktop" aria-label="Main"><a href="/#catalog">APIs</a><a href="/#tools">Tools</a><a href="/#roadmap">Roadmap</a><a href="/pricing/">Pricing</a><details class="bw-policies"><summary>Policies</summary><div><a href="/terms/">Terms of Service</a><a href="/privacy/">Privacy Policy</a><a href="/refund/">Refund Policy</a><a href="/legal/">Licences and contact</a></div></details></nav><details><summary>Menu</summary><nav aria-label="Main"><a href="/#catalog">APIs</a><a href="/#tools">Tools</a><a href="/#roadmap">Roadmap</a><a href="/pricing/">Pricing</a><a href="/terms/">Terms of Service</a><a href="/privacy/">Privacy Policy</a><a href="/refund/">Refund Policy</a><a href="/legal/">Licences and contact</a></nav></details></header>
 
     <div class="eyebrow">Verification infrastructure</div>
     <h1>CORDON</h1>
@@ -222,7 +219,7 @@ pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2
     </table>
     </div>
 
-    <p>A page read is 2 units. A scan is 1 unit for each 20,000 characters. A key is prepaid credit, bought in packs through PayPal and sent as <code>Authorization: Bearer bk_live_...</code>. The purchase link is in every 402 response and in the pricing document below.</p>
+    <p>A page read or HTML scan costs 2 units. Plain text costs 1 unit per 20,000 characters, rounded up per request. A key is prepaid credit, bought in packs through PayPal and sent as <code>Authorization: Bearer bk_live_...</code>. The purchase link is in every 402 response and in the pricing document below.</p>
 
     <p>The third row is for agents that pay their own way. When the free allowance runs out, the response is HTTP 402 with a <code>PAYMENT-REQUIRED</code> header in the <a href="https://www.x402.org/" rel="noopener noreferrer">x402</a> format. An agent holding USDC on Base signs the payment and retries the same request. Nobody opens an account and nobody issues a key.</p>
 
@@ -250,9 +247,10 @@ pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2
             <a href="https://cordon.blvkware.dev/v1/rules">Rules</a>
             <a href="https://cordon.blvkware.dev/openapi.json">OpenAPI</a>
             <a href="https://cordon.blvkware.dev/llms.txt">llms.txt</a>
-            <a href="/ai-agent-permissions/">Agent permissions</a>
+            <a href="/cordon/#limits">CORDON limits</a>
             <a href="/privacy/">Privacy</a>
             <a href="/terms/">Terms</a>
+        <a href="/refund/">Refunds</a>
         </div>
     </div>
 </div>

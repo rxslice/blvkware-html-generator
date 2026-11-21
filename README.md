@@ -1,18 +1,10 @@
-# The Blvk Lab
+# BlvkWare developer infrastructure
 
-Three browser-only tools that read a business, find the software it should have, and build it.
+[BlvkWare.dev](https://blvkware.dev/) publishes HALLUX and CORDON, open-source developer tools, and the Cloudflare infrastructure roadmap. The upcoming projects are Watchpin, Beacon, Burnlist, ToolHug and Flight Recorder.
 
-**Live: [blvkware.dev](https://blvkware.dev)** · Built by [BlvkWare](https://blvkware.dev) — bespoke AI agents that do the work, at flat prices. Browse the [agent catalog](https://blvkware.dev/agents/) or [configure and order one](https://blvkware.dev/hire/) without a call.
+Run `python dev/build-static.py --catalog-site` from a full clone to regenerate the public storefront using the committed API release artifacts. GitHub Pages serves `docs/`. The full release build also regenerates API documentation using the HALLUX sibling repository. The legacy configurator supports existing licence holders.
 
-| | Tool | What it does | Live |
-|---|---|---|---|
-| **01** | **Business Scan** — *Analyse* | Reads a company's live public website and reports the revenue and automation systems it should be running but isn't | [blvkware.dev/scan](https://blvkware.dev/scan/) |
-| **02** | **Agent Designer** — *Architect* | Maps how a business actually operates, finds the missing systems, and turns them into a clickable operating console | [blvkware.dev/design](https://blvkware.dev/design/) |
-| **03** | **App Builder** — *Build* | Streams a complete, working, single-file application into the page — then runs it, reads its own console, and repairs what it broke | [blvkware.dev/build](https://blvkware.dev/build/) |
-
-No sign-up, no account, no server. Each tool is one HTML file that runs entirely in your browser using an API key you supply, stored only in your own `localStorage`.
-
----
+## Archived Lab implementation notes
 
 ## Why these exist
 
@@ -108,7 +100,7 @@ Stdlib only for the server; the logo tooling needs Pillow and numpy.
 
 The build writes to a staging copy and replaces `docs/` only if every step passes, so an aborted build never publishes a half-updated site.
 
-HALLUX prices and coverage come from the private `hallux` repository when it is checked out beside this one. Each such build also refreshes `dev/hallux-snapshot.json`. A clone without `hallux` fills the same tokens from that snapshot, so the public repository still builds. Set `BLVKWARE_REQUIRE_HALLUX=1` to refuse the snapshot (for the production publish), and run `python dev/check-public-build.py` to verify both paths.
+HALLUX prices and coverage come from the private `hallux` repository when it is checked out beside this one. Each such build also refreshes `dev/hallux-snapshot.json`. A clone without `hallux` fills the same tokens from that snapshot, so the public repository still builds. For a release, use a full-history site checkout and run `BLVKWARE_REQUIRE_HALLUX=1 python dev/build-static.py` with the intended HALLUX revision beside it. Run `python dev/check-public-build.py`, review the generated changes, and commit the verified `docs/` and snapshot together. Pages deploys the committed tree. The `--catalog-site` command is for storefront previews.
 
 ---
 

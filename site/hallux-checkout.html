@@ -1,0 +1,111 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HALLUX prepaid credits | BlvkWare</title><meta name="robots" content="noindex"><link rel="stylesheet" href="/assets/fonts/fonts.css"><link rel="stylesheet" href="/assets/catalog.css"></head><body><div class="wrap"><header><a class="logo" href="/">BlvkWare</a></header><main class="group"><small>HALLUX / Billing</small><h1>Prepaid <em>credits.</em></h1><div id="offers"><p class="lead">One credit checks one identifier. Buy once, then use your balance across HALLUX and CORDON.</p><div class="links"><a class="primary" href="https://api.blvkware.dev/buy">Buy prepaid credits</a><a href="/pricing/#credits">Compare packs</a></div></div><div class="checkout-container"></div><p id="provisioning-status" role="status"></p><section id="key-reveal" hidden><h2>Your API key</h2><p>Save this key now. It is shown once.</p><pre><code id="api-key"></code></pre><button id="copy-key">Copy key</button><p id="copy-status" role="status"></p></section><a id="recovery" href="/hallux/recover/" hidden>Recover an existing key</a></main><footer><a href="/">BlvkWare</a><nav aria-label="Footer"><a href="/legal/">Legal</a><a href="mailto:russ@blvkware.dev">Contact</a></nav></footer></div><script>
+(async function () {
+    const params = new URLSearchParams(location.search);
+    if (!params.has("_ptxn") && params.get("completed") !== "1") return;
+    const staging = params.get("env") === "staging";
+    const API = staging ? "https://api-staging.blvkware.dev" : "https://api.blvkware.dev";
+    const CLAIM = "hallux_claim" + (staging ? "_staging" : "");
+    const CONTACT = "russ@blvkware.dev";
+    const $ = id => document.getElementById(id);
+    const setText = (id, text) => $(id).textContent = text;
+    const show = (id, visible) => $(id).hidden = !visible;
+    $("offers").hidden = true;
+    document.querySelector("h1").textContent = "Existing billing request";
+    $("recovery").hidden = false;
+    if (staging) $("recovery").search = "?env=staging";
+    $("copy-key").addEventListener("click", copyKey);
+    if (!params.has("_ptxn")) { await pollStatus(); return; }
+    try {
+        const res = await fetch(API + "/hallux/v1/billing/config");
+        if (!res.ok) throw Error();
+        const {paddle} = await res.json();
+        if (!paddle?.available) throw Error();
+        await new Promise((resolve,reject) => {
+            const script = document.createElement("script");
+            script.src = "https://cdn.paddle.com/paddle/v2/paddle.js";
+            script.onload = resolve;
+            script.onerror = reject;
+            document.head.append(script);
+        });
+        if (paddle.environment === "sandbox") Paddle.Environment.set("sandbox");
+        Paddle.Initialize({token:paddle.client_token, checkout:{settings:{displayMode:"inline",frameTarget:"checkout-container",frameInitialHeight:"450",theme:"dark"}},eventCallback(event){
+            if(event.name === "checkout.completed") setText("provisioning-status","Billing request confirmed.");
+            if(event.name === "checkout.error") setText("provisioning-status","Check your payment link or contact support.");
+        }});
+    } catch { setText("provisioning-status","Open your original receipt for billing support."); }
+    function savedClaim() {
+
+        try { return JSON.parse(sessionStorage.getItem(CLAIM) || "null"); } catch (e) { return null; }
+    }
+
+    async function pollStatus() {
+        var saved = savedClaim();
+        if (!saved) {
+            setText("provisioning-status", "This browser has no saved key for this checkout. If you received a Paddle receipt, use the recovery link below with the email on that receipt.");
+            return;
+        }
+        var deadline = Date.now() + 90000;
+        while (Date.now() < deadline) {
+            try {
+                var r = await fetch(API + "/hallux/v1/billing/paddle/status?claim_id=" + encodeURIComponent(saved.claim_id) + "&nonce=" + encodeURIComponent(saved.nonce));
+                if (r.ok) {
+                    var s = await r.json();
+                    if (s.status === "active" || s.status === "trialing" || s.status === "past_due") { revealKey(saved); return; }
+                    if (s.status === "expired") {
+                        setText("provisioning-status", "This checkout expired before the payment was confirmed. If you were charged, email " + CONTACT + " with your Paddle receipt and we will fix it the same day.");
+                        return;
+                    }
+                }
+            } catch (e) { /* transient; keep polling */ }
+            await new Promise(function (res) { setTimeout(res, 2000); });
+        }
+        setText("provisioning-status", "Activation is taking longer than usual. Your payment is safe: keys activate from Paddle's confirmation, which can lag. Keep this page open, check your email, or contact " + CONTACT + " with your receipt.");
+    }
+
+    function revealKey(saved) {
+        setText("provisioning-status", "");
+        setText("api-key", saved.api_key);
+        show("key-reveal", true);
+        try { sessionStorage.removeItem(CLAIM); } catch (e) {}
+        $("copy-key").focus();
+    }
+
+    // Copy with a real confirmation. The Clipboard API can refuse (no focus right after the
+    // payment frame, permissions, older browsers), so fall back to execCommand, and if both fail
+    // select the key and say so instead of pretending it worked.
+    async function copyText(text) {
+        try {
+            if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(text); return true; }
+        } catch (e) { /* fall through */ }
+        var ta = document.createElement("textarea");
+        ta.value = text; ta.setAttribute("readonly", "");
+        ta.style.cssText = "position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;pointer-events:none";
+        document.body.appendChild(ta); ta.focus(); ta.select(); ta.setSelectionRange(0, text.length);
+        var ok = false;
+        try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+        document.body.removeChild(ta);
+        return ok;
+    }
+    var copyTimer = null;
+    async function copyKey() {
+        var code = document.getElementById("api-key"), btn = document.getElementById("copy-key"), status = document.getElementById("copy-status");
+        var key = code.textContent.trim();
+        if (!key) return;
+        var ok = await copyText(key);
+        clearTimeout(copyTimer);
+        status.hidden = false;
+        if (ok) {
+            btn.textContent = "Copied \u2713"; btn.classList.add("copied");
+            status.className = "copy-status ok";
+            status.textContent = "API key copied to your clipboard.";
+            btn.focus();
+            copyTimer = setTimeout(function () { btn.textContent = "Copy key"; btn.classList.remove("copied"); status.hidden = true; }, 4000);
+        } else {
+            var range = document.createRange(); range.selectNodeContents(code);
+            var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+            status.className = "copy-status bad";
+            status.textContent = "Your browser blocked automatic copying. The key is selected: press " + (/Mac|iPhone|iPad/.test(navigator.platform) ? "\u2318C" : "Ctrl+C") + " to copy it.";
+        }
+    }
+
+})();</script></body></html>

@@ -37,7 +37,7 @@
       "mainEntityOfPage": "https://blvkware.dev/subscription-audit/",
       "about": ["Subscription audit", "Vendor management", "Cost reduction", "SaaS spend"],
       "datePublished": "2026-09-12",
-      "dateModified": "2026-09-23",
+      "dateModified": "2026-11-19",
       "image": "https://blvkware.dev/assets/og/subscription-audit.png"
     },
     {
@@ -141,21 +141,18 @@
 .sitenav a:hover, .sitenav a[aria-current] { color: var(--ink, #F5F0E6); text-decoration: none; }
 .sitenav .sitenav-cta { color: #14170A; background: var(--accent, #D4F24A); padding: .5rem .9rem; border-radius: 8px; font-weight: 700; }
 .sitenav .sitenav-cta:hover { color: #14170A; filter: brightness(1.06); }
-@media (max-width: 720px) { .sitenav a:not(.sitenav-cta) { display: none; } }
+@media (max-width: 720px) {  .sitenav { flex-wrap: wrap; gap: .8rem; } }
 /* Links inside running text are underlined, not told apart by colour alone. */
 .wrap p a:not([class]), .wrap li:not(.guide) > a:not([class]), .wrap td a:not([class]) {
   text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2px; }
 </style>
-</head>
+<link rel="stylesheet" href="/assets/site-shell.css?v=262ec9d0e645"></head>
 <body>
 <div class="wrap">
-    <header class="sitebar" style="margin-bottom:2.75rem"><a class="top" href="/">
-        <span class="mark"><img src="/assets/logo-192.png" alt="BlvkWare" width="192" height="192"></span>
-        <span class="wordmark">BlvkWare<span>.</span></span>
-    </a><nav class="sitenav" aria-label="Site"><a href="/agents/">Agents</a><a href="/sample-kit/">Sample kit</a><a href="/#lab">Free tools</a><a href="/guides/">Guides</a><a href="/hallux/">Developers</a><a class="sitenav-cta" href="/hire/">Design an agent</a></nav></header>
+    <header class="bw-header"><a class="bw-logo" href="/">BlvkWare<b>.</b></a><nav class="bw-desktop" aria-label="Main"><a href="/#catalog">APIs</a><a href="/#tools">Tools</a><a href="/#roadmap">Roadmap</a><a href="/pricing/">Pricing</a><details class="bw-policies"><summary>Policies</summary><div><a href="/terms/">Terms of Service</a><a href="/privacy/">Privacy Policy</a><a href="/refund/">Refund Policy</a><a href="/legal/">Licences and contact</a></div></details></nav><details><summary>Menu</summary><nav aria-label="Main"><a href="/#catalog">APIs</a><a href="/#tools">Tools</a><a href="/#roadmap">Roadmap</a><a href="/pricing/">Pricing</a><a href="/terms/">Terms of Service</a><a href="/privacy/">Privacy Policy</a><a href="/refund/">Refund Policy</a><a href="/legal/">Licences and contact</a></nav></details></header>
 
-    <div class="eyebrow">Cost recovery <span class="updated">&middot; <time datetime="2026-09-23">Updated September 23, 2026</time></span></div>
+    <div class="eyebrow">Cost recovery <span class="updated">&middot; <time datetime="2026-11-19">Updated November 19, 2026</time></span></div>
     <h1>Subscription audit</h1>
 
     <p class="lede">Every small business is paying for something it stopped using. That is not the expensive part. The expensive part is the tool it still uses, on a plan four times larger than it needs, which renewed last month because nobody was watching the date. This is the method for finding both, in the order that actually gets it finished.</p>
@@ -290,11 +287,11 @@ pre:focus-visible { outline: 2px solid var(--accent, #D4F24A); outline-offset: 2
         <p>It also checks its own arithmetic in front of you. The Self Test tab recomputes eight worked examples live in whatever application you opened the file in and reports PASSED or FAILED before you rely on a number in it. In that example it finds $7,088 across $26,148 of annual recurring spend, $3,709 of it inside the first 50 minutes.</p>
         <p>From $29, one purchase, no subscription, which would have been an odd thing to sell here.</p>
         <a class="btn" href="https://aiprodev.gumroad.com/l/vendor-renewal-tracker" rel="noopener">See the kit &rarr;</a>
-        <a class="btn-2" href="/scan/">Scan my business first</a>
+
     </div>
 
     <div class="foot">
-        <div class="foot-links"><a href="/">Home</a><a href="/vendor-renewal-tracker/">Renewal tracker tools</a><a href="/scan/">Business Scan</a><a href="/design/">Agent Designer</a><a href="/build/">App Builder</a><a href="/#services">Pricing</a><a href="/privacy/">Privacy</a></div>
+        <div class="foot-links"><a href="/">Home</a><a href="/vendor-renewal-tracker/">Renewal tracker tools</a><a href="/#catalog">API catalog</a><a href="/build/">App Builder</a><a href="/pricing/">Pricing</a><a href="/privacy/">Privacy</a></div>
         <p style="margin-top:1rem">This is general commercial information, not legal, accounting or financial advice. Your contract governs your actual rights and obligations. BlvkWare designs AI agents for small businesses and sells each one as a kit. Mississippi, serving the United States remotely. <a href="mailto:russ@blvkware.dev">russ@blvkware.dev</a></p>
     </div>
 </div>

@@ -11,6 +11,9 @@ no HALLUX checkout beside it, then asserts:
 
 Usage: python3 dev/check-public-build.py
 """
+import importlib.util
+from pathlib import Path
+from unittest.mock import patch
 import hashlib
 import os
 import re
@@ -32,6 +35,41 @@ def tree_hash(path):
             with open(full, "rb") as fh:
                 digest.update(hashlib.sha256(fh.read()).digest())
     return digest.hexdigest()
+
+
+def check_failed_publication(repo):
+    spec = importlib.util.spec_from_file_location("site_build", Path(repo, "dev/build-static.py"))
+    builder = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(builder)
+    output = Path(repo, "docs")
+    (output / "assets/site-shell.css").write_text("previous release")
+    before = tree_hash(output)
+    publish = builder.publish
+    rename = os.rename
+
+    def fail_after_publish(*args):
+        publish(*args)
+        raise OSError("injected failure")
+
+    def fail_install(src, dst):
+        if Path(src).name.startswith(".docs-staging-") and Path(dst) == output:
+            raise OSError("injected failure")
+        rename(src, dst)
+
+    for catalog_only in (False, True):
+        for target, attr, failure in ((builder, "publish", fail_after_publish),
+                                      (os, "rename", fail_install)):
+            with patch.object(target, attr, failure):
+                try:
+                    builder.main(catalog_only=catalog_only)
+                except OSError as exc:
+                    if str(exc) != "injected failure":
+                        raise
+                else:
+                    raise AssertionError("build did not reach injected failure")
+            assert output.is_dir() and tree_hash(output) == before
+            assert not list(Path(repo).glob(".docs-staging-*"))
+            assert not Path(repo, "docs.previous").exists()
 
 
 def main():
@@ -79,7 +117,9 @@ def main():
         if any(n.startswith(".docs-staging-") for n in os.listdir(repo)):
             print("FAIL: staging directory left behind")
             return 1
-        print("ok: aborted build left docs/ unchanged and cleaned up")
+        with patch.dict(os.environ, env, clear=True):
+            check_failed_publication(repo)
+        print("ok: strict preflight, late abort and failed installation preserve docs/")
         return 0
     finally:
         shutil.rmtree(work, ignore_errors=True)

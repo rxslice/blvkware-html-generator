@@ -1,0 +1,30 @@
+/* Shared navigation is independent of each tool's controls. */
+.bw-header{position:relative;inset:auto;z-index:55;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:nowrap;max-width:80rem;width:100%;margin:0 auto;padding:1rem 0;background:#111410;color:#eef2df;border:0;border-bottom:1px solid #41463c;font:500 1rem/1.5 Manrope,system-ui,sans-serif;box-sizing:border-box}
+.bw-header .bw-logo{font:800 1.4rem/1.1 Manrope,system-ui,sans-serif;letter-spacing:-.055em;color:#eef2df;text-decoration:none}.bw-logo b{color:#d7f75e}
+.bw-header nav{display:flex;align-items:center;gap:1.4rem;margin:0;padding:0;position:static;border:0;background:transparent}.bw-header nav a{display:flex;align-items:center;min-height:44px;text-decoration:underline;color:#eef2df;font:500 .95rem/1.4 Manrope,system-ui,sans-serif}.bw-header nav a:hover{color:#d7f75e}
+.bw-header details{display:none}.bw-header summary{display:flex;align-items:center;gap:.65rem;min-height:44px;padding:0 .75rem;cursor:pointer;border:1px solid #59604e;border-radius:4px;list-style:none}.bw-header summary::-webkit-details-marker{display:none}.bw-header summary::before{content:"";width:1rem;height:.7rem;border-block:1.5px solid currentColor;background:linear-gradient(currentColor,currentColor) center/100% 1.5px no-repeat}
+@media(max-width:760px){.bw-header>.bw-desktop{display:none}.bw-header details{display:block}.bw-header details nav{position:absolute;inset:100% 0 auto;padding:.5rem 1rem;display:grid;gap:0;background:#1a2016;border:1px solid #41463c}.bw-header details nav a{padding:.3rem .5rem}}
+body:has(.bw-header){background-color:#111410;color:#eef2df;font-family:Manrope,system-ui,sans-serif}
+body>.wrap:has(.bw-header){min-height:100vh;min-height:100svh;display:flex;flex-direction:column}.wrap>.foot,.wrap>footer{margin-top:auto}.bw-header+h1,.bw-header+.eyebrow,.bw-header+.back{margin-top:clamp(2rem,5vw,4rem)}
+body:has(.bw-header) h1{letter-spacing:-.055em}body:has(.bw-header) .eyebrow{color:#d7f75e;font-family:'DM Mono',monospace}.bw-header:focus-within a:focus-visible,.bw-header summary:focus-visible{outline:2px solid #d7f75e;outline-offset:3px}
+body>.bw-header{padding-inline:clamp(1rem,5vw,4rem)}.bw-header~#app{height:calc(100% - 77px)}.bw-header~#app .gallery{grid-template-columns:repeat(auto-fill,minmax(175px,1fr))}.bw-header~#app .preset{min-height:48px}.bw-header~#app .stage-area{justify-content:flex-start}
+@media(max-width:760px){.bw-header~#app .gallery{grid-template-columns:repeat(2,minmax(0,1fr))}.bw-header~#app .rail{top:77px}.bw-header~#app .btn.icon{min-width:44px;min-height:44px}}
+@media(max-width:420px){.bw-header~#app .gallery{grid-template-columns:minmax(0,1fr)}}
+body:has(.bw-header):not([data-theme="light"]){--bg:#111410;--surface:#20251d;--card:#20251d;--accent-ink:#d7f75e;--acid:#d7f75e;--line:#41463c;--muted:#b3b9a6}
+body>.wrap:has(.bw-header)>.bw-header{flex:none;margin-bottom:clamp(1rem,3vw,2rem)}
+body>.wrap:has(.hero)>.bw-header{margin-bottom:0}
+body>.wrap:has(.bw-header)>:is(.foot,footer){padding-block:1.7rem;border-top:1px solid #41463c}
+body:has(.bw-header) pre{max-width:100%;overflow:auto}
+body:has(.bw-header) [hidden]{display:none!important}
+body>.wrap:has(.bw-header):not(:has(.hero))>.bw-header~h1,body>.wrap:has(.bw-header)>main>h1{font-family:Manrope,system-ui,sans-serif;font-size:clamp(2.9rem,6vw,5.25rem);line-height:1.04;text-wrap:balance}
+body>.wrap:has(.bw-header) :is(.lede,.lead){max-width:65ch;font-size:clamp(1.05rem,2vw,1.24rem);line-height:1.55}
+body:has(.bw-header) .foot a{min-height:44px;display:inline-flex;align-items:center}
+
+body>.wrap:has(.bw-header){padding-top:0;padding-bottom:0}
+body:has(.bw-header) .foot-links{display:flex;align-items:center;flex-wrap:wrap;gap:.25rem 1rem}
+body:has(.bw-header) .eyebrow,.bw-header~main>small{font-family:'DM Mono',monospace;letter-spacing:.055em}
+body:has(.bw-header) .bw-header~#app .brand-name i{font-family:Georgia,serif;font-style:italic}
+.bw-header .bw-policies{display:block;position:relative}
+.bw-header .bw-policies summary::before{display:none}
+.bw-header .bw-policies div{position:absolute;right:0;top:100%;min-width:12rem;background:#1a2016;border:1px solid #59604e;padding:.25rem 1rem}
+footer nav[aria-label="Footer"]{display:flex;flex-wrap:wrap;gap:.45rem 1rem}

@@ -193,28 +193,7 @@
 
     <p>That is not a promise, it is a property. The function that prices a request takes a count of identifiers and has no parameter through which a verdict could reach it, and the test suite resolves the same batch under four different registry states and asserts a single charge.</p>
 
-    {{HALLUX_PAID_NOTICE}}
-
-    <div class="tw">
-    <table>
-        <thead><tr><th>Tier</th><th>Who it is for</th><th>Price</th></tr></thead>
-        <tbody>
-            <tr><td><strong>Open</strong></td><td>Any agent or developer, with no account</td><td>Free, {{HALLUX_FREE_DAILY}} identifiers a day</td></tr>
-            <tr><td><strong>Metered</strong></td><td>An individual agent or a small team</td><td>{{HALLUX_PRICE_PER_IDENTIFIER}} per identifier</td></tr>
-            <tr><td><strong>Team</strong></td><td>A company putting it in CI</td><td>{{HALLUX_TEAM_MONTH}}/month or {{HALLUX_TEAM_YEAR}}/year</td></tr>
-            <tr><td><strong>Feed</strong></td><td>Registries, IDE vendors, CI platforms, security vendors</td><td>{{HALLUX_FEED_MONTH}}/month or {{HALLUX_FEED_YEAR}}/year</td></tr>
-            <tr><td><strong>Embedded</strong></td><td>A platform shipping it inside its own product</td><td>{{HALLUX_EMBEDDED_FROM}}/month</td></tr>
-        </tbody>
-    </table>
-    </div>
-
-    <p>The open tier is {{HALLUX_FREE_DAILY}} identifiers a day for each client, and all free traffic together draws from one pool of {{HALLUX_OPEN_POOL}} a day. The pool is what keeps a free tier with no account honest: nobody can make it bigger by pretending to be many clients. Paid traffic never touches it, and the <a href="/docs/limits">limits page</a> says how both are reported.</p>
-
-    <p>Metered spend stops at the Team price. Above {{HALLUX_CAP_IDENTIFIERS}} identifiers in a calendar month the account moves to Team and is no longer metered. A build pipeline asks about the same few thousand established packages all day, those answers cost nothing to serve, and an invoice made of them would read as a tax on doing the right thing.</p>
-
-    <p>Watches are {{HALLUX_WATCH_MONTH}} per watched identifier per month, {{HALLUX_TEAM_WATCHES}} included on Team and unlimited on Feed. They are priced on what you chose to watch, never on whether one fired. An annual commitment is twelve months charged as ten.</p>
-
-    <p>Machine-readable prices, identical to the numbers above and generated from the same source, are at <a href="{{HALLUX_API_BASE}}/pricing">/hallux/v1/pricing</a> and in the <a href="/.well-known/ai-catalog.json">agent catalog</a>.</p>
+    <p class="note">Single lookups include {{HALLUX_FREE_DAILY}} free identifiers per client each day within a shared pool of {{HALLUX_OPEN_POOL}}. After that, each identifier uses one prepaid credit. <a href="/pricing/#credits">Compare credit packs</a> or <a href="https://api.blvkware.dev/buy">buy credits</a>.</p><p>Machine-readable prices, identical to the numbers above and generated from the same source, are at <a href="{{HALLUX_API_BASE}}/pricing">/hallux/v1/pricing</a> and in the <a href="/.well-known/ai-catalog.json">agent catalog</a>.</p>
 
     <h2>Where it came from</h2>
 
@@ -233,9 +212,10 @@
             <a href="/pkgguard/">pkgguard</a>
             <a href="/cordon/">CORDON</a>
             <a href="/.well-known/ai-catalog.json">Agent catalog</a>
-            <a href="/agents/">AI agents</a>
+            <a href="/#catalog">API catalog</a>
             <a href="/privacy/">Privacy</a>
             <a href="/terms/">Terms</a>
+        <a href="/refund/">Refunds</a>
         </div>
     </div>
 </div>
