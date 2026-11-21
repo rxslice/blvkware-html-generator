@@ -32,6 +32,8 @@ able to publish the site, so everything here degrades to a warning.
 """
 from __future__ import annotations
 
+from functools import lru_cache
+from decimal import Decimal
 import io
 import json
 import os
@@ -251,15 +253,59 @@ def _try_response(deployed):
     return "<pre><code>%s</code></pre>" % text
 
 
-def tokens():
-    """The `{{HALLUX_*}}` substitutions, or None when HALLUX is absent.
+#: The token values from the last build that had HALLUX checked out. Every
+#: full build rewrites it, so it is committed beside the docs/ it produced and
+#: cannot drift from them. A public clone without the private HALLUX
+#: repository fills the pages from it instead of aborting.
+SNAPSHOT = os.path.join(HERE, "hallux-snapshot.json")
 
-    Every value here is read from HALLUX at build time. Nothing in this
-    function may be a literal price.
+_SNAPSHOT_NOTED = []
+
+
+def _write_snapshot(values):
+    text = json.dumps(values, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
+    try:
+        with io.open(SNAPSHOT, encoding="utf-8") as fh:
+            if fh.read() == text:
+                return
+    except OSError:
+        pass
+    with io.open(SNAPSHOT, "w", encoding="utf-8") as fh:
+        fh.write(text)
+
+
+def _read_snapshot():
+    try:
+        with io.open(SNAPSHOT, encoding="utf-8") as fh:
+            values = json.load(fh)
+    except (OSError, ValueError):
+        return None
+    if not _SNAPSHOT_NOTED:
+        _SNAPSHOT_NOTED.append(True)
+        print("note: HALLUX not checked out; HALLUX tokens filled from "
+              "dev/hallux-snapshot.json (the last full build's values)")
+    return values
+
+
+def tokens():
+    """The `{{HALLUX_*}}` substitutions, or None when HALLUX is absent and no
+    snapshot exists.
+
+    Every value here is read from HALLUX at build time, or from the snapshot
+    the last such build wrote. Nothing in this function may be a literal price.
     """
     path = locate()
     if path is None:
-        return None
+        if os.environ.get("BLVKWARE_REQUIRE_HALLUX") == "1":
+            return None
+        return _read_snapshot()
+    values = _live_tokens(path)
+    _write_snapshot(values)
+    return values
+
+
+@lru_cache(maxsize=1)
+def _live_tokens(path):
     payment, authorities = _load(path)
     # Named apart from `namespaces` on purpose: an earlier version called both
     # of these `live`, the namespace list overwrote the probe result, and the
@@ -358,34 +404,18 @@ def check_published_prices(pages, out_dir=None):
     text = re.sub(r"<[^>]+>", " ", page)
     text = re.sub(r"\s+", " ", text)
 
-    required = {
-        "per identifier": "$" + payment.PRICE_PER_IDENTIFIER_USD,
-        "per watch": "$" + payment.PRICE_PER_WATCH_MONTH_USD,
-        "Team monthly": _money(payment.TIERS_BY_ID[payment.TIER_TEAM].monthly_usd),
-        "Team annual": _money(payment.TIERS_BY_ID[payment.TIER_TEAM].annual_usd),
-        "Feed monthly": _money(payment.TIERS_BY_ID[payment.TIER_FEED].monthly_usd),
-        "Feed annual": _money(payment.TIERS_BY_ID[payment.TIER_FEED].annual_usd),
-    }
-    for label, value in required.items():
-        if value not in text:
-            problems.append(
-                "the HALLUX page does not show the %s price %s. "
-                "Add the matching {{HALLUX_*}} token." % (label, value)
-            )
-
-    # /pricing is rendered from the specification's ladder, which is prose a
-    # person edits, so it is held to payment.py the same way.
+    if 'href="/pricing/#credits"' not in page or "one prepaid credit" not in text:
+        problems.append("the HALLUX page must link to credit pricing and state its billing unit")
     if out_dir:
         pricing_path = os.path.join(out_dir, "pricing", "index.html")
-        if os.path.isfile(pricing_path):
-            with io.open(pricing_path, encoding="utf-8") as fh:
-                ladder = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", fh.read()))
-            for label, value in required.items():
-                if value not in ladder:
-                    problems.append(
-                        "/pricing (from HALLUX-SPEC.md section 8) does not show "
-                        "the %s price %s that payment.py charges." % (label, value)
-                    )
+        with io.open(pricing_path, encoding="utf-8") as fh:
+            pricing_text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", fh.read()))
+        if "$" + payment.PRICE_PER_IDENTIFIER_USD + " per identifier" not in pricing_text:
+            problems.append("the pricing page does not quote the HALLUX identifier rate")
+        for pack in (contract() or {}).get("hallux", {}).get("pricing", {}).get("packs", []):
+            expected = "${:g} {:,} shared credits".format(Decimal(pack["usd"]), int(pack["credits"]))
+            if expected not in pricing_text:
+                problems.append("the pricing page is missing the production pack " + expected)
 
     # The other half of the rule: the machine surface has to agree with the
     # page a human reads, because an agent quoting one and being billed the

@@ -21,6 +21,7 @@ import json
 import os
 import re
 import shutil
+import tempfile
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -1601,7 +1602,6 @@ def build_public_pricing():
 
 def build_catalog_site():
     """Rebuild the public storefront against the checked-in API release artifacts."""
-    _require_full_history()
     shutil.copyfile(SITE, os.path.join(OUT_DIR, "index.html"))
     for slug in ("legal", "terms", "privacy", "refund"):
         shutil.copyfile(Path(ROOT) / "site" / (slug + ".html"), Path(OUT_DIR) / slug / "index.html")
@@ -1610,12 +1610,58 @@ def build_catalog_site():
     write_seo_files()
     add_site_nav()
     self_host_fonts()
-    publish(RETIRED_ROUTES)
+    publish(RETIRED_ROUTES, Path(OUT_DIR))
     return 0
 
 
-def main():
+def main(catalog_only=False):
+    """Build into a staging copy of docs/ and swap it in only on success.
+
+    The build writes hundreds of files. Writing them straight into docs/
+    meant an abort halfway through (an unresolved token, a price mismatch)
+    left a published tree that was part old, part new.
+    """
+    global OUT_DIR
+    import hallux_bridge as hallux
     _require_full_history()
+    strict = os.environ.get("BLVKWARE_REQUIRE_HALLUX") == "1"
+    if strict and hallux.locate() is None:
+        print("ABORTED: strict release requires a HALLUX checkout")
+        return 1
+    if strict and not hallux.contract():
+        print("ABORTED: HALLUX production contract is missing")
+        return 1
+    if strict and catalog_only:
+        print("ABORTED: strict releases require the full build")
+        return 1
+    final = OUT_DIR
+    stage = tempfile.mkdtemp(prefix=".docs-staging-", dir=ROOT)
+    try:
+        if os.path.isdir(final):
+            shutil.copytree(final, stage, symlinks=True, dirs_exist_ok=True)
+        OUT_DIR = stage
+        code = build_catalog_site() if catalog_only else _build()
+        if code != 0:
+            print("docs/ left unchanged")
+            return code
+        previous = final + ".previous"
+        shutil.rmtree(previous, ignore_errors=True)
+        if os.path.isdir(final):
+            os.rename(final, previous)
+        try:
+            os.rename(stage, final)
+        except OSError:
+            if os.path.isdir(previous):
+                os.rename(previous, final)
+            raise
+        shutil.rmtree(previous, ignore_errors=True)
+        return 0
+    finally:
+        OUT_DIR = final
+        shutil.rmtree(stage, ignore_errors=True)
+
+
+def _build():
     if not os.path.isdir(OUT_DIR):
         os.makedirs(OUT_DIR)
 
@@ -1776,9 +1822,13 @@ def main():
     # this publishes is the catalog HALLUX's own tests check.
     try:
         note = hallux.build_surface(OUT_DIR)
+        if note is None and os.environ.get("BLVKWARE_REQUIRE_HALLUX") == "1":
+            raise RuntimeError("HALLUX catalog generation was skipped")
         if note:
             print("Built docs/.well-known/ai-catalog.json")
     except RuntimeError as e:
+        if os.environ.get("BLVKWARE_REQUIRE_HALLUX") == "1":
+            raise
         print("WARNING: %s" % e)
 
     # CORDON is a separate service with no sibling checkout to generate from,
@@ -1853,7 +1903,6 @@ def main():
             print("ABORTED: %s" % problem)
         return 1
 
-    build_guides_page()
     build_not_found_page()
     write_seo_files()
 
@@ -1865,7 +1914,7 @@ def main():
     print("Added the site header to %d pages" % add_site_nav())
     print("Made code blocks focusable on %d pages" % focusable_code_blocks())
 
-    publish(RETIRED_ROUTES)
+    publish(RETIRED_ROUTES, Path(OUT_DIR))
 
     # Pages would otherwise run the output through Jekyll.
     with io.open(os.path.join(OUT_DIR, ".nojekyll"), "w", encoding="utf-8") as fh:
@@ -1880,4 +1929,4 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(build_catalog_site() if sys.argv[1:] == ["--catalog-site"] else main())
+    sys.exit(main(catalog_only=sys.argv[1:] == ["--catalog-site"]))

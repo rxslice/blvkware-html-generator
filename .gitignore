@@ -24,3 +24,7 @@ ops/*.json
 
 # The demo video is rebuilt by marketing/video/record.mjs; too big for git.
 marketing/video/out/*.mp4
+
+# Build staging (dev/build-static.py)
+.docs-staging-*/
+docs.previous/

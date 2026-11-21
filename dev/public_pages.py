@@ -6,7 +6,6 @@ import shutil
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "site"
-PUBLIC = ROOT / "docs"
 LINKS = (("/#catalog", "APIs"), ("/#tools", "Tools"), ("/#roadmap", "Roadmap"), ("/pricing/", "Pricing"))
 
 
@@ -35,21 +34,23 @@ def shell(body, route):
         body = re.sub(r'(<body\b[^>]*>)', lambda m: m[0] + header, body, count=1)
     if '/assets/fonts/fonts.css' not in body:
         body = body.replace('</head>', '<link rel="stylesheet" href="/assets/fonts/fonts.css"></head>', 1)
+    if 'href="/assets/site-shell.css' in body:
+        return body
     return body.replace('</head>', '<link rel="stylesheet" href="/assets/site-shell.css"></head>', 1)
 
 
-def publish(retired):
-    shutil.copyfile(SOURCE / "site-shell.css", PUBLIC / "assets/site-shell.css")
+def publish(retired, output):
+    shutil.copyfile(SOURCE / "site-shell.css", output / "assets/site-shell.css")
     css_version = hashlib.sha256((SOURCE / "site-shell.css").read_bytes()).hexdigest()[:12]
     for route in (*retired, 'hire'):
-        path = PUBLIC / route / 'index.html'
+        path = output / route / 'index.html'
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text((SOURCE / 'retired.html').read_text())
     for slug, source in (("hallux/checkout", "hallux-checkout.html"), ("docs/payment", "payment-public.html")):
-        shutil.copyfile(SOURCE / source, PUBLIC / slug / "index.html")
-    for path in PUBLIC.rglob('*.html'):
+        shutil.copyfile(SOURCE / source, output / slug / "index.html")
+    for path in output.rglob('*.html'):
         page = path.read_text()
-        route = '/' + str(path.parent.relative_to(PUBLIC)).strip('.') + '/'
+        route = '/' + str(path.parent.relative_to(output)).strip('.') + '/'
         if 'http-equiv="refresh"' in page[:1500].lower():
             continue
         if route == '/docs/hallux-spec/':
@@ -59,5 +60,5 @@ def publish(retired):
         page = re.sub(r'href="/assets/site-shell\.css(?:\?v=[a-f0-9]+)?"',
                       f'href="/assets/site-shell.css?v={css_version}"', shell(page, route))
         path.write_text(page)
-    for path in (PUBLIC / 'pricing/embedded.txt', PUBLIC / 'samples/blvkware-sample-kit-follow-up-agent.zip'):
+    for path in (output / 'pricing/embedded.txt', output / 'samples/blvkware-sample-kit-follow-up-agent.zip'):
         path.unlink(missing_ok=True)
