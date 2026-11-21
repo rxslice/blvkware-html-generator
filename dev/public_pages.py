@@ -1,5 +1,6 @@
 """Apply the catalog identity to HTML from all of the site's page generators."""
 from pathlib import Path
+import hashlib
 import re
 import shutil
 
@@ -39,6 +40,7 @@ def shell(body, route):
 
 def publish(retired):
     shutil.copyfile(SOURCE / "site-shell.css", PUBLIC / "assets/site-shell.css")
+    css_version = hashlib.sha256((SOURCE / "site-shell.css").read_bytes()).hexdigest()[:12]
     for route in (*retired, 'hire'):
         path = PUBLIC / route / 'index.html'
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -54,6 +56,8 @@ def publish(retired):
             page = re.sub(r'<h3>The ladder</h3>.*?<h3>Settlement</h3>',
                           '<h3>Usage pricing</h3><p>Each identifier costs one prepaid credit. '
                           '<a href="/pricing/#credits">Compare credit packs</a>.</p><h3>Settlement</h3>', page, flags=re.S)
-        path.write_text(shell(page, route))
+        page = re.sub(r'href="/assets/site-shell\.css(?:\?v=[a-f0-9]+)?"',
+                      f'href="/assets/site-shell.css?v={css_version}"', shell(page, route))
+        path.write_text(page)
     for path in (PUBLIC / 'pricing/embedded.txt', PUBLIC / 'samples/blvkware-sample-kit-follow-up-agent.zip'):
         path.unlink(missing_ok=True)
