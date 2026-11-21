@@ -132,3 +132,9 @@ Built and maintained by **W. Russell Wheeler** — [blvkware.dev](https://blvkwa
 BlvkWare builds AI automation and custom software for small businesses: automated quote follow-up, review requests, business process automation, and the internal tools you keep meaning to build. Fixed prices, published on the site.
 
 If you want the underlying business process found and turned into software rather than doing it yourself, that is the actual service — [see what it costs](https://blvkware.dev/#services).
+
+### Production Pages workflow
+
+The **Strict Pages release** workflow checks out the pinned HALLUX revision beside a full-history site checkout, builds in strict mode and packages only the resulting site. Its tar archive includes the hidden `.well-known/` discovery endpoints. The deployment job consumes that same archive.
+
+To activate it, set the Actions secret `HALLUX_CONTENTS_READ` to a credential scoped to read contents of `rxslice/hallux`. With Pages still using its branch source, dispatch **Strict Pages release** on `main` and confirm the build and artifact upload succeed. Then switch **Settings → Pages → Source** to **GitHub Actions** and dispatch it again. Confirm the deployment and fetch `/.well-known/ai-catalog.json` on the custom domain. Subsequent pushes to `main` run the strict deployment. To roll back to the committed site, restore the prior Pages source (`main`, `/docs`).
